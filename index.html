@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>English Vocabulary 12</title>
+    <title>Gemini English Phonetics Quiz</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;700;800&display=swap" rel="stylesheet">
     <style>
@@ -87,37 +87,26 @@
             animation: point-down 1s ease-in-out infinite;
         }
     </style>
+<script type="importmap">
+{
+  "imports": {
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.27.0"
+  }
+}
+</script>
 </head>
 <body class="bg-gray-100">
     <div id="root"></div>
-    
     <!-- Libraries for file processing -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.16/mammoth.browser.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <script src="https://unpkg.com/docx@8.5.0/build/index.js"></script>
+
+    <script type="module" src="/index.tsx"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
-    <script type="module" src="/src/index.tsx"></script>
 </body>
 </html>
-```
-
-## 📋 Các thay đổi đã thực hiện:
-
-1. ✅ **Đổi `lang="en"` → `lang="vi"`** (vì app dùng tiếng Việt)
-2. ✅ **Xóa `<link rel="stylesheet" href="/index.css">`** (không cần thiết)
-4. ✅ **Sửa `src="/index.tsx"` → `src="/src/index.tsx"`** (đúng cấu trúc Vite)
-5. ✅ **Giữ nguyên tất cả CSS animations và styles**
-6. ✅ **Giữ nguyên các thư viện CDN cần thiết**
-
-## 🚀 Cấu trúc thư mục tương ứng:
-```
-project-root/
-├── index.html          ← File này
-├── src/
-│   ├── index.tsx       ← Entry point
-│   ├── App.tsx
-│   └── ...
-├── package.json
-├── vercel.json
-└── .env.local

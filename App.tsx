@@ -1,4 +1,5 @@
 
+
 import React, { useState, useCallback, useEffect } from 'react';
 import WelcomeScreen from './components/WelcomeScreen';
 import QuizScreen from './components/QuizScreen';
@@ -228,7 +229,7 @@ const App: React.FC = () => {
       case Screen.MatchingGame:
         return playerData && selectedUnit && currentActivityId && selectedGrade && <MatchingGameScreen vocabulary={vocabulary} unitNumber={selectedUnit} playerData={playerData} onFinish={handleFinishGame} onForceExit={handleForceExitToWelcome} classroomId={FIXED_CLASSROOM_ID} activityId={currentActivityId} onBack={handleReturnToActivitySelection} grade={selectedGrade} />;
       case Screen.Vocabulary:
-        return selectedUnit && <VocabularyScreen unitNumber={selectedUnit} vocabulary={vocabulary} onBack={handleReturnToActivitySelection} />;
+        return selectedUnit && selectedGrade && <VocabularyScreen unitNumber={selectedUnit} vocabulary={vocabulary} onBack={handleReturnToActivitySelection} classroomId={FIXED_CLASSROOM_ID} grade={selectedGrade} />;
       case Screen.Results:
         return gameResult && <ResultsScreen result={gameResult} onBack={handleReturnToActivitySelection} onLogout={handleLogout} isClassroomMode={true} />;
       case Screen.Dashboard:
@@ -246,7 +247,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="blueprint-bg min-h-screen flex items-center justify-center p-4">
+    <div className="bg-gray-100 min-h-screen flex items-center justify-center p-4">
       <div className="w-full max-w-7xl mx-auto bg-transparent rounded-2xl shadow-2xl overflow-hidden relative">
         {renderScreen()}
         <PasswordModal 

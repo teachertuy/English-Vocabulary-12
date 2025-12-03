@@ -1,5 +1,6 @@
 
 
+
 // IMPORTANT: You need to install firebase for this to work
 // In a real project, you would run: npm install firebase
 // For this environment, we will assume it's available globally or via import map.
@@ -579,6 +580,28 @@ export const listenToTopicVocabulary = (classroomId: string, topicId: string, ca
         console.error(`Failed to listen to vocabulary for topic ${topicId}:`, e);
         callback(null);
         return () => {};
+    }
+};
+
+// --- CACHE VOCABULARY AUDIO ---
+export const updateVocabularyAudio = async (classroomId: string, grade: number | 'topics', unitId: string, word: string, base64Audio: string): Promise<void> => {
+    const db = checkFirebase();
+    const basePath = grade === 'topics' 
+        ? `classrooms/${classroomId}/topics/${unitId}/vocabulary`
+        : `classrooms/${classroomId}/units_${grade}/${unitId}/vocabulary`;
+
+    const vocabRef = ref(db, basePath);
+    
+    // We fetch the list to find the index.
+    const snapshot = await get(vocabRef);
+    const vocabList = snapshot.val() as VocabularyWord[];
+    
+    if (vocabList) {
+        const index = vocabList.findIndex(v => v.word === word);
+        if (index !== -1) {
+            const audioRef = ref(db, `${basePath}/${index}/audio`);
+            await set(audioRef, base64Audio);
+        }
     }
 };
 
