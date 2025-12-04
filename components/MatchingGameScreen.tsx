@@ -253,29 +253,55 @@ const MatchingGameScreen: React.FC<MatchingGameScreenProps> = ({ playerData, voc
 
             <WordButtons words={topWords} />
 
-            <div className="flex flex-col items-center justify-center flex-grow w-full my-2">
-                 <div className="w-full max-w-xs">
+            <div className="flex flex-col items-center justify-center flex-grow w-full my-1">
+                 <div className="w-full max-w-[260px]">
                     <div className="bg-black rounded-xl p-0.5 shadow-lg">
                         <div className="bg-white rounded-[10px] p-0.5">
                             <div className="bg-black rounded-[8px] p-0.5">
                                 <div className="bg-white rounded-[6px]">
-                                    <div className="p-3 text-center flex flex-col items-center">
-                                        <div className="w-full pb-1 min-h-[2.5rem] flex items-center justify-center">
-                                            <p className="text-orange-600 font-extrabold text-xl sm:text-2xl leading-tight text-center">{currentVietnamese?.translation}</p>
+                                    <div className="px-3 py-2 text-center flex flex-col items-center gap-1.5">
+                                        <div className="w-full flex items-center justify-center">
+                                            <p className="text-orange-600 font-extrabold text-lg sm:text-xl leading-none text-center pb-0.5">{currentVietnamese?.translation}</p>
                                         </div>
                                         
-                                        <div className="w-10/12 border-b border-gray-300 mb-2"></div>
+                                        <div className="w-3/4 border-b border-gray-300"></div>
     
-                                        <div className="w-full mb-3 h-10 flex items-center justify-center">
-                                            <div className="w-full h-full border border-dashed border-black rounded-lg flex items-center justify-center px-2">
-                                                <p className={`font-bold text-lg transition-colors ${selectedEnglish ? 'text-blue-700' : 'text-gray-400'}`}>
+                                        <div className="w-full flex items-center justify-center">
+                                            <div className="w-full py-1 border border-dashed border-black rounded flex items-center justify-center min-h-[28px]">
+                                                <p className={`font-bold text-base transition-colors ${selectedEnglish ? 'text-blue-700' : 'text-gray-400'}`}>
                                                     {selectedEnglish ? selectedEnglish.word : '...'}
                                                 </p>
                                             </div>
                                         </div>
                                         
-                                        <button onClick={handleCheckAnswer} className="bg-gradient-to-br from-yellow-400 to-orange-500 text-white font-bold py-1.5 px-4 rounded-full shadow-md hover:shadow-lg transform transition-all duration-300 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-yellow-300 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-sm text-sm">
-                                            Check answer
+                                        <button 
+                                            onClick={handleCheckAnswer} 
+                                            disabled={!selectedEnglish}
+                                            className={`w-full mt-0.5 font-bold py-1 rounded-full shadow-sm transform transition-all duration-300 text-xs focus:outline-none relative overflow-hidden group ${
+                                                !selectedEnglish 
+                                                ? "bg-gray-200 text-gray-400 cursor-not-allowed shadow-none" 
+                                                : "text-white border border-gray-600 hover:shadow-lg hover:shadow-white/20 hover:-translate-y-0.5"
+                                            }`}
+                                            style={selectedEnglish ? {
+                                                backgroundColor: '#000000',
+                                                backgroundImage: `
+                                                    radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 3px),
+                                                    radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 2px),
+                                                    radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 3px)
+                                                `,
+                                                backgroundSize: '50px 50px, 30px 30px, 40px 40px',
+                                                backgroundPosition: '0 0, 15px 15px, 20px 20px'
+                                            } : {}}
+                                        >
+                                           {selectedEnglish ? (
+                                                <div className="relative z-10 flex items-center justify-center gap-1">
+                                                    <span className="text-[10px] animate-pulse">✨</span>
+                                                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-gray-200 to-gray-400">Check answer</span>
+                                                    <span className="text-[10px] animate-pulse delay-75">✨</span>
+                                                </div>
+                                            ) : (
+                                                "Check answer"
+                                            )}
                                         </button>
                                     </div>
                                 </div>
