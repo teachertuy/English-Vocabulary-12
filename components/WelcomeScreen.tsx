@@ -85,13 +85,13 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
       <div className="flex flex-col items-center w-full flex-grow">
         <div className="flex-grow"></div>
 
-        <div className="w-full max-w-md mb-6">
+        <div className="w-full max-w-md mb-6 mt-16">
             <div className="text-center mb-8">
                 <div className="w-full h-28 -mb-4">
                     <svg viewBox="0 0 500 100" className="w-full h-full">
                         <path id="curve" d="M 20, 95 Q 250, 55 480, 95" stroke="transparent" fill="transparent"/>
                         <text width="500" style={{textShadow: '2px 2px 4px rgba(0,0,0,0.5)'}} className="text-yellow-300 fill-current">
-                            <textPath href="#curve" startOffset="50%" text-anchor="middle" className="text-[2.2rem] sm:text-[3.0rem] font-black tracking-widest uppercase">
+                            <textPath href="#curve" startOffset="50%" textAnchor="middle" className="text-[1.8rem] sm:text-[2.4rem] font-black tracking-widest uppercase">
                                 ENGLISH VOCABULARY 12
                             </textPath>
                         </text>
