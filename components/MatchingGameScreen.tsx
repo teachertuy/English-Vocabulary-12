@@ -189,14 +189,14 @@ const MatchingGameScreen: React.FC<MatchingGameScreenProps> = ({ playerData, voc
     const bottomWords = shuffledRemainingWords.slice(splitIndex);
 
     const WordButtons = ({ words }: { words: VocabularyWord[] }) => (
-        <div className="flex flex-wrap justify-center gap-2 p-2 max-w-5xl">
+        <div className="flex flex-wrap justify-center gap-1 p-1 max-w-2xl">
             {words.map(v => {
                 const isSelected = selectedEnglish?.word === v.word;
                 return (
                     <button 
                         key={v.word} 
                         onClick={() => setSelectedEnglish(v)}
-                        className={`px-4 py-2 text-base font-bold rounded-full text-white cursor-pointer transition transform hover:scale-110 ${getTagColor(v.word)} ${isSelected ? 'ring-4 ring-offset-2 ring-yellow-400' : ''}`}
+                        className={`px-2.5 py-1 text-xs font-bold rounded-lg text-white shadow-sm cursor-pointer transition transform hover:scale-105 ${getTagColor(v.word)} ${isSelected ? 'ring-2 ring-offset-1 ring-yellow-400 scale-105' : ''}`}
                     >
                         {v.word}
                     </button>
@@ -206,75 +206,75 @@ const MatchingGameScreen: React.FC<MatchingGameScreenProps> = ({ playerData, voc
     );
     
     return (
-        <div className="flex flex-col items-center justify-center p-4 sm:p-6 bg-white min-h-[600px] relative w-full">
+        <div className="flex flex-col items-center justify-center p-2 sm:p-4 bg-white min-h-[500px] relative w-full">
             {feedback && (
-                <div className="fixed top-5 right-5 shadow-lg rounded-lg p-4 text-center z-50 bg-red-100 text-red-800 transition-transform transform">
+                <div className="fixed top-5 right-5 shadow-lg rounded-lg p-3 text-sm text-center z-50 bg-red-100 text-red-800 transition-transform transform">
                     <p className="font-bold">{feedback}</p>
                 </div>
             )}
-            <div className="w-full max-w-5xl mx-auto mb-4">
+            <div className="w-full max-w-3xl mx-auto mb-2">
                 <div className="flex justify-between items-center">
-                    <button onClick={onBack} className="group flex items-center text-blue-600 font-bold text-lg hover:text-blue-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50 rounded">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1 transition-transform group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                    <button onClick={onBack} className="group flex items-center text-blue-600 font-bold text-sm hover:text-blue-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50 rounded">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 transition-transform group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
                         </svg>
                         <span className="border-b-2 border-current pb-0.5">Back</span>
                     </button>
 
-                    <div className="bg-gray-50 px-2 py-0.5 rounded-lg shadow-lg border-2 border-indigo-400 flex items-center gap-2">
-                        <span className="text-xs font-bold text-gray-700">Kết quả:</span>
+                    <div className="bg-gray-50 px-2 py-0.5 rounded-lg shadow-sm border border-indigo-300 flex items-center gap-2">
+                        <span className="text-[10px] font-bold text-gray-700 uppercase">Kết quả:</span>
                         <div className="flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-green-500" viewBox="0 0 20 20" fill="currentColor">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-green-500" viewBox="0 0 20 20" fill="currentColor">
                               <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                             </svg>
-                            <span className="text-lg font-black text-green-600 w-8 text-center">{score}</span>
+                            <span className="text-sm font-black text-green-600 w-5 text-center">{score}</span>
                         </div>
                         <div className="flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-red-500" viewBox="0 0 20 20" fill="currentColor">
                               <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
                             </svg>
-                            <span className="text-lg font-black text-red-600 w-8 text-center">{incorrectMatches}</span>
+                            <span className="text-sm font-black text-red-600 w-5 text-center">{incorrectMatches}</span>
                         </div>
                     </div>
                     
-                    <div className="bg-gray-50 px-2 py-0.5 rounded-lg shadow-lg border-2 border-red-400 flex items-center gap-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                    <div className="bg-gray-50 px-2 py-0.5 rounded-lg shadow-sm border border-red-300 flex items-center gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        <span className="text-lg font-black text-red-700 tracking-wider" style={{fontVariantNumeric: 'tabular-nums'}}>{formatTime(timeLeft)}</span>
+                        <span className="text-sm font-black text-red-700 tracking-wider" style={{fontVariantNumeric: 'tabular-nums'}}>{formatTime(timeLeft)}</span>
                     </div>
                 </div>
             </div>
 
-            <div className="w-full max-w-4xl my-2">
-                <div className="border-t-2 border-black"></div>
-                <div className="border-t-2 border-gray-400 mt-1"></div>
+            <div className="w-full max-w-2xl my-1">
+                <div className="border-t border-black"></div>
+                <div className="border-t border-gray-400 mt-0.5"></div>
             </div>
 
             <WordButtons words={topWords} />
 
-            <div className="flex flex-col items-center justify-center flex-grow w-full my-4">
-                 <div className="w-full max-w-2xl">
-                    <div className="bg-black rounded-2xl p-1 shadow-2xl">
-                        <div className="bg-white rounded-[14px] p-1">
-                            <div className="bg-black rounded-[12px] p-1">
-                                <div className="bg-white rounded-[10px]">
-                                    <div className="p-6 text-center flex flex-col items-center">
-                                        <div className="w-full pb-4 min-h-[5rem] flex items-center justify-center">
-                                            <p className="text-orange-600 font-extrabold text-4xl leading-tight text-center">{currentVietnamese?.translation}</p>
+            <div className="flex flex-col items-center justify-center flex-grow w-full my-2">
+                 <div className="w-full max-w-xs">
+                    <div className="bg-black rounded-xl p-0.5 shadow-lg">
+                        <div className="bg-white rounded-[10px] p-0.5">
+                            <div className="bg-black rounded-[8px] p-0.5">
+                                <div className="bg-white rounded-[6px]">
+                                    <div className="p-3 text-center flex flex-col items-center">
+                                        <div className="w-full pb-1 min-h-[2.5rem] flex items-center justify-center">
+                                            <p className="text-orange-600 font-extrabold text-xl sm:text-2xl leading-tight text-center">{currentVietnamese?.translation}</p>
                                         </div>
                                         
-                                        <div className="w-11/12 border-b-2 border-gray-300 mb-4"></div>
+                                        <div className="w-10/12 border-b border-gray-300 mb-2"></div>
     
-                                        <div className="w-full mb-6 min-h-[5rem] flex items-center justify-center">
-                                            <div className="w-full h-full border-2 border-dashed border-black rounded-xl flex items-center justify-center p-4">
-                                                <p className={`font-bold text-3xl transition-colors ${selectedEnglish ? 'text-blue-700' : 'text-gray-400'}`}>
+                                        <div className="w-full mb-3 h-10 flex items-center justify-center">
+                                            <div className="w-full h-full border border-dashed border-black rounded-lg flex items-center justify-center px-2">
+                                                <p className={`font-bold text-lg transition-colors ${selectedEnglish ? 'text-blue-700' : 'text-gray-400'}`}>
                                                     {selectedEnglish ? selectedEnglish.word : '...'}
                                                 </p>
                                             </div>
                                         </div>
                                         
-                                        <button onClick={handleCheckAnswer} className="bg-gradient-to-br from-yellow-400 to-orange-500 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-yellow-300 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-md">
+                                        <button onClick={handleCheckAnswer} className="bg-gradient-to-br from-yellow-400 to-orange-500 text-white font-bold py-1.5 px-4 rounded-full shadow-md hover:shadow-lg transform transition-all duration-300 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-yellow-300 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-sm text-sm">
                                             Check answer
                                         </button>
                                     </div>
@@ -288,7 +288,7 @@ const MatchingGameScreen: React.FC<MatchingGameScreenProps> = ({ playerData, voc
             <WordButtons words={bottomWords} />
 
             {remainingWords.length === 1 && (
-                <button onClick={() => finishGame(false)} className="bg-gradient-to-br from-gray-700 to-gray-800 text-white font-bold py-2 px-6 rounded-full shadow-lg hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-gray-500 absolute bottom-6 text-sm">
+                <button onClick={() => finishGame(false)} className="bg-gradient-to-br from-gray-700 to-gray-800 text-white font-bold py-1.5 px-4 rounded-full shadow-md hover:shadow-lg transform transition-all duration-300 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-gray-500 absolute bottom-4 text-xs">
                     Finish Quiz
                 </button>
             )}

@@ -4,7 +4,7 @@
 import { GoogleGenAI, Type, Modality } from "@google/genai";
 import { QuizQuestion, VocabularyWord } from "../types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 // This version number should be manually updated whenever the prompt or vocabulary is significantly changed.
 export const QUIZ_VERSION = '3.0';

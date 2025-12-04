@@ -89,15 +89,15 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
             <div className="text-center mb-8">
                 <div className="w-full h-28 -mb-4">
                     <svg viewBox="0 0 500 100" className="w-full h-full">
-                        <path id="curve" d="M 20, 75 Q 250, 20 480, 75" stroke="transparent" fill="transparent"/>
+                        <path id="curve" d="M 20, 95 Q 250, 55 480, 95" stroke="transparent" fill="transparent"/>
                         <text width="500" style={{textShadow: '2px 2px 4px rgba(0,0,0,0.5)'}} className="text-yellow-300 fill-current">
-                            <textPath href="#curve" startOffset="50%" text-anchor="middle" className="text-[1.2rem] sm:text-[1.5rem] font-extrabold tracking-wider uppercase">
-                                Learn & Practice English Vocabulary 12
+                            <textPath href="#curve" startOffset="50%" text-anchor="middle" className="text-[2.2rem] sm:text-[3.0rem] font-black tracking-widest uppercase">
+                                ENGLISH VOCABULARY 12
                             </textPath>
                         </text>
                     </svg>
                 </div>
-                <div className="text-5xl pointing-finger-down mt-4">
+                <div className="text-5xl pointing-finger-down mt-0">
                     <span>👇</span>
                 </div>
             </div>
