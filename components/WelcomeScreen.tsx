@@ -73,7 +73,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
        >
          <img src="https://i.postimg.cc/132B8h0t/11zon-cropped-1.png" alt="Logo" className="w-20 h-20 rounded-full border-4 border-yellow-300 shadow-lg group-hover:border-yellow-400" />
          <p
-           className="text-white font-bold text-xs pointer-events-none select-none mt-1 group-hover:text-yellow-300"
+           className="text-white font-bold text-sm pointer-events-none select-none -mt-2 group-hover:text-yellow-300"
            style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}
            aria-hidden="true"
          >
@@ -101,24 +101,31 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
                 </div>
             </div>
 
-            {/* Input Fields - Thinner borders, specific text colors */}
-            <div className="space-y-4 px-8">
+            {/* Input Fields */}
+            <div className="space-y-4 w-full">
                  <div className="relative group">
                     <input 
                         type="text" 
                         value={playerName} 
                         onChange={(e) => setPlayerName(e.target.value)} 
                         placeholder="Nhập họ và tên của bạn.." 
-                        className={`w-full px-6 py-3 rounded-2xl text-center text-xl font-black bg-white border-[3px] border-yellow-400 focus:outline-none focus:border-yellow-500 focus:ring-4 focus:ring-yellow-200 placeholder-gray-400 text-teal-700 shadow-lg transition-all transform group-hover:scale-[1.02] ${shakeName ? 'animate-pulse border-red-500' : ''}`}
+                        className={`w-full px-6 py-4 rounded-3xl text-center text-xl font-black bg-gradient-to-r from-teal-400 to-cyan-500 border-2 border-white focus:outline-none focus:border-yellow-300 focus:ring-4 focus:ring-cyan-300/40 placeholder-teal-100 text-white shadow-[0_10px_20px_rgba(0,0,0,0.2)] transition-all transform group-hover:-translate-y-0.5 group-hover:shadow-[0_15px_25px_rgba(0,0,0,0.3)] ${shakeName ? 'animate-pulse border-red-500' : ''}`}
                     />
                  </div>
-                 <div className="relative group">
+                 {/* Class Input - Ebony Black, Starry, Thin White Border, Yellow Text */}
+                 <div className="relative group flex justify-center">
                     <input 
                         type="text" 
                         value={playerClass} 
                         onChange={(e) => setPlayerClass(e.target.value)} 
-                        placeholder="Nhập lớp của bạn..." 
-                        className={`w-full px-6 py-3 rounded-2xl text-center text-xl font-black bg-white border-[3px] border-red-500 focus:outline-none focus:border-red-600 focus:ring-4 focus:ring-red-200 placeholder-gray-400 text-red-600 shadow-lg transition-all transform group-hover:scale-[1.02] ${shakeClass ? 'animate-pulse border-red-500' : ''}`}
+                        placeholder="Lớp..." 
+                        style={{
+                            backgroundImage: 'radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 3px), radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 2px)',
+                            backgroundSize: '30px 30px, 20px 20px',
+                            backgroundPosition: '0 0, 10px 10px',
+                            backgroundColor: '#050505' // Ebony/Mun black
+                        }}
+                        className={`w-32 sm:w-40 px-2 py-3 rounded-2xl text-center text-xl font-black border-2 border-white focus:outline-none focus:border-white focus:ring-4 focus:ring-yellow-200/50 placeholder-gray-600 text-yellow-300 shadow-lg transition-all transform group-hover:-translate-y-1 ${shakeClass ? 'animate-pulse border-red-600' : ''}`}
                     />
                  </div>
             </div>
