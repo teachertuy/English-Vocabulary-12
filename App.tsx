@@ -170,7 +170,7 @@ const App: React.FC = () => {
 
   const handlePasswordSubmit = useCallback((password: string) => {
     if (password === TEACHER_PASSWORD) {
-        sessionStorage.setItem('teacherLoggedIn', 'true');
+        sessionStorage.setItem('teacherLoggedIn-APP_2', 'true');
         setClassroomId(FIXED_CLASSROOM_ID);
         setCurrentScreen(Screen.Dashboard);
         setIsPasswordModalVisible(false);
