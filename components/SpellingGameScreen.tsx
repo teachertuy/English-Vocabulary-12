@@ -1,7 +1,8 @@
 
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { PlayerData, VocabularyWord, GameResult, QuizAnswerDetail } from '../types';
-import { updateUnitActivityResult, trackStudentPresence, incrementCheatCount, listenForKickedStatus, getGameStatus, removeStudentPresence } from '../services/firebaseService';
+import { updateUnitActivityResult, trackStudentPresence, incrementCheatCount, listenForKickedStatus, getGameStatus, removeStudentPresence, updateVocabularyAudio } from '../services/firebaseService';
+import { generateSpeech } from '../services/geminiService';
 
 const GAME_DURATION_SECONDS = 20 * 60; // 20 minutes
 
@@ -44,6 +45,36 @@ function shuffleArray<T>(array: T[]): T[] {
     return newArray;
 }
 
+// --- Audio Helper Functions ---
+function decode(base64: string): Uint8Array {
+  const binaryString = atob(base64);
+  const len = binaryString.length;
+  const bytes = new Uint8Array(len);
+  for (let i = 0; i < len; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
+  return bytes;
+}
+
+async function decodeAudioData(
+  data: Uint8Array,
+  ctx: AudioContext,
+  sampleRate: number,
+  numChannels: number,
+): Promise<AudioBuffer> {
+  const dataInt16 = new Int16Array(data.buffer);
+  const frameCount = dataInt16.length / numChannels;
+  const buffer = ctx.createBuffer(numChannels, frameCount, sampleRate);
+
+  for (let channel = 0; channel < numChannels; channel++) {
+    const channelData = buffer.getChannelData(channel);
+    for (let i = 0; i < frameCount; i++) {
+      channelData[i] = dataInt16[i * numChannels + channel] / 32768.0;
+    }
+  }
+  return buffer;
+}
+
 interface SpellingGameScreenProps {
   playerData: PlayerData;
   vocabulary: VocabularyWord[];
@@ -65,6 +96,13 @@ const SpellingGameScreen: React.FC<SpellingGameScreenProps> = ({ playerData, voc
     const [isGameOver, setIsGameOver] = useState(false);
     const [isChecking, setIsChecking] = useState(false);
     const [inputStatus, setInputStatus] = useState<'idle' | 'correct' | 'incorrect'>('idle');
+    
+    // Audio State
+    const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+    const [isRateLimited, setIsRateLimited] = useState(false);
+    const [isLoadingAudio, setIsLoadingAudio] = useState(false);
+    const audioContextRef = useRef<AudioContext | null>(null);
+
     const inputRef = useRef<HTMLInputElement>(null);
     
     const startTime = useMemo(() => Date.now(), []);
@@ -122,6 +160,7 @@ const SpellingGameScreen: React.FC<SpellingGameScreenProps> = ({ playerData, voc
             setUserInput('');
             setIsChecking(false);
             setInputStatus('idle');
+            setIsPlayingAudio(false); // Reset audio state
         } else {
             finishGame();
         }
@@ -157,6 +196,62 @@ const SpellingGameScreen: React.FC<SpellingGameScreenProps> = ({ playerData, voc
         }
 
         setTimeout(handleNextWord, 1200);
+    };
+
+    // --- Audio Logic ---
+    const handlePlayAudio = async (e?: React.MouseEvent) => {
+        if (e) e.preventDefault();
+        if (isPlayingAudio || isLoadingAudio || isRateLimited) return;
+
+        try {
+            setIsLoadingAudio(true);
+
+            if (!audioContextRef.current) {
+                audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
+            }
+            const audioContext = audioContextRef.current;
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+
+            let base64Audio = currentWord.audio;
+
+            // If not cached locally in the object, we check if we need to fetch from API
+            if (!base64Audio) {
+                 base64Audio = await generateSpeech(currentWord.word);
+                 // Save to Firebase for future use
+                 const unitIdentifier = grade === 'topics' ? `topic_${unitNumber}` : `unit_${unitNumber}`;
+                 updateVocabularyAudio(classroomId, grade, unitIdentifier, currentWord.word, base64Audio).catch(err => console.error("Failed to cache audio", err));
+                 
+                 // Update the current word in the array so we don't fetch again this session if we revisited
+                 currentWord.audio = base64Audio; 
+            }
+
+            const decodedBytes = decode(base64Audio);
+            const audioBuffer = await decodeAudioData(decodedBytes, audioContext, 24000, 1);
+
+            const source = audioContext.createBufferSource();
+            source.buffer = audioBuffer;
+            source.connect(audioContext.destination);
+            
+            source.onended = () => {
+                setIsPlayingAudio(false);
+            };
+
+            source.start();
+            setIsPlayingAudio(true);
+            setIsLoadingAudio(false);
+
+        } catch (error: any) {
+            console.error("Failed to play sound:", error);
+            setIsLoadingAudio(false);
+            setIsPlayingAudio(false);
+            
+            const apiError = error as any;
+            if (apiError?.error?.code === 429 || apiError?.error?.status === 'RESOURCE_EXHAUSTED') {
+                setIsRateLimited(true);
+            }
+        }
     };
 
     // --- Lifecycle and Listeners ---
@@ -228,8 +323,49 @@ const SpellingGameScreen: React.FC<SpellingGameScreenProps> = ({ playerData, voc
             </div>
 
             <div className="flex flex-col items-center justify-center flex-grow w-full max-w-xl">
-                <p className="text-gray-600 text-xl mb-2">Hãy viết từ/cụm từ tiếng Anh tương ứng:</p>
-                <p className="text-orange-500 font-extrabold text-6xl mb-8 text-center">{currentWord?.translation}</p>
+                <p className="text-gray-600 text-xl mb-4">Hãy viết từ/cụm từ tiếng Anh tương ứng:</p>
+                
+                {/* Audio Button with Sound Wave Effect */}
+                <button
+                    onClick={handlePlayAudio}
+                    type="button"
+                    disabled={isRateLimited || isLoadingAudio || isPlayingAudio}
+                    className={`mb-8 w-24 h-24 rounded-full flex items-center justify-center shadow-xl transition-all duration-300 outline-none relative overflow-visible
+                        ${isPlayingAudio 
+                            ? 'bg-blue-50 ring-4 ring-blue-300 scale-110' 
+                            : 'bg-white hover:bg-blue-50 hover:scale-105 active:scale-95 border-4 border-gray-100'
+                        }
+                    `}
+                    title="Nghe phát âm"
+                >
+                    {isLoadingAudio ? (
+                         <svg className="animate-spin h-10 w-10 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                    ) : (
+                        <div className="relative flex items-center justify-center">
+                            {/* Sound Waves Animation */}
+                            {isPlayingAudio && (
+                                <>
+                                    <div className="absolute rounded-full border-4 border-blue-400 opacity-0 animate-[ping_1.5s_cubic-bezier(0,0,0.2,1)_infinite] h-full w-full inset-0"></div>
+                                    <div className="absolute rounded-full border-4 border-blue-300 opacity-0 animate-[ping_1.5s_cubic-bezier(0,0,0.2,1)_infinite_0.5s] h-full w-full inset-0"></div>
+                                </>
+                            )}
+                            
+                             <svg xmlns="http://www.w3.org/2000/svg" className={`h-12 w-12 transition-colors duration-300 ${isPlayingAudio ? 'text-blue-600' : 'text-gray-600'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                 {/* Speaker Icon */}
+                                 <path strokeLinecap="round" strokeLinejoin="round" fill={isPlayingAudio ? "currentColor" : "none"} stroke="currentColor" d="M11 5L6 9H2v6h4l5 4V5z" />
+                                 
+                                 {/* Animated Wave Lines */}
+                                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.54 8.46a5 5 0 010 7.07" className={isPlayingAudio ? 'animate-pulse text-blue-500' : 'text-gray-400'} />
+                                 <path strokeLinecap="round" strokeLinejoin="round" d="M19.07 4.93a10 10 0 010 14.14" className={isPlayingAudio ? 'animate-pulse delay-75 text-blue-500' : 'text-gray-300'} />
+                             </svg>
+                        </div>
+                    )}
+                </button>
+
+                <p className="text-orange-500 font-extrabold text-5xl sm:text-6xl mb-8 text-center drop-shadow-sm">{currentWord?.translation}</p>
                 
                 <form onSubmit={(e) => { e.preventDefault(); handleCheckAnswer(); }} className="w-full space-y-6 flex flex-col items-center">
                     <div className="w-full relative">

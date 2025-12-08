@@ -1,5 +1,7 @@
 
 
+
+
 import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import { GameResult, StudentProgress, QuizQuestion, UnitsState, VocabularyWord } from '../types';
 import { 
@@ -18,6 +20,7 @@ import TextToQuizModal from './TextToQuizModal';
 import EditQuizModal from './EditQuizModal';
 import AIQuizGeneratorModal from './AIQuizGeneratorModal';
 import ConfirmationModal from './ConfirmationModal';
+import EditVocabularyModal from './EditVocabularyModal';
 
 type Tab = 'dashboard' | 'units_12' | 'topics';
 
@@ -177,6 +180,8 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
     const [quizForEditing, setQuizForEditing] = useState<QuizQuestion[] | null>(null);
     const [isDeleteQuizConfirmOpen, setIsDeleteQuizConfirmOpen] = useState(false);
     const [isDeletingQuiz, setIsDeletingQuiz] = useState(false);
+    const [isEditVocabModalOpen, setIsEditVocabModalOpen] = useState(false);
+    const [vocabForEditing, setVocabForEditing] = useState<VocabularyWord[]>([]);
     
     // Units State
     const [unitsStatus12, setUnitsStatus12] = useState<UnitsState>({});
@@ -596,6 +601,37 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
         }
     }, [classroomId, viewingUnit, viewingTopic]);
 
+    // Handle saving manually edited vocabulary
+    const handleSaveVocabulary = useCallback(async (editedVocab: VocabularyWord[]) => {
+        try {
+            if (viewingUnit !== null) {
+                const { grade, unit } = viewingUnit;
+                const unitId = `unit_${unit}`;
+                await saveUnitVocabularyByGrade(classroomId, grade, unitId, editedVocab);
+                setNotification({ message: `Đã cập nhật từ vựng cho UNIT ${unit}!`, type: 'success' });
+            } else if (viewingTopic !== null) {
+                const topicId = `topic_${viewingTopic}`;
+                await saveTopicVocabulary(classroomId, topicId, editedVocab);
+                setNotification({ message: `Đã cập nhật từ vựng cho TOPIC ${viewingTopic}!`, type: 'success' });
+            }
+        } catch (error) {
+             console.error("Failed to save edited vocabulary:", error);
+             setNotification({ message: 'Lưu từ vựng thất bại.', type: 'error' });
+        }
+    }, [classroomId, viewingUnit, viewingTopic]);
+
+    // Open the vocabulary edit modal
+    const handleOpenVocabEdit = useCallback(() => {
+        if (viewingUnit !== null) {
+            setVocabForEditing(currentUnitVocabulary);
+            setIsEditVocabModalOpen(true);
+        } else if (viewingTopic !== null) {
+            setVocabForEditing(currentTopicVocabulary);
+            setIsEditVocabModalOpen(true);
+        }
+    }, [viewingUnit, currentUnitVocabulary, viewingTopic, currentTopicVocabulary]);
+
+
     const handleRefresh = useCallback(() => {
         setIsRefreshing(true);
         setRefreshKey(prev => prev + 1);
@@ -831,6 +867,18 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                                 className="w-full h-96 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm bg-white text-slate-900"
                                 disabled={isGeneratingUnitActivities}
                             />
+                            <div className="flex justify-end">
+                                <button 
+                                    onClick={handleOpenVocabEdit}
+                                    className="text-sm flex items-center gap-1 bg-white border border-gray-300 px-3 py-1.5 rounded-md hover:bg-gray-50 text-blue-600 font-bold transition shadow-sm"
+                                    title="Chỉnh sửa chi tiết danh sách hiện có"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                                    </svg>
+                                    Chỉnh sửa chi tiết
+                                </button>
+                            </div>
                         </div>
 
                         {/* Right side: Activity Prompts */}
@@ -1216,6 +1264,18 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                                 className="w-full h-96 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm bg-white text-slate-900"
                                 disabled={isGeneratingTopicActivities}
                             />
+                            <div className="flex justify-end">
+                                <button 
+                                    onClick={handleOpenVocabEdit}
+                                    className="text-sm flex items-center gap-1 bg-white border border-gray-300 px-3 py-1.5 rounded-md hover:bg-gray-50 text-blue-600 font-bold transition shadow-sm"
+                                    title="Chỉnh sửa chi tiết danh sách hiện có"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                                    </svg>
+                                    Chỉnh sửa chi tiết
+                                </button>
+                            </div>
                         </div>
 
                         {/* Right side: Activity Prompts */}
@@ -1864,6 +1924,13 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                     questions={quizForEditing} 
                     onClose={() => setQuizForEditing(null)} 
                     onSave={handleSaveEditedQuiz} 
+                />
+            )}
+            {isEditVocabModalOpen && (
+                <EditVocabularyModal
+                    vocabulary={vocabForEditing}
+                    onClose={() => setIsEditVocabModalOpen(false)}
+                    onSave={handleSaveVocabulary}
                 />
             )}
             <ConfirmationModal
