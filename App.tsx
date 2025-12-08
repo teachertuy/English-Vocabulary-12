@@ -47,7 +47,7 @@ const App: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    const isTeacherLoggedIn = sessionStorage.getItem('teacherLoggedIn');
+    const isTeacherLoggedIn = sessionStorage.getItem('teacherLoggedIn-APP_2');
     if (isTeacherLoggedIn === 'true') {
       setCurrentScreen(Screen.Dashboard);
       setClassroomId(FIXED_CLASSROOM_ID);
@@ -136,7 +136,7 @@ const App: React.FC = () => {
     setSelectedGrade(null);
     setClassroomId(null);
     setCurrentActivityId(null);
-    sessionStorage.removeItem('teacherLoggedIn');
+    sessionStorage.removeItem('teacherLoggedIn-APP_2');
     setCurrentScreen(Screen.Welcome);
   }, []);
   
