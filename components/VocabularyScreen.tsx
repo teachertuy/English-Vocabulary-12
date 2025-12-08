@@ -1,4 +1,6 @@
 
+
+
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { VocabularyWord } from '../types';
 import { generateSpeech } from '../services/geminiService';
@@ -43,6 +45,35 @@ const CARD_COLORS = [
     'bg-[#F0F8FF]', // Pastel Blue
     'bg-[#F0FFF4]'  // Pastel Green
 ];
+
+// Sub-component to handle individual image loading states
+const ImageWithLoader: React.FC<{ src: string, alt: string }> = ({ src, alt }) => {
+    const [loaded, setLoaded] = useState(false);
+
+    return (
+        <div className="w-40 h-40 bg-white rounded-2xl shadow-sm p-3 mb-4 flex items-center justify-center relative overflow-hidden">
+            {!loaded && (
+                <div className="absolute inset-0 flex items-center justify-center z-0">
+                    <svg className="animate-spin h-8 w-8 text-teal-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                </div>
+            )}
+            <img 
+                src={src} 
+                alt={alt} 
+                className={`max-h-full max-w-full object-contain rounded-xl relative z-10 transition-opacity duration-500 ${loaded ? 'opacity-100' : 'opacity-0'}`}
+                loading="lazy"
+                onLoad={() => setLoaded(true)}
+                onError={(e) => {
+                    (e.target as HTMLImageElement).src = `https://via.placeholder.com/150?text=${alt}`;
+                    setLoaded(true);
+                }}
+            />
+        </div>
+    );
+};
 
 interface VocabularyScreenProps {
   unitNumber: number;
@@ -161,18 +192,7 @@ const VocabularyScreen: React.FC<VocabularyScreenProps> = ({ unitNumber, vocabul
                                 key={index}
                                 className={`${bgColor} rounded-[2rem] p-6 flex flex-col items-center shadow-sm hover:shadow-md transition-shadow duration-300`}
                             >
-                                {/* Image Container */}
-                                <div className="w-40 h-40 bg-white rounded-2xl shadow-sm p-3 mb-4 flex items-center justify-center">
-                                     <img 
-                                        src={imageUrl} 
-                                        alt={item.word} 
-                                        className="max-h-full max-w-full object-contain rounded-xl"
-                                        loading="lazy"
-                                        onError={(e) => {
-                                            (e.target as HTMLImageElement).src = `https://via.placeholder.com/150?text=${item.word}`;
-                                        }}
-                                    />
-                                </div>
+                                <ImageWithLoader src={imageUrl} alt={item.word} />
 
                                 {/* Text Content */}
                                 <div className="text-center w-full mb-6">

@@ -42,7 +42,7 @@ const vocabularyListSchema = {
                     type: { type: Type.STRING, description: 'The word type (e.g., n, v, adj).' },
                     phonetic: { type: Type.STRING, description: 'The phonetic transcription of the word.' },
                     translation: { type: Type.STRING, description: 'The Vietnamese translation of the word.' },
-                    image: { type: Type.STRING, description: 'A URL for the image. Format: "https://image.pollinations.ai/prompt/{description}?width=800&height=600&model=flux&nologo=true". The description MUST be based on the Vietnamese translation to ensure accuracy.' },
+                    image: { type: Type.STRING, description: 'A URL for the image. Format: "https://image.pollinations.ai/prompt/{description}?width=800&height=600&nologo=true". The description MUST be based on the Vietnamese translation to ensure accuracy.' },
                     audio: { type: Type.STRING, description: 'Leave empty for now, will be filled later.' }
                 },
                 required: ['word', 'type', 'phonetic', 'translation', 'image']
@@ -189,7 +189,7 @@ export async function generateVocabularyList(prompt: string): Promise<Vocabulary
     2. English words often have multiple meanings. You MUST select the visual representation that matches the specific Vietnamese definition provided.
     3. Create a detailed VISUAL description in English that corresponds EXACTLY to that Vietnamese meaning.
     4. Construct the URL strictly in this format: 
-       "https://image.pollinations.ai/prompt/{visual_description}?width=800&height=600&model=flux&nologo=true"
+       "https://image.pollinations.ai/prompt/{visual_description}?width=800&height=600&nologo=true"
     5. In {visual_description}:
        - Use underscores (_) instead of spaces.
        - Include keywords like "photorealistic", "educational", "highly_detailed", "isolated_on_white_background" to ensure clarity.
