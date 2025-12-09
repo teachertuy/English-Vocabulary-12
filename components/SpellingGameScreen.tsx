@@ -274,63 +274,62 @@ const SpellingGameScreen: React.FC<SpellingGameScreenProps> = ({ playerData, voc
     useEffect(() => { if (classroomId) { const u = listenForKickedStatus(classroomId, playerData.name, playerData.class, () => finishGame(true)); return () => u(); } }, [classroomId, playerData.name, playerData.class, finishGame]);
     useEffect(() => { const h = () => document.hidden && classroomId && incrementCheatCount(classroomId, playerData.name, playerData.class); document.addEventListener('visibilitychange', h); return () => document.removeEventListener('visibilitychange', h); }, [classroomId, playerData.name, playerData.class]);
 
-    let inputClasses = "w-full text-center text-4xl font-bold bg-white rounded-lg py-5 pl-24 pr-4 focus:outline-none transition-all duration-300 border-2 border-gray-300 focus:ring-4 focus:ring-blue-300";
-    if (inputStatus === 'correct') inputClasses = "w-full text-center text-4xl font-bold bg-green-50 text-green-700 rounded-lg py-5 pl-24 pr-4 focus:outline-none transition-all duration-300 border-4 border-green-500 ring-4 ring-green-200";
-    if (inputStatus === 'incorrect') inputClasses = "w-full text-center text-4xl font-bold bg-red-50 text-red-700 rounded-lg py-5 pl-24 pr-4 focus:outline-none transition-all duration-300 border-4 border-red-500 ring-4 ring-red-200";
+    // Compact styles
+    let inputClasses = "w-full text-center text-2xl font-bold bg-white rounded-lg py-2 pl-12 pr-4 focus:outline-none transition-all duration-300 border-2 border-gray-300 focus:ring-2 focus:ring-blue-300";
+    if (inputStatus === 'correct') inputClasses = "w-full text-center text-2xl font-bold bg-green-50 text-green-700 rounded-lg py-2 pl-12 pr-4 focus:outline-none transition-all duration-300 border-2 border-green-500 ring-2 ring-green-200";
+    if (inputStatus === 'incorrect') inputClasses = "w-full text-center text-2xl font-bold bg-red-50 text-red-700 rounded-lg py-2 pl-12 pr-4 focus:outline-none transition-all duration-300 border-2 border-red-500 ring-2 ring-red-200";
     
     return (
         <div className="flex flex-col items-center p-4 sm:p-6 bg-white min-h-[600px] relative">
             <div className="w-full max-w-4xl mx-auto flex justify-between items-center mb-6">
-                <button onClick={onBack} className="group flex items-center text-blue-600 font-bold text-lg hover:text-blue-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50 rounded">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1 transition-transform group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                <button onClick={onBack} className="group flex items-center text-blue-600 font-bold text-sm hover:text-blue-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50 rounded">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 transition-transform group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
                     </svg>
                     <span className="border-b-2 border-current pb-0.5">Back</span>
                 </button>
 
                 <div className="flex items-center gap-4">
-                    <div title="Từ đang làm" className="flex items-center gap-1.5 bg-white text-gray-700 font-bold px-3 py-1 rounded-full text-sm border-2 border-gray-300 shadow-sm">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
+                    <div title="Từ đang làm" className="flex items-center gap-1.5 bg-white text-gray-700 font-bold px-3 py-1 rounded-full text-xs border-2 border-gray-300 shadow-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
                             <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
                             <path fillRule="evenodd" d="M4 5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h4a1 1 0 100-2H7zm0 4a1 1 0 100 2h4a1 1 0 100-2H7z" clipRule="evenodd" />
                         </svg>
-                        <span className="font-extrabold text-blue-600 text-base">{currentIndex + 1}</span>
-                        <span className="text-gray-500 text-base">/{shuffledVocabulary.length}</span>
+                        <span className="font-extrabold text-blue-600 text-sm">{currentIndex + 1}</span>
+                        <span className="text-gray-500 text-sm">/{shuffledVocabulary.length}</span>
                     </div>
 
-                    <div title="Kết quả Đúng / Sai" className="flex items-center gap-3 bg-white px-3 py-1 rounded-full text-sm border-2 border-gray-300 shadow-sm">
+                    <div title="Kết quả Đúng / Sai" className="flex items-center gap-3 bg-white px-3 py-1 rounded-full text-xs border-2 border-gray-300 shadow-sm">
                         <div className="flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-500" viewBox="0 0 20 20" fill="currentColor">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-green-500" viewBox="0 0 20 20" fill="currentColor">
                                 <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                             </svg>
-                            <span className="font-black text-green-600 w-6 text-center text-base">{correctAnswers}</span>
+                            <span className="font-black text-green-600 w-5 text-center">{correctAnswers}</span>
                         </div>
-                        <div className="h-4 w-px bg-gray-300"></div>
+                        <div className="h-3 w-px bg-gray-300"></div>
                         <div className="flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-red-500" viewBox="0 0 20 20" fill="currentColor">
                                 <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
                             </svg>
-                            <span className="font-black text-red-600 w-6 text-center text-base">{incorrectAnswers}</span>
+                            <span className="font-black text-red-600 w-5 text-center">{incorrectAnswers}</span>
                         </div>
                     </div>
                 </div>
-                 <div className="flex items-center gap-1.5 bg-white text-red-700 font-bold px-3 py-1 rounded-full text-sm border-2 border-red-300 shadow-sm">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                 <div className="flex items-center gap-1.5 bg-white text-red-700 font-bold px-3 py-1 rounded-full text-xs border-2 border-red-300 shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    <span className="text-base font-black tracking-wider" style={{fontVariantNumeric: 'tabular-nums'}}>{formatTime(timeLeft)}</span>
+                    <span className="font-black tracking-wider" style={{fontVariantNumeric: 'tabular-nums'}}>{formatTime(timeLeft)}</span>
                 </div>
             </div>
 
-            <div className="flex flex-col items-center justify-center flex-grow w-full max-w-xl">
-                <p className="text-gray-600 text-xl mb-4">Hãy viết từ/cụm từ tiếng Anh tương ứng:</p>
-                
-                {/* Audio Button with Sound Wave Effect */}
+            <div className="flex flex-col items-center justify-start mt-8 flex-grow w-full max-w-xl">
+                {/* Audio Button with Sound Wave Effect - Compact */}
                 <button
                     onClick={handlePlayAudio}
                     type="button"
                     disabled={isRateLimited || isLoadingAudio || isPlayingAudio}
-                    className={`mb-8 w-24 h-24 rounded-full flex items-center justify-center shadow-xl transition-all duration-300 outline-none relative overflow-visible
+                    className={`mb-6 w-20 h-20 rounded-full flex items-center justify-center shadow-xl transition-all duration-300 outline-none relative overflow-visible
                         ${isPlayingAudio 
                             ? 'bg-blue-50 ring-4 ring-blue-300 scale-110' 
                             : 'bg-white hover:bg-blue-50 hover:scale-105 active:scale-95 border-4 border-gray-100'
@@ -339,7 +338,7 @@ const SpellingGameScreen: React.FC<SpellingGameScreenProps> = ({ playerData, voc
                     title="Nghe phát âm"
                 >
                     {isLoadingAudio ? (
-                         <svg className="animate-spin h-10 w-10 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                         <svg className="animate-spin h-8 w-8 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
@@ -353,7 +352,7 @@ const SpellingGameScreen: React.FC<SpellingGameScreenProps> = ({ playerData, voc
                                 </>
                             )}
                             
-                             <svg xmlns="http://www.w3.org/2000/svg" className={`h-12 w-12 transition-colors duration-300 ${isPlayingAudio ? 'text-blue-600' : 'text-gray-600'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                             <svg xmlns="http://www.w3.org/2000/svg" className={`h-10 w-10 transition-colors duration-300 ${isPlayingAudio ? 'text-blue-600' : 'text-gray-600'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                  {/* Speaker Icon */}
                                  <path strokeLinecap="round" strokeLinejoin="round" fill={isPlayingAudio ? "currentColor" : "none"} stroke="currentColor" d="M11 5L6 9H2v6h4l5 4V5z" />
                                  
@@ -365,12 +364,12 @@ const SpellingGameScreen: React.FC<SpellingGameScreenProps> = ({ playerData, voc
                     )}
                 </button>
 
-                <p className="text-orange-500 font-extrabold text-5xl sm:text-6xl mb-8 text-center drop-shadow-sm">{currentWord?.translation}</p>
+                <p className="text-orange-500 font-extrabold text-3xl sm:text-4xl mb-6 text-center drop-shadow-sm">{currentWord?.translation}</p>
                 
-                <form onSubmit={(e) => { e.preventDefault(); handleCheckAnswer(); }} className="w-full space-y-6 flex flex-col items-center">
-                    <div className="w-full relative">
+                <form onSubmit={(e) => { e.preventDefault(); handleCheckAnswer(); }} className="w-full space-y-4 flex flex-col items-center">
+                    <div className="w-full relative max-w-md">
                          <span 
-                            className="absolute left-4 top-1/2 -translate-y-1/2 text-5xl sm:text-6xl pointing-finger"
+                            className="absolute left-3 top-1/2 -translate-y-1/2 text-3xl pointing-finger"
                             aria-hidden="true"
                             style={{ top: 'calc(50% - 2px)' }}
                         >
@@ -390,13 +389,13 @@ const SpellingGameScreen: React.FC<SpellingGameScreenProps> = ({ playerData, voc
                         />
                     </div>
 
-                    <button type="submit" className="bg-gradient-to-br from-yellow-400 to-orange-500 text-white font-bold py-3 px-12 rounded-full shadow-lg hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-yellow-300 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-md text-xl" disabled={isChecking || !userInput.trim()}>
+                    <button type="submit" className="bg-gradient-to-br from-yellow-400 to-orange-500 text-white font-bold py-2 px-8 rounded-full shadow-lg hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-yellow-300 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-md text-lg" disabled={isChecking || !userInput.trim()}>
                         Check answer
                     </button>
                 </form>
             </div>
 
-            <button onClick={() => finishGame(false)} className="bg-gradient-to-br from-green-500 to-teal-600 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-green-300 absolute bottom-6">
+            <button onClick={() => finishGame(false)} className="bg-gradient-to-br from-green-500 to-teal-600 text-white font-bold py-2 px-4 rounded-full shadow-lg hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-green-300 absolute bottom-4 right-4 text-sm">
                 Finish Quiz
             </button>
         </div>
