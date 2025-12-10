@@ -275,13 +275,14 @@ const SpellingGameScreen: React.FC<SpellingGameScreenProps> = ({ playerData, voc
     useEffect(() => { const h = () => document.hidden && classroomId && incrementCheatCount(classroomId, playerData.name, playerData.class); document.addEventListener('visibilitychange', h); return () => document.removeEventListener('visibilitychange', h); }, [classroomId, playerData.name, playerData.class]);
 
     // Compact styles
-    let inputClasses = "w-full text-center text-2xl font-bold bg-white rounded-lg py-2 pl-12 pr-4 focus:outline-none transition-all duration-300 border-2 border-gray-300 focus:ring-2 focus:ring-blue-300";
-    if (inputStatus === 'correct') inputClasses = "w-full text-center text-2xl font-bold bg-green-50 text-green-700 rounded-lg py-2 pl-12 pr-4 focus:outline-none transition-all duration-300 border-2 border-green-500 ring-2 ring-green-200";
-    if (inputStatus === 'incorrect') inputClasses = "w-full text-center text-2xl font-bold bg-red-50 text-red-700 rounded-lg py-2 pl-12 pr-4 focus:outline-none transition-all duration-300 border-2 border-red-500 ring-2 ring-red-200";
+    let inputClasses = "w-full text-center text-xl font-bold bg-white rounded-lg py-2 pl-4 pr-4 focus:outline-none transition-all duration-300 border-2 border-gray-300 focus:ring-2 focus:ring-blue-300 shadow-inner";
+    if (inputStatus === 'correct') inputClasses = "w-full text-center text-xl font-bold bg-green-50 text-green-700 rounded-lg py-2 pl-4 pr-4 focus:outline-none transition-all duration-300 border-2 border-green-500 ring-2 ring-green-200 shadow-inner";
+    if (inputStatus === 'incorrect') inputClasses = "w-full text-center text-xl font-bold bg-red-50 text-red-700 rounded-lg py-2 pl-4 pr-4 focus:outline-none transition-all duration-300 border-2 border-red-500 ring-2 ring-red-200 shadow-inner";
     
     return (
-        <div className="flex flex-col items-center p-4 sm:p-6 bg-white min-h-[600px] relative">
-            <div className="w-full max-w-4xl mx-auto flex justify-between items-center mb-6 pt-4">
+        <div className="flex flex-col items-center justify-start p-4 bg-white min-h-[600px] relative">
+            {/* TOP BAR: Back button, Stats, Score */}
+            <div className="w-full max-w-4xl mx-auto flex justify-between items-center mb-6 pt-2">
                 <button onClick={onBack} className="group flex items-center text-blue-600 font-bold text-sm hover:text-blue-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50 rounded">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 transition-transform group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
@@ -297,17 +298,17 @@ const SpellingGameScreen: React.FC<SpellingGameScreenProps> = ({ playerData, voc
                         <span className="text-gray-500 text-sm font-['Bungee']">{shuffledVocabulary.length}</span>
                     </div>
 
-                    {/* Score Circle - White Background, Double Red Border, Unique Font */}
+                    {/* Score Circle - White Background, Double Red Border, Unique Bungee Font, Red Text */}
                     <div title="Kết quả Đúng / Sai" className="flex items-center gap-3 bg-white px-4 py-1.5 rounded-full border-4 border-double border-red-500 shadow-md">
                         <div className="flex items-center gap-1">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-red-600" viewBox="0 0 20 20" fill="currentColor">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-green-600" viewBox="0 0 20 20" fill="currentColor">
                                 <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                             </svg>
                             <span className="text-red-600 w-5 text-center text-lg font-['Bungee']">{correctAnswers}</span>
                         </div>
                         <div className="h-4 w-0.5 bg-red-200"></div>
                         <div className="flex items-center gap-1">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-red-600" viewBox="0 0 20 20" fill="currentColor">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-red-500" viewBox="0 0 20 20" fill="currentColor">
                                 <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
                             </svg>
                             <span className="text-red-600 w-5 text-center text-lg font-['Bungee']">{incorrectAnswers}</span>
@@ -324,16 +325,18 @@ const SpellingGameScreen: React.FC<SpellingGameScreenProps> = ({ playerData, voc
                 </div>
             </div>
 
-            <div className="flex flex-col items-center justify-start mt-8 flex-grow w-full max-w-xl">
-                {/* Audio Button with Sound Wave Effect - Compact */}
+            {/* MAIN CONTENT AREA - Compact Layout */}
+            <div className="flex flex-col items-center justify-start mt-4 flex-grow w-full max-w-sm">
+                
+                {/* Audio Button with Broadcasting Wave Effect */}
                 <button
                     onClick={handlePlayAudio}
                     type="button"
                     disabled={isRateLimited || isLoadingAudio || isPlayingAudio}
-                    className={`mb-6 w-20 h-20 rounded-full flex items-center justify-center shadow-xl transition-all duration-300 outline-none relative overflow-visible
+                    className={`mb-4 w-20 h-20 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 outline-none relative overflow-visible
                         ${isPlayingAudio 
-                            ? 'bg-blue-50 ring-4 ring-blue-300 scale-110' 
-                            : 'bg-white hover:bg-blue-50 hover:scale-105 active:scale-95 border-4 border-gray-100'
+                            ? 'bg-blue-50 scale-105' 
+                            : 'bg-white hover:bg-gray-50 hover:scale-105 active:scale-95 border-2 border-gray-200'
                         }
                     `}
                     title="Nghe phát âm"
@@ -345,32 +348,28 @@ const SpellingGameScreen: React.FC<SpellingGameScreenProps> = ({ playerData, voc
                         </svg>
                     ) : (
                         <div className="relative flex items-center justify-center">
-                            {/* Sound Waves Animation */}
+                            {/* Broadcasting Waves Animation - Only visible when playing */}
                             {isPlayingAudio && (
                                 <>
-                                    <div className="absolute rounded-full border-4 border-blue-400 opacity-0 animate-[ping_1.5s_cubic-bezier(0,0,0.2,1)_infinite] h-full w-full inset-0"></div>
-                                    <div className="absolute rounded-full border-4 border-blue-300 opacity-0 animate-[ping_1.5s_cubic-bezier(0,0,0.2,1)_infinite_0.5s] h-full w-full inset-0"></div>
+                                    <div className="absolute rounded-full border-2 border-blue-400 opacity-0 animate-[ping_1.5s_cubic-bezier(0,0,0.2,1)_infinite] h-full w-full inset-0"></div>
+                                    <div className="absolute rounded-full border-2 border-blue-300 opacity-0 animate-[ping_1.5s_cubic-bezier(0,0,0.2,1)_infinite_0.4s] h-full w-full inset-0"></div>
                                 </>
                             )}
                             
-                             <svg xmlns="http://www.w3.org/2000/svg" className={`h-10 w-10 transition-colors duration-300 ${isPlayingAudio ? 'text-blue-600' : 'text-gray-600'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                 {/* Speaker Icon */}
-                                 <path strokeLinecap="round" strokeLinejoin="round" fill={isPlayingAudio ? "currentColor" : "none"} stroke="currentColor" d="M11 5L6 9H2v6h4l5 4V5z" />
-                                 
-                                 {/* Animated Wave Lines */}
-                                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.54 8.46a5 5 0 010 7.07" className={isPlayingAudio ? 'animate-pulse text-blue-500' : 'text-gray-400'} />
-                                 <path strokeLinecap="round" strokeLinejoin="round" d="M19.07 4.93a10 10 0 010 14.14" className={isPlayingAudio ? 'animate-pulse delay-75 text-blue-500' : 'text-gray-300'} />
-                             </svg>
+                             <svg xmlns="http://www.w3.org/2000/svg" className={`h-10 w-10 transition-colors duration-300 ${isPlayingAudio ? 'text-blue-600' : 'text-gray-700'}`} viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M14.016 3.234q3.047 0.656 5.016 3.117t1.969 5.648-1.969 5.648-5.016 3.117v-2.063q2.203-0.656 3.586-2.484t1.383-4.219-1.383-4.219-3.586-2.484v-2.063zM16.5 12q0 2.813-2.484 4.031v-8.063q1.031 0.516 1.758 1.688t0.727 2.344zM3 9h3.984l5.016-5.016v16.031l-5.016-5.016h-3.984v-6z"></path>
+                            </svg>
                         </div>
                     )}
                 </button>
 
-                <p className="text-orange-500 font-extrabold text-3xl sm:text-4xl mb-6 text-center drop-shadow-sm">{currentWord?.translation}</p>
+                {/* Word Meaning - Reduced Font Size */}
+                <p className="text-orange-500 font-extrabold text-2xl sm:text-3xl mb-4 text-center drop-shadow-sm">{currentWord?.translation}</p>
                 
-                <form onSubmit={(e) => { e.preventDefault(); handleCheckAnswer(); }} className="w-full space-y-4 flex flex-col items-center">
-                    <div className="w-full relative max-w-md">
+                <form onSubmit={(e) => { e.preventDefault(); handleCheckAnswer(); }} className="w-full space-y-3 flex flex-col items-center">
+                    <div className="w-full relative max-w-sm">
                          <span 
-                            className="absolute left-3 top-1/2 -translate-y-1/2 text-3xl pointing-finger"
+                            className="absolute left-3 top-1/2 -translate-y-1/2 text-2xl pointing-finger"
                             aria-hidden="true"
                             style={{ top: 'calc(50% - 2px)' }}
                         >
@@ -381,7 +380,6 @@ const SpellingGameScreen: React.FC<SpellingGameScreenProps> = ({ playerData, voc
                             type="text"
                             value={userInput}
                             onChange={(e) => setUserInput(e.target.value)}
-                            placeholder="Viết vào đây"
                             className={inputClasses}
                             disabled={isChecking}
                             autoComplete="off"
@@ -390,13 +388,21 @@ const SpellingGameScreen: React.FC<SpellingGameScreenProps> = ({ playerData, voc
                         />
                     </div>
 
-                    <button type="submit" className="bg-gradient-to-br from-yellow-400 to-orange-500 text-white font-bold py-2 px-8 rounded-full shadow-lg hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-yellow-300 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-md text-lg" disabled={isChecking || !userInput.trim()}>
+                    <button 
+                        type="submit" 
+                        className="bg-gradient-to-br from-yellow-400 to-orange-500 text-white font-bold py-2 px-6 rounded-full shadow-md hover:shadow-lg transform transition-all duration-300 hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-yellow-300 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none text-base" 
+                        disabled={isChecking || !userInput.trim()}
+                    >
                         Check answer
                     </button>
                 </form>
             </div>
 
-            <button onClick={() => finishGame(false)} className="bg-gradient-to-br from-green-500 to-teal-600 text-white font-bold py-2 px-4 rounded-full shadow-lg hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-green-300 absolute bottom-4 right-4 text-sm">
+            {/* Finish Button - Absolute Position Bottom Right */}
+            <button 
+                onClick={() => finishGame(false)} 
+                className="absolute bottom-4 right-4 bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-full shadow hover:bg-gray-300 transition-all text-xs"
+            >
                 Finish Quiz
             </button>
         </div>

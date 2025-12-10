@@ -1,7 +1,4 @@
 
-
-
-
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { VocabularyWord } from '../types';
 import { generateSpeech } from '../services/geminiService';
@@ -208,7 +205,7 @@ const VocabularyScreen: React.FC<VocabularyScreenProps> = ({ unitNumber, vocabul
                                 <button 
                                     onClick={(e) => handlePlaySound(item, e)}
                                     disabled={isRateLimited}
-                                    className={`w-12 h-12 bg-white rounded-full shadow-md flex items-center justify-center hover:scale-105 active:scale-95 transition-transform cursor-pointer relative ${isPlaying ? 'ring-2 ring-blue-200' : ''}`}
+                                    className={`w-14 h-14 bg-white rounded-full shadow-md flex items-center justify-center hover:scale-105 active:scale-95 transition-transform cursor-pointer relative ${isPlaying ? 'ring-4 ring-blue-200' : ''}`}
                                     aria-label={`Listen to ${item.word}`}
                                 >
                                     {hasError ? (
@@ -216,11 +213,16 @@ const VocabularyScreen: React.FC<VocabularyScreenProps> = ({ unitNumber, vocabul
                                             <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                                         </svg>
                                     ) : (
-                                        <svg xmlns="http://www.w3.org/2000/svg" className={`h-6 w-6 transition-colors duration-300 ${isPlaying ? 'text-blue-600' : 'text-gray-600'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                            <path strokeLinecap="round" strokeLinejoin="round" fill={isPlaying ? "currentColor" : "none"} d="M11 5L6 9H2v6h4l5 4V5z" />
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="M15.54 8.46a5 5 0 010 7.07" className={isPlaying ? 'animate-pulse' : ''} />
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="M19.07 4.93a10 10 0 010 14.14" className={isPlaying ? 'animate-pulse delay-75' : ''} />
-                                        </svg>
+                                        <div className="relative flex items-center justify-center">
+                                            {isPlaying && (
+                                                <>
+                                                    <div className="absolute rounded-full border-2 border-blue-400 opacity-0 animate-[ping_1.5s_cubic-bezier(0,0,0.2,1)_infinite] h-full w-full inset-0"></div>
+                                                </>
+                                            )}
+                                            <svg xmlns="http://www.w3.org/2000/svg" className={`h-8 w-8 transition-colors duration-300 ${isPlaying ? 'text-blue-600' : 'text-gray-600'}`} viewBox="0 0 24 24" fill="currentColor">
+                                                <path d="M14.016 3.234q3.047 0.656 5.016 3.117t1.969 5.648-1.969 5.648-5.016 3.117v-2.063q2.203-0.656 3.586-2.484t1.383-4.219-1.383-4.219-3.586-2.484v-2.063zM16.5 12q0 2.813-2.484 4.031v-8.063q1.031 0.516 1.758 1.688t0.727 2.344zM3 9h3.984l5.016-5.016v16.031l-5.016-5.016h-3.984v-6z"></path>
+                                            </svg>
+                                        </div>
                                     )}
                                 </button>
                             </div>

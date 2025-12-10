@@ -21,17 +21,17 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ result, onBack, onLogout,
         const isCorrect = detail.status === 'correct';
         const userDidAnswer = detail.status !== null;
         
-        // Changed background to white, adjusted borders to be clearer
-        let resultColorClass = 'border-gray-200 bg-white shadow-sm';
+        // Changed background to white for detail cards as requested
+        let resultColorClass = 'border-gray-200 bg-white shadow-md';
         if (userDidAnswer) {
-            resultColorClass = isCorrect ? 'border-green-500 bg-white ring-1 ring-green-500' : 'border-red-500 bg-white ring-1 ring-red-500';
+            resultColorClass = isCorrect ? 'border-green-500 bg-white ring-2 ring-green-100' : 'border-red-500 bg-white ring-2 ring-red-100';
         }
 
         const userChoiceText = detail.userAnswer ? `"${detail.userAnswer}"` : "Chưa trả lời";
         
-        // Updated text colors for white background
+        // Ensure options text is dark for white background
         const optionsHTML = detail.options.map(option => {
-            let optionClass = "text-gray-600";
+            let optionClass = "text-gray-700";
             if (option === detail.correctAnswer) {
                 optionClass = "font-bold text-green-700";
             }
@@ -43,29 +43,26 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ result, onBack, onLogout,
 
         return (
             <div key={index} className={`p-5 rounded-xl mb-4 border-2 ${resultColorClass}`}>
-                <p className="font-bold text-lg text-gray-800 mb-2">Câu {index + 1}:</p>
+                <p className="font-bold text-lg text-gray-900 mb-2">Câu {index + 1}:</p>
                 
-                {/* Changed inner box to light gray */}
-                <div className="p-3 bg-gray-100 rounded-md mb-3 border border-gray-200">
-                    <p className="font-semibold text-blue-800">{detail.question.replace('______', '...')}</p>
+                <div className="p-3 bg-gray-50 rounded-md mb-3 border border-gray-200">
+                    <p className="font-semibold text-blue-900">{detail.question.replace('______', '...')}</p>
                     <p className="text-sm text-gray-600 italic mt-1">{detail.translation.replace('______', '...')}</p>
                     <ul className="list-disc list-inside mt-2 pl-2 space-y-1" dangerouslySetInnerHTML={{ __html: optionsHTML }}>
                     </ul>
                 </div>
 
-                {/* Updated text colors to dark gray/black */}
-                <div className="text-left space-y-2 text-gray-700">
+                <div className="text-left space-y-2 text-gray-800">
                      <p>
                         <span className="font-semibold">Bạn đã chọn:</span> 
-                        <span className={`font-bold ${!userDidAnswer ? 'text-gray-400' : isCorrect ? 'text-green-600' : 'text-red-600'}`}>{userChoiceText}</span>
+                        <span className={`font-bold ${!userDidAnswer ? 'text-gray-400' : isCorrect ? 'text-green-700' : 'text-red-600'}`}>{userChoiceText}</span>
                     </p>
                     <p>
                         <span className="font-semibold">Đáp án đúng:</span> 
-                        <span className="font-bold text-green-600">"{detail.correctAnswer}"</span>
+                        <span className="font-bold text-green-700">"{detail.correctAnswer}"</span>
                     </p>
-                    {/* Changed explanation box to light blue */}
-                    <div className="mt-2 p-3 bg-blue-50 rounded text-sm border-l-4 border-blue-500">
-                        <p className="text-gray-800"><strong className="text-blue-800">Giải thích chi tiết:</strong> {detail.explanation}</p>
+                    <div className="mt-2 p-3 bg-blue-50 rounded text-sm border-l-4 border-blue-400">
+                        <p className="text-gray-900"><strong className="text-blue-800">Giải thích chi tiết:</strong> {detail.explanation}</p>
                     </div>
                 </div>
             </div>
