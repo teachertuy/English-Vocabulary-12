@@ -21,7 +21,6 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ result, onBack, onLogout,
         const isCorrect = detail.status === 'correct';
         const userDidAnswer = detail.status !== null;
         
-        // Changed background to white for detail cards as requested
         let resultColorClass = 'border-gray-200 bg-white shadow-md';
         if (userDidAnswer) {
             resultColorClass = isCorrect ? 'border-green-500 bg-white ring-2 ring-green-100' : 'border-red-500 bg-white ring-2 ring-red-100';
@@ -29,7 +28,6 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ result, onBack, onLogout,
 
         const userChoiceText = detail.userAnswer ? `"${detail.userAnswer}"` : "Chưa trả lời";
         
-        // Ensure options text is dark for white background
         const optionsHTML = detail.options.map(option => {
             let optionClass = "text-gray-700";
             if (option === detail.correctAnswer) {
@@ -73,11 +71,11 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ result, onBack, onLogout,
         <div className="flex flex-col items-center justify-start p-4 sm:p-6 bg-[#1E6543] min-h-[600px] text-white">
             <div id="results-content" className="w-full max-w-4xl p-6 rounded-lg overflow-y-auto max-h-[90vh]">
                 
-                {/* Score Circle Redesign */}
-                <div className="w-full text-center mb-8">
-                    <div className="w-40 h-40 bg-white rounded-full flex flex-col justify-center items-center shadow-2xl mx-auto border-4 border-double border-red-500">
-                        <span className="text-sm text-gray-500 font-bold font-sans uppercase tracking-wide">Tổng điểm</span>
-                        <span className="text-5xl font-extrabold text-red-600 font-['Bungee']" style={{textShadow: '1px 1px 0px rgba(0,0,0,0.1)'}}>{result.score}</span>
+                {/* Score Circle Redesign: Triple Red Border, Times New Roman Font */}
+                <div className="w-full text-center mb-8 pt-4">
+                    <div className="w-40 h-40 bg-white rounded-full flex flex-col justify-center items-center mx-auto border-4 border-red-600 shadow-[0_0_0_4px_#ffffff,0_0_0_8px_#dc2626]">
+                        <span className="text-sm text-gray-500 font-bold font-sans uppercase tracking-wide mb-1">Tổng điểm</span>
+                        <span className="text-6xl font-bold text-red-600 font-['Times_New_Roman']">{result.score}</span>
                     </div>
                 </div>
 
