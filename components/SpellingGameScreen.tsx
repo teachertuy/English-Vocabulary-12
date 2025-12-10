@@ -401,7 +401,7 @@ const SpellingGameScreen: React.FC<SpellingGameScreenProps> = ({ playerData, voc
             {/* Finish Button - Absolute Position Bottom Right */}
             <button 
                 onClick={() => finishGame(false)} 
-                className="absolute bottom-4 right-4 bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-full shadow hover:bg-gray-300 transition-all text-xs"
+                className="absolute bottom-4 right-4 bg-green-600 text-white font-bold py-2 px-4 rounded-full shadow hover:bg-green-700 transition-all text-xs"
             >
                 Finish Quiz
             </button>

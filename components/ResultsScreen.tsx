@@ -72,30 +72,36 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ result, onBack, onLogout,
     return (
         <div className="flex flex-col items-center justify-start p-4 sm:p-6 bg-[#1E6543] min-h-[600px] text-white">
             <div id="results-content" className="w-full max-w-4xl p-6 rounded-lg overflow-y-auto max-h-[90vh]">
+                
+                {/* Score Circle Redesign */}
                 <div className="w-full text-center mb-8">
-                    <div className="w-40 h-40 bg-slate-800/50 rounded-full flex flex-col justify-center items-center shadow-2xl mx-auto" style={{boxShadow: '0 0 0 5px rgba(239, 68, 68, 0.7), 0 0 0 10px rgba(250, 204, 21, 0.7), 0 0 0 15px rgba(34, 197, 94, 0.7)'}}>
-                        <span className="text-sm text-slate-300 font-bold">Tổng điểm</span>
-                        <span className="text-5xl font-extrabold text-yellow-300" style={{textShadow: '2px 2px 4px rgba(0,0,0,0.5)'}}>{result.score}</span>
+                    <div className="w-40 h-40 bg-white rounded-full flex flex-col justify-center items-center shadow-2xl mx-auto border-4 border-double border-red-500">
+                        <span className="text-sm text-gray-500 font-bold font-sans uppercase tracking-wide">Tổng điểm</span>
+                        <span className="text-5xl font-extrabold text-red-600 font-['Bungee']" style={{textShadow: '1px 1px 0px rgba(0,0,0,0.1)'}}>{result.score}</span>
                     </div>
                 </div>
+
                 <h2 className="text-3xl font-bold text-white mb-2 text-center" style={{textShadow: '2px 2px 4px rgba(0,0,0,0.5)'}}>Kết quả Bài kiểm tra</h2>
                  {isClassroomMode && (
-                    <div className="text-center mb-6 bg-green-500/30 text-green-200 font-semibold p-3 rounded-lg border border-green-400/50">
+                    <div className="text-center mb-6 bg-white/20 text-white font-semibold p-3 rounded-lg border border-white/30 backdrop-blur-sm">
                         <p>Nộp bài thành công! Kết quả của bạn đã được gửi cho giáo viên.</p>
                     </div>
                 )}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-800/30 backdrop-blur-sm p-6 rounded-xl shadow-lg mb-8 border border-slate-600">
+                
+                {/* Info Container Redesign: White background for student info and stats */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white p-6 rounded-xl shadow-lg mb-8 border border-gray-200 text-gray-800">
                     <div className="space-y-3 text-left text-lg">
-                        <p><span className="font-semibold text-sky-300">Họ và tên:</span> <span className="font-bold text-orange-300">{result.playerName}</span></p>
-                        <p><span className="font-semibold text-sky-300">Lớp:</span> <span className="font-bold text-orange-300">{result.playerClass}</span></p>
-                        <p><span className="font-semibold text-sky-300">Tổng thời gian làm bài:</span> <span className="font-bold text-orange-300">{formatTime(result.timeTakenSeconds)}</span></p>
+                        <p className="flex items-center"><span className="font-semibold text-gray-600 w-32">Họ và tên:</span> <span className="font-bold text-blue-700">{result.playerName}</span></p>
+                        <p className="flex items-center"><span className="font-semibold text-gray-600 w-32">Lớp:</span> <span className="font-bold text-blue-700">{result.playerClass}</span></p>
+                        <p className="flex items-center"><span className="font-semibold text-gray-600 w-32">Thời gian:</span> <span className="font-bold text-blue-700">{formatTime(result.timeTakenSeconds)}</span></p>
                     </div>
                      <div className="space-y-3 text-left text-lg">
-                        <p><span className="font-semibold text-sky-300">Số lượng câu đã làm:</span> <span className="font-bold text-orange-300">{result.answered}/{result.totalQuestions}</span></p>
-                        <p><span className="font-semibold text-sky-300">Số câu đúng:</span> <span className="font-bold text-green-400">{result.correct}</span></p>
-                        <p><span className="font-semibold text-sky-300">Số câu sai:</span> <span className="font-bold text-red-400">{result.incorrect}</span></p>
+                        <p className="flex items-center"><span className="font-semibold text-gray-600 w-40">Số câu đã làm:</span> <span className="font-bold text-blue-700">{result.answered}/{result.totalQuestions}</span></p>
+                        <p className="flex items-center"><span className="font-semibold text-gray-600 w-40">Số câu đúng:</span> <span className="font-bold text-green-600">{result.correct}</span></p>
+                        <p className="flex items-center"><span className="font-semibold text-gray-600 w-40">Số câu sai:</span> <span className="font-bold text-red-600">{result.incorrect}</span></p>
                     </div>
                 </div>
+
                 <div className="text-left mb-8">
                     <h3 className="text-2xl font-bold text-white mb-4" style={{textShadow: '2px 2px 4px rgba(0,0,0,0.5)'}}>Chi tiết bài làm & Giải thích</h3>
                     <div className="space-y-3">
@@ -103,7 +109,7 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ result, onBack, onLogout,
                     </div>
                 </div>
             </div>
-            <div className="flex items-center justify-center space-x-8 mt-6">
+            <div className="flex items-center justify-center space-x-8 mt-6 pb-8">
                  <button onClick={onBack} className="bg-white/20 backdrop-blur-sm border border-white/30 text-white font-bold py-3 px-8 rounded-full text-lg hover:bg-white/30 transition shadow-lg flex items-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
