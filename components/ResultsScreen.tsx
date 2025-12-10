@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { GameResult, QuizAnswerDetail } from '../types';
 
@@ -20,46 +21,51 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ result, onBack, onLogout,
         const isCorrect = detail.status === 'correct';
         const userDidAnswer = detail.status !== null;
         
-        let resultColorClass = 'border-slate-600 bg-slate-800/30';
+        // Changed background to white, adjusted borders to be clearer
+        let resultColorClass = 'border-gray-200 bg-white shadow-sm';
         if (userDidAnswer) {
-            resultColorClass = isCorrect ? 'border-green-500/50 bg-green-500/10' : 'border-red-500/50 bg-red-500/10';
+            resultColorClass = isCorrect ? 'border-green-500 bg-white ring-1 ring-green-500' : 'border-red-500 bg-white ring-1 ring-red-500';
         }
 
         const userChoiceText = detail.userAnswer ? `"${detail.userAnswer}"` : "Chưa trả lời";
         
+        // Updated text colors for white background
         const optionsHTML = detail.options.map(option => {
-            let optionClass = "text-slate-300";
+            let optionClass = "text-gray-600";
             if (option === detail.correctAnswer) {
-                optionClass = "font-bold text-green-400";
+                optionClass = "font-bold text-green-700";
             }
             if (option === detail.userAnswer && !isCorrect) {
-                optionClass = "font-bold text-red-400 line-through";
+                optionClass = "font-bold text-red-600 line-through";
             }
              return `<li class="${optionClass}">${option}</li>`;
         }).join('');
 
         return (
-            <div key={index} className={`p-4 rounded-lg mb-4 border-2 ${resultColorClass}`}>
-                <p className="font-bold text-lg text-slate-100 mb-2">Câu {index + 1}:</p>
+            <div key={index} className={`p-5 rounded-xl mb-4 border-2 ${resultColorClass}`}>
+                <p className="font-bold text-lg text-gray-800 mb-2">Câu {index + 1}:</p>
                 
-                <div className="p-3 bg-slate-700/50 rounded-md mb-3">
-                    <p className="font-semibold text-sky-300">{detail.question.replace('______', '...')}</p>
-                    <p className="text-sm text-slate-400 italic mt-1">{detail.translation.replace('______', '...')}</p>
+                {/* Changed inner box to light gray */}
+                <div className="p-3 bg-gray-100 rounded-md mb-3 border border-gray-200">
+                    <p className="font-semibold text-blue-800">{detail.question.replace('______', '...')}</p>
+                    <p className="text-sm text-gray-600 italic mt-1">{detail.translation.replace('______', '...')}</p>
                     <ul className="list-disc list-inside mt-2 pl-2 space-y-1" dangerouslySetInnerHTML={{ __html: optionsHTML }}>
                     </ul>
                 </div>
 
-                <div className="text-left space-y-2 text-slate-300">
+                {/* Updated text colors to dark gray/black */}
+                <div className="text-left space-y-2 text-gray-700">
                      <p>
                         <span className="font-semibold">Bạn đã chọn:</span> 
-                        <span className={`font-bold ${!userDidAnswer ? 'text-slate-500' : isCorrect ? 'text-green-400' : 'text-red-400'}`}>{userChoiceText}</span>
+                        <span className={`font-bold ${!userDidAnswer ? 'text-gray-400' : isCorrect ? 'text-green-600' : 'text-red-600'}`}>{userChoiceText}</span>
                     </p>
                     <p>
                         <span className="font-semibold">Đáp án đúng:</span> 
-                        <span className="font-bold text-green-400">"{detail.correctAnswer}"</span>
+                        <span className="font-bold text-green-600">"{detail.correctAnswer}"</span>
                     </p>
-                    <div className="mt-2 p-2 bg-blue-500/10 rounded text-sm border-l-4 border-blue-400">
-                        <p className="text-slate-200"><strong className="text-blue-300">Giải thích chi tiết:</strong> {detail.explanation}</p>
+                    {/* Changed explanation box to light blue */}
+                    <div className="mt-2 p-3 bg-blue-50 rounded text-sm border-l-4 border-blue-500">
+                        <p className="text-gray-800"><strong className="text-blue-800">Giải thích chi tiết:</strong> {detail.explanation}</p>
                     </div>
                 </div>
             </div>
