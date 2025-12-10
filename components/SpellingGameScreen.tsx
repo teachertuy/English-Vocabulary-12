@@ -281,7 +281,7 @@ const SpellingGameScreen: React.FC<SpellingGameScreenProps> = ({ playerData, voc
     
     return (
         <div className="flex flex-col items-center p-4 sm:p-6 bg-white min-h-[600px] relative">
-            <div className="w-full max-w-4xl mx-auto flex justify-between items-center mb-6">
+            <div className="w-full max-w-4xl mx-auto flex justify-between items-center mb-6 pt-4">
                 <button onClick={onBack} className="group flex items-center text-blue-600 font-bold text-sm hover:text-blue-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50 rounded">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 transition-transform group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
@@ -290,36 +290,37 @@ const SpellingGameScreen: React.FC<SpellingGameScreenProps> = ({ playerData, voc
                 </button>
 
                 <div className="flex items-center gap-4">
-                    <div title="Từ đang làm" className="flex items-center gap-1.5 bg-white text-gray-700 font-bold px-3 py-1 rounded-full text-xs border-2 border-gray-300 shadow-sm">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
-                            <path fillRule="evenodd" d="M4 5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h4a1 1 0 100-2H7zm0 4a1 1 0 100 2h4a1 1 0 100-2H7z" clipRule="evenodd" />
-                        </svg>
-                        <span className="font-extrabold text-blue-600 text-sm">{currentIndex + 1}</span>
-                        <span className="text-gray-500 text-sm">/{shuffledVocabulary.length}</span>
+                    {/* Current Index Box - White Background */}
+                    <div title="Từ đang làm" className="flex items-center gap-1.5 bg-white text-gray-700 font-bold px-3 py-1.5 rounded-xl border-2 border-gray-200 shadow-sm">
+                        <span className="font-extrabold text-blue-600 text-sm font-['Bungee'] tracking-widest">{currentIndex + 1}</span>
+                        <span className="text-gray-400 text-xs font-['Bungee']">/</span>
+                        <span className="text-gray-500 text-sm font-['Bungee']">{shuffledVocabulary.length}</span>
                     </div>
 
-                    <div title="Kết quả Đúng / Sai" className="flex items-center gap-3 bg-white px-3 py-1 rounded-full text-xs border-2 border-gray-300 shadow-sm">
-                        <div className="flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-green-500" viewBox="0 0 20 20" fill="currentColor">
+                    {/* Score Circle - White Background, Double Red Border, Unique Font */}
+                    <div title="Kết quả Đúng / Sai" className="flex items-center gap-3 bg-white px-4 py-1.5 rounded-full border-4 border-double border-red-500 shadow-md">
+                        <div className="flex items-center gap-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-red-600" viewBox="0 0 20 20" fill="currentColor">
                                 <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                             </svg>
-                            <span className="font-black text-green-600 w-5 text-center">{correctAnswers}</span>
+                            <span className="text-red-600 w-5 text-center text-lg font-['Bungee']">{correctAnswers}</span>
                         </div>
-                        <div className="h-3 w-px bg-gray-300"></div>
-                        <div className="flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+                        <div className="h-4 w-0.5 bg-red-200"></div>
+                        <div className="flex items-center gap-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-red-600" viewBox="0 0 20 20" fill="currentColor">
                                 <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
                             </svg>
-                            <span className="font-black text-red-600 w-5 text-center">{incorrectAnswers}</span>
+                            <span className="text-red-600 w-5 text-center text-lg font-['Bungee']">{incorrectAnswers}</span>
                         </div>
                     </div>
                 </div>
-                 <div className="flex items-center gap-1.5 bg-white text-red-700 font-bold px-3 py-1 rounded-full text-xs border-2 border-red-300 shadow-sm">
+                
+                 {/* Timer Box - White Background */}
+                 <div className="flex items-center gap-1.5 bg-white text-red-700 font-bold px-3 py-1.5 rounded-xl border-2 border-red-200 shadow-sm">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    <span className="font-black tracking-wider" style={{fontVariantNumeric: 'tabular-nums'}}>{formatTime(timeLeft)}</span>
+                    <span className="font-['Bungee'] tracking-wider text-base" style={{fontVariantNumeric: 'tabular-nums'}}>{formatTime(timeLeft)}</span>
                 </div>
             </div>
 
