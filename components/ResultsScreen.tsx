@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { GameResult, QuizAnswerDetail } from '../types';
 
@@ -41,7 +40,7 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ result, onBack, onLogout,
 
         return (
             <div key={index} className={`p-5 rounded-xl mb-4 border-2 ${resultColorClass}`}>
-                <p className="font-bold text-lg text-gray-900 mb-2">Câu {index + 1}:</p>
+                <p className="font-bold text-lg text-gray-900 mb-2">Câu <span className="font-['Nunito'] font-black text-blue-600">{index + 1}</span>:</p>
                 
                 <div className="p-3 bg-gray-50 rounded-md mb-3 border border-gray-200">
                     <p className="font-semibold text-blue-900">{detail.question.replace('______', '...')}</p>
@@ -71,11 +70,11 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ result, onBack, onLogout,
         <div className="flex flex-col items-center justify-start p-4 sm:p-6 bg-[#1E6543] min-h-[600px] text-white">
             <div id="results-content" className="w-full max-w-4xl p-6 rounded-lg overflow-y-auto max-h-[90vh]">
                 
-                {/* Score Circle Redesign: Triple Red Border, Times New Roman Font */}
+                {/* Score Circle Redesign: Triple Red Border, Nunito Font */}
                 <div className="w-full text-center mb-8 pt-4">
                     <div className="w-40 h-40 bg-white rounded-full flex flex-col justify-center items-center mx-auto border-4 border-red-600 shadow-[0_0_0_4px_#ffffff,0_0_0_8px_#dc2626]">
                         <span className="text-sm text-gray-500 font-bold font-sans uppercase tracking-wide mb-1">Tổng điểm</span>
-                        <span className="text-6xl font-bold text-red-600 font-['Times_New_Roman']">{result.score}</span>
+                        <span className="text-6xl font-black text-red-600 font-['Nunito']">{result.score}</span>
                     </div>
                 </div>
 
@@ -91,12 +90,12 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ result, onBack, onLogout,
                     <div className="space-y-3 text-left text-lg">
                         <p className="flex items-center"><span className="font-semibold text-gray-600 w-32">Họ và tên:</span> <span className="font-bold text-blue-700">{result.playerName}</span></p>
                         <p className="flex items-center"><span className="font-semibold text-gray-600 w-32">Lớp:</span> <span className="font-bold text-blue-700">{result.playerClass}</span></p>
-                        <p className="flex items-center"><span className="font-semibold text-gray-600 w-32">Thời gian:</span> <span className="font-bold text-blue-700">{formatTime(result.timeTakenSeconds)}</span></p>
+                        <p className="flex items-center"><span className="font-semibold text-gray-600 w-32">Thời gian:</span> <span className="font-bold text-blue-700 font-['Nunito']">{formatTime(result.timeTakenSeconds)}</span></p>
                     </div>
                      <div className="space-y-3 text-left text-lg">
-                        <p className="flex items-center"><span className="font-semibold text-gray-600 w-40">Số câu đã làm:</span> <span className="font-bold text-blue-700">{result.answered}/{result.totalQuestions}</span></p>
-                        <p className="flex items-center"><span className="font-semibold text-gray-600 w-40">Số câu đúng:</span> <span className="font-bold text-green-600">{result.correct}</span></p>
-                        <p className="flex items-center"><span className="font-semibold text-gray-600 w-40">Số câu sai:</span> <span className="font-bold text-red-600">{result.incorrect}</span></p>
+                        <p className="flex items-center"><span className="font-semibold text-gray-600 w-40">Số câu đã làm:</span> <span className="font-bold text-blue-700 font-['Nunito']">{result.answered}/{result.totalQuestions}</span></p>
+                        <p className="flex items-center"><span className="font-semibold text-gray-600 w-40">Số câu đúng:</span> <span className="font-bold text-green-600 font-['Nunito']">{result.correct}</span></p>
+                        <p className="flex items-center"><span className="font-semibold text-gray-600 w-40">Số câu sai:</span> <span className="font-bold text-red-600 font-['Nunito']">{result.incorrect}</span></p>
                     </div>
                 </div>
 

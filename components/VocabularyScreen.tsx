@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { VocabularyWord } from '../types';
 import { generateSpeech } from '../services/geminiService';
@@ -161,7 +160,11 @@ const VocabularyScreen: React.FC<VocabularyScreenProps> = ({ unitNumber, vocabul
                     <span>Back</span>
                 </button>
                  <h1 className="text-2xl font-extrabold text-center text-gray-800 uppercase tracking-wide">
-                    {grade === 'topics' ? `Topic ${unitNumber}` : `Unit ${unitNumber}`} Vocabulary
+                    {grade === 'topics' ? (
+                        <>Topic <span className="font-['Nunito']">{unitNumber}</span> Vocabulary</>
+                    ) : (
+                        <>Unit <span className="font-['Nunito']">{unitNumber}</span> Vocabulary</>
+                    )}
                 </h1>
                 <div className="w-20"></div> 
             </div>

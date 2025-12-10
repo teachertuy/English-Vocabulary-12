@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { PlayerData, VocabularyWord, GameResult, QuizAnswerDetail } from '../types';
 import { updateUnitActivityResult, trackStudentPresence, incrementCheatCount, listenForKickedStatus, getGameStatus, removeStudentPresence } from '../services/firebaseService';
@@ -227,13 +226,13 @@ const MatchingGameScreen: React.FC<MatchingGameScreenProps> = ({ playerData, voc
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-green-500" viewBox="0 0 20 20" fill="currentColor">
                               <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                             </svg>
-                            <span className="text-sm font-black text-green-600 w-5 text-center">{score}</span>
+                            <span className="text-sm font-black text-green-600 w-5 text-center font-['Nunito']">{score}</span>
                         </div>
                         <div className="flex items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-red-500" viewBox="0 0 20 20" fill="currentColor">
                               <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
                             </svg>
-                            <span className="text-sm font-black text-red-600 w-5 text-center">{incorrectMatches}</span>
+                            <span className="text-sm font-black text-red-600 w-5 text-center font-['Nunito']">{incorrectMatches}</span>
                         </div>
                     </div>
                     
@@ -241,7 +240,7 @@ const MatchingGameScreen: React.FC<MatchingGameScreenProps> = ({ playerData, voc
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        <span className="text-sm font-black text-red-700 tracking-wider" style={{fontVariantNumeric: 'tabular-nums'}}>{formatTime(timeLeft)}</span>
+                        <span className="text-sm font-black text-red-700 tracking-wider font-['Nunito']" style={{fontVariantNumeric: 'tabular-nums'}}>{formatTime(timeLeft)}</span>
                     </div>
                 </div>
             </div>

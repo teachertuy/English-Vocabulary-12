@@ -129,7 +129,7 @@ const UnitSelectionScreen: React.FC<UnitSelectionScreenProps> = ({ playerData, c
                                         className={`w-full h-28 rounded-lg flex flex-col items-center justify-center text-white transition-transform transform hover:scale-105 disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none ${color}`}
                                     >
                                         <span className="text-sm uppercase font-extrabold text-yellow-300">{itemLabel}</span>
-                                        <span className="text-4xl font-black -mt-1">{itemNumber}</span>
+                                        <span className="text-4xl font-black -mt-1 font-['Nunito']">{itemNumber}</span>
                                     </button>
                                 </div>
                                 {!isTopics && index === 4 && (

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { PlayerData, QuizQuestion, GameResult, QuizAnswerDetail } from '../types';
 import { updateUnitActivityResult, trackStudentPresence, incrementCheatCount, listenForKickedStatus, getGameStatus, removeStudentPresence, updateStudentProgress } from '../services/firebaseService';
@@ -288,11 +287,11 @@ const QuizScreen: React.FC<QuizScreenProps> = ({ playerData, questions, unitNumb
                 </button>
                 <div className="bg-red-500 text-white font-bold py-0.5 px-2 rounded-lg shadow-md flex items-baseline">
                     <span className="text-sm">Điểm:&nbsp;</span>
-                    <span className="text-sm font-bold">{score.toFixed(1)}</span>
+                    <span className="text-sm font-black font-['Nunito']">{score.toFixed(1)}</span>
                 </div>
-                <p className="text-base font-bold text-red-600 text-center">{`#${currentQuestionIndex + 1} / ${questions.length}`}</p>
+                <p className="text-base font-bold text-red-600 text-center font-['Nunito']">{`#${currentQuestionIndex + 1} / ${questions.length}`}</p>
                 <div className="bg-purple-800 text-white font-bold py-0.5 px-2 rounded-lg shadow-md">
-                     <span className="text-base font-bold">{formatTime(timeLeft)}</span>
+                     <span className="text-base font-black font-['Nunito']">{formatTime(timeLeft)}</span>
                 </div>
             </div>
 
@@ -320,7 +319,7 @@ const QuizScreen: React.FC<QuizScreenProps> = ({ playerData, questions, unitNumb
 
                             return (
                                 <button key={i} onClick={() => handleAnswerSelect(option)} disabled={isAnswered} className={btnClass}>
-                                    <span className="font-bold mr-2">{optionLabels[i]}.</span><span dangerouslySetInnerHTML={{ __html: option }} />
+                                    <span className="font-bold mr-2 font-['Nunito']">{optionLabels[i]}.</span><span dangerouslySetInnerHTML={{ __html: option }} />
                                 </button>
                             )
                         })}
