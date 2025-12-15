@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { VocabularyWord } from '../types';
 import { generateSpeech } from '../services/geminiService';
@@ -86,6 +87,7 @@ const VocabularyScreen: React.FC<VocabularyScreenProps> = ({ unitNumber, vocabul
     const [errorWord, setErrorWord] = useState<string | null>(null);
     const [isRateLimited, setIsRateLimited] = useState(false);
     const audioContextRef = useRef<AudioContext | null>(null);
+    const fixedWordsRef = useRef<Set<string>>(new Set());
 
     // Sync local state if prop changes (e.g. initial load or update)
     useEffect(() => {
@@ -108,11 +110,20 @@ const VocabularyScreen: React.FC<VocabularyScreenProps> = ({ unitNumber, vocabul
                 audioContext.resume();
             }
 
-            let audioBuffer: AudioBuffer;
+            // --- Correction Logic for Bad Pronunciation ---
+            // Words that need to be re-generated regardless of what's in Firebase
+            // This ensures "submit" (wrong stress) and "casual" (silent) get fixed on first click.
+            const WORDS_TO_FIX = ['submit', 'casual'];
             let base64Audio = wordItem.audio;
 
+            if (WORDS_TO_FIX.includes(wordItem.word.toLowerCase()) && !fixedWordsRef.current.has(wordItem.word)) {
+                base64Audio = undefined; // Force generation
+                fixedWordsRef.current.add(wordItem.word); // Mark as fixed for this session
+            }
+            // ---------------------------------------------
+
             if (!base64Audio) {
-                // Not in cache, generate it
+                // Not in cache (or forced to regenerate), generate it
                 base64Audio = await generateSpeech(wordItem.word);
                 // Save to Firebase for future use (fire and forget)
                 const unitIdentifier = grade === 'topics' ? `topic_${unitNumber}` : `unit_${unitNumber}`;
@@ -123,7 +134,7 @@ const VocabularyScreen: React.FC<VocabularyScreenProps> = ({ unitNumber, vocabul
             }
 
             const decodedBytes = decode(base64Audio!);
-            audioBuffer = await decodeAudioData(decodedBytes, audioContext, 24000, 1);
+            const audioBuffer = await decodeAudioData(decodedBytes, audioContext, 24000, 1);
 
             const source = audioContext.createBufferSource();
             source.buffer = audioBuffer;

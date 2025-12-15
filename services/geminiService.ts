@@ -1,6 +1,3 @@
-
-
-
 import { GoogleGenAI, Type, Modality } from "@google/genai";
 import { QuizQuestion, VocabularyWord } from "../types";
 
@@ -8,6 +5,13 @@ const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 // This version number should be manually updated whenever the prompt or vocabulary is significantly changed.
 export const QUIZ_VERSION = '3.0';
+
+// Dictionary to correct specific pronunciation issues
+// Keys must be lowercase. Values are the text/phonetic hints sent to the TTS engine.
+const PRONUNCIATION_OVERRIDES: Record<string, string> = {
+    "submit": "sub-MIT", // Force verb stress on the second syllable
+    "casual": "ca-sual", // Break syllable to ensure audio generation avoids silence glitches
+};
 
 const quizSchema = {
     type: Type.OBJECT,
@@ -251,11 +255,14 @@ export async function generateVocabularyList(prompt: string): Promise<Vocabulary
 export async function generateSpeech(text: string): Promise<string> {
     let lastError: unknown = null;
 
+    // Apply specific pronunciation corrections
+    const textToSpeak = PRONUNCIATION_OVERRIDES[text.toLowerCase()] || text;
+
     for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
         try {
             const response = await ai.models.generateContent({
                 model: "gemini-2.5-flash-preview-tts",
-                contents: [{ parts: [{ text }] }],
+                contents: [{ parts: [{ text: textToSpeak }] }],
                 config: {
                     responseModalities: [Modality.AUDIO],
                     speechConfig: {
