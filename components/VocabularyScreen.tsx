@@ -107,19 +107,14 @@ const VocabularyScreen: React.FC<VocabularyScreenProps> = ({ unitNumber, vocabul
 
                 // 1. Xử lý tải trước HÌNH ẢNH
                 if (!item.image || item.image.includes('pollinations.ai/prompt/')) {
-                    // Nếu ảnh chưa tối ưu hoặc bị thiếu, dùng AI tạo prompt xịn
                     if (!fetchingImages.has(item.word)) {
                         try {
                             setFetchingImages(prev => new Set(prev).add(item.word));
                             const betterImageUrl = await generateImagePrompt(item.word, item.translation);
                             
                             if (isComponentMounted.current) {
-                                // Lưu link ảnh xịn vào Firebase
                                 updateVocabularyImage(classroomId, grade, unitIdentifier, item.word, betterImageUrl).catch(console.error);
-                                // Cập nhật state
                                 setLocalVocabulary(prev => prev.map(w => w.word === item.word ? { ...w, image: betterImageUrl } : w));
-                                
-                                // Kích hoạt trình duyệt tải ảnh ngầm vào cache
                                 const img = new Image();
                                 img.src = betterImageUrl;
                             }
@@ -129,13 +124,9 @@ const VocabularyScreen: React.FC<VocabularyScreenProps> = ({ unitNumber, vocabul
                             setFetchingImages(prev => { const n = new Set(prev); n.delete(item.word); return n; });
                         }
                     }
-                } else {
-                    // Nếu đã có ảnh xịn rồi, chỉ cần kích hoạt tải ngầm
-                    const img = new Image();
-                    img.src = item.image;
                 }
 
-                // 2. Xử lý tải trước ÂM THANH (Tiếp tục hàng đợi cũ nhưng tối ưu hơn)
+                // 2. Xử lý tải trước ÂM THANH
                 if (!item.audio && !isRateLimited && !errorWords.has(item.word)) {
                     try {
                         setFetchingWords(prev => new Set(prev).add(item.word));
@@ -147,8 +138,16 @@ const VocabularyScreen: React.FC<VocabularyScreenProps> = ({ unitNumber, vocabul
                         }
                     } catch (error: any) {
                         const code = error?.error?.code;
-                        if (code === 429) setIsRateLimited(true);
-                        else setErrorWords(prev => new Set(prev).add(item.word));
+                        const status = error?.error?.status;
+                        console.error(`Pre-fetch error for ${item.word}:`, error);
+
+                        if (code === 429 || status === 'RESOURCE_EXHAUSTED') {
+                            setIsRateLimited(true);
+                            break; // Dừng toàn bộ hàng đợi nếu hết quota
+                        } else {
+                            // Đánh dấu từ bị lỗi 400 hoặc lỗi khác để không thử lại nữa
+                            setErrorWords(prev => new Set(prev).add(item.word));
+                        }
                     } finally {
                         if (isComponentMounted.current) {
                             setFetchingWords(prev => { const n = new Set(prev); n.delete(item.word); return n; });
@@ -156,13 +155,13 @@ const VocabularyScreen: React.FC<VocabularyScreenProps> = ({ unitNumber, vocabul
                     }
                 }
 
-                // Nghỉ 1.5 giây giữa các từ để tránh spam API và nghẽn mạng
-                await new Promise(r => setTimeout(r, 1500));
+                // Nghỉ 2.5 giây giữa các từ để tránh spam API và an toàn cho Free Tier
+                await new Promise(r => setTimeout(r, 2500));
             }
         };
 
         startPreFetching();
-    }, [unitNumber, classroomId, grade]);
+    }, [unitNumber, classroomId, grade, isRateLimited]);
 
     const handlePlaySound = useCallback(async (wordItem: VocabularyWord, e: React.MouseEvent) => {
         e.stopPropagation();
@@ -233,9 +232,9 @@ const VocabularyScreen: React.FC<VocabularyScreenProps> = ({ unitNumber, vocabul
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                             <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 112 0 1 1 0 01-2 0zm-1 9a1 1 0 102 0v-6a1 1 0 10-2 0v6z" clipRule="evenodd" />
                         </svg>
-                        Giới hạn API phát âm
+                        Thông báo: Hạn mức API tạm thời hết
                     </p>
-                    <p className="text-sm mt-1">Dịch vụ âm thanh đang bận, hình ảnh vẫn sẽ được tải trước tuần tự. Vui lòng chờ trong giây lát.</p>
+                    <p className="text-sm mt-1">Dịch vụ âm thanh đang tạm dừng để tránh quá tải. Hình ảnh vẫn được ưu tiên tải trước. Vui lòng thử nghe lại sau ít phút.</p>
                 </div>
             )}
 
@@ -282,7 +281,7 @@ const VocabularyScreen: React.FC<VocabularyScreenProps> = ({ unitNumber, vocabul
                                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                     </svg>
                                 ) : hasError ? (
-                                    <svg className="h-6 w-6 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                                    <svg className="h-6 w-6 text-red-500" fill="currentColor" viewBox="0 0 20 20" title="Không thể tải âm thanh cho từ này">
                                         <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                                     </svg>
                                 ) : (

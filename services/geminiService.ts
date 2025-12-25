@@ -6,7 +6,7 @@ import { QuizQuestion, VocabularyWord } from "../types";
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 // Current version of the quiz logic
-export const QUIZ_VERSION = '1.0.0';
+export const QUIZ_VERSION = '1.0.1';
 
 // Schema for multiple choice quiz questions
 const quizSchema = {
@@ -82,19 +82,46 @@ export async function generateVocabularyList(prompt: string): Promise<Vocabulary
  * Transforms a word or sentence into speech (PCM audio base64).
  */
 export async function generateSpeech(text: string): Promise<string> {
-    const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash-preview-tts",
-        contents: [{ parts: [{ text: `Say clearly: ${text}` }] }],
-        config: {
-            responseModalities: ["AUDIO"],
-            speechConfig: {
-                voiceConfig: {
-                    prebuiltVoiceConfig: { voiceName: 'Kore' },
+    const MAX_RETRIES = 2;
+    let lastError: any = null;
+
+    // Sử dụng prompt mô tả rõ ràng hơn để tránh lỗi "non-audio response"
+    const descriptivePrompt = `Please pronounce the following English word clearly and naturally: "${text}"`;
+
+    for (let i = 0; i <= MAX_RETRIES; i++) {
+        try {
+            const response = await ai.models.generateContent({
+                model: "gemini-2.5-flash-preview-tts",
+                contents: [{ parts: [{ text: descriptivePrompt }] }],
+                config: {
+                    responseModalities: ["AUDIO"],
+                    speechConfig: {
+                        voiceConfig: {
+                            prebuiltVoiceConfig: { voiceName: 'Kore' },
+                        },
+                    },
                 },
-            },
-        },
-    });
-    return response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data || '';
+            });
+            const audioData = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+            if (!audioData) throw new Error("No audio data returned");
+            return audioData;
+        } catch (error: any) {
+            lastError = error;
+            const status = error?.error?.status;
+            const code = error?.error?.code;
+
+            // Nếu lỗi 429 (hết hạn mức) hoặc 400 (prompt không hợp lệ cho TTS), dừng ngay lập tức
+            if (code === 429 || status === 'RESOURCE_EXHAUSTED' || code === 400 || status === 'INVALID_ARGUMENT') {
+                break;
+            }
+
+            if (i < MAX_RETRIES) {
+                // Đợi lâu hơn một chút giữa các lần retry
+                await new Promise(resolve => setTimeout(resolve, 2000 * (i + 1)));
+            }
+        }
+    }
+    throw lastError || new Error("Failed to generate speech");
 }
 
 /**
