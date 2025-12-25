@@ -1,8 +1,8 @@
 
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { VocabularyWord } from '../types';
-import { generateSpeech } from '../services/geminiService';
-import { updateVocabularyAudio } from '../services/firebaseService';
+import { generateSpeech, generateImagePrompt } from '../services/geminiService';
+import { updateVocabularyAudio, updateVocabularyImage } from '../services/firebaseService';
 
 // --- Audio Helper Functions ---
 function decode(base64: string): Uint8Array {
@@ -36,11 +36,11 @@ async function decodeAudioData(
 
 const CARD_COLORS = ['bg-[#FFF0F0]', 'bg-[#F0F8FF]', 'bg-[#F0FFF4]'];
 
-const ImageWithLoader: React.FC<{ src: string, alt: string }> = ({ src, alt }) => {
+const ImageWithLoader: React.FC<{ src: string, alt: string, isProcessing?: boolean }> = ({ src, alt, isProcessing }) => {
     const [loaded, setLoaded] = useState(false);
     return (
         <div className="w-40 h-40 bg-white rounded-2xl shadow-sm p-3 mb-4 flex items-center justify-center relative overflow-hidden">
-            {!loaded && (
+            {(!loaded || isProcessing) && (
                 <div className="absolute inset-0 flex items-center justify-center z-0">
                     <svg className="animate-spin h-8 w-8 text-teal-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
@@ -51,10 +51,16 @@ const ImageWithLoader: React.FC<{ src: string, alt: string }> = ({ src, alt }) =
             <img 
                 src={src} 
                 alt={alt} 
-                className={`max-h-full max-w-full object-contain rounded-xl relative z-10 transition-opacity duration-500 ${loaded ? 'opacity-100' : 'opacity-0'}`}
+                className={`max-h-full max-w-full object-contain rounded-xl relative z-10 transition-opacity duration-500 ${loaded && !isProcessing ? 'opacity-100' : 'opacity-0'}`}
                 onLoad={() => setLoaded(true)}
                 onError={(e) => { (e.target as HTMLImageElement).src = `https://via.placeholder.com/150?text=${alt}`; setLoaded(true); }}
             />
+            {isProcessing && (
+                <div className="absolute bottom-2 right-2 flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                </div>
+            )}
         </div>
     );
 };
@@ -71,6 +77,7 @@ const VocabularyScreen: React.FC<VocabularyScreenProps> = ({ unitNumber, vocabul
     const [localVocabulary, setLocalVocabulary] = useState<VocabularyWord[]>(vocabulary);
     const [playingWord, setPlayingWord] = useState<string | null>(null);
     const [fetchingWords, setFetchingWords] = useState<Set<string>>(new Set());
+    const [fetchingImages, setFetchingImages] = useState<Set<string>>(new Set());
     const [errorWords, setErrorWords] = useState<Set<string>>(new Set());
     const [isRateLimited, setIsRateLimited] = useState(false);
     
@@ -82,54 +89,62 @@ const VocabularyScreen: React.FC<VocabularyScreenProps> = ({ unitNumber, vocabul
         return () => { isComponentMounted.current = false; };
     }, []);
 
-    // Cơ chế Pre-fetching: Tự động tạo âm thanh cho các từ chưa có
+    // --- CƠ CHẾ SIÊU HÀNG ĐỢI AI (Pre-fetching & Optimization) ---
     useEffect(() => {
-        const preFetchAudio = async () => {
-            const unitIdentifier = grade === 'topics' ? `topic_${unitNumber}` : `unit_${unitNumber}`;
+        const startWorker = async () => {
+            const unitId = grade === 'topics' ? `topic_${unitNumber}` : `unit_${unitNumber}`;
             
             for (const item of localVocabulary) {
                 if (!isComponentMounted.current) break;
-                if (item.audio || errorWords.has(item.word) || isRateLimited) continue; 
 
-                try {
-                    setFetchingWords(prev => new Set(prev).add(item.word));
-                    const base64Audio = await generateSpeech(item.word);
-                    
-                    if (isComponentMounted.current) {
-                        updateVocabularyAudio(classroomId, grade, unitIdentifier, item.word, base64Audio).catch(console.error);
-                        setLocalVocabulary(prev => prev.map(w => w.word === item.word ? { ...w, audio: base64Audio } : w));
-                    }
-                } catch (error: any) {
-                    console.error(`Pre-fetch failed for ${item.word}:`, error);
-                    const code = error?.error?.code;
-                    const status = error?.error?.status;
-
-                    if (code === 429 || status === 'RESOURCE_EXHAUSTED') {
-                        setIsRateLimited(true);
-                        // Show warning and stop queue
-                        break; 
-                    } else {
-                        // Mark specific word as errored to avoid retrying it
-                        setErrorWords(prev => new Set(prev).add(item.word));
-                    }
-                } finally {
-                    if (isComponentMounted.current) {
-                        setFetchingWords(prev => {
-                            const next = new Set(prev);
-                            next.delete(item.word);
-                            return next;
-                        });
+                // 1. TỐI ƯU HÌNH ẢNH: Nếu chưa có link AI "xịn" (có chứa keyword Illustrating)
+                const isPlaceholderImg = !item.image || item.image.includes('illustration_white_background');
+                if (isPlaceholderImg && !fetchingImages.has(item.word)) {
+                    try {
+                        setFetchingImages(prev => new Set(prev).add(item.word));
+                        const highQualityUrl = await generateImagePrompt(item.word, item.translation);
+                        
+                        if (isComponentMounted.current) {
+                            updateVocabularyImage(classroomId, grade, unitId, item.word, highQualityUrl).catch(console.error);
+                            setLocalVocabulary(prev => prev.map(w => w.word === item.word ? { ...w, image: highQualityUrl } : w));
+                        }
+                    } catch (e) {
+                        console.warn("Failed to optimize image for:", item.word);
+                    } finally {
+                        if (isComponentMounted.current) {
+                            setFetchingImages(prev => { const next = new Set(prev); next.delete(item.word); return next; });
+                        }
                     }
                 }
-                // Increase delay to 2000ms to stay safer within free tier limits
-                await new Promise(r => setTimeout(r, 2000));
+
+                // 2. TẠO ÂM THANH: Nếu chưa có audio
+                if (!item.audio && !errorWords.has(item.word) && !isRateLimited) {
+                    try {
+                        setFetchingWords(prev => new Set(prev).add(item.word));
+                        const base64Audio = await generateSpeech(item.word);
+                        
+                        if (isComponentMounted.current) {
+                            updateVocabularyAudio(classroomId, grade, unitId, item.word, base64Audio).catch(console.error);
+                            setLocalVocabulary(prev => prev.map(w => w.word === item.word ? { ...w, audio: base64Audio } : w));
+                        }
+                    } catch (error: any) {
+                        const code = error?.error?.code;
+                        if (code === 429) setIsRateLimited(true);
+                        else setErrorWords(prev => new Set(prev).add(item.word));
+                    } finally {
+                        if (isComponentMounted.current) {
+                            setFetchingWords(prev => { const next = new Set(prev); next.delete(item.word); return next; });
+                        }
+                    }
+                }
+
+                // Nghỉ 1.5 giây giữa mỗi từ để không bị chặn API
+                await new Promise(r => setTimeout(r, 1500));
             }
         };
 
-        if (!isRateLimited) {
-            preFetchAudio();
-        }
-    }, [unitNumber, classroomId, grade, isRateLimited]);
+        startWorker();
+    }, [unitNumber, classroomId, grade]);
 
     const handlePlaySound = useCallback(async (wordItem: VocabularyWord, e: React.MouseEvent) => {
         e.stopPropagation();
@@ -150,18 +165,14 @@ const VocabularyScreen: React.FC<VocabularyScreenProps> = ({ unitNumber, vocabul
                 setFetchingWords(prev => new Set(prev).add(wordItem.word));
                 try {
                     base64Audio = await generateSpeech(wordItem.word);
-                    const unitIdentifier = grade === 'topics' ? `topic_${unitNumber}` : `unit_${unitNumber}`;
-                    updateVocabularyAudio(classroomId, grade, unitIdentifier, wordItem.word, base64Audio).catch(console.error);
+                    const unitId = grade === 'topics' ? `topic_${unitNumber}` : `unit_${unitNumber}`;
+                    updateVocabularyAudio(classroomId, grade, unitId, wordItem.word, base64Audio).catch(console.error);
                     setLocalVocabulary(prev => prev.map(w => w.word === wordItem.word ? { ...w, audio: base64Audio } : w));
                 } catch (err: any) {
                     if (err?.error?.code === 429) setIsRateLimited(true);
                     throw err;
                 } finally {
-                    setFetchingWords(prev => {
-                        const next = new Set(prev);
-                        next.delete(wordItem.word);
-                        return next;
-                    });
+                    setFetchingWords(prev => { const next = new Set(prev); next.delete(wordItem.word); return next; });
                 }
             }
 
@@ -178,11 +189,7 @@ const VocabularyScreen: React.FC<VocabularyScreenProps> = ({ unitNumber, vocabul
             setPlayingWord(null);
             setErrorWords(prev => new Set(prev).add(wordItem.word));
             setTimeout(() => {
-                setErrorWords(prev => {
-                    const next = new Set(prev);
-                    next.delete(wordItem.word);
-                    return next;
-                });
+                setErrorWords(prev => { const next = new Set(prev); next.delete(wordItem.word); return next; });
             }, 5000);
         }
     }, [playingWord, classroomId, grade, unitNumber]);
@@ -202,6 +209,13 @@ const VocabularyScreen: React.FC<VocabularyScreenProps> = ({ unitNumber, vocabul
                 <div className="w-20"></div> 
             </div>
 
+            {(fetchingImages.size > 0 || fetchingWords.size > 0) && (
+                <div className="mb-4 px-4 py-2 bg-blue-50 text-blue-700 text-sm font-bold rounded-lg border border-blue-200 flex items-center gap-2 animate-pulse self-center">
+                    <div className="w-2 h-2 bg-blue-600 rounded-full animate-ping"></div>
+                    <span>AI đang xếp hàng tạo học liệu (Ảnh & Âm thanh)...</span>
+                </div>
+            )}
+
             {isRateLimited && (
                 <div className="mb-6 p-4 bg-orange-100 border-l-4 border-orange-500 text-orange-700 rounded-r shadow-sm">
                     <p className="font-bold flex items-center gap-2">
@@ -210,21 +224,22 @@ const VocabularyScreen: React.FC<VocabularyScreenProps> = ({ unitNumber, vocabul
                         </svg>
                         Thông báo giới hạn API
                     </p>
-                    <p className="text-sm mt-1">Dịch vụ phát âm đang tạm nghỉ để tránh quá tải. Một số từ có thể chưa có âm thanh ngay lập tức. Vui lòng chờ vài phút rồi quay lại bài học này.</p>
+                    <p className="text-sm mt-1">Dịch vụ đang tạm nghỉ để tránh quá tải. Vui lòng chờ vài phút rồi quay lại bài học.</p>
                 </div>
             )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 overflow-y-auto flex-grow px-2 pb-8 max-w-7xl mx-auto w-full">
                 {localVocabulary.map((item, index) => {
                     const isPlaying = playingWord === item.word;
-                    const isFetching = fetchingWords.has(item.word);
+                    const isFetchingAudio = fetchingWords.has(item.word);
+                    const isFetchingImage = fetchingImages.has(item.word);
                     const hasError = errorWords.has(item.word);
                     const bgColor = CARD_COLORS[index % CARD_COLORS.length];
                     const imageUrl = item.image || `https://image.pollinations.ai/prompt/${item.word.replace(/\s+/g, '_')}_illustration_white_background`;
 
                     return (
                         <div key={index} className={`${bgColor} rounded-[2rem] p-6 flex flex-col items-center shadow-sm hover:shadow-md transition-shadow duration-300`}>
-                            <ImageWithLoader src={imageUrl} alt={item.word} />
+                            <ImageWithLoader src={imageUrl} alt={item.word} isProcessing={isFetchingImage} />
                             <div className="text-center w-full mb-6">
                                 <h2 className="text-2xl font-extrabold text-[#006064] mb-1">
                                     {item.word} <span className="text-lg text-[#E91E63]">({item.type})</span>
@@ -243,17 +258,17 @@ const VocabularyScreen: React.FC<VocabularyScreenProps> = ({ unitNumber, vocabul
 
                             <button 
                                 onClick={(e) => handlePlaySound(item, e)}
-                                disabled={isFetching && !isPlaying}
+                                disabled={isFetchingAudio && !isPlaying}
                                 className={`w-14 h-14 bg-white rounded-full shadow-md flex items-center justify-center hover:scale-105 active:scale-95 transition-transform cursor-pointer relative ${isPlaying ? 'ring-4 ring-blue-200' : ''}`}
                             >
-                                {isFetching ? (
+                                {isFetchingAudio ? (
                                     <svg className="animate-spin h-6 w-6 text-blue-400" viewBox="0 0 24 24">
                                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                     </svg>
                                 ) : hasError ? (
                                     <svg className="h-6 w-6 text-red-500" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 112 0 1 1 0 01-2 0zm-1 9a1 1 0 102 0v-6a1 1 0 10-2 0v6z" clipRule="evenodd" />
                                     </svg>
                                 ) : (
                                     <div className="relative flex items-center justify-center">
