@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { PlayerData, VocabularyWord, GameResult, QuizAnswerDetail } from '../types';
 import { updateUnitActivityResult, trackStudentPresence, incrementCheatCount, listenForKickedStatus, getGameStatus, removeStudentPresence } from '../services/firebaseService';
@@ -83,10 +84,12 @@ const MatchingGameScreen: React.FC<MatchingGameScreenProps> = ({ playerData, voc
     const incorrectMatches = useMemo(() => gameDetails.filter(d => d.status === 'incorrect').length, [gameDetails]);
     
     useEffect(() => {
-        const initialWords = shuffleArray(vocabulary);
+        const initialWords = [...vocabulary];
         setRemainingWords(initialWords);
         if (initialWords.length > 0) {
-            setCurrentVietnamese(initialWords[Math.floor(Math.random() * initialWords.length)]);
+            // Pick a random word for the first Vietnamese prompt
+            const shuffledForPrompt = shuffleArray(initialWords);
+            setCurrentVietnamese(shuffledForPrompt[0]);
         }
     }, [vocabulary]);
 
@@ -162,7 +165,7 @@ const MatchingGameScreen: React.FC<MatchingGameScreenProps> = ({ playerData, voc
         setSelectedEnglish(null);
 
         if (nextWords.length > 0) {
-            // Pick a new random word that is different from the current one if possible
+            // Pick a new random word for the Vietnamese prompt
             let newWord = currentVietnamese;
             if (nextWords.length > 1) {
                 const availableWords = nextWords.filter(w => w.word !== currentVietnamese.word);
@@ -182,10 +185,14 @@ const MatchingGameScreen: React.FC<MatchingGameScreenProps> = ({ playerData, voc
     useEffect(() => { if (classroomId) { const u = listenForKickedStatus(classroomId, playerData.name, playerData.class, () => finishGame(true)); return () => u(); } }, [classroomId, playerData.name, playerData.class, finishGame]);
     useEffect(() => { const h = () => document.hidden && classroomId && incrementCheatCount(classroomId, playerData.name, playerData.class); document.addEventListener('visibilitychange', h); return () => document.removeEventListener('visibilitychange', h); }, [classroomId, playerData.name, playerData.class]);
 
-    const shuffledRemainingWords = useMemo(() => shuffleArray(remainingWords), [remainingWords]);
-    const splitIndex = Math.ceil(shuffledRemainingWords.length / 2);
-    const topWords = shuffledRemainingWords.slice(0, splitIndex);
-    const bottomWords = shuffledRemainingWords.slice(splitIndex);
+    // Sorting English words alphabetically for the view as requested
+    const sortedRemainingWords = useMemo(() => {
+        return [...remainingWords].sort((a, b) => a.word.localeCompare(b.word));
+    }, [remainingWords]);
+
+    const splitIndex = Math.ceil(sortedRemainingWords.length / 2);
+    const topWords = sortedRemainingWords.slice(0, splitIndex);
+    const bottomWords = sortedRemainingWords.slice(splitIndex);
 
     const WordButtons = ({ words }: { words: VocabularyWord[] }) => (
         <div className="flex flex-wrap justify-center gap-1 p-1 max-w-2xl">
