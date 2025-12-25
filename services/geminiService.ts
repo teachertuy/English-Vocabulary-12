@@ -4,7 +4,7 @@ import { QuizQuestion, VocabularyWord } from "../types";
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 // This version number should be manually updated whenever the prompt or vocabulary is significantly changed.
-export const QUIZ_VERSION = '3.0';
+export const QUIZ_VERSION = '3.1';
 
 // Dictionary to correct specific pronunciation issues
 // Keys must be lowercase. Values are the text/phonetic hints sent to the TTS engine.
@@ -46,10 +46,11 @@ const vocabularyListSchema = {
                     type: { type: Type.STRING, description: 'The word type (e.g., n, v, adj).' },
                     phonetic: { type: Type.STRING, description: 'The phonetic transcription of the word.' },
                     translation: { type: Type.STRING, description: 'The Vietnamese translation of the word.' },
+                    example: { type: Type.STRING, description: 'A simple English example sentence (7-12 words) containing the word.' },
                     image: { type: Type.STRING, description: 'A URL for the image. Format: "https://image.pollinations.ai/prompt/{description}?width=800&height=600&nologo=true". The description MUST be based on the Vietnamese translation to ensure accuracy.' },
                     audio: { type: Type.STRING, description: 'Leave empty for now, will be filled later.' }
                 },
-                required: ['word', 'type', 'phonetic', 'translation', 'image']
+                required: ['word', 'type', 'phonetic', 'translation', 'example', 'image']
             }
         }
     },
@@ -85,7 +86,7 @@ export async function generateQuizFromCustomPrompt(prompt: string): Promise<Quiz
     for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
         try {
             const response = await ai.models.generateContent({
-                model: 'gemini-2.5-flash',
+                model: 'gemini-3-flash-preview',
                 contents: fullPrompt,
                 config: {
                     responseMimeType: "application/json",
@@ -145,7 +146,7 @@ export async function generateQuizFromText(context: string): Promise<QuizQuestio
     for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
         try {
             const response = await ai.models.generateContent({
-                model: 'gemini-2.5-flash',
+                model: 'gemini-3-flash-preview',
                 contents: prompt,
                 config: {
                     responseMimeType: "application/json",
@@ -188,6 +189,11 @@ export async function generateVocabularyList(prompt: string): Promise<Vocabulary
     Your output MUST be a JSON object that strictly adheres to the provided schema.
     Do not add any extra text or explanations outside of the JSON structure.
     
+    IMPORTANT RULES for 'example' field:
+    1. Create a simple English example sentence for the word.
+    2. The length MUST be between 7 and 12 words.
+    3. The sentence MUST contain the English word being learned.
+
     IMPORTANT RULES for generating the 'image' field:
     1. CRITICAL: Ignore the English word's general meaning if it is polysemous. Focus ENTIRELY on the provided Vietnamese translation (meaning) to determine the visual content.
     2. English words often have multiple meanings. You MUST select the visual representation that matches the specific Vietnamese definition provided.
@@ -199,16 +205,6 @@ export async function generateVocabularyList(prompt: string): Promise<Vocabulary
        - Include keywords like "photorealistic", "educational", "highly_detailed", "isolated_on_white_background" to ensure clarity.
        - If the word is abstract (e.g., "responsibility"), describe a concrete scene or metaphor representing it clearly.
     
-    Examples of Disambiguation:
-    - Word: "Bat", Translation: "Con dơi" -> Description: "bat_animal_flying_mammal_photorealistic_white_background"
-    - Word: "Bat", Translation: "Gậy bóng chày" -> Description: "baseball_bat_sports_equipment_photorealistic_white_background"
-    - Word: "Orange", Translation: "Quả cam" -> Description: "orange_fruit_citrus_fresh_photorealistic_white_background"
-    - Word: "Orange", Translation: "Màu cam" -> Description: "orange_color_swatch_abstract_background"
-    - Word: "Spring", Translation: "Mùa xuân" -> Description: "spring_season_flowers_blooming_nature_photorealistic"
-    - Word: "Spring", Translation: "Lò xo" -> Description: "metal_coil_spring_mechanical_part_photorealistic_white_background"
-    - Word: "Match", Translation: "Que diêm" -> Description: "wooden_matchstick_fire_starter_photorealistic_white_background"
-    - Word: "Match", Translation: "Trận đấu" -> Description: "sports_match_competition_stadium_scene_photorealistic"
-
     User's request:
     """
     ${prompt}
@@ -220,7 +216,7 @@ export async function generateVocabularyList(prompt: string): Promise<Vocabulary
     for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
         try {
             const response = await ai.models.generateContent({
-                model: 'gemini-2.5-flash',
+                model: 'gemini-3-flash-preview',
                 contents: fullPrompt,
                 config: {
                     responseMimeType: "application/json",
