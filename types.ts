@@ -1,4 +1,5 @@
 
+
 export interface QuizQuestion {
   sentence: string;
   options: string[];
@@ -67,7 +68,6 @@ export interface VocabularyWord {
   type: string; // e.g., 'n', 'v', 'adj'
   phonetic: string;
   translation: string;
-  example?: string; // Simple English example sentence
   image?: string; // URL to the image
   audio?: string; // Base64 audio string
 }

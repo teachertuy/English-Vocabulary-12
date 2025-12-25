@@ -1,3 +1,4 @@
+
 import { GoogleGenAI, Type, Modality } from "@google/genai";
 import { QuizQuestion, VocabularyWord } from "../types";
 
@@ -7,10 +8,9 @@ const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 export const QUIZ_VERSION = '3.1';
 
 // Dictionary to correct specific pronunciation issues
-// Keys must be lowercase. Values are the text/phonetic hints sent to the TTS engine.
 const PRONUNCIATION_OVERRIDES: Record<string, string> = {
-    "submit": "sub-MIT", // Force verb stress on the second syllable
-    "casual": "ca-sual", // Break syllable to ensure audio generation avoids silence glitches
+    "submit": "sub-MIT",
+    "casual": "ca-sual",
 };
 
 const quizSchema = {
@@ -21,11 +21,11 @@ const quizSchema = {
             items: {
                 type: Type.OBJECT,
                 properties: {
-                    sentence: { type: Type.STRING, description: 'An English sentence or instruction for the question.' },
-                    options: { type: Type.ARRAY, items: { type: Type.STRING }, description: 'An array of 4 strings representing the multiple choice options. For pronunciation, options may contain <u> tags.' },
-                    answer: { type: Type.STRING, description: 'The correct option from the options array.' },
-                    translation: { type: Type.STRING, description: 'The Vietnamese translation of the question sentence.' },
-                    explanation: { type: Type.STRING, description: 'A detailed explanation in Vietnamese about why the answer is correct, focusing on phonetics, grammar, or vocabulary.' }
+                    sentence: { type: Type.STRING },
+                    options: { type: Type.ARRAY, items: { type: Type.STRING } },
+                    answer: { type: Type.STRING },
+                    translation: { type: Type.STRING },
+                    explanation: { type: Type.STRING }
                 },
                 required: ['sentence', 'options', 'answer', 'translation', 'explanation']
             }
@@ -42,15 +42,15 @@ const vocabularyListSchema = {
             items: {
                 type: Type.OBJECT,
                 properties: {
-                    word: { type: Type.STRING, description: 'The English word.' },
-                    type: { type: Type.STRING, description: 'The word type (e.g., n, v, adj).' },
-                    phonetic: { type: Type.STRING, description: 'The phonetic transcription of the word.' },
-                    translation: { type: Type.STRING, description: 'The Vietnamese translation of the word.' },
-                    example: { type: Type.STRING, description: 'A simple English example sentence (7-12 words) containing the word.' },
-                    image: { type: Type.STRING, description: 'A URL for the image. Format: "https://image.pollinations.ai/prompt/{description}?width=800&height=600&nologo=true". The description MUST be based on the Vietnamese translation to ensure accuracy.' },
-                    audio: { type: Type.STRING, description: 'Leave empty for now, will be filled later.' }
+                    word: { type: Type.STRING },
+                    type: { type: Type.STRING },
+                    phonetic: { type: Type.STRING },
+                    translation: { type: Type.STRING },
+                    image: { type: Type.STRING },
+                    audio: { type: Type.STRING },
+                    example: { type: Type.STRING }
                 },
-                required: ['word', 'type', 'phonetic', 'translation', 'example', 'image']
+                required: ['word', 'type', 'phonetic', 'translation', 'image', 'example']
             }
         }
     },
@@ -70,231 +70,97 @@ const MAX_RETRIES = 3;
 const INITIAL_BACKOFF_MS = 1000;
 
 export async function generateQuizFromCustomPrompt(prompt: string): Promise<QuizQuestion[]> {
-    const fullPrompt = `You are an expert English teacher tasked with creating a quiz based on a user's request.
-    Your output MUST be a JSON object that strictly adheres to the provided schema.
-    Do not add any extra text or explanations outside of the JSON structure.
-    The questions should be high-quality, multiple-choice questions suitable for English learners.
-
-    User's request:
-    """
-    ${prompt}
-    """
-    `;
-
-    let lastError: unknown = null;
-
-    for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
-        try {
-            const response = await ai.models.generateContent({
-                model: 'gemini-3-flash-preview',
-                contents: fullPrompt,
-                config: {
-                    responseMimeType: "application/json",
-                    responseSchema: quizSchema,
-                    temperature: 0.5,
-                },
-            });
-            
-            const jsonText = response.text.trim();
-            const parsed = JSON.parse(jsonText);
-            
-            if (!parsed.questions || !Array.isArray(parsed.questions) || parsed.questions.length === 0) {
-                throw new Error("Invalid format for generated questions. The AI could not parse the user's request into a valid quiz.");
-            }
-
-            const questions: QuizQuestion[] = parsed.questions;
-            questions.forEach(q => {
-                q.options = shuffleArray(q.options);
-            });
-
-            return questions;
-
-        } catch (error) {
-            lastError = error;
-            console.warn(`Attempt ${attempt + 1} to generate from custom prompt failed. Retrying...`);
-            if (attempt < MAX_RETRIES - 1) {
-                await new Promise(resolve => setTimeout(resolve, INITIAL_BACKOFF_MS * Math.pow(2, attempt)));
-            }
-        }
+    const fullPrompt = `You are an expert English teacher. Output strictly JSON. User request: ${prompt}`;
+    try {
+        const response = await ai.models.generateContent({
+            model: 'gemini-3-flash-preview',
+            contents: fullPrompt,
+            config: { responseMimeType: "application/json", responseSchema: quizSchema, temperature: 0.5 },
+        });
+        const parsed = JSON.parse(response.text.trim());
+        const questions: QuizQuestion[] = parsed.questions;
+        questions.forEach(q => q.options = shuffleArray(q.options));
+        return questions;
+    } catch (error) {
+        console.error("Quiz gen error:", error);
+        throw error;
     }
-    
-    console.error("Error generating questions from custom prompt after multiple retries:", lastError);
-    throw new Error("Could not generate quiz questions from the provided request. Please check your prompt and try again.");
 }
-
 
 export async function generateQuizFromText(context: string): Promise<QuizQuestion[]> {
-    const prompt = `You are an expert English teacher tasked with formatting a quiz.
-    The user will provide a block of text containing one or more multiple-choice questions. Your job is to parse this text and convert EACH question into a specific JSON object format.
-    The number of questions in your final JSON output MUST EXACTLY MATCH the number of questions found in the provided text. Do not invent new questions or skip any.
-
-    Provided Text:
-    """
-    ${context}
-    """
-
-    For EACH question you identify in the text, you MUST follow these strict rules:
-    1.  'sentence': Extract the question's sentence. If there's a blank like '______', preserve it.
-    2.  'options': Extract the multiple-choice options and format them into an array of 4 strings.
-    3.  'answer': Identify and extract the correct answer from the options.
-    4.  'translation': Provide a Vietnamese translation of the complete, correct English sentence (fill in the blank if necessary).
-    5.  'explanation': Provide a detailed explanation in Vietnamese explaining why the answer is correct, focusing on grammar or vocabulary. If the source text provides clues for an explanation, use them.
-    `;
-
-    let lastError: unknown = null;
-
-    for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
-        try {
-            const response = await ai.models.generateContent({
-                model: 'gemini-3-flash-preview',
-                contents: prompt,
-                config: {
-                    responseMimeType: "application/json",
-                    responseSchema: quizSchema,
-                    temperature: 0.2, // Lower temperature for more deterministic parsing
-                },
-            });
-            
-            const jsonText = response.text.trim();
-            const parsed = JSON.parse(jsonText);
-            
-            if (!parsed.questions || !Array.isArray(parsed.questions) || parsed.questions.length === 0) {
-                 throw new Error("Invalid format for generated questions from text. The AI could not parse the input.");
-            }
-
-            const questions: QuizQuestion[] = parsed.questions;
-            // Keep the user-defined order of questions, but shuffle the options within each question.
-            questions.forEach(q => {
-                q.options = shuffleArray(q.options);
-            });
-
-            return questions;
-
-        } catch (error) {
-            lastError = error;
-            console.warn(`Attempt ${attempt + 1} to generate from text failed. Retrying...`);
-            if (attempt < MAX_RETRIES - 1) {
-                await new Promise(resolve => setTimeout(resolve, INITIAL_BACKOFF_MS * Math.pow(2, attempt)));
-            }
-        }
+    const prompt = `Convert this text to quiz questions JSON: ${context}`;
+    try {
+        const response = await ai.models.generateContent({
+            model: 'gemini-3-flash-preview',
+            contents: prompt,
+            config: { responseMimeType: "application/json", responseSchema: quizSchema, temperature: 0.2 },
+        });
+        const parsed = JSON.parse(response.text.trim());
+        const questions: QuizQuestion[] = parsed.questions;
+        questions.forEach(q => q.options = shuffleArray(q.options));
+        return questions;
+    } catch (error) {
+        console.error("Quiz text gen error:", error);
+        throw error;
     }
-    
-    console.error("Error generating questions from text after multiple retries:", lastError);
-    throw new Error("Could not generate quiz questions from the provided text. Please check the format of your input text and try again.");
 }
-
 
 export async function generateVocabularyList(prompt: string): Promise<VocabularyWord[]> {
-    const fullPrompt = `You are an expert English teacher tasked with creating a vocabulary list based on a user's request.
-    Your output MUST be a JSON object that strictly adheres to the provided schema.
-    Do not add any extra text or explanations outside of the JSON structure.
-    
-    IMPORTANT RULES for 'example' field:
-    1. Create a simple English example sentence for the word.
-    2. The length MUST be between 7 and 12 words.
-    3. The sentence MUST contain the English word being learned.
-
-    IMPORTANT RULES for generating the 'image' field:
-    1. CRITICAL: Ignore the English word's general meaning if it is polysemous. Focus ENTIRELY on the provided Vietnamese translation (meaning) to determine the visual content.
-    2. English words often have multiple meanings. You MUST select the visual representation that matches the specific Vietnamese definition provided.
-    3. Create a detailed VISUAL description in English that corresponds EXACTLY to that Vietnamese meaning.
-    4. Construct the URL strictly in this format: 
-       "https://image.pollinations.ai/prompt/{visual_description}?width=800&height=600&nologo=true"
-    5. In {visual_description}:
-       - Use underscores (_) instead of spaces.
-       - Include keywords like "photorealistic", "educational", "highly_detailed", "isolated_on_white_background" to ensure clarity.
-       - If the word is abstract (e.g., "responsibility"), describe a concrete scene or metaphor representing it clearly.
-    
-    User's request:
-    """
-    ${prompt}
-    """
-    `;
-
-    let lastError: unknown = null;
-
-    for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
-        try {
-            const response = await ai.models.generateContent({
-                model: 'gemini-3-flash-preview',
-                contents: fullPrompt,
-                config: {
-                    responseMimeType: "application/json",
-                    responseSchema: vocabularyListSchema,
-                    temperature: 0.3,
-                },
-            });
-            
-            const jsonText = response.text.trim();
-            const parsed = JSON.parse(jsonText);
-            
-            if (!parsed.vocabulary || !Array.isArray(parsed.vocabulary)) {
-                throw new Error("Invalid format for generated vocabulary. The AI could not parse the user's request into a valid list.");
-            }
-            
-            return parsed.vocabulary;
-
-        } catch (error) {
-            lastError = error;
-            console.warn(`Attempt ${attempt + 1} to generate vocabulary list failed. Retrying...`);
-            if (attempt < MAX_RETRIES - 1) {
-                await new Promise(resolve => setTimeout(resolve, INITIAL_BACKOFF_MS * Math.pow(2, attempt)));
-            }
-        }
+    const fullPrompt = `Create a vocabulary list JSON. Instruction: ${prompt}`;
+    try {
+        const response = await ai.models.generateContent({
+            model: 'gemini-3-flash-preview',
+            contents: fullPrompt,
+            config: { responseMimeType: "application/json", responseSchema: vocabularyListSchema, temperature: 0.3 },
+        });
+        return JSON.parse(response.text.trim()).vocabulary;
+    } catch (error) {
+        console.error("Vocab list gen error:", error);
+        throw error;
     }
-    
-    console.error("Error generating vocabulary list after multiple retries:", lastError);
-    throw new Error("Could not generate vocabulary list from the provided request. Please check your vocabulary and prompt, then try again.");
 }
 
+/**
+ * Tạo mô tả hình ảnh chất lượng cao để Pollinations AI vẽ chuẩn hơn
+ */
+export async function generateImagePrompt(word: string, translation: string): Promise<string> {
+    const prompt = `You are a professional visual prompt engineer for educational materials. 
+    Create a highly detailed, clear, and educational visual description for the English word: "${word}" (meaning in Vietnamese: "${translation}").
+    The description should focus on illustrating the Vietnamese meaning exactly.
+    The image must be photorealistic, centered, on a clean white background, with no text.
+    Return ONLY the final Pollinations AI URL in this format: 
+    https://image.pollinations.ai/prompt/{detailed_visual_description}?width=800&height=600&nologo=true
+    In {detailed_visual_description}, replace spaces with underscores.`;
+
+    try {
+        const response = await ai.models.generateContent({
+            model: 'gemini-3-flash-preview',
+            contents: prompt,
+            config: { temperature: 0.4 },
+        });
+        const text = response.text.trim();
+        return text.startsWith('http') ? text : `https://image.pollinations.ai/prompt/${word.replace(/\s+/g, '_')}_illustrating_${translation.replace(/\s+/g, '_')}?width=800&height=600&nologo=true`;
+    } catch (error) {
+        console.error("Image prompt gen error:", error);
+        return `https://image.pollinations.ai/prompt/${word.replace(/\s+/g, '_')}_educational_illustration?width=800&height=600&nologo=true`;
+    }
+}
 
 export async function generateSpeech(text: string): Promise<string> {
-    let lastError: unknown = null;
-
-    // Apply specific pronunciation corrections
     const textToSpeak = PRONUNCIATION_OVERRIDES[text.toLowerCase()] || text;
-
-    for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
-        try {
-            const response = await ai.models.generateContent({
-                model: "gemini-2.5-flash-preview-tts",
-                contents: [{ parts: [{ text: textToSpeak }] }],
-                config: {
-                    responseModalities: [Modality.AUDIO],
-                    speechConfig: {
-                        voiceConfig: {
-                            // Kore is a standard US English voice. Other options: Puck, Charon, Zephyr, Fenrir for different accents.
-                            prebuiltVoiceConfig: { voiceName: 'Kore' },
-                        },
-                    },
-                },
-            });
-
-            const base64Audio = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
-            
-            if (!base64Audio) {
-                throw new Error("No audio data returned from API.");
-            }
-            return base64Audio;
-
-        } catch (error) {
-            lastError = error;
-            console.warn(`Attempt ${attempt + 1} to generate speech for "${text}" failed. Retrying...`);
-            if (attempt < MAX_RETRIES - 1) {
-                const apiError = error as any;
-                // Directly check the nested error object properties, which is more reliable than stringifying.
-                if (apiError?.error?.code === 429 || apiError?.error?.status === 'RESOURCE_EXHAUSTED') {
-                    break; // Exit retry loop immediately
-                }
-                await new Promise(resolve => setTimeout(resolve, INITIAL_BACKOFF_MS * Math.pow(2, attempt)));
-            }
-        }
+    const descriptivePrompt = `Please pronounce the following English word clearly and naturally: "${textToSpeak}"`;
+    try {
+        const response = await ai.models.generateContent({
+            model: "gemini-2.5-flash-preview-tts",
+            contents: [{ parts: [{ text: descriptivePrompt }] }],
+            config: {
+                responseModalities: [Modality.AUDIO],
+                speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Kore' } } },
+            },
+        });
+        return response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data || '';
+    } catch (error) {
+        console.error("TTS error:", error);
+        throw error;
     }
-    
-    console.error(`Error generating speech for "${text}" after multiple retries:`, lastError);
-    // Re-throw the original error to preserve its properties for inspection in the UI component.
-    if (lastError) {
-        throw lastError;
-    }
-    throw new Error(`Could not generate speech for "${text}". Please try again.`);
 }

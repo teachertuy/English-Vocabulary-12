@@ -1,5 +1,7 @@
 
 
+
+
 import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import { GameResult, StudentProgress, QuizQuestion, UnitsState, VocabularyWord } from '../types';
 import { 
@@ -697,8 +699,7 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                      const numA = parseFloat(aValue as string);
                      const numB = parseFloat(bValue as string);
                      if (numA < numB) comparison = -1;
-                     // FIX: Corrected typo where bValue was used instead of numB in sorting comparison.
-                     if (numA > numB) comparison = 1;
+                     if (numA > bValue) comparison = 1;
                 } else if (typeof aValue === 'string' && typeof bValue === 'string') {
                     comparison = aValue.localeCompare(bValue);
                 }
@@ -802,8 +803,7 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                      const numA = parseFloat(aValue as string);
                      const numB = parseFloat(bValue as string);
                      if (numA < numB) comparison = -1;
-                     // FIX: Corrected typo where bValue was used instead of numB in sorting comparison for units.
-                     if (numA > numB) comparison = 1;
+                     if (numA > bValue) comparison = 1;
                 } else if (typeof aValue === 'string' && typeof bValue === 'string') {
                     comparison = aValue.localeCompare(bValue);
                 }
@@ -1200,8 +1200,7 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                      const numA = parseFloat(aValue as string);
                      const numB = parseFloat(bValue as string);
                      if (numA < numB) comparison = -1;
-                     // FIX: Corrected typo where bValue was used instead of numB in sorting comparison for topics.
-                     if (numA > numB) comparison = 1;
+                     if (numA > bValue) comparison = 1;
                 } else if (typeof aValue === 'string' && typeof bValue === 'string') {
                     comparison = aValue.localeCompare(bValue);
                 }
@@ -1673,76 +1672,160 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                                                 className="bg-red-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-red-700 transition text-sm shadow-md disabled:bg-gray-500 disabled:cursor-not-allowed flex items-center gap-2"
                                             >
                                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                                    <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 00-1 1v1h13.59l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                                                    <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
                                                 </svg>
-                                                Xóa đề hiện tại
+                                                {isDeletingQuiz ? 'Đang xóa...' : 'Xóa đề'}
                                             </button>
                                         </div>
                                     </div>
                                 </div>
 
-                                {/* Results Table Section */}
-                                <div className="mt-8 bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
-                                     <div className="p-4 border-b border-gray-200 bg-gray-50 flex flex-col md:flex-row justify-between items-center gap-4">
-                                        <h3 className="text-lg font-bold text-gray-800">Kết quả Tổng hợp (Tất cả hoạt động)</h3>
-                                        <div className="flex gap-2">
-                                            <select value={selectedClass} onChange={e => setSelectedClass(e.target.value)} className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
-                                                {uniqueClasses.map(c => <option key={c} value={c}>{c === 'all' ? 'Tất cả các lớp' : c}</option>)}
-                                            </select>
-                                            <button onClick={handleClearRequest} className="bg-red-100 text-red-700 hover:bg-red-200 px-3 py-2 rounded-md text-sm font-bold transition flex items-center gap-1" disabled={isClearing}>
-                                                {isClearing ? 'Đang xoá...' : 'Xóa tất cả'}
-                                            </button>
+                                {onlineStudents.length > 0 && (
+                                        <div className="mb-6 p-4 bg-gray-50 rounded-lg shadow-md border border-gray-200">
+                                        <h3 className="text-lg font-bold text-slate-700 mb-3">Học sinh đang làm bài:</h3>
+                                        <div className="flex flex-wrap gap-2">
+                                            {onlineStudents.map(student => {
+                                                const playerKey = getPlayerKey(student.name, student.class);
+                                                const cheatCount = cheatCounts[playerKey] || 0;
+                                                const progress = studentProgress[playerKey];
+                                                const correctCount = progress?.correct ?? 0;
+                                                const incorrectCount = progress?.incorrect ?? 0;
+                                                const isFlashing = flashingStudents.has(student.name);
+                                                
+                                                const baseClass = "flex items-center text-sm font-medium pl-3 pr-1 py-1 rounded-full transition-colors duration-300 border";
+                                                let statusClass = " bg-teal-100 text-teal-800 border-teal-300"; // Default
+                                                if (isFlashing) {
+                                                    statusClass = " flashing-red text-white font-bold border-red-700";
+                                                }
+
+                                                return (
+                                                    <div key={playerKey} className={`${baseClass}${statusClass}`}>
+                                                        <span className="font-bold">{student.name} ({student.class})</span>
+                                                        <span className="ml-2 flex items-center space-x-1.5 bg-white rounded-full px-2 py-0.5 border border-gray-300">
+                                                            <span title="Correct" className="flex items-center text-green-600 font-bold">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                                                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                                                </svg>
+                                                                <span className="w-5 text-center">{correctCount}</span>
+                                                            </span>
+                                                            <span title="Incorrect" className="flex items-center text-red-600 font-bold">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                                                    <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                                                                    </svg>
+                                                                <span className="w-5 text-center">{incorrectCount}</span>
+                                                            </span>
+                                                        </span>
+                                                        {cheatCount > 0 && (
+                                                            <span className="ml-2 font-extrabold bg-red-600 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center border-2 border-white">
+                                                                {cheatCount}
+                                                            </span>
+                                                        )}
+                                                        <button 
+                                                            onClick={() => handleKickPlayer(student)} 
+                                                            className="ml-2 w-5 h-5 flex items-center justify-center bg-red-100 text-red-600 rounded-full hover:bg-red-200 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed" 
+                                                            title={`Loại ${student.name}`}
+                                                            disabled={isClearing || !!deletingStudent || !!kickingStudent}>
+                                                            &times;
+                                                        </button>
+                                                    </div>
+                                                );
+                                            })}
                                         </div>
                                     </div>
+                                )}
+                                
+                                <div className="p-4 bg-white rounded-lg shadow-md border border-gray-200">
+                                        <div className="flex flex-col md:flex-row gap-4 mb-4 items-center justify-between">
+                                        <select value={selectedClass} onChange={e => setSelectedClass(e.target.value)} className="w-full md:w-auto px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50 text-gray-800">
+                                            {uniqueClasses.map(c => <option key={c} value={c}>{c === 'all' ? 'Tất cả các lớp' : c}</option>)}
+                                        </select>
+                                        <div className="flex items-center gap-2">
+                                            <button
+                                                onClick={handleRefresh}
+                                                className="bg-green-600 text-white font-bold p-2 rounded-lg hover:bg-green-700 transition shadow-sm disabled:bg-gray-500"
+                                                title="Tải lại dữ liệu"
+                                                disabled={isRefreshing}
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 ${isRefreshing ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h5M20 20v-5h-5M4 4l1.5 1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 003.5 12" />
+                                                </svg>
+                                            </button>
+                                            <button 
+                                                onClick={handleClearRequest} 
+                                                className="bg-red-600 text-white font-bold p-2 rounded-lg hover:bg-red-700 transition shadow-sm disabled:bg-gray-500 disabled:cursor-wait" 
+                                                title="Xoá tất cả kết quả"
+                                                disabled={isClearing || !!deletingStudent}>
+                                            <svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 ${isClearing ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    </div>
+                                    <div className="bg-white rounded-lg shadow-lg overflow-hidden border-2 border-gray-200">
                                     <div className="overflow-x-auto">
-                                        <table className="w-full text-sm text-left text-gray-500">
-                                            <thead className="text-xs text-gray-700 uppercase bg-gray-100">
-                                                <tr>
-                                                    {headers.map(({ key, label }) => (
-                                                        <th key={key} scope="col" className="px-6 py-3 cursor-pointer hover:bg-gray-200" onClick={() => requestSort(key)}>
-                                                            {label} {getSortIndicator(key)}
-                                                        </th>
-                                                    ))}
-                                                    <th scope="col" className="px-6 py-3 text-center">Chi tiết</th>
-                                                    <th scope="col" className="px-6 py-3 text-center">Xóa</th>
-                                                    <th scope="col" className="px-6 py-3 text-center">Kick</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {sortedResults.map((result, index) => (
-                                                    <tr key={index} className="bg-white border-b hover:bg-gray-50">
-                                                        <td className={`px-6 py-4 font-bold ${getColorForName(result.playerName)}`}>{result.playerName}</td>
-                                                        <td className="px-6 py-4 font-bold text-gray-600">{result.playerClass}</td>
-                                                        <td className="px-6 py-4 font-bold text-blue-600">{result.score}</td>
-                                                        <td className={`px-6 py-4 font-bold ${result.cheatAttempts && result.cheatAttempts > 0 ? 'text-red-600' : 'text-gray-400'}`}>{result.cheatAttempts || 0}</td>
-                                                        <td className="px-6 py-4 text-green-600">{result.correct}</td>
-                                                        <td className="px-6 py-4 text-red-600">{result.incorrect}</td>
-                                                        <td className="px-6 py-4">{formatTime(result.timeTakenSeconds)}</td>
-                                                        <td className="px-6 py-4 text-gray-400 text-xs">{result.timestamp ? new Date(result.timestamp).toLocaleTimeString() : ''}</td>
-                                                        <td className="px-6 py-4 text-center">
-                                                            <button onClick={() => setSelectedResult(result)} className="text-blue-600 hover:text-blue-900 font-bold">Xem</button>
-                                                        </td>
-                                                        <td className="px-6 py-4 text-center">
-                                                            <button onClick={() => handleDeleteRequest(result)} className="text-red-600 hover:text-red-900" disabled={!!deletingStudent}>
-                                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" /></svg>
-                                                            </button>
-                                                        </td>
-                                                        <td className="px-6 py-4 text-center">
-                                                            {onlineStudents.some(s => getPlayerKey(s.name, s.class) === getPlayerKey(result.playerName, result.playerClass)) && (
-                                                                <button onClick={() => handleKickPlayer({ name: result.playerName, class: result.playerClass })} className="text-orange-600 hover:text-orange-900 font-bold text-xs border border-orange-200 px-2 py-1 rounded bg-orange-50 hover:bg-orange-100" disabled={!!kickingStudent}>
-                                                                    KICK
-                                                                </button>
-                                                            )}
-                                                        </td>
-                                                    </tr>
+                                    <table className="w-full text-sm text-left text-gray-800">
+                                        <thead className="text-xs font-bold text-gray-700 uppercase bg-gray-100">
+                                            <tr className="border-b-4 border-gray-300">
+                                                <th scope="col" className="px-4 py-3 border-r-2 border-gray-300">STT</th>
+                                                 {headers.map(({ key, label }) => (
+                                                    <th key={key} scope="col" className="px-6 py-3 cursor-pointer hover:bg-gray-200/50 border-r-2 border-gray-300" onClick={() => requestSort(key)}>
+                                                        {label} {getSortIndicator(key)}
+                                                    </th>
                                                 ))}
-                                                {sortedResults.length === 0 && (
-                                                    <tr>
-                                                        <td colSpan={11} className="px-6 py-4 text-center text-gray-500">Chưa có kết quả nào.</td>
-                                                    </tr>
-                                                )}
-                                            </tbody>
-                                        </table>
+                                                <th scope="col" className="px-6 py-3 text-center">Hành động</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {sortedResults.map((result, index) => {
+                                                const playerKey = getPlayerKey(result.playerName, result.playerClass);
+                                                const isOnline = onlineStudents.some(s => getPlayerKey(s.name, s.class) === playerKey);
+                                                return (
+                                                    <tr key={playerKey} className={`bg-white hover:bg-gray-50 ${rowBorderColors[index % rowBorderColors.length]}`}>
+                                                    <td className="px-4 py-4 font-black text-blue-600 text-center border-x-2 border-gray-200">{index + 1}</td>
+                                                    <td className={`px-6 py-4 font-bold ${getColorForName(result.playerName)} whitespace-nowrap border-r-2 border-gray-200`}>
+                                                        <div className="flex items-center gap-2">
+                                                            <span 
+                                                                className={`w-3 h-3 rounded-full ${isOnline ? 'bg-green-500 animate-pulse' : 'bg-gray-400'}`} 
+                                                                title={isOnline ? 'Online' : 'Offline'}>
+                                                            </span>
+                                                            <span>{result.playerName}</span>
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-6 py-4 font-bold text-purple-600 border-r-2 border-gray-200">{result.playerClass}</td>
+                                                    <td className="px-6 py-4 font-extrabold text-red-600 text-lg border-r-2 border-gray-200">{result.score}</td>
+                                                    <td className="px-6 py-4 font-bold text-center text-red-600 border-r-2 border-gray-200">{result.cheatAttempts || 0}</td>
+                                                    <td className="px-6 py-4 font-bold text-green-600 border-r-2 border-gray-200">{result.correct}</td>
+                                                    <td className="px-6 py-4 font-bold text-red-700 border-r-2 border-gray-200">{result.incorrect}</td>
+                                                    <td className="px-6 py-4 font-bold text-orange-600 border-r-2 border-gray-200">{formatTime(result.timeTakenSeconds)}</td>
+                                                    <td className="px-6 py-4 font-bold text-slate-600 border-r-2 border-gray-200 whitespace-nowrap text-sm">
+                                                        {result.timestamp ? new Date(result.timestamp).toLocaleString('vi-VN') : ''}
+                                                    </td>
+                                                    <td className="px-6 py-4 text-center">
+                                                        <div className="flex items-center justify-center space-x-2">
+                                                            <button onClick={() => setSelectedResult(result)} className="p-1.5 bg-blue-100 text-blue-600 rounded-full hover:bg-blue-200" title="Xem chi tiết">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                                                    <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                                                                    <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.27 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
+                                                                </svg>
+                                                            </button>
+                                                            <button 
+                                                                onClick={() => handleDeleteRequest(result)} 
+                                                                className="p-1.5 bg-red-100 text-red-600 rounded-full hover:bg-red-200 disabled:bg-gray-200 disabled:cursor-wait"
+                                                                title={`Xóa kết quả của ${result.playerName}`}
+                                                                disabled={!!deletingStudent || isClearing}>
+                                                                <svg xmlns="http://www.w3.org/2000/svg" className={`h-4 w-4 ${deletingStudent === result.playerName ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                                </svg>
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                )
+                                            })}
+                                        </tbody>
+                                    </table>
+                                    </div>
+                                    {sortedResults.length === 0 && <p className="text-center p-4 text-gray-600">Không tìm thấy kết quả phù hợp.</p>}
                                     </div>
                                 </div>
                             </>
@@ -1751,110 +1834,117 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                 );
         }
     };
-
+    
     return (
-        <div className="min-h-screen bg-slate-50 font-sans text-slate-900 pb-10">
-            {/* Top Navigation Bar */}
-            <div className="bg-white border-b border-gray-200 sticky top-0 z-30 shadow-sm">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex justify-between h-16">
-                        <div className="flex items-center gap-4">
-                            <div className="flex-shrink-0 flex items-center">
-                                <span className="text-2xl font-black text-blue-600 tracking-tighter">TEACHER<span className="text-yellow-500">DASHBOARD</span></span>
-                            </div>
-                            <div className="hidden md:flex space-x-2 ml-8">
-                                <button onClick={() => setActiveTab('dashboard')} className={`px-3 py-2 rounded-md text-sm font-bold transition ${activeTab === 'dashboard' ? 'bg-blue-100 text-blue-700' : 'text-gray-600 hover:bg-gray-100'}`}>
-                                    Tổng Quan
-                                </button>
-                                <button onClick={() => setActiveTab('units_12')} className={`px-3 py-2 rounded-md text-sm font-bold transition ${activeTab === 'units_12' ? 'bg-green-100 text-green-700' : 'text-gray-600 hover:bg-gray-100'}`}>
-                                    Lớp 12 (Units)
-                                </button>
-                                <button onClick={() => setActiveTab('topics')} className={`px-3 py-2 rounded-md text-sm font-bold transition ${activeTab === 'topics' ? 'bg-purple-100 text-purple-700' : 'text-gray-600 hover:bg-gray-100'}`}>
-                                    Chủ Đề (Topics)
-                                </button>
-                            </div>
-                        </div>
-                        <div className="flex items-center gap-4">
-                             <div className="hidden md:block text-right">
-                                <p className="text-sm font-bold text-gray-800">Mã Lớp: <span className="text-red-600 bg-red-100 px-2 py-0.5 rounded font-mono">{classroomId}</span></p>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <button onClick={handleToggleGameStatus} className={`relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none ${isGameEnabled ? 'bg-green-500' : 'bg-gray-300'}`}>
-                                    <span className={`pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200 ${isGameEnabled ? 'translate-x-5' : 'translate-x-0'}`} />
-                                </button>
-                                <span className="text-xs font-semibold text-gray-500">{isGameEnabled ? 'Game ON' : 'Game OFF'}</span>
-                            </div>
-                            <button onClick={onGoHome} className="ml-4 bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-gray-900 transition shadow-md">
-                                Thoát
-                            </button>
-                        </div>
+        <div className="w-full bg-sky-100 min-h-screen">
+            {notification && (
+                <div className={`fixed top-5 right-5 shadow-lg rounded-lg p-4 text-center z-50 transition-transform transform ${notification.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                    <p className="font-bold">{notification.message}</p>
+                </div>
+            )}
+            
+            <header className="flex justify-between items-center p-4 bg-white shadow-md">
+                <div>
+                    <h1 className="text-3xl font-extrabold text-slate-800 tracking-wider">FOR TEACHERTUY</h1>
+                    <div className="flex mt-1">
+                        <div className="h-1 w-24 bg-red-500 rounded-full"></div>
+                        <div className="h-1 w-12 bg-blue-500 ml-1 rounded-full"></div>
                     </div>
+                </div>
+                <button 
+                    onClick={onGoHome} 
+                    className="bg-red-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-red-700 transition shadow-md"
+                >
+                    Logout
+                </button>
+            </header>
+            
+            <div className="p-6">
+                <div className="bg-white rounded-lg shadow-md p-3 mb-6 flex items-center">
+                    <span className="text-lg font-bold text-gray-700 mr-4">Trạng thái phòng:</span>
+                    <label className="flex items-center cursor-pointer">
+                        <div className="relative">
+                            <input type="checkbox" className="sr-only" checked={isGameEnabled} onChange={handleToggleGameStatus} />
+                            <div className="block w-14 h-8 rounded-full bg-gray-200"></div>
+                            <div className={`dot absolute left-1 top-1 w-6 h-6 rounded-full shadow-lg transition-transform ${isGameEnabled ? 'transform translate-x-6 bg-green-500' : 'bg-gray-400'}`}></div>
+                        </div>
+                        <span className={`ml-3 font-bold text-lg ${isGameEnabled ? 'text-green-600' : 'text-gray-500'}`}>
+                            {isGameEnabled ? 'MỞ' : 'ĐÓNG'}
+                        </span>
+                    </label>
+                </div>
+                
+                <div className="mb-6 flex items-center flex-wrap gap-4">
+                    <div className={activeTab === 'dashboard' ? 'p-1 bg-white rounded-xl shadow-md' : ''}>
+                        <button
+                            onClick={() => { setViewingUnit(null); setViewingTopic(null); setActiveTab('dashboard'); }}
+                            className="px-6 py-3 text-base font-bold text-white rounded-lg transition-colors bg-green-500 hover:bg-green-600"
+                        >
+                            Bảng điều khiển
+                        </button>
+                    </div>
+                    <div className={activeTab === 'units_12' ? 'p-1 bg-white rounded-xl shadow-md' : ''}>
+                        <button
+                            onClick={() => { setViewingUnit(null); setViewingTopic(null); setActiveTab('units_12'); }}
+                            className="px-6 py-3 text-base font-bold text-white rounded-lg transition-colors bg-red-600 hover:bg-red-700"
+                        >
+                            Quản lý UNITs _ English 12
+                        </button>
+                    </div>
+                    <div className={activeTab === 'topics' ? 'p-1 bg-white rounded-xl shadow-md' : ''}>
+                        <button
+                            onClick={() => { setViewingUnit(null); setViewingTopic(null); setActiveTab('topics'); }}
+                            className="px-6 py-3 text-base font-bold text-white rounded-lg transition-colors bg-blue-600 hover:bg-blue-700"
+                        >
+                            Quản lý TOPICs
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    {renderContent()}
                 </div>
             </div>
 
-            {/* Mobile Tabs */}
-            <div className="md:hidden bg-white border-b border-gray-200 p-2 flex justify-around">
-                <button onClick={() => setActiveTab('dashboard')} className={`flex-1 py-2 text-center text-xs font-bold rounded ${activeTab === 'dashboard' ? 'bg-blue-100 text-blue-700' : 'text-gray-600'}`}>Tổng Quan</button>
-                <button onClick={() => setActiveTab('units_12')} className={`flex-1 py-2 text-center text-xs font-bold rounded ${activeTab === 'units_12' ? 'bg-green-100 text-green-700' : 'text-gray-600'}`}>Units 12</button>
-                <button onClick={() => setActiveTab('topics')} className={`flex-1 py-2 text-center text-xs font-bold rounded ${activeTab === 'topics' ? 'bg-purple-100 text-purple-700' : 'text-gray-600'}`}>Topics</button>
-            </div>
-
-            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                 {/* Flashing Cheat Alert */}
-                 {flashingStudents.size > 0 && (
-                    <div className="mb-6 bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded shadow-md animate-pulse">
-                        <p className="font-bold">Cảnh báo gian lận:</p>
-                        <p>Học sinh {Array.from(flashingStudents).join(', ')} vừa rời khỏi màn hình!</p>
-                    </div>
-                )}
-                
-                {renderContent()}
-            </main>
-            
-            {/* Modals */}
-            {selectedResult && <ResultDetailModal result={selectedResult} onClose={() => setSelectedResult(null)} />}
-            <TextToQuizModal 
+             {selectedResult && <ResultDetailModal result={selectedResult} onClose={() => setSelectedResult(null)} />}
+             <TextToQuizModal 
                 show={isTextQuizModalOpen} 
                 onClose={() => setIsTextQuizModalOpen(false)} 
-                onSubmit={handleGenerateFromText} 
-                isGenerating={isGeneratingFromText} 
+                onSubmit={handleGenerateFromText}
+                isGenerating={isGeneratingFromText}
             />
-            {quizForEditing && (
+             <AIQuizGeneratorModal
+                show={isAiQuizModalOpen}
+                onClose={() => setIsAiQuizModalOpen(false)}
+                onSubmit={handleGenerateFromAiPrompt}
+                isGenerating={isGeneratingNewQuiz}
+            />
+             {quizForEditing && (
                 <EditQuizModal 
                     questions={quizForEditing} 
                     onClose={() => setQuizForEditing(null)} 
                     onSave={handleSaveEditedQuiz} 
                 />
             )}
-            <AIQuizGeneratorModal 
-                show={isAiQuizModalOpen} 
-                onClose={() => setIsAiQuizModalOpen(false)} 
-                onSubmit={handleGenerateFromAiPrompt} 
-                isGenerating={isGeneratingNewQuiz} 
-            />
-            <ConfirmationModal 
-                show={isDeleteQuizConfirmOpen} 
-                title="Xác nhận xóa đề" 
-                message="Bạn có chắc chắn muốn xóa đề thi hiện tại? Hành động này không thể hoàn tác."
-                onConfirm={handleConfirmDeleteQuiz} 
-                onCancel={() => setIsDeleteQuizConfirmOpen(false)} 
-                isConfirming={isDeletingQuiz}
-                confirmText="Xóa đề"
-            />
             {isEditVocabModalOpen && (
-                <EditVocabularyModal 
-                    vocabulary={vocabForEditing} 
-                    onClose={() => setIsEditVocabModalOpen(false)} 
-                    onSave={handleSaveVocabulary} 
+                <EditVocabularyModal
+                    vocabulary={vocabForEditing}
+                    onClose={() => setIsEditVocabModalOpen(false)}
+                    onSave={handleSaveVocabulary}
                 />
             )}
-            
-            {/* Notification Toast */}
-            {notification && (
-                <div className={`fixed bottom-5 right-5 px-6 py-3 rounded-lg shadow-xl text-white font-bold z-50 animate-bounce ${notification.type === 'success' ? 'bg-green-600' : 'bg-red-600'}`}>
-                    {notification.message}
-                </div>
-            )}
+            <ConfirmationModal
+                show={isDeleteQuizConfirmOpen}
+                title="Xác nhận Xóa Đề thi"
+                message={<>
+                    <p>Bạn có chắc chắn muốn xóa vĩnh viễn đề thi chung hiện tại?</p>
+                    <p className="font-bold text-red-600 mt-2">Hành động này không thể hoàn tác.</p>
+                </>}
+                onConfirm={handleConfirmDeleteQuiz}
+                onCancel={() => setIsDeleteQuizConfirmOpen(false)}
+                confirmText="Xóa đề thi"
+                isConfirming={isDeletingQuiz}
+            />
         </div>
     );
 };
