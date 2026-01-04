@@ -2,8 +2,6 @@
 import { GoogleGenAI, Type, Modality } from "@google/genai";
 import { QuizQuestion, VocabularyWord } from "../types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-
 // This version number should be manually updated whenever the prompt or vocabulary is significantly changed.
 export const QUIZ_VERSION = '3.1';
 
@@ -66,10 +64,8 @@ function shuffleArray<T>(array: T[]): T[] {
     return array;
 }
 
-const MAX_RETRIES = 3;
-const INITIAL_BACKOFF_MS = 1000;
-
 export async function generateQuizFromCustomPrompt(prompt: string): Promise<QuizQuestion[]> {
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const fullPrompt = `You are an expert English teacher. Output strictly JSON. User request: ${prompt}`;
     try {
         const response = await ai.models.generateContent({
@@ -88,6 +84,7 @@ export async function generateQuizFromCustomPrompt(prompt: string): Promise<Quiz
 }
 
 export async function generateQuizFromText(context: string): Promise<QuizQuestion[]> {
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const prompt = `Convert this text to quiz questions JSON: ${context}`;
     try {
         const response = await ai.models.generateContent({
@@ -106,6 +103,7 @@ export async function generateQuizFromText(context: string): Promise<QuizQuestio
 }
 
 export async function generateVocabularyList(prompt: string): Promise<VocabularyWord[]> {
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const fullPrompt = `Create a vocabulary list JSON. Instruction: ${prompt}`;
     try {
         const response = await ai.models.generateContent({
@@ -124,6 +122,7 @@ export async function generateVocabularyList(prompt: string): Promise<Vocabulary
  * Tạo mô tả hình ảnh chất lượng cao để Pollinations AI vẽ chuẩn hơn
  */
 export async function generateImagePrompt(word: string, translation: string): Promise<string> {
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const prompt = `You are a professional visual prompt engineer for educational materials. 
     Create a highly detailed, clear, and educational visual description for the English word: "${word}" (meaning in Vietnamese: "${translation}").
     The description should focus on illustrating the Vietnamese meaning exactly.
@@ -147,6 +146,7 @@ export async function generateImagePrompt(word: string, translation: string): Pr
 }
 
 export async function generateSpeech(text: string): Promise<string> {
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const textToSpeak = PRONUNCIATION_OVERRIDES[text.toLowerCase()] || text;
     const descriptivePrompt = `Please pronounce the following English word clearly and naturally: "${textToSpeak}"`;
     try {
