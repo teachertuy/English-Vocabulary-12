@@ -146,8 +146,8 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
                 </svg>
             </div>
 
-            {/* Pointing Finger - Increased negative margin from -mt-52 to -mt-64 to pull it almost touching the title */}
-            <div className="flex justify-center -mt-64 mb-2 relative z-20">
+            {/* Pointing Finger - Increased negative margin from -mt-64 to -mt-80 to pull it even closer to touching the title */}
+            <div className="flex justify-center -mt-80 mb-2 relative z-20">
                  <div className="text-5xl pointing-finger-down filter drop-shadow-xl transform hover:scale-110 transition-transform cursor-default">
                     👇
                 </div>
