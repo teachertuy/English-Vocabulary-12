@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { PlayerData, WelcomeScreenConfig } from '../types';
 import { getGameStatus, listenToWelcomeConfig } from '../services/firebaseService';
 
@@ -85,6 +85,17 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
   };
   
   const isButtonDisabled = isCheckingStatus || isSubmitting || !isGameEnabled;
+
+  // Logic chia hàng cho tiêu đề: Ưu tiên xuống dòng thủ công từ giáo viên, 
+  // hoặc tự động chia nếu cỡ chữ quá lớn (>2.5rem) và văn bản dài.
+  const titleLines = useMemo(() => {
+    const rawLines = config.titleText.split('\n').filter(l => l.trim() !== '');
+    if (rawLines.length > 1) return rawLines.slice(0, 2);
+    
+    // Nếu chỉ có 1 dòng nhưng cỡ chữ quá lớn, ta có thể thử "auto-split" 
+    // Tuy nhiên theo yêu cầu linh hoạt, giáo viên nên chủ động nhấn Enter trong modal sẽ chuẩn nhất.
+    return [config.titleText];
+  }, [config.titleText, config.titleFontSize]);
   
   return (
     <div className="flex flex-col items-center justify-center p-4 text-center min-h-[600px] blueprint-bg relative overflow-hidden">
@@ -105,20 +116,33 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
        </button>
       
       <div className="w-full max-w-md mt-20 space-y-4 z-10">
-            {/* Curved Title - Controlled by Config */}
-            <div className="w-full h-24 mb-0 relative">
-                 <svg viewBox="0 0 500 100" className="w-full h-full overflow-visible">
-                    <path id="curve" d="M 50, 90 Q 250, 45 450, 90" stroke="transparent" fill="transparent"/>
+            {/* Curved Title - Controlled by Config, supports Multi-line */}
+            <div className={`w-full transition-all duration-300 ${titleLines.length > 1 ? 'h-40' : 'h-24'} mb-0 relative`}>
+                 <svg viewBox={titleLines.length > 1 ? "0 0 500 160" : "0 0 500 100"} className="w-full h-full overflow-visible">
+                    {/* Hàng 1 */}
+                    <path id="curve1" d={titleLines.length > 1 ? "M 50, 75 Q 250, 30 450, 75" : "M 50, 90 Q 250, 45 450, 90"} stroke="transparent" fill="transparent"/>
                     <text width="500" style={{ fill: config.titleColor, filter: 'drop-shadow(2px 2px 0px rgba(0,0,0,0.3))', fontSize: `${config.titleFontSize}rem` }} className="font-black tracking-wider uppercase">
-                        <textPath href="#curve" startOffset="50%" textAnchor="middle">
-                            {config.titleText}
+                        <textPath href="#curve1" startOffset="50%" textAnchor="middle">
+                            {titleLines[0]}
                         </textPath>
                     </text>
+                    
+                    {/* Hàng 2 (nếu có) */}
+                    {titleLines.length > 1 && (
+                        <>
+                            <path id="curve2" d="M 50, 125 Q 250, 80 450, 125" stroke="transparent" fill="transparent"/>
+                            <text width="500" style={{ fill: config.titleColor, filter: 'drop-shadow(2px 2px 0px rgba(0,0,0,0.3))', fontSize: `${config.titleFontSize * 0.9}rem` }} className="font-black tracking-wider uppercase">
+                                <textPath href="#curve2" startOffset="50%" textAnchor="middle">
+                                    {titleLines[1]}
+                                </textPath>
+                            </text>
+                        </>
+                    )}
                 </svg>
             </div>
 
             {/* Pointing Finger */}
-            <div className="flex justify-center -mt-8 mb-4">
+            <div className="flex justify-center -mt-6 mb-4">
                  <div className="text-5xl pointing-finger-down filter drop-shadow-xl transform hover:scale-110 transition-transform cursor-default">
                     👇
                 </div>

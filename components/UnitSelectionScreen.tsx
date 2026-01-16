@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { PlayerData, QuizQuestion, UnitsState, VocabularyWord } from '../types';
-import { listenToUnitsStatusByGrade, listenToTopicsStatus } from '../services/firebaseService';
+
+import React, { useState, useEffect, useMemo } from 'react';
+import { PlayerData, QuizQuestion, UnitsState, VocabularyWord, WelcomeScreenConfig } from '../types';
+import { listenToUnitsStatusByGrade, listenToTopicsStatus, listenToWelcomeConfig } from '../services/firebaseService';
 import ActivitySelectionModal from './ActivitySelectionModal';
 
 interface UnitSelectionScreenProps {
@@ -31,9 +32,21 @@ const unitColors = [
     'bg-[#16A085]', // Unit 10 - Dark Teal
 ];
 
+const DEFAULT_CONFIG: WelcomeScreenConfig = {
+    titleText: 'ENGLISH VOCABULARY 12',
+    titleFontSize: 2.2,
+    titleColor: '#facc15',
+    inputNameWidth: 100,
+    inputNameFontSize: 1.25,
+    inputNameColor: '#ffffff',
+    inputClassWidth: 10,
+    inputClassFontSize: 1.25,
+    inputClassColor: '#facc15',
+};
 
 const UnitSelectionScreen: React.FC<UnitSelectionScreenProps> = ({ playerData, classroomId, grade, onStartQuiz, onLearnVocabulary, onStartSpellingGame, onStartMatchingGame, onBack, selectedUnit, onUnitSelect, onCloseActivityModal }) => {
     const [unitsStatus, setUnitsStatus] = useState<UnitsState>({});
+    const [config, setConfig] = useState<WelcomeScreenConfig>(DEFAULT_CONFIG);
 
     useEffect(() => {
         let unsubscribe: () => void;
@@ -46,7 +59,15 @@ const UnitSelectionScreen: React.FC<UnitSelectionScreenProps> = ({ playerData, c
                 setUnitsStatus(status || {});
             });
         }
-        return () => unsubscribe();
+        
+        const unsubConfig = listenToWelcomeConfig(classroomId, (newConfig) => {
+            if (newConfig) setConfig(newConfig);
+        });
+
+        return () => {
+            unsubscribe();
+            unsubConfig();
+        };
     }, [classroomId, grade]);
     
     const handleUnitSelect = (unitNumber: number) => {
@@ -60,12 +81,14 @@ const UnitSelectionScreen: React.FC<UnitSelectionScreenProps> = ({ playerData, c
     const itemCount = isTopics ? 60 : 10;
     const itemPrefix = isTopics ? 'topic_' : 'unit_';
     const itemLabel = isTopics ? 'Topic' : 'Unit';
-    const title = isTopics ? 'TOPIC-BASED VOCABULARY' : `ENGLISH VOCABULARY ${grade}`;
+    
+    // Nếu giáo viên có tùy chỉnh văn bản tiêu đề, ta ưu tiên sử dụng nó nhưng vẫn giữ hậu tố lớp học/chủ đề
+    const titleText = config.titleText || (isTopics ? 'TOPIC-BASED VOCABULARY' : `ENGLISH VOCABULARY ${grade}`);
     const subtitle = isTopics ? '(Từ vựng theo chủ đề)' : `(Từ vựng Tiếng Anh Lớp ${grade})`;
     
-    const titleClassName = isTopics
-        ? "text-[2.0rem] sm:text-[2.5rem] font-extrabold tracking-wider uppercase"
-        : "text-[2.2rem] sm:text-[2.8rem] font-extrabold tracking-wider uppercase";
+    const titleLines = useMemo(() => {
+        return titleText.split('\n').filter(l => l.trim() !== '').slice(0, 2);
+    }, [titleText]);
 
     const items = Array.from({ length: itemCount }, (_, i) => i + 1);
 
@@ -94,17 +117,34 @@ const UnitSelectionScreen: React.FC<UnitSelectionScreenProps> = ({ playerData, c
             </button>
 
             <div className="w-full max-w-5xl mx-auto">
-                 <div className="w-full h-36 mb-2">
-                    <svg viewBox="0 0 500 100" className="w-full h-full">
-                        <path id="curve" d="M 20, 65 Q 250, 10 480, 65" stroke="transparent" fill="transparent"/>
-                        <text width="500" style={{textShadow: '2px 2px 4px rgba(0,0,0,0.5)'}} className="text-yellow-300 fill-current">
-                            <textPath href="#curve" startOffset="50%" text-anchor="middle" className={titleClassName}>
-                                {title}
+                 <div className={`w-full transition-all duration-300 ${titleLines.length > 1 ? 'h-48' : 'h-36'} mb-2`}>
+                    <svg viewBox={titleLines.length > 1 ? "0 0 500 140" : "0 0 500 100"} className="w-full h-full overflow-visible">
+                        {/* Hàng 1 */}
+                        <path id="unit-curve1" d={titleLines.length > 1 ? "M 20, 60 Q 250, 5 480, 60" : "M 20, 65 Q 250, 10 480, 65"} stroke="transparent" fill="transparent"/>
+                        <text width="500" style={{fill: config.titleColor, textShadow: '2px 2px 4px rgba(0,0,0,0.5)', fontSize: `${config.titleFontSize}rem` }} className="font-extrabold tracking-wider uppercase">
+                            <textPath href="#unit-curve1" startOffset="50%" textAnchor="middle">
+                                {titleLines[0]}
                             </textPath>
                         </text>
-                        <text x="250" y="88" text-anchor="middle" className="fill-current text-white text-2xl font-bold tracking-normal" style={{textShadow: '1px 1px 2px rgba(0,0,0,0.5)'}}>
-                            {subtitle}
-                        </text>
+                        
+                        {/* Hàng 2 (nếu có) */}
+                        {titleLines.length > 1 ? (
+                             <>
+                                <path id="unit-curve2" d="M 20, 100 Q 250, 45 480, 100" stroke="transparent" fill="transparent"/>
+                                <text width="500" style={{fill: config.titleColor, textShadow: '2px 2px 4px rgba(0,0,0,0.5)', fontSize: `${config.titleFontSize * 0.9}rem` }} className="font-extrabold tracking-wider uppercase">
+                                    <textPath href="#unit-curve2" startOffset="50%" textAnchor="middle">
+                                        {titleLines[1]}
+                                    </textPath>
+                                </text>
+                                <text x="250" y="130" text-anchor="middle" className="fill-current text-white text-xl font-bold tracking-normal" style={{textShadow: '1px 1px 2px rgba(0,0,0,0.5)'}}>
+                                    {subtitle}
+                                </text>
+                             </>
+                        ) : (
+                            <text x="250" y="88" text-anchor="middle" className="fill-current text-white text-2xl font-bold tracking-normal" style={{textShadow: '1px 1px 2px rgba(0,0,0,0.5)'}}>
+                                {subtitle}
+                            </text>
+                        )}
                     </svg>
                 </div>
                 
