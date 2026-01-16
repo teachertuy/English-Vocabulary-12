@@ -119,11 +119,11 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
          </p>
        </button>
       
-      {/* Main Content Wrapper - Increased mt significantly to move everything down */}
+      {/* Main Content Wrapper */}
       <div className="w-full max-w-md mt-32 space-y-0 z-10 flex flex-col items-center">
             {/* Curved Title */}
-            <div className={`w-full transition-all duration-500 ${titleLines.length > 1 ? 'h-32' : 'h-20'} relative`}>
-                 <svg viewBox={titleLines.length > 1 ? "0 0 500 140" : "0 0 500 80"} className="w-full h-full overflow-visible">
+            <div className={`w-full transition-all duration-500 ${titleLines.length > 1 ? 'h-28' : 'h-20'} relative`}>
+                 <svg viewBox={titleLines.length > 1 ? "0 0 500 130" : "0 0 500 80"} className="w-full h-full overflow-visible">
                     {/* Hàng 1 */}
                     <path id="curve1" d={titleLines.length > 1 ? "M 50, 60 Q 250, 15 450, 60" : "M 50, 70 Q 250, 25 450, 70"} stroke="transparent" fill="transparent"/>
                     <text width="500" style={{ fill: config.titleColor, filter: 'drop-shadow(2px 2px 2px rgba(0,0,0,0.4))', fontSize: `${config.titleFontSize}rem` }} className="font-black tracking-wider uppercase">
@@ -135,7 +135,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
                     {/* Hàng 2 (Chỗ của số 12) */}
                     {titleLines.length > 1 && (
                         <>
-                            <path id="curve2" d="M 50, 115 Q 250, 70 450, 115" stroke="transparent" fill="transparent"/>
+                            <path id="curve2" d="M 50, 105 Q 250, 60 450, 105" stroke="transparent" fill="transparent"/>
                             <text width="500" style={{ fill: config.titleColor, filter: 'drop-shadow(2px 2px 2px rgba(0,0,0,0.4))', fontSize: `${config.titleFontSize * 0.85}rem` }} className="font-black tracking-wider uppercase opacity-90">
                                 <textPath href="#curve2" startOffset="50%" textAnchor="middle">
                                     {titleLines[1]}
@@ -146,8 +146,8 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
                 </svg>
             </div>
 
-            {/* Pointing Finger - Extreme negative margin to sit right against the text */}
-            <div className="flex justify-center -mt-16 mb-2 relative z-20">
+            {/* Pointing Finger - Increased negative margin from -mt-52 to -mt-64 to pull it almost touching the title */}
+            <div className="flex justify-center -mt-64 mb-2 relative z-20">
                  <div className="text-5xl pointing-finger-down filter drop-shadow-xl transform hover:scale-110 transition-transform cursor-default">
                     👇
                 </div>
