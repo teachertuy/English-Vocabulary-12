@@ -119,8 +119,8 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
          </p>
        </button>
       
-      {/* Main Content Wrapper - Remove negative margin to drop the title lower */}
-      <div className="w-full max-w-md mt-0 space-y-0 z-10 flex flex-col items-center">
+      {/* Main Content Wrapper - Increased mt to push the title down more */}
+      <div className="w-full max-w-md mt-10 space-y-0 z-10 flex flex-col items-center">
             {/* Curved Title */}
             <div className={`w-full transition-all duration-500 ${titleLines.length > 1 ? 'h-32' : 'h-20'} relative`}>
                  <svg viewBox={titleLines.length > 1 ? "0 0 500 140" : "0 0 500 80"} className="w-full h-full overflow-visible">
@@ -146,14 +146,14 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
                 </svg>
             </div>
 
-            {/* Pointing Finger - Pull up into the title area to be very close to the text */}
-            <div className="flex justify-center -mt-10 mb-2 relative z-20">
+            {/* Pointing Finger - Increased negative margin to pull it up even CLOSER to the title text */}
+            <div className="flex justify-center -mt-12 mb-2 relative z-20">
                  <div className="text-5xl pointing-finger-down filter drop-shadow-xl transform hover:scale-110 transition-transform cursor-default">
                     👇
                 </div>
             </div>
 
-            {/* Input Fields & Start Button Section - Compact Spacing */}
+            {/* Input Fields & Start Button Section */}
             <div className="-mt-1 space-y-3 w-full flex flex-col items-center">
                  <div className="relative group w-full flex justify-center" style={{ width: `${config.inputNameWidth}%` }}>
                     <input 
