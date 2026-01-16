@@ -102,7 +102,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
   }, [config.titleText, config.titleFontSize]);
   
   return (
-    <div className="flex flex-col items-center justify-center p-4 text-center min-h-[600px] blueprint-bg relative overflow-hidden">
+    <div className="flex flex-col items-center justify-center p-4 text-center min-h-[550px] blueprint-bg relative overflow-hidden">
        {/* Teacher Login / Avatar */}
        <button 
          onClick={onHostRequest} 
@@ -119,8 +119,8 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
          </p>
        </button>
       
-      {/* Main Content Wrapper */}
-      <div className="w-full max-w-md mt-32 space-y-0 z-10 flex flex-col items-center">
+      {/* Main Content Wrapper - Moved up from mt-24 to mt-12 */}
+      <div className="w-full max-w-md mt-12 space-y-0 z-10 flex flex-col items-center">
             {/* Curved Title */}
             <div className={`w-full transition-all duration-500 ${titleLines.length > 1 ? 'h-28' : 'h-20'} relative`}>
                  <svg viewBox={titleLines.length > 1 ? "0 0 500 130" : "0 0 500 80"} className="w-full h-full overflow-visible">
@@ -146,15 +146,15 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
                 </svg>
             </div>
 
-            {/* Pointing Finger - Increased negative margin from -mt-64 to -mt-80 to pull it even closer to touching the title */}
-            <div className="flex justify-center -mt-80 mb-2 relative z-20">
+            {/* Pointing Finger - Pulled up closer to title from -mt-80 to -mt-88 */}
+            <div className="flex justify-center -mt-88 mb-2 relative z-20">
                  <div className="text-5xl pointing-finger-down filter drop-shadow-xl transform hover:scale-110 transition-transform cursor-default">
                     👇
                 </div>
             </div>
 
-            {/* Input Fields & Start Button Section */}
-            <div className="-mt-1 space-y-3 w-full flex flex-col items-center">
+            {/* Input Fields & Start Button Section - Pulled up closer to finger from -mt-4 to -mt-12 */}
+            <div className="-mt-12 space-y-3 w-full flex flex-col items-center">
                  <div className="relative group w-full flex justify-center" style={{ width: `${config.inputNameWidth}%` }}>
                     <input 
                         type="text" 
@@ -190,8 +190,8 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
                  {error && <p className="text-red-100 font-bold bg-red-600/90 px-4 py-0.5 rounded-full inline-block shadow-lg animate-bounce text-[10px]">{error}</p>}
             </div>
 
-            {/* Start Button */}
-            <div className="flex justify-center pt-2 pb-6">
+            {/* Start Button - Removed pb-6 to shrink the bottom space */}
+            <div className="flex justify-center pt-2 pb-0">
                 <button 
                     onClick={handleStartClick} 
                     disabled={isButtonDisabled}
