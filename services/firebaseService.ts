@@ -2,7 +2,7 @@
 // ... existing imports
 import { initializeApp, FirebaseApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getDatabase, ref, set, get, onValue, remove, Unsubscribe, Database, onDisconnect, runTransaction, update, push, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-import { GameResult, PlayerData, QuizQuestion, StudentProgress, UnitsState, VocabularyWord } from "../types";
+import { GameResult, PlayerData, QuizQuestion, StudentProgress, UnitsState, VocabularyWord, WelcomeScreenConfig } from "../types";
 
 const firebaseConfig = {
     apiKey: "AIzaSyDL_Jg9VrJuV3sVyy_Gb5a4iLzy_QaTBGo",
@@ -327,4 +327,14 @@ export const checkAndSyncQuizVersion = async (classroomId: string, codeVersion: 
         await clearResults(classroomId);
         await set(versionRef, codeVersion);
     }
+};
+
+export const saveWelcomeConfig = async (classroomId: string, config: WelcomeScreenConfig): Promise<void> => {
+    const db = checkFirebase();
+    await set(ref(db, `classrooms/${classroomId}/welcomeConfig`), config);
+};
+
+export const listenToWelcomeConfig = (classroomId: string, callback: (config: WelcomeScreenConfig | null) => void): Unsubscribe => {
+    const db = checkFirebase();
+    return onValue(ref(db, `classrooms/${classroomId}/welcomeConfig`), (snapshot) => callback(snapshot.val()));
 };

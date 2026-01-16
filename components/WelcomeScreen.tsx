@@ -1,13 +1,25 @@
 
 import React, { useState, useEffect } from 'react';
-import { PlayerData } from '../types';
-import { getGameStatus } from '../services/firebaseService';
+import { PlayerData, WelcomeScreenConfig } from '../types';
+import { getGameStatus, listenToWelcomeConfig } from '../services/firebaseService';
 
 interface WelcomeScreenProps {
   onLogin: (player: PlayerData) => void;
   onHostRequest: () => void;
   classroomId: string;
 }
+
+const DEFAULT_CONFIG: WelcomeScreenConfig = {
+    titleText: 'ENGLISH VOCABULARY 12',
+    titleFontSize: 2.2,
+    titleColor: '#facc15',
+    inputNameWidth: 100,
+    inputNameFontSize: 1.25,
+    inputNameColor: '#ffffff',
+    inputClassWidth: 10,
+    inputClassFontSize: 1.25,
+    inputClassColor: '#facc15',
+};
 
 const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, classroomId }) => {
   const [playerName, setPlayerName] = useState('');
@@ -18,10 +30,11 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
   const [shakeName, setShakeName] = useState(false);
   const [shakeClass, setShakeClass] = useState(false);
   const [isGameEnabled, setIsGameEnabled] = useState(true);
+  const [config, setConfig] = useState<WelcomeScreenConfig>(DEFAULT_CONFIG);
 
   useEffect(() => {
     setIsCheckingStatus(true);
-    const unsubscribe = getGameStatus(classroomId, (isEnabled) => {
+    const unsubscribeStatus = getGameStatus(classroomId, (isEnabled) => {
       setIsGameEnabled(isEnabled);
       if (!isEnabled) {
         setError("Giáo viên đã tạm ngắt kết nối, vui lòng chờ!");
@@ -30,7 +43,17 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
       }
       setIsCheckingStatus(false);
     });
-    return () => unsubscribe();
+
+    const unsubscribeConfig = listenToWelcomeConfig(classroomId, (newConfig) => {
+        if (newConfig) {
+            setConfig(newConfig);
+        }
+    });
+
+    return () => {
+        unsubscribeStatus();
+        unsubscribeConfig();
+    };
   }, [classroomId]);
 
   const handleStartClick = () => {
@@ -82,19 +105,19 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
        </button>
       
       <div className="w-full max-w-md mt-20 space-y-4 z-10">
-            {/* Curved Title - Smaller and moved down closer to emoji */}
+            {/* Curved Title - Controlled by Config */}
             <div className="w-full h-24 mb-0 relative">
                  <svg viewBox="0 0 500 100" className="w-full h-full overflow-visible">
                     <path id="curve" d="M 50, 90 Q 250, 45 450, 90" stroke="transparent" fill="transparent"/>
-                    <text width="500" className="fill-current text-yellow-400" style={{ filter: 'drop-shadow(2px 2px 0px rgba(0,0,0,0.3))' }}>
-                        <textPath href="#curve" startOffset="50%" textAnchor="middle" className="text-[1.6rem] sm:text-[2.2rem] font-black tracking-wider uppercase">
-                            ENGLISH VOCABULARY 12
+                    <text width="500" style={{ fill: config.titleColor, filter: 'drop-shadow(2px 2px 0px rgba(0,0,0,0.3))', fontSize: `${config.titleFontSize}rem` }} className="font-black tracking-wider uppercase">
+                        <textPath href="#curve" startOffset="50%" textAnchor="middle">
+                            {config.titleText}
                         </textPath>
                     </text>
                 </svg>
             </div>
 
-            {/* Pointing Finger - Adjusted position relative to title */}
+            {/* Pointing Finger */}
             <div className="flex justify-center -mt-8 mb-4">
                  <div className="text-5xl pointing-finger-down filter drop-shadow-xl transform hover:scale-110 transition-transform cursor-default">
                     👇
@@ -102,17 +125,18 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
             </div>
 
             {/* Input Fields */}
-            <div className="space-y-4 w-full">
-                 <div className="relative group">
+            <div className="space-y-4 w-full flex flex-col items-center">
+                 <div className="relative group w-full flex justify-center" style={{ width: `${config.inputNameWidth}%` }}>
                     <input 
                         type="text" 
                         value={playerName} 
                         onChange={(e) => setPlayerName(e.target.value)} 
                         placeholder="Nhập họ và tên của bạn.." 
-                        className={`w-full px-6 py-4 rounded-3xl text-center text-xl font-black bg-gradient-to-r from-teal-400 to-cyan-500 border-2 border-white focus:outline-none focus:border-yellow-300 focus:ring-4 focus:ring-cyan-300/40 placeholder-teal-100 text-white shadow-[0_10px_20px_rgba(0,0,0,0.2)] transition-all transform group-hover:-translate-y-0.5 group-hover:shadow-[0_15px_25px_rgba(0,0,0,0.3)] ${shakeName ? 'animate-pulse border-red-500' : ''}`}
+                        style={{ fontSize: `${config.inputNameFontSize}rem`, color: config.inputNameColor }}
+                        className={`w-full px-6 py-4 rounded-3xl text-center font-black bg-gradient-to-r from-teal-400 to-cyan-500 border-2 border-white focus:outline-none focus:border-yellow-300 focus:ring-4 focus:ring-cyan-300/40 placeholder-teal-100 shadow-[0_10px_20px_rgba(0,0,0,0.2)] transition-all transform group-hover:-translate-y-0.5 group-hover:shadow-[0_15px_25px_rgba(0,0,0,0.3)] ${shakeName ? 'animate-pulse border-red-500' : ''}`}
                     />
                  </div>
-                 {/* Class Input - Ebony Black, Starry, Thin White Border, Yellow Text */}
+                 {/* Class Input */}
                  <div className="relative group flex justify-center">
                     <input 
                         type="text" 
@@ -123,9 +147,12 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
                             backgroundImage: 'radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 3px), radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 2px)',
                             backgroundSize: '30px 30px, 20px 20px',
                             backgroundPosition: '0 0, 10px 10px',
-                            backgroundColor: '#050505' // Ebony/Mun black
+                            backgroundColor: '#050505',
+                            width: `${config.inputClassWidth}rem`,
+                            fontSize: `${config.inputClassFontSize}rem`,
+                            color: config.inputClassColor
                         }}
-                        className={`w-32 sm:w-40 px-2 py-3 rounded-2xl text-center text-xl font-black border-2 border-white focus:outline-none focus:border-white focus:ring-4 focus:ring-yellow-200/50 placeholder-gray-600 text-yellow-300 shadow-lg transition-all transform group-hover:-translate-y-1 ${shakeClass ? 'animate-pulse border-red-600' : ''}`}
+                        className={`px-2 py-3 rounded-2xl text-center font-black border-2 border-white focus:outline-none focus:border-white focus:ring-4 focus:ring-yellow-200/50 placeholder-gray-600 shadow-lg transition-all transform group-hover:-translate-y-1 ${shakeClass ? 'animate-pulse border-red-600' : ''}`}
                     />
                  </div>
             </div>
@@ -134,7 +161,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
                  {error && <p className="text-red-100 font-bold bg-red-600/90 px-4 py-1 rounded-full inline-block shadow-lg animate-bounce text-sm">{error}</p>}
             </div>
 
-            {/* Start Button - Compact with thin white border, removed brown shadow */}
+            {/* Start Button */}
             <div className="flex justify-center pt-2 pb-8">
                 <button 
                     onClick={handleStartClick} 

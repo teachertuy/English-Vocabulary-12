@@ -1,5 +1,4 @@
 
-
 export interface QuizQuestion {
   sentence: string;
   options: string[];
@@ -40,7 +39,6 @@ export interface GameResult {
   status?: 'in-progress' | 'completed';
 }
 
-// FIX: Add the missing SavedQuiz interface, which is used in ViewQuizModal.tsx.
 export interface SavedQuiz {
   name:string;
   questions: QuizQuestion[];
@@ -70,4 +68,16 @@ export interface VocabularyWord {
   translation: string;
   image?: string; // URL to the image
   audio?: string; // Base64 audio string
+}
+
+export interface WelcomeScreenConfig {
+    titleText: string;
+    titleFontSize: number;
+    titleColor: string;
+    inputNameWidth: number;
+    inputNameFontSize: number;
+    inputNameColor: string;
+    inputClassWidth: number;
+    inputClassFontSize: number;
+    inputClassColor: string;
 }

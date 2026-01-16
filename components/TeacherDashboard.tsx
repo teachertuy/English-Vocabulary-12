@@ -1,6 +1,6 @@
 
 import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
-import { GameResult, StudentProgress, QuizQuestion, UnitsState, VocabularyWord } from '../types';
+import { GameResult, StudentProgress, QuizQuestion, UnitsState, VocabularyWord, WelcomeScreenConfig } from '../types';
 import { 
     listenToResults, clearResults, setGameStatus, getGameStatus, 
     listenToOnlineStudents, listenToCheatCounts, kickPlayer, deleteStudentResult, 
@@ -10,7 +10,7 @@ import {
     deleteUnitStudentResultByGrade, saveUnitVocabularyByGrade, listenToUnitVocabularyByGrade, deleteCurrentQuiz,
     listenToTopicsStatus, setTopicStatus, listenToTopicQuizQuestions, listenToTopicResults,
     listenToTopicVocabulary, saveTopicVocabulary, saveTopicQuizQuestions, clearTopicResults,
-    deleteTopicStudentResult
+    deleteTopicStudentResult, saveWelcomeConfig, listenToWelcomeConfig
 } from '../services/firebaseService';
 import { QUIZ_VERSION, generateQuizFromCustomPrompt, generateQuizFromText, generateVocabularyList } from '../services/geminiService';
 import TextToQuizModal from './TextToQuizModal';
@@ -18,6 +18,7 @@ import EditQuizModal from './EditQuizModal';
 import AIQuizGeneratorModal from './AIQuizGeneratorModal';
 import ConfirmationModal from './ConfirmationModal';
 import EditVocabularyModal from './EditVocabularyModal';
+import EditWelcomeScreenModal from './EditWelcomeScreenModal';
 
 type Tab = 'dashboard' | 'units_12' | 'topics';
 
@@ -168,6 +169,10 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
     const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
     const [activeTab, setActiveTab] = useState<Tab>('dashboard');
     
+    // Welcome Screen Config
+    const [welcomeConfig, setWelcomeConfig] = useState<WelcomeScreenConfig | null>(null);
+    const [isEditWelcomeModalOpen, setIsEditWelcomeModalOpen] = useState(false);
+
     // Modal & Editing State
     const [selectedResult, setSelectedResult] = useState<GameResult | null>(null);
     const [isTextQuizModalOpen, setIsTextQuizModalOpen] = useState(false);
@@ -233,6 +238,7 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
         let unsubscribeQuiz: () => void;
         let unsubscribeUnits12: () => void;
         let unsubscribeTopics: () => void;
+        let unsubscribeWelcome: () => void;
     
         (async () => {
             try {
@@ -250,6 +256,7 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
             unsubscribeQuiz = listenToQuizQuestions(classroomId, (questions) => setQuizQuestions(questions || []));
             unsubscribeUnits12 = listenToUnitsStatusByGrade(classroomId, 12, (status) => setUnitsStatus12(status || {}));
             unsubscribeTopics = listenToTopicsStatus(classroomId, (status) => setTopicsStatus(status || {}));
+            unsubscribeWelcome = listenToWelcomeConfig(classroomId, (config) => setWelcomeConfig(config));
         })();
     
         return () => {
@@ -261,6 +268,7 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
             if (unsubscribeQuiz) unsubscribeQuiz();
             if (unsubscribeUnits12) unsubscribeUnits12();
             if (unsubscribeTopics) unsubscribeTopics();
+            if (unsubscribeWelcome) unsubscribeWelcome();
         };
     }, [classroomId, refreshKey]);
     
@@ -823,6 +831,16 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
 
     const handleUnitPromptChange = (activity: keyof typeof unitActivityPrompts, value: string) => {
         setUnitActivityPrompts(prev => ({ ...prev, [activity]: value }));
+    };
+
+    const handleSaveWelcomeConfig = async (config: WelcomeScreenConfig) => {
+        try {
+            await saveWelcomeConfig(classroomId, config);
+            setNotification({ message: 'Đã lưu thay đổi giao diện đăng nhập thành công!', type: 'success' });
+        } catch (error) {
+            console.error("Failed to save welcome config:", error);
+            setNotification({ message: 'Lưu thay đổi thất bại.', type: 'error' });
+        }
     };
 
     const renderUnitDetailView = (grade: number, unitNumber: number) => {
@@ -1596,6 +1614,28 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
             default:
                 return (
                     <div className="tab-content-enter bg-white p-6 rounded-xl shadow-lg">
+                         <div className="mb-8 p-6 bg-gradient-to-r from-teal-50 to-cyan-50 rounded-2xl border-2 border-teal-100 shadow-sm">
+                            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                                <div className="flex items-center gap-4">
+                                    <div className="bg-white p-3 rounded-full shadow-md text-teal-600">
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h3 className="text-xl font-bold text-teal-800">Tùy chỉnh Màn hình Đăng nhập</h3>
+                                        <p className="text-gray-600">Chỉnh sửa nội dung, cỡ chữ và màu sắc của trang Chào mừng cho học sinh.</p>
+                                    </div>
+                                </div>
+                                <button 
+                                    onClick={() => setIsEditWelcomeModalOpen(true)}
+                                    className="px-6 py-3 bg-teal-600 text-white font-bold rounded-xl hover:bg-teal-700 transition shadow-lg flex items-center gap-2 whitespace-nowrap"
+                                >
+                                    <span>⚙️ Chỉnh sửa nội dung thông tin màn hình đăng nhập</span>
+                                </button>
+                            </div>
+                        </div>
+
                         {results.length === 0 && onlineStudents.length === 0 ? (
                             <div className="text-center bg-white p-8 rounded-lg shadow-inner border border-gray-200">
                                 <p className="text-xl text-gray-700">Chưa có học sinh nào nộp bài hoặc tham gia.</p>
@@ -1939,6 +1979,12 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                     onSave={handleSaveVocabulary}
                 />
             )}
+            <EditWelcomeScreenModal
+                show={isEditWelcomeModalOpen}
+                onClose={() => setIsEditWelcomeModalOpen(false)}
+                onSave={handleSaveWelcomeConfig}
+                currentConfig={welcomeConfig}
+            />
             <ConfirmationModal
                 show={isDeleteQuizConfirmOpen}
                 title="Xác nhận Xóa Đề thi"
