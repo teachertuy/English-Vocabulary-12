@@ -62,16 +62,16 @@ const EditWelcomeScreenModal: React.FC<EditWelcomeScreenModalProps> = ({ show, o
                     {/* Section: Title */}
                     <div className="space-y-4">
                         <h3 className="text-lg font-bold text-blue-700 border-b pb-2 flex items-center gap-2">
-                            <span>🏷️</span> Tiêu đề (Hỗ trợ xuống dòng)
+                            <span>🏷️</span> Tiêu đề (Thông minh: Nhảy dòng nếu chữ quá lớn)
                         </h3>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div className="md:col-span-2">
-                                <label className="block text-sm font-semibold text-gray-600 mb-1">Nội dung văn bản (Nhấn Enter để xuống dòng 2)</label>
+                                <label className="block text-sm font-semibold text-gray-600 mb-1">Nội dung văn bản (Có thể nhấn Enter để chia hàng chủ động)</label>
                                 <textarea 
                                     value={config.titleText} 
                                     onChange={e => handleChange('titleText', e.target.value.toUpperCase())}
                                     className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 font-bold uppercase min-h-[80px]"
-                                    placeholder="ENGLISH VOCABULARY&#10;12"
+                                    placeholder="VÍ DỤ: ENGLISH VOCABULARY&#10;12"
                                 />
                             </div>
                             <div className="space-y-4">
