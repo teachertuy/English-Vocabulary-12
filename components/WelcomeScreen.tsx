@@ -119,8 +119,8 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
          </p>
        </button>
       
-      {/* Main Content Wrapper - Increased mt to push the title down more */}
-      <div className="w-full max-w-md mt-10 space-y-0 z-10 flex flex-col items-center">
+      {/* Main Content Wrapper - Increased mt significantly to move everything down */}
+      <div className="w-full max-w-md mt-32 space-y-0 z-10 flex flex-col items-center">
             {/* Curved Title */}
             <div className={`w-full transition-all duration-500 ${titleLines.length > 1 ? 'h-32' : 'h-20'} relative`}>
                  <svg viewBox={titleLines.length > 1 ? "0 0 500 140" : "0 0 500 80"} className="w-full h-full overflow-visible">
@@ -146,8 +146,8 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
                 </svg>
             </div>
 
-            {/* Pointing Finger - Increased negative margin to pull it up even CLOSER to the title text */}
-            <div className="flex justify-center -mt-12 mb-2 relative z-20">
+            {/* Pointing Finger - Extreme negative margin to sit right against the text */}
+            <div className="flex justify-center -mt-16 mb-2 relative z-20">
                  <div className="text-5xl pointing-finger-down filter drop-shadow-xl transform hover:scale-110 transition-transform cursor-default">
                     👇
                 </div>
