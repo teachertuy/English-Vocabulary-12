@@ -120,9 +120,9 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
        </button>
       
       {/* Main Content Wrapper */}
-      <div className="w-full max-w-md mt-2 space-y-0 z-10 flex flex-col items-center">
-            {/* Curved Title */}
-            <div className={`w-full transition-all duration-500 ${titleLines.length > 1 ? 'h-28' : 'h-20'} relative`}>
+      <div className="w-full max-w-md mt-0 space-y-0 z-10 flex flex-col items-center">
+            {/* Curved Title - Moved DOWN significantly with mt-24 */}
+            <div className={`w-full transition-all duration-500 ${titleLines.length > 1 ? 'h-28' : 'h-20'} relative mt-24`}>
                  <svg viewBox={titleLines.length > 1 ? "0 0 500 130" : "0 0 500 80"} className="w-full h-full overflow-visible">
                     {/* Hàng 1 */}
                     <path id="curve1" d={titleLines.length > 1 ? "M 50, 60 Q 250, 15 450, 60" : "M 50, 70 Q 250, 25 450, 70"} stroke="transparent" fill="transparent"/>
@@ -146,15 +146,15 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
                  </svg>
             </div>
 
-            {/* Pointing Finger */}
-            <div className="flex justify-center -mt-120 mb-2 relative z-20">
+            {/* Pointing Finger - Adjusted position to be close to the title */}
+            <div className="flex justify-center -mt-10 mb-2 relative z-20">
                  <div className="text-5xl pointing-finger-down filter drop-shadow-xl transform hover:scale-110 transition-transform cursor-default">
                     👇
                 </div>
             </div>
 
-            {/* Input Fields */}
-            <div className="-mt-40 space-y-3 w-full flex flex-col items-center">
+            {/* Input Fields - Positioned neatly after the finger */}
+            <div className="mt-2 space-y-3 w-full flex flex-col items-center">
                  <div className="relative group w-full flex justify-center" style={{ width: `${config.inputNameWidth}%` }}>
                     <input 
                         type="text" 
@@ -190,8 +190,8 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
                  {error && <p className="text-red-100 font-bold bg-red-600/90 px-4 py-0.5 rounded-full inline-block shadow-lg animate-bounce text-[10px]">{error}</p>}
             </div>
 
-            {/* Start Button - Moved down further with pt-10 */}
-            <div className="flex justify-center pt-10 pb-0">
+            {/* Start Button */}
+            <div className="flex justify-center pt-8 pb-0">
                 <button 
                     onClick={handleStartClick} 
                     disabled={isButtonDisabled}
