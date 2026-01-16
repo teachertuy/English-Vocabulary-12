@@ -86,15 +86,19 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
   
   const isButtonDisabled = isCheckingStatus || isSubmitting || !isGameEnabled;
 
-  // Logic chia hàng cho tiêu đề: Ưu tiên xuống dòng thủ công từ giáo viên, 
-  // hoặc tự động chia nếu cỡ chữ quá lớn (>2.5rem) và văn bản dài.
   const titleLines = useMemo(() => {
-    const rawLines = config.titleText.split('\n').filter(l => l.trim() !== '');
-    if (rawLines.length > 1) return rawLines.slice(0, 2);
-    
-    // Nếu chỉ có 1 dòng nhưng cỡ chữ quá lớn, ta có thể thử "auto-split" 
-    // Tuy nhiên theo yêu cầu linh hoạt, giáo viên nên chủ động nhấn Enter trong modal sẽ chuẩn nhất.
-    return [config.titleText];
+    const manualLines = config.titleText.split('\n').filter(l => l.trim() !== '');
+    if (manualLines.length > 1) return manualLines.slice(0, 2);
+
+    const text = config.titleText.trim();
+    if (text.length > 12 && config.titleFontSize > 2.8) {
+        const mid = Math.floor(text.length / 2);
+        const splitIndex = text.lastIndexOf(' ', mid + 5);
+        if (splitIndex !== -1) {
+            return [text.substring(0, splitIndex), text.substring(splitIndex + 1)];
+        }
+    }
+    return [text];
   }, [config.titleText, config.titleFontSize]);
   
   return (
@@ -115,23 +119,24 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
          </p>
        </button>
       
-      <div className="w-full max-w-md mt-20 space-y-4 z-10">
-            {/* Curved Title - Controlled by Config, supports Multi-line */}
-            <div className={`w-full transition-all duration-300 ${titleLines.length > 1 ? 'h-40' : 'h-24'} mb-0 relative`}>
-                 <svg viewBox={titleLines.length > 1 ? "0 0 500 160" : "0 0 500 100"} className="w-full h-full overflow-visible">
+      {/* Main Content Wrapper - Remove negative margin to drop the title lower */}
+      <div className="w-full max-w-md mt-0 space-y-0 z-10 flex flex-col items-center">
+            {/* Curved Title */}
+            <div className={`w-full transition-all duration-500 ${titleLines.length > 1 ? 'h-32' : 'h-20'} relative`}>
+                 <svg viewBox={titleLines.length > 1 ? "0 0 500 140" : "0 0 500 80"} className="w-full h-full overflow-visible">
                     {/* Hàng 1 */}
-                    <path id="curve1" d={titleLines.length > 1 ? "M 50, 75 Q 250, 30 450, 75" : "M 50, 90 Q 250, 45 450, 90"} stroke="transparent" fill="transparent"/>
-                    <text width="500" style={{ fill: config.titleColor, filter: 'drop-shadow(2px 2px 0px rgba(0,0,0,0.3))', fontSize: `${config.titleFontSize}rem` }} className="font-black tracking-wider uppercase">
+                    <path id="curve1" d={titleLines.length > 1 ? "M 50, 60 Q 250, 15 450, 60" : "M 50, 70 Q 250, 25 450, 70"} stroke="transparent" fill="transparent"/>
+                    <text width="500" style={{ fill: config.titleColor, filter: 'drop-shadow(2px 2px 2px rgba(0,0,0,0.4))', fontSize: `${config.titleFontSize}rem` }} className="font-black tracking-wider uppercase">
                         <textPath href="#curve1" startOffset="50%" textAnchor="middle">
                             {titleLines[0]}
                         </textPath>
                     </text>
                     
-                    {/* Hàng 2 (nếu có) */}
+                    {/* Hàng 2 (Chỗ của số 12) */}
                     {titleLines.length > 1 && (
                         <>
-                            <path id="curve2" d="M 50, 125 Q 250, 80 450, 125" stroke="transparent" fill="transparent"/>
-                            <text width="500" style={{ fill: config.titleColor, filter: 'drop-shadow(2px 2px 0px rgba(0,0,0,0.3))', fontSize: `${config.titleFontSize * 0.9}rem` }} className="font-black tracking-wider uppercase">
+                            <path id="curve2" d="M 50, 115 Q 250, 70 450, 115" stroke="transparent" fill="transparent"/>
+                            <text width="500" style={{ fill: config.titleColor, filter: 'drop-shadow(2px 2px 2px rgba(0,0,0,0.4))', fontSize: `${config.titleFontSize * 0.85}rem` }} className="font-black tracking-wider uppercase opacity-90">
                                 <textPath href="#curve2" startOffset="50%" textAnchor="middle">
                                     {titleLines[1]}
                                 </textPath>
@@ -141,15 +146,15 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
                 </svg>
             </div>
 
-            {/* Pointing Finger */}
-            <div className="flex justify-center -mt-6 mb-4">
+            {/* Pointing Finger - Pull up into the title area to be very close to the text */}
+            <div className="flex justify-center -mt-10 mb-2 relative z-20">
                  <div className="text-5xl pointing-finger-down filter drop-shadow-xl transform hover:scale-110 transition-transform cursor-default">
                     👇
                 </div>
             </div>
 
-            {/* Input Fields */}
-            <div className="space-y-4 w-full flex flex-col items-center">
+            {/* Input Fields & Start Button Section - Compact Spacing */}
+            <div className="-mt-1 space-y-3 w-full flex flex-col items-center">
                  <div className="relative group w-full flex justify-center" style={{ width: `${config.inputNameWidth}%` }}>
                     <input 
                         type="text" 
@@ -181,19 +186,19 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
                  </div>
             </div>
             
-            <div className="h-4">
-                 {error && <p className="text-red-100 font-bold bg-red-600/90 px-4 py-1 rounded-full inline-block shadow-lg animate-bounce text-sm">{error}</p>}
+            <div className="h-1 mt-1">
+                 {error && <p className="text-red-100 font-bold bg-red-600/90 px-4 py-0.5 rounded-full inline-block shadow-lg animate-bounce text-[10px]">{error}</p>}
             </div>
 
             {/* Start Button */}
-            <div className="flex justify-center pt-2 pb-8">
+            <div className="flex justify-center pt-2 pb-6">
                 <button 
                     onClick={handleStartClick} 
                     disabled={isButtonDisabled}
-                    className="group relative w-24 h-24 rounded-full bg-yellow-400 text-red-600 font-black text-xl transition-all border-2 border-white flex items-center justify-center hover:scale-110 hover:bg-yellow-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none shadow-md"
+                    className="group relative w-20 h-20 rounded-full bg-yellow-400 text-red-600 font-black text-lg transition-all border-2 border-white flex items-center justify-center hover:scale-110 hover:bg-yellow-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none shadow-md"
                 >
                     {isCheckingStatus ? (
-                        <svg className="animate-spin h-8 w-8 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <svg className="animate-spin h-6 w-6 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
