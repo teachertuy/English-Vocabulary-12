@@ -86,23 +86,15 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
   
   const isButtonDisabled = isCheckingStatus || isSubmitting || !isGameEnabled;
 
-  // Logic chia hàng thông minh:
-  // 1. Ưu tiên xuống dòng thủ công bằng Enter.
-  // 2. Nếu không có Enter nhưng cỡ chữ lớn (> 2.8rem) và text dài, tự động tách ở giữa.
+  // Logic chia hàng cho tiêu đề: Ưu tiên xuống dòng thủ công từ giáo viên, 
+  // hoặc tự động chia nếu cỡ chữ quá lớn (>2.5rem) và văn bản dài.
   const titleLines = useMemo(() => {
-    const manualLines = config.titleText.split('\n').filter(l => l.trim() !== '');
-    if (manualLines.length > 1) return manualLines.slice(0, 2);
-
-    const text = config.titleText.trim();
-    // Ngưỡng tự động xuống dòng: (độ dài ký tự * cỡ chữ) > hằng số giới hạn
-    if (text.length > 12 && config.titleFontSize > 2.8) {
-        const mid = Math.floor(text.length / 2);
-        const splitIndex = text.lastIndexOf(' ', mid + 5);
-        if (splitIndex !== -1) {
-            return [text.substring(0, splitIndex), text.substring(splitIndex + 1)];
-        }
-    }
-    return [text];
+    const rawLines = config.titleText.split('\n').filter(l => l.trim() !== '');
+    if (rawLines.length > 1) return rawLines.slice(0, 2);
+    
+    // Nếu chỉ có 1 dòng nhưng cỡ chữ quá lớn, ta có thể thử "auto-split" 
+    // Tuy nhiên theo yêu cầu linh hoạt, giáo viên nên chủ động nhấn Enter trong modal sẽ chuẩn nhất.
+    return [config.titleText];
   }, [config.titleText, config.titleFontSize]);
   
   return (
@@ -124,22 +116,22 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
        </button>
       
       <div className="w-full max-w-md mt-20 space-y-4 z-10">
-            {/* Curved Title - Support Dynamic Height & Multi-line */}
-            <div className={`w-full transition-all duration-500 ${titleLines.length > 1 ? 'h-48' : 'h-24'} mb-0 relative`}>
-                 <svg viewBox={titleLines.length > 1 ? "0 0 500 180" : "0 0 500 100"} className="w-full h-full overflow-visible">
-                    {/* Hàng 1 - Giữ nguyên độ cong cũ M 50, 90 Q 250, 45 450, 90 nhưng có thể tịnh tiến Y */}
-                    <path id="curve1" d={titleLines.length > 1 ? "M 50, 70 Q 250, 25 450, 70" : "M 50, 90 Q 250, 45 450, 90"} stroke="transparent" fill="transparent"/>
-                    <text width="500" style={{ fill: config.titleColor, filter: 'drop-shadow(2px 2px 2px rgba(0,0,0,0.4))', fontSize: `${config.titleFontSize}rem` }} className="font-black tracking-wider uppercase">
+            {/* Curved Title - Controlled by Config, supports Multi-line */}
+            <div className={`w-full transition-all duration-300 ${titleLines.length > 1 ? 'h-40' : 'h-24'} mb-0 relative`}>
+                 <svg viewBox={titleLines.length > 1 ? "0 0 500 160" : "0 0 500 100"} className="w-full h-full overflow-visible">
+                    {/* Hàng 1 */}
+                    <path id="curve1" d={titleLines.length > 1 ? "M 50, 75 Q 250, 30 450, 75" : "M 50, 90 Q 250, 45 450, 90"} stroke="transparent" fill="transparent"/>
+                    <text width="500" style={{ fill: config.titleColor, filter: 'drop-shadow(2px 2px 0px rgba(0,0,0,0.3))', fontSize: `${config.titleFontSize}rem` }} className="font-black tracking-wider uppercase">
                         <textPath href="#curve1" startOffset="50%" textAnchor="middle">
                             {titleLines[0]}
                         </textPath>
                     </text>
                     
-                    {/* Hàng 2 (nếu cần nhảy hàng) */}
+                    {/* Hàng 2 (nếu có) */}
                     {titleLines.length > 1 && (
                         <>
-                            <path id="curve2" d="M 50, 130 Q 250, 85 450, 130" stroke="transparent" fill="transparent"/>
-                            <text width="500" style={{ fill: config.titleColor, filter: 'drop-shadow(2px 2px 2px rgba(0,0,0,0.4))', fontSize: `${config.titleFontSize * 0.85}rem` }} className="font-black tracking-wider uppercase opacity-90">
+                            <path id="curve2" d="M 50, 125 Q 250, 80 450, 125" stroke="transparent" fill="transparent"/>
+                            <text width="500" style={{ fill: config.titleColor, filter: 'drop-shadow(2px 2px 0px rgba(0,0,0,0.3))', fontSize: `${config.titleFontSize * 0.9}rem` }} className="font-black tracking-wider uppercase">
                                 <textPath href="#curve2" startOffset="50%" textAnchor="middle">
                                     {titleLines[1]}
                                 </textPath>
@@ -150,7 +142,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
             </div>
 
             {/* Pointing Finger */}
-            <div className="flex justify-center -mt-4 mb-4">
+            <div className="flex justify-center -mt-6 mb-4">
                  <div className="text-5xl pointing-finger-down filter drop-shadow-xl transform hover:scale-110 transition-transform cursor-default">
                     👇
                 </div>

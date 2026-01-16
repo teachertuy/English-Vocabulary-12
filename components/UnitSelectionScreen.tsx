@@ -82,24 +82,13 @@ const UnitSelectionScreen: React.FC<UnitSelectionScreenProps> = ({ playerData, c
     const itemPrefix = isTopics ? 'topic_' : 'unit_';
     const itemLabel = isTopics ? 'Topic' : 'Unit';
     
+    // Nếu giáo viên có tùy chỉnh văn bản tiêu đề, ta ưu tiên sử dụng nó nhưng vẫn giữ hậu tố lớp học/chủ đề
+    const titleText = config.titleText || (isTopics ? 'TOPIC-BASED VOCABULARY' : `ENGLISH VOCABULARY ${grade}`);
     const subtitle = isTopics ? '(Từ vựng theo chủ đề)' : `(Từ vựng Tiếng Anh Lớp ${grade})`;
     
-    // Đồng bộ logic chia hàng
     const titleLines = useMemo(() => {
-        const text = config.titleText || (isTopics ? 'TOPIC-BASED VOCABULARY' : `ENGLISH VOCABULARY ${grade}`);
-        const manualLines = text.split('\n').filter(l => l.trim() !== '');
-        if (manualLines.length > 1) return manualLines.slice(0, 2);
-
-        const trimmed = text.trim();
-        if (trimmed.length > 12 && config.titleFontSize > 2.8) {
-            const mid = Math.floor(trimmed.length / 2);
-            const splitIndex = trimmed.lastIndexOf(' ', mid + 5);
-            if (splitIndex !== -1) {
-                return [trimmed.substring(0, splitIndex), trimmed.substring(splitIndex + 1)];
-            }
-        }
-        return [trimmed];
-    }, [config.titleText, config.titleFontSize, grade, isTopics]);
+        return titleText.split('\n').filter(l => l.trim() !== '').slice(0, 2);
+    }, [titleText]);
 
     const items = Array.from({ length: itemCount }, (_, i) => i + 1);
 
@@ -128,31 +117,31 @@ const UnitSelectionScreen: React.FC<UnitSelectionScreenProps> = ({ playerData, c
             </button>
 
             <div className="w-full max-w-5xl mx-auto">
-                 <div className={`w-full transition-all duration-500 ${titleLines.length > 1 ? 'h-52' : 'h-36'} mb-2`}>
-                    <svg viewBox={titleLines.length > 1 ? "0 0 500 160" : "0 0 500 100"} className="w-full h-full overflow-visible">
+                 <div className={`w-full transition-all duration-300 ${titleLines.length > 1 ? 'h-48' : 'h-36'} mb-2`}>
+                    <svg viewBox={titleLines.length > 1 ? "0 0 500 140" : "0 0 500 100"} className="w-full h-full overflow-visible">
                         {/* Hàng 1 */}
-                        <path id="unit-curve1" d={titleLines.length > 1 ? "M 20, 50 Q 250, 0 480, 50" : "M 20, 65 Q 250, 15 480, 65"} stroke="transparent" fill="transparent"/>
+                        <path id="unit-curve1" d={titleLines.length > 1 ? "M 20, 60 Q 250, 5 480, 60" : "M 20, 65 Q 250, 10 480, 65"} stroke="transparent" fill="transparent"/>
                         <text width="500" style={{fill: config.titleColor, textShadow: '2px 2px 4px rgba(0,0,0,0.5)', fontSize: `${config.titleFontSize}rem` }} className="font-extrabold tracking-wider uppercase">
                             <textPath href="#unit-curve1" startOffset="50%" textAnchor="middle">
                                 {titleLines[0]}
                             </textPath>
                         </text>
                         
-                        {/* Hàng 2 */}
+                        {/* Hàng 2 (nếu có) */}
                         {titleLines.length > 1 ? (
                              <>
-                                <path id="unit-curve2" d="M 20, 105 Q 250, 55 480, 105" stroke="transparent" fill="transparent"/>
+                                <path id="unit-curve2" d="M 20, 100 Q 250, 45 480, 100" stroke="transparent" fill="transparent"/>
                                 <text width="500" style={{fill: config.titleColor, textShadow: '2px 2px 4px rgba(0,0,0,0.5)', fontSize: `${config.titleFontSize * 0.9}rem` }} className="font-extrabold tracking-wider uppercase">
                                     <textPath href="#unit-curve2" startOffset="50%" textAnchor="middle">
                                         {titleLines[1]}
                                     </textPath>
                                 </text>
-                                <text x="250" y="140" text-anchor="middle" className="fill-current text-white text-xl font-bold tracking-normal" style={{textShadow: '1px 1px 2px rgba(0,0,0,0.5)'}}>
+                                <text x="250" y="130" text-anchor="middle" className="fill-current text-white text-xl font-bold tracking-normal" style={{textShadow: '1px 1px 2px rgba(0,0,0,0.5)'}}>
                                     {subtitle}
                                 </text>
                              </>
                         ) : (
-                            <text x="250" y="90" text-anchor="middle" className="fill-current text-white text-2xl font-bold tracking-normal" style={{textShadow: '1px 1px 2px rgba(0,0,0,0.5)'}}>
+                            <text x="250" y="88" text-anchor="middle" className="fill-current text-white text-2xl font-bold tracking-normal" style={{textShadow: '1px 1px 2px rgba(0,0,0,0.5)'}}>
                                 {subtitle}
                             </text>
                         )}
