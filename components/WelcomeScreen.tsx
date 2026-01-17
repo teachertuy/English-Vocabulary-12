@@ -103,6 +103,21 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
     }
     return [text];
   }, [config.titleText, config.titleFontSize]);
+
+  const line2LetterSpacing = useMemo(() => {
+    if (titleLines.length > 1) {
+        const line2 = titleLines[1].trim();
+        // If the second line is exactly "12", bring the digits closer together
+        if (line2 === '12') {
+            return '-0.08em';
+        }
+        // If it contains "12" anywhere, use a tighter spacing than the default airy one
+        if (line2.includes('12')) {
+            return '0.05em';
+        }
+    }
+    return '0.35em'; // Default "airy" spacing for other text
+  }, [titleLines]);
   
   return (
     <div className="flex flex-col items-center justify-center p-4 text-center min-h-[500px] blueprint-bg relative overflow-hidden">
@@ -124,10 +139,10 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
       
       {/* Main Content Wrapper */}
       <div className="w-full max-w-md mt-0 space-y-0 z-10 flex flex-col items-center">
-            {/* Curved Title */}
-            <div className={`w-full transition-all duration-500 ${titleLines.length > 1 ? 'h-32' : 'h-20'} relative mt-24`}>
-                 <svg viewBox={titleLines.length > 1 ? "0 0 500 130" : "0 0 500 80"} className="w-full h-full overflow-visible">
-                    {/* Hàng 1 */}
+            {/* Curved Title - Increased height to accommodate shifted line 2 */}
+            <div className={`w-full transition-all duration-500 ${titleLines.length > 1 ? 'h-36' : 'h-20'} relative mt-24`}>
+                 <svg viewBox={titleLines.length > 1 ? "0 0 500 150" : "0 0 500 80"} className="w-full h-full overflow-visible">
+                    {/* Hàng 1 - Đường cong chuẩn */}
                     <path id="curve1" d={titleLines.length > 1 ? "M 50, 60 Q 250, 15 450, 60" : "M 50, 70 Q 250, 25 450, 70"} stroke="transparent" fill="transparent"/>
                     <text width="500" style={{ fill: config.titleColor, filter: 'drop-shadow(2px 2px 2px rgba(0,0,0,0.4))', fontSize: `${config.titleFontSize}rem` }} className="font-black tracking-wider uppercase">
                         <textPath href="#curve1" startOffset="50%" textAnchor="middle">
@@ -135,11 +150,11 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
                         </textPath>
                     </text>
                     
-                    {/* Hàng 2 (Chỗ của số 12) */}
+                    {/* Hàng 2 (Chỗ của số 12) - Đường cong được hạ thấp xuống (y=130 thay vì 115) */}
                     {titleLines.length > 1 && (
                         <>
-                            <path id="curve2" d="M 50, 110 Q 250, 65 450, 110" stroke="transparent" fill="transparent"/>
-                            <text width="500" style={{ fill: config.titleColor, filter: 'drop-shadow(2px 2px 2px rgba(0,0,0,0.4))', fontSize: `${config.titleFontSizeLine2 || (config.titleFontSize * 0.85)}rem` }} className="font-black tracking-wider uppercase opacity-90">
+                            <path id="curve2" d="M 10, 130 Q 250, 80 490, 130" stroke="transparent" fill="transparent"/>
+                            <text width="500" style={{ fill: config.titleColor, filter: 'drop-shadow(2px 2px 2px rgba(0,0,0,0.4))', fontSize: `${config.titleFontSizeLine2 || (config.titleFontSize * 0.85)}rem`, letterSpacing: line2LetterSpacing }} className="font-black uppercase opacity-95">
                                 <textPath href="#curve2" startOffset="50%" textAnchor="middle">
                                     {titleLines[1]}
                                 </textPath>
@@ -149,8 +164,8 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
                  </svg>
             </div>
 
-            {/* Pointing Finger */}
-            <div className="flex justify-center -mt-10 mb-2 relative z-20">
+            {/* Pointing Finger - Adjusted margin to keep it neat after moving text down */}
+            <div className="flex justify-center -mt-8 mb-2 relative z-20">
                  <div className="text-5xl pointing-finger-down filter drop-shadow-xl transform hover:scale-110 transition-transform cursor-default">
                     👇
                 </div>
