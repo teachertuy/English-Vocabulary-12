@@ -39,9 +39,11 @@ const DEFAULT_CONFIG: WelcomeScreenConfig = {
     inputNameWidth: 100,
     inputNameFontSize: 1.25,
     inputNameColor: '#ffffff',
+    inputNamePlaceholder: 'Nhập họ và tên của bạn..',
     inputClassWidth: 10,
     inputClassFontSize: 1.25,
     inputClassColor: '#facc15',
+    inputClassPlaceholder: 'Lớp...',
 };
 
 const UnitSelectionScreen: React.FC<UnitSelectionScreenProps> = ({ playerData, classroomId, grade, onStartQuiz, onLearnVocabulary, onStartSpellingGame, onStartMatchingGame, onBack, selectedUnit, onUnitSelect, onCloseActivityModal }) => {

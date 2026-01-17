@@ -16,9 +16,11 @@ const DEFAULT_CONFIG: WelcomeScreenConfig = {
     inputNameWidth: 100,
     inputNameFontSize: 1.25,
     inputNameColor: '#ffffff',
+    inputNamePlaceholder: 'Nhập họ và tên của bạn..',
     inputClassWidth: 10,
     inputClassFontSize: 1.25,
     inputClassColor: '#facc15',
+    inputClassPlaceholder: 'Lớp...',
 };
 
 const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, classroomId }) => {
@@ -160,7 +162,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
                         type="text" 
                         value={playerName} 
                         onChange={(e) => setPlayerName(e.target.value)} 
-                        placeholder="Nhập họ và tên của bạn.." 
+                        placeholder={config.inputNamePlaceholder || "Nhập họ và tên của bạn.."} 
                         style={{ fontSize: `${config.inputNameFontSize}rem`, color: config.inputNameColor }}
                         className={`w-full px-6 py-4 rounded-3xl text-center font-black bg-gradient-to-r from-teal-400 to-cyan-500 border-2 border-white focus:outline-none focus:border-yellow-300 focus:ring-4 focus:ring-cyan-300/40 placeholder-teal-100 shadow-[0_10px_20px_rgba(0,0,0,0.2)] transition-all transform group-hover:-translate-y-0.5 group-hover:shadow-[0_15px_25px_rgba(0,0,0,0.3)] ${shakeName ? 'animate-pulse border-red-500' : ''}`}
                     />
@@ -171,7 +173,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
                         type="text" 
                         value={playerClass} 
                         onChange={(e) => setPlayerClass(e.target.value)} 
-                        placeholder="Lớp..." 
+                        placeholder={config.inputClassPlaceholder || "Lớp..."} 
                         style={{
                             backgroundImage: 'radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 3px), radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 2px)',
                             backgroundSize: '30px 30px, 20px 20px',

@@ -16,9 +16,11 @@ const DEFAULT_CONFIG: WelcomeScreenConfig = {
     inputNameWidth: 100,
     inputNameFontSize: 1.25, // text-xl
     inputNameColor: '#ffffff',
+    inputNamePlaceholder: 'Nhập họ và tên của bạn..',
     inputClassWidth: 10, // rem
     inputClassFontSize: 1.25, // text-xl
     inputClassColor: '#facc15', // text-yellow-300
+    inputClassPlaceholder: 'Lớp...',
 };
 
 const EditWelcomeScreenModal: React.FC<EditWelcomeScreenModalProps> = ({ show, onClose, onSave, currentConfig }) => {
@@ -106,27 +108,39 @@ const EditWelcomeScreenModal: React.FC<EditWelcomeScreenModalProps> = ({ show, o
                         <h3 className="text-lg font-bold text-teal-700 border-b pb-2 flex items-center gap-2">
                             <span>👤</span> Khung nhập Họ tên
                         </h3>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label className="block text-sm font-semibold text-gray-600 mb-1">Độ rộng khung (%)</label>
+                                <label className="block text-sm font-semibold text-gray-600 mb-1">Gợi ý nhập liệu (Placeholder)</label>
                                 <input 
-                                    type="range" 
-                                    min="50" max="100"
-                                    value={config.inputNameWidth} 
-                                    onChange={e => handleChange('inputNameWidth', parseInt(e.target.value))}
-                                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-teal-500 mt-4"
-                                />
-                                <div className="text-center font-bold text-teal-600 mt-1">{config.inputNameWidth}%</div>
-                            </div>
-                            <div>
-                                <label className="block text-sm font-semibold text-gray-600 mb-1">Cỡ chữ (rem)</label>
-                                <input 
-                                    type="number" 
-                                    step="0.1"
-                                    value={config.inputNameFontSize} 
-                                    onChange={e => handleChange('inputNameFontSize', parseFloat(e.target.value))}
+                                    type="text" 
+                                    value={config.inputNamePlaceholder} 
+                                    onChange={e => handleChange('inputNamePlaceholder', e.target.value)}
                                     className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                    placeholder="Ví dụ: Nhập họ và tên của bạn.."
                                 />
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-semibold text-gray-600 mb-1">Độ rộng khung (%)</label>
+                                    <input 
+                                        type="range" 
+                                        min="50" max="100"
+                                        value={config.inputNameWidth} 
+                                        onChange={e => handleChange('inputNameWidth', parseInt(e.target.value))}
+                                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-teal-500 mt-4"
+                                    />
+                                    <div className="text-center font-bold text-teal-600 mt-1">{config.inputNameWidth}%</div>
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-semibold text-gray-600 mb-1">Cỡ chữ (rem)</label>
+                                    <input 
+                                        type="number" 
+                                        step="0.1"
+                                        value={config.inputNameFontSize} 
+                                        onChange={e => handleChange('inputNameFontSize', parseFloat(e.target.value))}
+                                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                    />
+                                </div>
                             </div>
                             <div>
                                 <label className="block text-sm font-semibold text-gray-600 mb-1">Màu chữ</label>
@@ -148,26 +162,38 @@ const EditWelcomeScreenModal: React.FC<EditWelcomeScreenModalProps> = ({ show, o
                         <h3 className="text-lg font-bold text-orange-700 border-b pb-2 flex items-center gap-2">
                             <span>🏫</span> Khung nhập Lớp
                         </h3>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label className="block text-sm font-semibold text-gray-600 mb-1">Độ rộng khung (rem)</label>
+                                <label className="block text-sm font-semibold text-gray-600 mb-1">Gợi ý nhập liệu (Placeholder)</label>
                                 <input 
-                                    type="number" 
-                                    step="0.5"
-                                    value={config.inputClassWidth} 
-                                    onChange={e => handleChange('inputClassWidth', parseFloat(e.target.value))}
+                                    type="text" 
+                                    value={config.inputClassPlaceholder} 
+                                    onChange={e => handleChange('inputClassPlaceholder', e.target.value)}
                                     className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                    placeholder="Ví dụ: Lớp..."
                                 />
                             </div>
-                            <div>
-                                <label className="block text-sm font-semibold text-gray-600 mb-1">Cỡ chữ (rem)</label>
-                                <input 
-                                    type="number" 
-                                    step="0.1"
-                                    value={config.inputClassFontSize} 
-                                    onChange={e => handleChange('inputClassFontSize', parseFloat(e.target.value))}
-                                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                                />
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-semibold text-gray-600 mb-1">Độ rộng khung (rem)</label>
+                                    <input 
+                                        type="number" 
+                                        step="0.5"
+                                        value={config.inputClassWidth} 
+                                        onChange={e => handleChange('inputClassWidth', parseFloat(e.target.value))}
+                                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-semibold text-gray-600 mb-1">Cỡ chữ (rem)</label>
+                                    <input 
+                                        type="number" 
+                                        step="0.1"
+                                        value={config.inputClassFontSize} 
+                                        onChange={e => handleChange('inputClassFontSize', parseFloat(e.target.value))}
+                                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                    />
+                                </div>
                             </div>
                             <div>
                                 <label className="block text-sm font-semibold text-gray-600 mb-1">Màu chữ</label>

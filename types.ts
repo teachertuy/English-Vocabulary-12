@@ -77,7 +77,9 @@ export interface WelcomeScreenConfig {
     inputNameWidth: number;
     inputNameFontSize: number;
     inputNameColor: string;
+    inputNamePlaceholder: string;
     inputClassWidth: number;
     inputClassFontSize: number;
     inputClassColor: string;
+    inputClassPlaceholder: string;
 }
