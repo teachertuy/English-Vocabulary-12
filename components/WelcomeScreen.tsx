@@ -139,9 +139,9 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
       
       {/* Main Content Wrapper */}
       <div className="w-full max-w-md mt-0 space-y-0 z-10 flex flex-col items-center">
-            {/* Curved Title - Increased height to accommodate shifted line 2 */}
-            <div className={`w-full transition-all duration-500 ${titleLines.length > 1 ? 'h-36' : 'h-20'} relative mt-24`}>
-                 <svg viewBox={titleLines.length > 1 ? "0 0 500 150" : "0 0 500 80"} className="w-full h-full overflow-visible">
+            {/* Curved Title - Increased height to accommodate shifted line 2 (h-36 -> h-44) */}
+            <div className={`w-full transition-all duration-500 ${titleLines.length > 1 ? 'h-44' : 'h-20'} relative mt-24`}>
+                 <svg viewBox={titleLines.length > 1 ? "0 0 500 180" : "0 0 500 80"} className="w-full h-full overflow-visible">
                     {/* Hàng 1 - Đường cong chuẩn */}
                     <path id="curve1" d={titleLines.length > 1 ? "M 50, 60 Q 250, 15 450, 60" : "M 50, 70 Q 250, 25 450, 70"} stroke="transparent" fill="transparent"/>
                     <text width="500" style={{ fill: config.titleColor, filter: 'drop-shadow(2px 2px 2px rgba(0,0,0,0.4))', fontSize: `${config.titleFontSize}rem` }} className="font-black tracking-wider uppercase">
@@ -150,10 +150,10 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
                         </textPath>
                     </text>
                     
-                    {/* Hàng 2 (Chỗ của số 12) - Đường cong được hạ thấp xuống (y=130 thay vì 115) */}
+                    {/* Hàng 2 - Dịch xuống dưới (y=130 -> y=160) */}
                     {titleLines.length > 1 && (
                         <>
-                            <path id="curve2" d="M 10, 130 Q 250, 80 490, 130" stroke="transparent" fill="transparent"/>
+                            <path id="curve2" d="M 10, 160 Q 250, 110 490, 160" stroke="transparent" fill="transparent"/>
                             <text width="500" style={{ fill: config.titleColor, filter: 'drop-shadow(2px 2px 2px rgba(0,0,0,0.4))', fontSize: `${config.titleFontSizeLine2 || (config.titleFontSize * 0.85)}rem`, letterSpacing: line2LetterSpacing }} className="font-black uppercase opacity-95">
                                 <textPath href="#curve2" startOffset="50%" textAnchor="middle">
                                     {titleLines[1]}
@@ -164,8 +164,8 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
                  </svg>
             </div>
 
-            {/* Pointing Finger - Adjusted margin to keep it neat after moving text down */}
-            <div className="flex justify-center -mt-8 mb-2 relative z-20">
+            {/* Pointing Finger - Adjusted margin to keep it neat after moving text down (-mt-8 -> -mt-10) */}
+            <div className="flex justify-center -mt-10 mb-2 relative z-20">
                  <div className="text-5xl pointing-finger-down filter drop-shadow-xl transform hover:scale-110 transition-transform cursor-default">
                     👇
                 </div>
