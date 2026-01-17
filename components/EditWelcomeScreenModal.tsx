@@ -12,6 +12,7 @@ interface EditWelcomeScreenModalProps {
 const DEFAULT_CONFIG: WelcomeScreenConfig = {
     titleText: 'ENGLISH VOCABULARY 12',
     titleFontSize: 2.2,
+    titleFontSizeLine2: 1.87,
     titleColor: '#facc15', // text-yellow-400
     inputNameWidth: 100,
     inputNameFontSize: 1.25, // text-xl
@@ -89,15 +90,27 @@ const EditWelcomeScreenModal: React.FC<EditWelcomeScreenModalProps> = ({ show, o
                                         <span className="font-mono text-sm uppercase">{config.titleColor}</span>
                                     </div>
                                 </div>
-                                <div>
-                                    <label className="block text-sm font-semibold text-gray-600 mb-1">Cỡ chữ (rem)</label>
-                                    <input 
-                                        type="number" 
-                                        step="0.1"
-                                        value={config.titleFontSize} 
-                                        onChange={e => handleChange('titleFontSize', parseFloat(e.target.value))}
-                                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                                    />
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-xs font-semibold text-gray-600 mb-1">Cỡ chữ H1 (rem)</label>
+                                        <input 
+                                            type="number" 
+                                            step="0.1"
+                                            value={config.titleFontSize} 
+                                            onChange={e => handleChange('titleFontSize', parseFloat(e.target.value))}
+                                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-semibold text-gray-600 mb-1">Cỡ chữ H2 (rem)</label>
+                                        <input 
+                                            type="number" 
+                                            step="0.1"
+                                            value={config.titleFontSizeLine2 || (config.titleFontSize * 0.85)} 
+                                            onChange={e => handleChange('titleFontSizeLine2', parseFloat(e.target.value))}
+                                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         </div>

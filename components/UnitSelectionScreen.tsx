@@ -35,6 +35,7 @@ const unitColors = [
 const DEFAULT_CONFIG: WelcomeScreenConfig = {
     titleText: 'ENGLISH VOCABULARY 12',
     titleFontSize: 2.2,
+    titleFontSizeLine2: 1.87,
     titleColor: '#facc15',
     inputNameWidth: 100,
     inputNameFontSize: 1.25,
@@ -133,7 +134,7 @@ const UnitSelectionScreen: React.FC<UnitSelectionScreenProps> = ({ playerData, c
                         {titleLines.length > 1 ? (
                              <>
                                 <path id="unit-curve2" d="M 20, 100 Q 250, 45 480, 100" stroke="transparent" fill="transparent"/>
-                                <text width="500" style={{fill: config.titleColor, textShadow: '2px 2px 4px rgba(0,0,0,0.5)', fontSize: `${config.titleFontSize * 0.9}rem` }} className="font-extrabold tracking-wider uppercase">
+                                <text width="500" style={{fill: config.titleColor, textShadow: '2px 2px 4px rgba(0,0,0,0.5)', fontSize: `${config.titleFontSizeLine2 || (config.titleFontSize * 0.9)}rem` }} className="font-extrabold tracking-wider uppercase">
                                     <textPath href="#unit-curve2" startOffset="50%" textAnchor="middle">
                                         {titleLines[1]}
                                     </textPath>

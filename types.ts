@@ -73,6 +73,7 @@ export interface VocabularyWord {
 export interface WelcomeScreenConfig {
     titleText: string;
     titleFontSize: number;
+    titleFontSizeLine2: number;
     titleColor: string;
     inputNameWidth: number;
     inputNameFontSize: number;
