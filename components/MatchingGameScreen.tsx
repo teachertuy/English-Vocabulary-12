@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { PlayerData, VocabularyWord, GameResult, QuizAnswerDetail } from '../types';
 import { updateUnitActivityResult, trackStudentPresence, incrementCheatCount, listenForKickedStatus, getGameStatus, removeStudentPresence, updateStudentProgress, updateUnitActivityProgress } from '../services/firebaseService';
@@ -287,7 +286,7 @@ const MatchingGameScreen: React.FC<MatchingGameScreenProps> = ({ playerData, voc
             <WordButtons words={topWords} />
 
             <div className="flex flex-col items-center justify-center flex-grow w-full my-1">
-                 <div className="w-full max-w-[340px]">
+                 <div className="w-full max-w-[400px]">
                     <div className="bg-black rounded-xl p-0.5 shadow-lg">
                         <div className="bg-white rounded-[10px] p-0.5">
                             <div className="bg-black rounded-[8px] p-0.5">
