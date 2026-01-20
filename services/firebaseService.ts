@@ -32,7 +32,7 @@ const checkFirebase = (): Database => {
 
 const getPlayerKey = (playerName: string, playerClass: string) => {
     const normalizedClass = (playerClass || '').trim().toUpperCase();
-    const normalizedName = (playerName || '').trim();
+    const normalizedName = (playerName || '').trim().toUpperCase();
     const combined = `${normalizedClass}_${normalizedName}`;
     return combined.replace(/[.#$[\]]/g, '_');
 };

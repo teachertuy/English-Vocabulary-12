@@ -256,16 +256,44 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
     }, [results, processedUnitResults, processedTopicResults]);
 
     const getGroupedData = (rawStudents: StudentUnitSummary[], currentClass: string) => {
-        const groups: StudentGroupedResult[] = rawStudents
-            .filter(s => currentClass === 'all' || s.playerClass.toUpperCase() === currentClass.toUpperCase())
-            .map(s => ({
-                playerKey: s.playerKey,
-                playerName: s.playerName,
-                playerClass: s.playerClass,
-                attempts: [...s.results].sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0)),
-                latestTimestamp: Math.max(...s.results.map(r => r.timestamp || 0))
-            }));
+        // Filter by class first
+        const filtered = rawStudents.filter(s => currentClass === 'all' || s.playerClass.toUpperCase() === currentClass.toUpperCase());
         
+        // Merge summaries by normalized identity (class + name in uppercase)
+        const mergedMap: Record<string, StudentGroupedResult> = {};
+        
+        filtered.forEach(s => {
+            const identityKey = `${s.playerClass.toUpperCase()}_${s.playerName.toUpperCase()}`;
+            if (!mergedMap[identityKey]) {
+                mergedMap[identityKey] = {
+                    playerKey: identityKey,
+                    playerName: s.playerName,
+                    playerClass: s.playerClass,
+                    attempts: [],
+                    latestTimestamp: 0
+                };
+            }
+            
+            // Add all results from this record to the merged group
+            mergedMap[identityKey].attempts.push(...s.results);
+            
+            // Calculate group's latest activity for sorting
+            const groupLatest = s.results.length > 0 ? Math.max(...s.results.map(r => r.timestamp || 0)) : 0;
+            if (groupLatest > mergedMap[identityKey].latestTimestamp) {
+                mergedMap[identityKey].latestTimestamp = groupLatest;
+                // Prefer the version of the name associated with the latest activity
+                mergedMap[identityKey].playerName = s.playerName;
+            }
+        });
+
+        const groups = Object.values(mergedMap);
+        
+        // Sort attempts within each group by timestamp descending
+        groups.forEach(g => {
+            g.attempts.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+        });
+
+        // Sort groups by their most recent activity descending
         return groups.sort((a, b) => b.latestTimestamp - a.latestTimestamp);
     };
 
@@ -307,8 +335,8 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                             ) : groupedData.map((group, sttIdx) => (
                                 <React.Fragment key={group.playerKey}>
                                     {group.attempts.map((res, attemptIdx) => (
-                                        <tr key={res.activityId} onClick={() => onRowClick(res)} className="hover:bg-blue-50/50 transition-colors cursor-pointer text-[14px] font-bold">
-                                            {/* Merged Columns */}
+                                        <tr key={`${res.activityId}_${attemptIdx}`} onClick={() => onRowClick(res)} className="hover:bg-blue-50/50 transition-colors cursor-pointer text-[14px] font-bold">
+                                            {/* Merged Columns using rowSpan */}
                                             {attemptIdx === 0 && (
                                                 <>
                                                     <td rowSpan={group.attempts.length} className="p-3 border border-gray-300 text-blue-600 font-black text-center align-middle bg-white">{sttIdx + 1}</td>
@@ -410,7 +438,7 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                         <div className="flex justify-between items-center"><button onClick={() => setViewingTopic(null)} className="flex items-center gap-2 text-blue-600 font-semibold hover:underline">Quay lại danh sách</button><h2 className="text-2xl font-bold text-indigo-800">Quản lý chi tiết: TOPIC {viewingTopic}</h2></div>
                         <div className="p-4 border rounded-lg bg-sky-50 border-sky-200 grid grid-cols-1 lg:grid-cols-2 gap-6 shadow-inner">
                             <div><textarea value={topicVocabList} onChange={(e) => setTopicVocabList(e.target.value)} placeholder="Dán từ vựng tại đây..." className="w-full h-96 p-3 border border-gray-300 rounded-md font-mono text-sm bg-white" /></div>
-                            <div className="flex flex-col justify-between"><div className="space-y-4"><textarea value={topicActivityPrompts.learn} onChange={(e) => topicActivityPrompts.learn !== undefined ? setTopicActivityPrompts(p => ({...p, learn: e.target.value})) : null} placeholder="Học từ vựng..." className="w-full p-2 border rounded-md text-sm bg-sky-50" rows={3}/><textarea value={topicActivityPrompts.quiz} onChange={(e) => topicActivityPrompts.quiz !== undefined ? setTopicActivityPrompts(p => ({...p, quiz: e.target.value})) : null} placeholder="Trắc nghiệm..." className="w-full p-2 border rounded-md text-sm bg-sky-50" rows={3}/></div><button onClick={() => handleGenerateActivities('topic')} disabled={isGeneratingTopicActivities} className="bg-slate-500 text-white font-bold py-4 px-8 rounded-lg hover:bg-slate-600 shadow-md transition-all active:scale-95 disabled:bg-gray-400 mt-6 w-full">{isGeneratingTopicActivities ? 'Đang tạo bài...' : '✨ Tạo hoạt động với AI'}</button></div>
+                            <div className="flex flex-col justify-between"><div className="space-y-4"><textarea value={topicActivityPrompts.learn} onChange={(e) => setTopicActivityPrompts(p => ({...p, learn: e.target.value}))} placeholder="Học từ vựng..." className="w-full p-2 border rounded-md text-sm bg-sky-50" rows={3}/><textarea value={topicActivityPrompts.quiz} onChange={(e) => setTopicActivityPrompts(p => ({...p, quiz: e.target.value}))} placeholder="Trắc nghiệm..." className="w-full p-2 border rounded-md text-sm bg-sky-50" rows={3}/></div><button onClick={() => handleGenerateActivities('topic')} disabled={isGeneratingTopicActivities} className="bg-slate-500 text-white font-bold py-4 px-8 rounded-lg hover:bg-slate-600 shadow-md transition-all active:scale-95 disabled:bg-gray-400 mt-6 w-full">{isGeneratingTopicActivities ? 'Đang tạo bài...' : '✨ Tạo hoạt động với AI'}</button></div>
                         </div>
                         <h3 className="text-xl font-bold text-indigo-700 border-l-4 border-indigo-600 pl-3">Kết quả làm bài (TOPIC {viewingTopic})</h3>
                         {renderResultsTable(groupedTopicResults, 'topic', setSelectedResult, setDeletingTopicStudent)}
