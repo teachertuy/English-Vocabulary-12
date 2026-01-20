@@ -287,7 +287,7 @@ const MatchingGameScreen: React.FC<MatchingGameScreenProps> = ({ playerData, voc
             <WordButtons words={topWords} />
 
             <div className="flex flex-col items-center justify-center flex-grow w-full my-1">
-                 <div className="w-full max-w-[260px]">
+                 <div className="w-full max-w-[340px]">
                     <div className="bg-black rounded-xl p-0.5 shadow-lg">
                         <div className="bg-white rounded-[10px] p-0.5">
                             <div className="bg-black rounded-[8px] p-0.5">
@@ -329,11 +329,11 @@ const MatchingGameScreen: React.FC<MatchingGameScreenProps> = ({ playerData, voc
                                            {selectedEnglish ? (
                                                 <div className="relative z-10 flex items-center justify-center gap-1">
                                                     <span className="text-[10px] animate-pulse">✨</span>
-                                                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-gray-200 to-gray-400">Check answer</span>
+                                                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-gray-200 to-gray-400 uppercase">CHECK ANSWER</span>
                                                     <span className="text-[10px] animate-pulse delay-75">✨</span>
                                                 </div>
                                             ) : (
-                                                "Check answer"
+                                                "CHECK ANSWER"
                                             )}
                                         </button>
                                     </div>
