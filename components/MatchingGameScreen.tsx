@@ -291,7 +291,7 @@ const MatchingGameScreen: React.FC<MatchingGameScreenProps> = ({ playerData, voc
                         <div className="bg-white rounded-[10px] p-0.5">
                             <div className="bg-black rounded-[8px] p-0.5">
                                 <div className="bg-white rounded-[6px]">
-                                    <div className="px-3 py-5 text-center flex flex-col items-center gap-4">
+                                    <div className="px-3 pt-6 pb-4 text-center flex flex-col items-center gap-4">
                                         <div className="w-full flex items-center justify-center">
                                             <p className="text-orange-600 font-extrabold text-xl sm:text-2xl leading-none text-center pb-0.5">{currentVietnamese?.translation}</p>
                                         </div>
@@ -306,35 +306,37 @@ const MatchingGameScreen: React.FC<MatchingGameScreenProps> = ({ playerData, voc
                                             </div>
                                         </div>
                                         
-                                        <button 
-                                            onClick={handleCheckAnswer} 
-                                            disabled={!selectedEnglish}
-                                            className={`w-auto mt-1 font-bold py-5 px-6 rounded-full shadow-sm transform transition-all duration-300 text-lg focus:outline-none relative overflow-hidden group ${
-                                                !selectedEnglish 
-                                                ? "bg-gray-200 text-gray-400 cursor-not-allowed shadow-none" 
-                                                : "text-white border border-gray-600 hover:shadow-lg hover:shadow-white/20 hover:-translate-y-0.5"
-                                            }`}
-                                            style={selectedEnglish ? {
-                                                backgroundColor: '#000000',
-                                                backgroundImage: `
-                                                    radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 3px),
-                                                    radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 2px),
-                                                    radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 3px)
-                                                `,
-                                                backgroundSize: '50px 50px, 30px 30px, 40px 40px',
-                                                backgroundPosition: '0 0, 15px 15px, 20px 20px'
-                                            } : {}}
-                                        >
-                                           {selectedEnglish ? (
-                                                <div className="relative z-10 flex items-center justify-center gap-2">
-                                                    <span className="text-xs animate-pulse">✨</span>
-                                                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-gray-200 to-gray-400 uppercase tracking-widest font-black">CHECK ANSWER</span>
-                                                    <span className="text-xs animate-pulse delay-75">✨</span>
-                                                </div>
-                                            ) : (
-                                                <span className="uppercase tracking-widest font-black">CHECK ANSWER</span>
-                                            )}
-                                        </button>
+                                        <div className={`w-full overflow-hidden transition-all duration-500 ease-in-out flex justify-center ${selectedEnglish ? 'opacity-100 max-h-32 mt-2' : 'opacity-0 max-h-0 mt-0'}`}>
+                                            <button 
+                                                onClick={handleCheckAnswer} 
+                                                disabled={!selectedEnglish}
+                                                className={`w-auto font-bold py-5 px-6 rounded-full shadow-sm transform transition-all duration-300 text-lg focus:outline-none relative overflow-hidden group ${
+                                                    !selectedEnglish 
+                                                    ? "bg-gray-200 text-gray-400 cursor-not-allowed shadow-none" 
+                                                    : "text-white border border-gray-600 hover:shadow-lg hover:shadow-white/20 hover:-translate-y-0.5"
+                                                }`}
+                                                style={selectedEnglish ? {
+                                                    backgroundColor: '#000000',
+                                                    backgroundImage: `
+                                                        radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 3px),
+                                                        radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 2px),
+                                                        radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 3px)
+                                                    `,
+                                                    backgroundSize: '50px 50px, 30px 30px, 40px 40px',
+                                                    backgroundPosition: '0 0, 15px 15px, 20px 20px'
+                                                } : {}}
+                                            >
+                                               {selectedEnglish ? (
+                                                    <div className="relative z-10 flex items-center justify-center gap-2">
+                                                        <span className="text-xs animate-pulse">✨</span>
+                                                        <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-gray-200 to-gray-400 uppercase tracking-widest font-black">CHECK ANSWER</span>
+                                                        <span className="text-xs animate-pulse delay-75">✨</span>
+                                                    </div>
+                                                ) : (
+                                                    <span className="uppercase tracking-widest font-black">CHECK ANSWER</span>
+                                                )}
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
