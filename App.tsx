@@ -1,5 +1,4 @@
 
-
 import React, { useState, useCallback, useEffect } from 'react';
 import WelcomeScreen from './components/WelcomeScreen';
 import QuizScreen from './components/QuizScreen';
@@ -102,7 +101,8 @@ const App: React.FC = () => {
   const handleLearnVocabulary = useCallback(async (vocabData: VocabularyWord[], unitNumber: number) => {
     if (playerData && selectedGrade) {
         const unitIdentifier = selectedGrade === 'topics' ? `topic_${unitNumber}` : `unit_${unitNumber}`;
-        await startUnitActivity(FIXED_CLASSROOM_ID, selectedGrade, unitIdentifier, playerData, 'vocabulary');
+        const activityId = await startUnitActivity(FIXED_CLASSROOM_ID, selectedGrade, unitIdentifier, playerData, 'vocabulary');
+        setCurrentActivityId(activityId);
     }
     setVocabulary(vocabData);
     setSelectedUnit(unitNumber);
@@ -118,7 +118,6 @@ const App: React.FC = () => {
     setCurrentScreen(Screen.UnitSelection);
     setQuestions([]);
     setVocabulary([]);
-    // Note: selectedUnit is NOT reset, so the modal for that unit will open.
     setCurrentActivityId(null);
   }, [currentActivityId, playerData]);
 
@@ -229,7 +228,7 @@ const App: React.FC = () => {
       case Screen.MatchingGame:
         return playerData && selectedUnit && currentActivityId && selectedGrade && <MatchingGameScreen vocabulary={vocabulary} unitNumber={selectedUnit} playerData={playerData} onFinish={handleFinishGame} onForceExit={handleForceExitToWelcome} classroomId={FIXED_CLASSROOM_ID} activityId={currentActivityId} onBack={handleReturnToActivitySelection} grade={selectedGrade} />;
       case Screen.Vocabulary:
-        return selectedUnit && selectedGrade && <VocabularyScreen unitNumber={selectedUnit} vocabulary={vocabulary} onBack={handleReturnToActivitySelection} classroomId={FIXED_CLASSROOM_ID} grade={selectedGrade} />;
+        return playerData && selectedUnit && selectedGrade && currentActivityId && <VocabularyScreen unitNumber={selectedUnit} vocabulary={vocabulary} onBack={handleReturnToActivitySelection} classroomId={FIXED_CLASSROOM_ID} grade={selectedGrade} playerData={playerData} activityId={currentActivityId} onFinish={handleFinishGame} />;
       case Screen.Results:
         return gameResult && <ResultsScreen result={gameResult} onBack={handleReturnToActivitySelection} onLogout={handleLogout} isClassroomMode={true} />;
       case Screen.Dashboard:

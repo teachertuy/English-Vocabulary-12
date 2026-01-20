@@ -180,7 +180,7 @@ const unitCardStyles = [
 const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }> = ({ classroomId, onGoHome }) => {
     // Main Dashboard State
     const [results, setResults] = useState<GameResult[]>([]);
-    const [sortConfig, setSortConfig] = useState<{ key: keyof GameResult | null; direction: 'ascending' | 'descending' }>({ key: 'score', direction: 'descending' });
+    const [sortConfig, setSortConfig] = useState<{ key: keyof GameResult | null; direction: 'ascending' | 'descending' }>({ key: 'timestamp', direction: 'descending' });
     const [selectedClass, setSelectedClass] = useState('all');
     const [onlineStudents, setOnlineStudents] = useState<{name: string, class: string}[]>([]);
     const [cheatCounts, setCheatCounts] = useState<Record<string, number>>({});
@@ -213,7 +213,7 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
     const [currentUnitVocabulary, setCurrentUnitVocabulary] = useState<VocabularyWord[]>([]);
     const [unitVocabList, setUnitVocabList] = useState('');
     const [isGeneratingUnitActivities, setIsGeneratingUnitActivities] = useState(false);
-    const [unitSortConfig, setUnitSortConfig] = useState<{ key: keyof GameResult | null; direction: 'ascending' | 'descending' }>({ key: 'score', direction: 'descending' });
+    const [unitSortConfig, setUnitSortConfig] = useState<{ key: keyof GameResult | null; direction: 'ascending' | 'descending' }>({ key: 'timestamp', direction: 'descending' });
     const [selectedUnitClass, setSelectedUnitClass] = useState('all');
     const [deletingUnitStudent, setDeletingUnitStudent] = useState<GameResult | null>(null);
     const [isClearingUnit, setIsClearingUnit] = useState(false);
@@ -227,7 +227,7 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
     const [currentTopicVocabulary, setCurrentTopicVocabulary] = useState<VocabularyWord[]>([]);
     const [topicVocabList, setTopicVocabList] = useState('');
     const [isGeneratingTopicActivities, setIsGeneratingTopicActivities] = useState(false);
-    const [topicSortConfig, setTopicSortConfig] = useState<{ key: keyof GameResult | null; direction: 'ascending' | 'descending' }>({ key: 'score', direction: 'descending' });
+    const [topicSortConfig, setTopicSortConfig] = useState<{ key: keyof GameResult | null; direction: 'ascending' | 'descending' }>({ key: 'timestamp', direction: 'descending' });
     const [selectedTopicClass, setSelectedTopicClass] = useState('all');
     const [deletingTopicStudent, setDeletingTopicStudent] = useState<GameResult | null>(null);
     const [isClearingTopic, setIsClearingTopic] = useState(false);
@@ -461,7 +461,7 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                                 <th onClick={() => toggleSort('playerName')} className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-40 cursor-pointer hover:bg-orange-100 uppercase tracking-tight">HỌ VÀ TÊN {config.key === 'playerName' && (config.direction === 'ascending' ? '↑' : '↓')}</th>
                                 <th onClick={() => toggleSort('playerClass')} className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-20 cursor-pointer hover:bg-orange-100 uppercase tracking-tight text-center">LỚP {config.key === 'playerClass' && (config.direction === 'ascending' ? '↑' : '↓')}</th>
                                 <th onClick={() => toggleSort('score')} className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-20 cursor-pointer hover:bg-orange-100 uppercase tracking-tight text-center">ĐIỂM {config.key === 'score' && (config.direction === 'ascending' ? '↑' : '↓')} ▼</th>
-                                <th className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-40 uppercase tracking-tight text-center">NỘI DUNG THAM GIA ↑</th>
+                                <th onClick={() => toggleSort('gameType')} className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-40 cursor-pointer hover:bg-orange-100 uppercase tracking-tight text-center">NỘI DUNG THAM GIA {config.key === 'gameType' && (config.direction === 'ascending' ? '↑' : '↓')} ↑</th>
                                 <th className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-20 uppercase tracking-tight text-center">LẦN LÀM ↑</th>
                                 <th className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-16 uppercase tracking-tight text-center">ĐÚNG ↑</th>
                                 <th className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-16 uppercase tracking-tight text-center">SAI ↑</th>
@@ -482,10 +482,10 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                                             {getGameTypeLabel(res.gameType)}
                                         </span>
                                     </td>
-                                    <td className="p-3 border border-gray-300 text-red-600 text-center">{res.attempts}</td>
+                                    <td className="p-3 border border-gray-300 text-red-600 text-center">{res.attempts || 1}</td>
                                     <td className="p-3 border border-gray-300 text-green-600 text-center">{res.correct}</td>
                                     <td className="p-3 border border-gray-300 text-red-600 text-center">{res.incorrect}</td>
-                                    <td className="p-3 border border-gray-300 text-[#c05621] text-center font-['Nunito'] font-black">{formatTime(res.timeTakenSeconds)}</td>
+                                    <td className="p-3 border border-gray-300 text-[#c05621] text-center font-['Nunito'] font-black">{formatTime(res.timeTakenSeconds || 0)}</td>
                                     <td className="p-3 border border-gray-300 text-slate-800 text-[13px] text-center font-['Nunito']">{formatDate(res.timestamp)}</td>
                                     <td className="p-3 border border-gray-300 text-center">
                                         <button 
@@ -518,7 +518,7 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                         </button>
                         <h2 className="text-2xl font-bold text-indigo-800">Quản lý chi tiết: <span className="text-red-500">UNIT</span> {unitNumber}</h2>
                     </div>
-                     <button onClick={handleRefresh} className="bg-blue-600 text-white font-bold p-2 rounded-full hover:bg-blue-700 transition shadow-sm disabled:bg-gray-500" title="Làm mới dữ liệu" disabled={isRefreshing}><svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 ${isRefreshing ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h5M20 20v-5h-5M4 4l1.5 1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 003.5 12" /></svg></button>
+                     <button onClick={handleRefresh} className="bg-blue-600 text-white font-bold p-2 rounded-full hover:bg-blue-700 transition shadow-sm disabled:bg-gray-500" title="Làm mới dữ liệu" disabled={isRefreshing}><svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 ${isRefreshing ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h5M20 20v-5h-5M4 4l1.5 1.5A9 9 0 0120.5 12M20 20v-5h-5M4 4l1.5 1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 003.5 12" /></svg></button>
                 </div>
                 
                 <div className="p-4 border rounded-lg bg-sky-50 border-sky-200 space-y-4">
@@ -576,7 +576,7 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                         </button>
                         <h2 className="text-2xl font-bold text-indigo-800">Quản lý chi tiết: <span className="text-blue-500">TOPIC</span> {topicNumber}</h2>
                     </div>
-                     <button onClick={handleRefresh} className="bg-blue-600 text-white font-bold p-2 rounded-full hover:bg-blue-700 transition shadow-sm disabled:bg-gray-500" title="Làm mới dữ liệu" disabled={isRefreshing}><svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 ${isRefreshing ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h5M20 20v-5h-5M4 4l1.5 1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 003.5 12" /></svg></button>
+                     <button onClick={handleRefresh} className="bg-blue-600 text-white font-bold p-2 rounded-full hover:bg-blue-700 transition shadow-sm disabled:bg-gray-500" title="Làm mới dữ liệu" disabled={isRefreshing}><svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 ${isRefreshing ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h5M20 20v-5h-5M4 4l1.5 1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 003.5 12" /></svg></button>
                 </div>
                 
                 <div className="p-4 border rounded-lg bg-sky-50 border-sky-200 space-y-4">
@@ -711,7 +711,7 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                                 <h2 className="font-bold" style={{ fontSize: `${dashboardConfig.sectionTitleFontSize}rem`, color: dashboardConfig.sectionTitleColor }}>{dashboardConfig.unitsTabLabel}</h2>
                                 <p className="text-slate-400 mt-2">Kích hoạt, quản lý nội dung và xem kết quả cho từng bài học.</p>
                             </div>
-                            <button onClick={handleRefresh} className="bg-slate-700/50 text-white font-bold p-2 rounded-full hover:bg-slate-600/50 transition shadow-md border border-slate-600 disabled:bg-gray-500" title="Làm mới dữ liệu" disabled={isRefreshing}><svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 ${isRefreshing ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h5M20 20v-5h-5M4 4l1.5 1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 003.5 12" /></svg></button>
+                            <button onClick={handleRefresh} className="bg-slate-700/50 text-white font-bold p-2 rounded-full hover:bg-slate-600/50 transition shadow-md border border-slate-600 disabled:bg-gray-500" title="Làm mới dữ liệu" disabled={isRefreshing}><svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 ${isRefreshing ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h5M20 20v-5h-5M4 4l1.5 1.5A9 9 0 0120.5 12M20 20v-5h-5M4 4l1.5 1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 003.5 12" /></svg></button>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                             {Array.from({ length: 10 }, (_, i) => i + 1).map(unitNumber => {
@@ -751,7 +751,7 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                                 <h2 className="font-bold" style={{ fontSize: `${dashboardConfig.sectionTitleFontSize}rem`, color: dashboardConfig.sectionTitleColor }}>{dashboardConfig.topicsTabLabel}</h2>
                                 <p className="text-slate-400 mt-2">Kích hoạt, quản lý nội dung và xem kết quả cho từng chủ đề.</p>
                             </div>
-                            <button onClick={handleRefresh} className="bg-slate-700/50 text-white font-bold p-2 rounded-full hover:bg-slate-600/50 transition shadow-md border border-slate-600 disabled:bg-gray-500" title="Làm mới dữ liệu" disabled={isRefreshing}><svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 ${isRefreshing ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h5M20 20v-5h-5M4 4l1.5 1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 003.5 12" /></svg></button>
+                            <button onClick={handleRefresh} className="bg-slate-700/50 text-white font-bold p-2 rounded-full hover:bg-slate-600/50 transition shadow-md border border-slate-600 disabled:bg-gray-500" title="Làm mới dữ liệu" disabled={isRefreshing}><svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 ${isRefreshing ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h5M20 20v-5h-5M4 4l1.5 1.5A9 9 0 0120.5 12M20 20v-5h-5M4 4l1.5 1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 003.5 12" /></svg></button>
                         </div>
                         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
                             {Array.from({ length: 60 }, (_, i) => i + 1).map(topicNumber => {
@@ -792,7 +792,7 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                              <div className="p-4 bg-red-50 border border-red-100 rounded-xl flex flex-col items-center text-center">
                                  <div className="p-3 bg-white rounded-full shadow mb-3 text-red-600"><svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" /></svg></div>
                                  <h4 className="font-bold text-red-800 mb-2">Màn hình Chọn bài tập</h4>
-                                 <button onClick={() => setIsEditExerciseModalOpen(true)} className="mt-auto px-4 py-2 bg-red-600 text-white font-bold rounded-lg hover:bg-red-700 transition text-sm shadow-md">🎨 Chỉnh sửa thiết kế HS</button>
+                                 <button onClick={() => setIsEditExerciseModalOpen(true)} className="mt-auto px-4 py-2 bg-red-600 text-white font-bold rounded-lg hover:bg-teal-700 transition text-sm shadow-md">🎨 Chỉnh sửa thiết kế HS</button>
                              </div>
                              <div className="p-4 bg-blue-50 border border-blue-100 rounded-xl flex flex-col items-center text-center">
                                  <div className="p-3 bg-white rounded-full shadow mb-3 text-blue-600"><svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg></div>
