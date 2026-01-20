@@ -34,9 +34,13 @@ const formatTime = (seconds: number) => {
 const formatDate = (timestamp?: number) => {
     if (!timestamp) return '';
     const date = new Date(timestamp);
-    const time = date.toLocaleTimeString('vi-VN', { hour12: false });
-    const d = date.toLocaleDateString('vi-VN');
-    return `${time} ${d}`;
+    const h = date.getHours().toString().padStart(2, '0');
+    const m = date.getMinutes().toString().padStart(2, '0');
+    const s = date.getSeconds().toString().padStart(2, '0');
+    const d = date.getDate();
+    const mo = date.getMonth() + 1;
+    const y = date.getFullYear();
+    return `${h}:${m}:${s} ${d}/${mo}/${y}`;
 };
 
 const VOCAB_PLACEHOLDER = `Dán danh sách từ vựng của bạn vào đây.
@@ -140,22 +144,6 @@ const getPlayerKey = (playerName: string, playerClass: string) => {
     return combined.replace(/[.#$[\]]/g, '_');
 };
 
-const nameColors = [
-    'text-red-600', 'text-blue-600', 'text-green-600', 'text-purple-600', 'text-pink-600',
-    'text-indigo-600', 'text-teal-600', 'text-orange-600', 'text-lime-600', 'text-cyan-600',
-    'text-rose-600', 'text-fuchsia-600'
-];
-
-const getColorForName = (name: string) => {
-    if (!name) return 'text-gray-700';
-    let hash = 0;
-    for (let i = 0; i < name.length; i++) {
-        hash = name.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    const index = Math.abs(hash % nameColors.length);
-    return nameColors[index];
-};
-
 const getGameTypeStyle = (gameType?: 'quiz' | 'spelling' | 'matching' | 'vocabulary') => {
     switch (gameType) {
         case 'quiz': return 'text-green-800 bg-green-100 border-green-200';
@@ -198,16 +186,8 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
     const [cheatCounts, setCheatCounts] = useState<Record<string, number>>({});
     const [studentProgress, setStudentProgress] = useState<Record<string, StudentProgress>>({});
     const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[]>([]);
-    const [flashingStudents, setFlashingStudents] = useState<Set<string>>(new Set());
-    const prevCheatCountsRef = useRef<Record<string, number>>({});
-    const [deletingStudent, setDeletingStudent] = useState<string | null>(null);
-    const [kickingStudent, setKickingStudent] = useState<string | null>(null);
-    
-    // Global State
-    const [isGameEnabled, setIsGameEnabled] = useState(true);
-    const [isClearing, setIsClearing] = useState(false);
-    const [isRefreshing, setIsRefreshing] = useState(false);
     const [refreshKey, setRefreshKey] = useState(0);
+    const [isRefreshing, setIsRefreshing] = useState(false);
     const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
     const [activeTab, setActiveTab] = useState<Tab>('dashboard');
     
@@ -221,13 +201,7 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
 
     // Modal & Editing State
     const [selectedResult, setSelectedResult] = useState<GameResult | null>(null);
-    const [isTextQuizModalOpen, setIsTextQuizModalOpen] = useState(false);
-    const [isAiQuizModalOpen, setIsAiQuizModalOpen] = useState(false);
-    const [isGeneratingNewQuiz, setIsGeneratingNewQuiz] = useState(false);
-    const [isGeneratingFromText, setIsGeneratingFromText] = useState(false);
     const [quizForEditing, setQuizForEditing] = useState<QuizQuestion[] | null>(null);
-    const [isDeleteQuizConfirmOpen, setIsDeleteQuizConfirmOpen] = useState(false);
-    const [isDeletingQuiz, setIsDeletingQuiz] = useState(false);
     const [isEditVocabModalOpen, setIsEditVocabModalOpen] = useState(false);
     const [vocabForEditing, setVocabForEditing] = useState<VocabularyWord[]>([]);
     
@@ -259,12 +233,7 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
     const [isClearingTopic, setIsClearingTopic] = useState(false);
     const [topicActivityPrompts, setTopicActivityPrompts] = useState(EMPTY_ACTIVITY_PROMPTS);
 
-    const rowBorderColors = useMemo(() => [
-        'border-b-indigo-200',
-        'border-b-teal-200',
-        'border-b-rose-200',
-        'border-b-amber-200',
-    ], []);
+    const [isGameEnabled, setIsGameEnabled] = useState(true);
 
     useEffect(() => {
         if (notification) {
@@ -291,8 +260,7 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
             try {
                 await checkAndSyncQuizVersion(classroomId, QUIZ_VERSION);
             } catch (error) {
-                console.error("Initialization failed due to Firebase errors.");
-                setNotification({ message: 'Lỗi kết nối CSDL.', type: 'error' });
+                console.error("Initialization failed.");
             }
     
             unsubscribeResults = listenToResults(classroomId, (data) => setResults(data ? Object.values(data) : []));
@@ -367,58 +335,46 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
     const handleToggleGameStatus = useCallback(() => setGameStatus(classroomId, !isGameEnabled), [classroomId, isGameEnabled]);
     const handleToggleUnitStatus = useCallback(async (grade: number, unitNumber: number, isEnabled: boolean) => {
         const unitId = `unit_${unitNumber}`;
-        try { await setUnitStatusByGrade(classroomId, grade, unitId, isEnabled); } catch (error) { console.error(error); setNotification({ message: `Lỗi khi cập nhật UNIT ${unitNumber}.`, type: 'error' }); }
+        try { await setUnitStatusByGrade(classroomId, grade, unitId, isEnabled); } catch (error) { setNotification({ message: `Lỗi UNIT ${unitNumber}.`, type: 'error' }); }
     }, [classroomId]);
     const handleToggleTopicStatus = useCallback(async (topicNumber: number, isEnabled: boolean) => {
         const topicId = `topic_${topicNumber}`;
-        try { await setTopicStatus(classroomId, topicId, isEnabled); } catch (error) { console.error(error); setNotification({ message: `Lỗi khi cập nhật TOPIC ${topicNumber}.`, type: 'error' }); }
+        try { await setTopicStatus(classroomId, topicId, isEnabled); } catch (error) { setNotification({ message: `Lỗi TOPIC ${topicNumber}.`, type: 'error' }); }
     }, [classroomId]);
 
     const handleClearUnitResults = useCallback(async () => {
         if (!viewingUnit || isClearingUnit) return;
         setIsClearingUnit(true);
-        try { await clearUnitResultsByGrade(classroomId, viewingUnit.grade, `unit_${viewingUnit.unit}`); setNotification({ message: `Đã xóa hết kết quả của UNIT ${viewingUnit.unit}!`, type: 'success' }); } catch (error) { setNotification({ message: 'Xóa kết quả thất bại.', type: 'error' }); } finally { setIsClearingUnit(false); }
+        try { await clearUnitResultsByGrade(classroomId, viewingUnit.grade, `unit_${viewingUnit.unit}`); setNotification({ message: `Đã xóa hết kết quả của UNIT ${viewingUnit.unit}!`, type: 'success' }); } catch (error) { setNotification({ message: 'Xóa thất bại.', type: 'error' }); } finally { setIsClearingUnit(false); }
     }, [classroomId, viewingUnit, isClearingUnit]);
 
     const handleClearTopicResults = useCallback(async () => {
         if (!viewingTopic || isClearingTopic) return;
         setIsClearingTopic(true);
-        try { await clearTopicResults(classroomId, `topic_${viewingTopic}`); setNotification({ message: `Đã xóa hết kết quả của TOPIC ${viewingTopic}!`, type: 'success' }); } catch (error) { setNotification({ message: 'Xóa kết quả thất bại.', type: 'error' }); } finally { setIsClearingTopic(false); }
+        try { await clearTopicResults(classroomId, `topic_${viewingTopic}`); setNotification({ message: `Đã xóa hết kết quả của TOPIC ${viewingTopic}!`, type: 'success' }); } catch (error) { setNotification({ message: 'Xóa thất bại.', type: 'error' }); } finally { setIsClearingTopic(false); }
     }, [classroomId, viewingTopic, isClearingTopic]);
 
-    const handleGenerateFromAiPrompt = useCallback(async (prompt: string) => {
-        if (isGeneratingNewQuiz) return;
-        setIsGeneratingNewQuiz(true);
-        try { const newQuestions = await generateQuizFromCustomPrompt(prompt); setQuizForEditing(newQuestions); setNotification({ message: 'Đề đã được tạo!', type: 'success' }); setIsAiQuizModalOpen(false); } catch (error) { setNotification({ message: 'Tạo đề thất bại.', type: 'error' }); } finally { setIsGeneratingNewQuiz(false); }
-    }, [isGeneratingNewQuiz]);
-
-    const handleGenerateFromText = useCallback(async (context: string) => {
-        if (isGeneratingFromText) return;
-        setIsGeneratingFromText(true);
-        try { const newQuestions = await generateQuizFromText(context); setQuizForEditing(newQuestions); setNotification({ message: 'Đề đã được tạo!', type: 'success' }); setIsTextQuizModalOpen(false); } catch (error) { setNotification({ message: 'Tạo đề từ văn bản thất bại.', type: 'error' }); } finally { setIsGeneratingFromText(false); }
-    }, [isGeneratingFromText]);
-
     const handleSaveEditedQuiz = useCallback(async (editedQuestions: QuizQuestion[]) => {
-        if (editedQuestions.length === 0) { setNotification({ message: 'Không thể lưu một đề trống.', type: 'error' }); setQuizForEditing(null); return; }
+        if (editedQuestions.length === 0) { setNotification({ message: 'Không thể lưu đề trống.', type: 'error' }); setQuizForEditing(null); return; }
         try {
-            if (viewingUnit !== null) { await saveUnitQuizQuestionsByGrade(classroomId, viewingUnit.grade, `unit_${viewingUnit.unit}`, editedQuestions); setNotification({ message: `Đã cập nhật đề thi cho UNIT ${viewingUnit.unit}!`, type: 'success' }); }
-            else if (viewingTopic !== null) { await saveTopicQuizQuestions(classroomId, `topic_${viewingTopic}`, editedQuestions); setNotification({ message: `Đã cập nhật đề thi cho TOPIC ${viewingTopic}!`, type: 'success' }); }
-            else { await saveQuizQuestions(classroomId, editedQuestions); setNotification({ message: 'Đã cập nhật đề thi chung!', type: 'success' }); }
-        } catch (error) { setNotification({ message: 'Lưu đề thi thất bại.', type: 'error' }); } finally { setQuizForEditing(null); }
+            if (viewingUnit !== null) { await saveUnitQuizQuestionsByGrade(classroomId, viewingUnit.grade, `unit_${viewingUnit.unit}`, editedQuestions); setNotification({ message: `Cập nhật UNIT ${viewingUnit.unit}!`, type: 'success' }); }
+            else if (viewingTopic !== null) { await saveTopicQuizQuestions(classroomId, `topic_${viewingTopic}`, editedQuestions); setNotification({ message: `Cập nhật TOPIC ${viewingTopic}!`, type: 'success' }); }
+            else { await saveQuizQuestions(classroomId, editedQuestions); setNotification({ message: 'Cập nhật đề chung!', type: 'success' }); }
+        } catch (error) { setNotification({ message: 'Lưu thất bại.', type: 'error' }); } finally { setQuizForEditing(null); }
     }, [classroomId, viewingUnit, viewingTopic]);
 
     const handleSaveVocabulary = useCallback(async (editedVocab: VocabularyWord[]) => {
         try {
-            if (viewingUnit !== null) { await saveUnitVocabularyByGrade(classroomId, viewingUnit.grade, `unit_${viewingUnit.unit}`, editedVocab); setNotification({ message: `Đã cập nhật từ vựng cho UNIT ${viewingUnit.unit}!`, type: 'success' }); }
-            else if (viewingTopic !== null) { await saveTopicVocabulary(classroomId, `topic_${viewingTopic}`, editedVocab); setNotification({ message: `Đã cập nhật từ vựng cho TOPIC ${viewingTopic}!`, type: 'success' }); }
-        } catch (error) { setNotification({ message: 'Lưu từ vựng thất bại.', type: 'error' }); }
+            if (viewingUnit !== null) { await saveUnitVocabularyByGrade(classroomId, viewingUnit.grade, `unit_${viewingUnit.unit}`, editedVocab); setNotification({ message: `Cập nhật UNIT ${viewingUnit.unit}!`, type: 'success' }); }
+            else if (viewingTopic !== null) { await saveTopicVocabulary(classroomId, `topic_${viewingTopic}`, editedVocab); setNotification({ message: `Cập nhật TOPIC ${viewingTopic}!`, type: 'success' }); }
+        } catch (error) { setNotification({ message: 'Lưu thất bại.', type: 'error' }); }
     }, [classroomId, viewingUnit, viewingTopic]);
 
     const handleRefresh = useCallback(() => { setIsRefreshing(true); setRefreshKey(prev => prev + 1); setTimeout(() => setIsRefreshing(false), 1000); }, []);
 
-    const handleSaveWelcomeConfig = async (config: WelcomeScreenConfig) => { try { await saveWelcomeConfig(classroomId, config); setNotification({ message: 'Đã lưu thay đổi!', type: 'success' }); } catch (error) { setNotification({ message: 'Lưu thất bại.', type: 'error' }); } };
-    const handleSaveDashboardConfig = async (config: DashboardConfig) => { try { await saveDashboardConfig(classroomId, config); setNotification({ message: 'Đã lưu thay đổi!', type: 'success' }); } catch (error) { setNotification({ message: 'Lưu thất bại.', type: 'error' }); } };
-    const handleSaveExerciseSelectionConfig = async (config: ExerciseSelectionConfig) => { try { await saveExerciseSelectionConfig(classroomId, config); setNotification({ message: 'Đã lưu thay đổi!', type: 'success' }); } catch (error) { setNotification({ message: 'Lưu thất bại.', type: 'error' }); } };
+    const handleSaveWelcomeConfig = async (config: WelcomeScreenConfig) => { try { await saveWelcomeConfig(classroomId, config); setNotification({ message: 'Đã lưu!', type: 'success' }); } catch (error) { setNotification({ message: 'Thất bại.', type: 'error' }); } };
+    const handleSaveDashboardConfig = async (config: DashboardConfig) => { try { await saveDashboardConfig(classroomId, config); setNotification({ message: 'Đã lưu!', type: 'success' }); } catch (error) { setNotification({ message: 'Thất bại.', type: 'error' }); } };
+    const handleSaveExerciseSelectionConfig = async (config: ExerciseSelectionConfig) => { try { await saveExerciseSelectionConfig(classroomId, config); setNotification({ message: 'Đã lưu!', type: 'success' }); } catch (error) { setNotification({ message: 'Thất bại.', type: 'error' }); } };
 
     const uniqueClasses = useMemo(() => {
         const allResults = [...results, ...processedUnitResults.flatMap(s => s.results), ...processedTopicResults.flatMap(s => s.results)];
@@ -475,9 +431,9 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
         const setClass = type === 'unit' ? setSelectedUnitClass : setSelectedTopicClass;
 
         return (
-            <div className="bg-white rounded-xl shadow-lg border-2 border-gray-200 overflow-hidden mt-8">
+            <div className="bg-white rounded-xl shadow-lg border border-gray-300 overflow-hidden mt-8">
                 {/* Control Header */}
-                <div className="p-4 border-b-2 border-gray-200 bg-white flex flex-col sm:flex-row justify-between items-center gap-4">
+                <div className="p-4 border-b border-gray-300 bg-white flex flex-col sm:flex-row justify-between items-center gap-4">
                     <div className="flex items-center gap-3">
                         <select 
                             value={currentClass} 
@@ -491,59 +447,58 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                         onClick={type === 'unit' ? handleClearUnitResults : handleClearTopicResults}
                         disabled={type === 'unit' ? isClearingUnit : isClearingTopic}
                         className="p-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition shadow-md disabled:bg-gray-400"
-                        title="Xóa tất cả kết quả"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                     </button>
                 </div>
 
-                {/* Table with visible grid borders */}
+                {/* Table with visible grid structure */}
                 <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse table-fixed min-w-[1200px]">
+                    <table className="w-full text-left border-collapse table-fixed min-w-[1100px]">
                         <thead>
                             <tr className="bg-[#fff2e0]">
-                                <th className="p-4 border-2 border-gray-200 text-[13px] font-black text-[#c05621] w-16 text-center">STT</th>
-                                <th onClick={() => toggleSort('playerName')} className="p-4 border-2 border-gray-200 text-[13px] font-black text-[#c05621] w-48 cursor-pointer hover:bg-orange-100 transition-colors uppercase tracking-tight">HỌ VÀ TÊN {config.key === 'playerName' && (config.direction === 'ascending' ? '↑' : '↓')}</th>
-                                <th onClick={() => toggleSort('playerClass')} className="p-4 border-2 border-gray-200 text-[13px] font-black text-[#c05621] w-24 cursor-pointer hover:bg-orange-100 transition-colors uppercase tracking-tight text-center">LỚP {config.key === 'playerClass' && (config.direction === 'ascending' ? '↑' : '↓')}</th>
-                                <th onClick={() => toggleSort('score')} className="p-4 border-2 border-gray-200 text-[13px] font-black text-[#c05621] w-24 cursor-pointer hover:bg-orange-100 transition-colors uppercase tracking-tight text-center">ĐIỂM {config.key === 'score' && (config.direction === 'ascending' ? '↑' : '↓')} ▼</th>
-                                <th className="p-4 border-2 border-gray-200 text-[13px] font-black text-[#c05621] w-44 uppercase tracking-tight text-center">NỘI DUNG THAM GIA ↑</th>
-                                <th className="p-4 border-2 border-gray-200 text-[13px] font-black text-[#c05621] w-24 uppercase tracking-tight text-center">LẦN LÀM ↑</th>
-                                <th className="p-4 border-2 border-gray-200 text-[13px] font-black text-[#c05621] w-20 uppercase tracking-tight text-center">ĐÚNG ↑</th>
-                                <th className="p-4 border-2 border-gray-200 text-[13px] font-black text-[#c05621] w-20 uppercase tracking-tight text-center">SAI ↑</th>
-                                <th className="p-4 border-2 border-gray-200 text-[13px] font-black text-[#c05621] w-32 uppercase tracking-tight text-center">THỜI GIAN ↑</th>
-                                <th onClick={() => toggleSort('timestamp')} className="p-4 border-2 border-gray-200 text-[13px] font-black text-[#c05621] w-52 cursor-pointer hover:bg-orange-100 transition-colors uppercase tracking-tight text-center">NGÀY LÀM {config.key === 'timestamp' && (config.direction === 'ascending' ? '↑' : '↓')} ↑</th>
-                                <th className="p-4 border-2 border-gray-200 text-[13px] font-black text-[#c05621] w-32 uppercase tracking-tight text-center">HÀNH ĐỘNG</th>
+                                <th className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-14 text-center">STT</th>
+                                <th onClick={() => toggleSort('playerName')} className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-40 cursor-pointer hover:bg-orange-100 uppercase tracking-tight">HỌ VÀ TÊN {config.key === 'playerName' && (config.direction === 'ascending' ? '↑' : '↓')}</th>
+                                <th onClick={() => toggleSort('playerClass')} className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-20 cursor-pointer hover:bg-orange-100 uppercase tracking-tight text-center">LỚP {config.key === 'playerClass' && (config.direction === 'ascending' ? '↑' : '↓')}</th>
+                                <th onClick={() => toggleSort('score')} className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-20 cursor-pointer hover:bg-orange-100 uppercase tracking-tight text-center">ĐIỂM {config.key === 'score' && (config.direction === 'ascending' ? '↑' : '↓')} ▼</th>
+                                <th className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-40 uppercase tracking-tight text-center">NỘI DUNG THAM GIA ↑</th>
+                                <th className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-20 uppercase tracking-tight text-center">LẦN LÀM ↑</th>
+                                <th className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-16 uppercase tracking-tight text-center">ĐÚNG ↑</th>
+                                <th className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-16 uppercase tracking-tight text-center">SAI ↑</th>
+                                <th onClick={() => toggleSort('timeTakenSeconds')} className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-28 cursor-pointer hover:bg-orange-100 uppercase tracking-tight text-center">THỜI GIAN {config.key === 'timeTakenSeconds' && (config.direction === 'ascending' ? '↑' : '↓')} ↑</th>
+                                <th onClick={() => toggleSort('timestamp')} className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-48 cursor-pointer hover:bg-orange-100 uppercase tracking-tight text-center">NGÀY LÀM {config.key === 'timestamp' && (config.direction === 'ascending' ? '↑' : '↓')} ↑</th>
+                                <th className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-28 uppercase tracking-tight text-center">HÀNH ĐỘNG</th>
                             </tr>
                         </thead>
                         <tbody className="bg-white">
                             {data.map((res, idx) => (
                                 <tr key={`${res.playerKey}_${res.activityId}`} onClick={() => onRowClick(res)} className="hover:bg-blue-50/50 transition-colors cursor-pointer text-[14px] font-bold">
-                                    <td className="p-4 border-2 border-gray-200 text-blue-600 font-black text-center">{idx + 1}</td>
-                                    <td className="p-4 border-2 border-gray-200 text-[#E91E63] truncate">{res.playerName}</td>
-                                    <td className="p-4 border-2 border-gray-200 text-[#8E44AD] text-center">{res.playerClass}</td>
-                                    <td className="p-4 border-2 border-gray-200 text-red-600 text-xl font-black text-center">{res.score}</td>
-                                    <td className="p-4 border-2 border-gray-200 text-center">
-                                        <span className={`px-4 py-1.5 rounded-full text-[12px] font-bold border-2 ${getGameTypeStyle(res.gameType)}`}>
+                                    <td className="p-3 border border-gray-300 text-blue-600 font-black text-center">{idx + 1}</td>
+                                    <td className="p-3 border border-gray-300 text-[#E91E63] truncate">{res.playerName}</td>
+                                    <td className="p-3 border border-gray-300 text-[#8E44AD] text-center">{res.playerClass}</td>
+                                    <td className="p-3 border border-gray-300 text-red-600 text-lg font-black text-center">{res.score}</td>
+                                    <td className="p-3 border border-gray-300 text-center">
+                                        <span className={`px-4 py-1.5 rounded-full text-[12px] font-bold border ${getGameTypeStyle(res.gameType)}`}>
                                             {getGameTypeLabel(res.gameType)}
                                         </span>
                                     </td>
-                                    <td className="p-4 border-2 border-gray-200 text-red-600 text-center text-lg">{res.attempts}</td>
-                                    <td className="p-4 border-2 border-gray-200 text-green-600 text-center text-lg">{res.correct}</td>
-                                    <td className="p-4 border-2 border-gray-200 text-red-600 text-center text-lg">{res.incorrect}</td>
-                                    <td className="p-4 border-2 border-gray-200 text-[#c05621] text-center font-['Nunito'] text-base">{formatTime(res.timeTakenSeconds)}</td>
-                                    <td className="p-4 border-2 border-gray-200 text-slate-700 text-[13px] text-center font-['Nunito'] font-medium">{formatDate(res.timestamp)}</td>
-                                    <td className="p-4 border-2 border-gray-200 text-center">
+                                    <td className="p-3 border border-gray-300 text-red-600 text-center">{res.attempts}</td>
+                                    <td className="p-3 border border-gray-300 text-green-600 text-center">{res.correct}</td>
+                                    <td className="p-3 border border-gray-300 text-red-600 text-center">{res.incorrect}</td>
+                                    <td className="p-3 border border-gray-300 text-[#c05621] text-center font-['Nunito'] font-black">{formatTime(res.timeTakenSeconds)}</td>
+                                    <td className="p-3 border border-gray-300 text-slate-800 text-[13px] text-center font-['Nunito']">{formatDate(res.timestamp)}</td>
+                                    <td className="p-3 border border-gray-300 text-center">
                                         <button 
                                             onClick={(e) => { e.stopPropagation(); onDeleteRow(res); }}
-                                            className="p-2 bg-red-50 text-red-500 rounded-full hover:bg-red-500 hover:text-white transition-all border-2 border-red-200"
+                                            className="p-1.5 bg-red-100 text-red-600 rounded-full hover:bg-red-200 transition"
                                         >
-                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                                         </button>
                                     </td>
                                 </tr>
                             ))}
                             {data.length === 0 && (
-                                <tr><td colSpan={11} className="p-16 text-center text-gray-400 font-bold text-lg border-2 border-gray-200">Chưa có kết quả nào.</td></tr>
+                                <tr><td colSpan={11} className="p-12 text-center text-gray-400 font-bold border border-gray-300">Chưa có kết quả nào.</td></tr>
                             )}
                         </tbody>
                     </table>
@@ -563,7 +518,7 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                         </button>
                         <h2 className="text-2xl font-bold text-indigo-800">Quản lý chi tiết: <span className="text-red-500">UNIT</span> {unitNumber}</h2>
                     </div>
-                     <button onClick={handleRefresh} className="bg-blue-600 text-white font-bold p-2 rounded-full hover:bg-blue-700 transition shadow-sm disabled:bg-gray-500" title="Làm mới dữ liệu" disabled={isRefreshing}><svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 ${isRefreshing ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h5M20 20v-5h-5M4 4l1.5 1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 003.5 12" /></svg></button>
+                     <button onClick={handleRefresh} className="bg-blue-600 text-white font-bold p-2 rounded-full hover:bg-blue-700 transition shadow-sm disabled:bg-gray-500" title="Làm mới dữ liệu" disabled={isRefreshing}><svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 ${isRefreshing ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h5M20 20v-5h-5M4 4l1.5 1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 003.5 12" /></svg></button>
                 </div>
                 
                 <div className="p-4 border rounded-lg bg-sky-50 border-sky-200 space-y-4">
@@ -604,7 +559,7 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
 
                 <div className="space-y-4">
                     <h3 className="text-xl font-bold text-indigo-700 border-l-4 border-indigo-600 pl-3">Kết quả làm bài (UNIT {unitNumber})</h3>
-                    {renderResultsTable(flattenedUnitResults, 'unit', setSelectedResult, setDeletingUnitStudent)}
+                    {renderResultsTable(flattenedUnitResults, 'unit', setSelectedResult, (res) => setDeletingUnitStudent(res))}
                 </div>
             </div>
         );
@@ -621,7 +576,7 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                         </button>
                         <h2 className="text-2xl font-bold text-indigo-800">Quản lý chi tiết: <span className="text-blue-500">TOPIC</span> {topicNumber}</h2>
                     </div>
-                     <button onClick={handleRefresh} className="bg-blue-600 text-white font-bold p-2 rounded-full hover:bg-blue-700 transition shadow-sm disabled:bg-gray-500" title="Làm mới dữ liệu" disabled={isRefreshing}><svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 ${isRefreshing ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h5M20 20v-5h-5M4 4l1.5 1.5A9 9 0 0120.5 12M20 20v-5h-5M4 4l1.5 1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 003.5 12" /></svg></button>
+                     <button onClick={handleRefresh} className="bg-blue-600 text-white font-bold p-2 rounded-full hover:bg-blue-700 transition shadow-sm disabled:bg-gray-500" title="Làm mới dữ liệu" disabled={isRefreshing}><svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 ${isRefreshing ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h5M20 20v-5h-5M4 4l1.5 1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 003.5 12" /></svg></button>
                 </div>
                 
                 <div className="p-4 border rounded-lg bg-sky-50 border-sky-200 space-y-4">
@@ -643,7 +598,7 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                                 <div className="space-y-4">
                                     <div className="bg-white p-3 rounded-lg border border-gray-200 shadow-sm">
                                         <label htmlFor="topic-prompt-learn" className="block text-sm font-bold text-blue-600 mb-2 uppercase">Học từ vựng</label>
-                                        <textarea id="topic-prompt-learn" value={topicActivityPrompts.learn} onChange={(e) => setTopicActivityPrompts(prev => ({...prev, learn: e.target.value}))} placeholder="VD: tạo 10 thẻ từ vựng..." className="w-full p-2 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-400 bg-sky-50 text-slate-900" rows={3} disabled={isGeneratingTopicActivities}/>
+                                        <textarea id="topic-prompt-learn" value={topicActivityPrompts.learn} onChange={(e) => setTopicActivityPrompts(prev => ({...prev, learn: e.target.value}))} placeholder="VD: tạo 10 thẻ từ vựng..." className="w-full p-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-400 bg-sky-50 text-slate-900" rows={3} disabled={isGeneratingTopicActivities}/>
                                     </div>
                                     <div className="bg-white p-3 rounded-lg border border-gray-200 shadow-sm">
                                         <label htmlFor="topic-prompt-quiz" className="block text-sm font-bold text-green-600 mb-2 uppercase">Bài tập trắc nghiệm</label>
@@ -662,7 +617,7 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
 
                 <div className="space-y-4">
                     <h3 className="text-xl font-bold text-indigo-700 border-l-4 border-indigo-600 pl-3">Kết quả làm bài (TOPIC {topicNumber})</h3>
-                    {renderResultsTable(flattenedTopicResults, 'topic', setSelectedResult, setDeletingTopicStudent)}
+                    {renderResultsTable(flattenedTopicResults, 'topic', setSelectedResult, (res) => setDeletingTopicStudent(res))}
                 </div>
             </div>
         );
@@ -676,33 +631,10 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
         return { totalStudents, avgScore: (totalScore / totalStudents).toFixed(1), avgTime: Math.round(totalTime / totalStudents) };
     }, [results]);
 
-    const sortedResults = useMemo(() => {
-        let itemsWithCheats: GameResult[] = results.map(result => ({ ...result, cheatAttempts: cheatCounts[getPlayerKey(result.playerName, result.playerClass)] || 0 }));
-        let filteredItems = itemsWithCheats.filter(result => (selectedClass === 'all' || (result.playerClass || '').trim().toUpperCase() === selectedClass));
-        if (sortConfig.key) {
-            filteredItems.sort((a, b) => {
-                const aValue = a[sortConfig.key!];
-                const bValue = b[sortConfig.key!];
-                let comparison = 0;
-                if (typeof aValue === 'number' && typeof bValue === 'number') comparison = aValue - bValue;
-                else if (sortConfig.key === 'score') comparison = parseFloat(aValue as string) - parseFloat(bValue as string);
-                else comparison = String(aValue).localeCompare(String(bValue));
-                return sortConfig.direction === 'ascending' ? comparison : -comparison;
-            });
-        }
-        return filteredItems;
-    }, [results, cheatCounts, sortConfig, selectedClass]);
-
     const handleToggleTopicStatus_Local = useCallback(async (topicNumber: number, isEnabled: boolean) => {
         const topicId = `topic_${topicNumber}`;
-        try { await setTopicStatus(classroomId, topicId, isEnabled); } catch (error) { setNotification({ message: 'Lỗi khi cập nhật TOPIC.', type: 'error' }); }
+        try { await setTopicStatus(classroomId, topicId, isEnabled); } catch (error) { setNotification({ message: 'Lỗi TOPIC.', type: 'error' }); }
     }, [classroomId]);
-
-    const handleClearRequest = useCallback(async () => {
-        if (isClearing) return;
-        setIsClearing(true);
-        try { await clearResults(classroomId); setNotification({ message: 'Đã xóa toàn bộ lịch sử bài làm chung!', type: 'success' }); } catch (error) { setNotification({ message: 'Xóa thất bại.', type: 'error' }); } finally { setIsClearing(false); }
-    }, [classroomId, isClearing]);
 
     const handleConfirmDeleteUnitResult = async () => {
         if (!deletingUnitStudent || !viewingUnit) return;
@@ -711,7 +643,7 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
             const unitId = `unit_${unit}`;
             await deleteUnitStudentResultByGrade(classroomId, grade, unitId, deletingUnitStudent.playerName, deletingUnitStudent.playerClass, deletingUnitStudent.activityId || '');
             setNotification({ message: `Đã xóa kết quả của ${deletingUnitStudent.playerName}!`, type: 'success' });
-        } catch (error) { setNotification({ message: 'Xóa kết quả thất bại.', type: 'error' }); } finally { setDeletingUnitStudent(null); }
+        } catch (error) { setNotification({ message: 'Xóa thất bại.', type: 'error' }); } finally { setDeletingUnitStudent(null); }
     };
 
     const handleConfirmDeleteTopicResult = async () => {
@@ -720,13 +652,12 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
             const topicId = `topic_${viewingTopic}`;
             await deleteTopicStudentResult(classroomId, topicId, deletingTopicStudent.playerName, deletingTopicStudent.playerClass, deletingTopicStudent.activityId || '');
             setNotification({ message: `Đã xóa kết quả của ${deletingTopicStudent.playerName}!`, type: 'success' });
-        } catch (error) { setNotification({ message: 'Xóa kết quả thất bại.', type: 'error' }); } finally { setDeletingTopicStudent(null); }
+        } catch (error) { setNotification({ message: 'Xóa thất bại.', type: 'error' }); } finally { setDeletingTopicStudent(null); }
     };
 
     const handleGenerateUnitActivities = useCallback(async () => {
         if (!viewingUnit) return;
         setIsGeneratingUnitActivities(true);
-        let hasError = false;
         try {
             const { grade, unit } = viewingUnit;
             const unitId = `unit_${unit}`;
@@ -742,17 +673,13 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                 const questions = await generateQuizFromCustomPrompt(`Context: ${vocabSourceText}\n\nInstruction: ${unitActivityPrompts.quiz}`);
                 await saveUnitQuizQuestionsByGrade(classroomId, grade, unitId, questions);
             }
-            setNotification({ message: `Đã cập nhật hoạt động cho UNIT ${unit}!`, type: 'success' });
-        } catch (error) { hasError = true; } finally {
-            if (hasError) setNotification({ message: 'Tạo hoạt động thất bại.', type: 'error' });
-            setIsGeneratingUnitActivities(false);
-        }
+            setNotification({ message: `Cập nhật thành công UNIT ${unit}!`, type: 'success' });
+        } catch (error) { setNotification({ message: 'Tạo hoạt động thất bại.', type: 'error' }); } finally { setIsGeneratingUnitActivities(false); }
     }, [unitVocabList, currentUnitVocabulary, unitActivityPrompts, viewingUnit, classroomId]);
 
     const handleGenerateTopicActivities = useCallback(async () => {
         if (!viewingTopic) return;
         setIsGeneratingTopicActivities(true);
-        let hasError = false;
         try {
             const topicId = `topic_${viewingTopic}`;
             let vocabSourceText = topicVocabList.trim();
@@ -767,11 +694,8 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                 const questions = await generateQuizFromCustomPrompt(`Context: ${vocabSourceText}\n\nInstruction: ${topicActivityPrompts.quiz}`);
                 await saveTopicQuizQuestions(classroomId, topicId, questions);
             }
-            setNotification({ message: `Đã cập nhật hoạt động cho TOPIC ${viewingTopic}!`, type: 'success' });
-        } catch (error) { hasError = true; } finally {
-            if (hasError) setNotification({ message: 'Tạo hoạt động thất bại.', type: 'error' });
-            setIsGeneratingTopicActivities(false);
-        }
+            setNotification({ message: `Cập nhật thành công TOPIC ${viewingTopic}!`, type: 'success' });
+        } catch (error) { setNotification({ message: 'Tạo hoạt động thất bại.', type: 'error' }); } finally { setIsGeneratingTopicActivities(false); }
     }, [topicVocabList, currentTopicVocabulary, topicActivityPrompts, viewingTopic, classroomId]);
 
     const renderContent = () => {
@@ -868,7 +792,7 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                              <div className="p-4 bg-red-50 border border-red-100 rounded-xl flex flex-col items-center text-center">
                                  <div className="p-3 bg-white rounded-full shadow mb-3 text-red-600"><svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" /></svg></div>
                                  <h4 className="font-bold text-red-800 mb-2">Màn hình Chọn bài tập</h4>
-                                 <button onClick={() => setIsEditExerciseModalOpen(true)} className="mt-auto px-4 py-2 bg-red-600 text-white font-bold rounded-lg hover:bg-teal-700 transition text-sm shadow-md">🎨 Chỉnh sửa thiết kế HS</button>
+                                 <button onClick={() => setIsEditExerciseModalOpen(true)} className="mt-auto px-4 py-2 bg-red-600 text-white font-bold rounded-lg hover:bg-red-700 transition text-sm shadow-md">🎨 Chỉnh sửa thiết kế HS</button>
                              </div>
                              <div className="p-4 bg-blue-50 border border-blue-100 rounded-xl flex flex-col items-center text-center">
                                  <div className="p-3 bg-white rounded-full shadow mb-3 text-blue-600"><svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg></div>
