@@ -428,24 +428,48 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                 </div>
             </header>
             <div className="p-6">
-                <div className="bg-white rounded-lg shadow-md p-3 mb-6 flex items-center">
-                    <span className="text-lg font-bold text-gray-700 mr-4">Trạng thái phòng:</span>
-                    <label className="flex items-center cursor-pointer">
-                        <div className="relative"><input type="checkbox" className="sr-only" checked={isGameEnabled} onChange={() => setGameStatus(classroomId, !isGameEnabled)} /><div className="block w-14 h-8 rounded-full bg-gray-200"></div><div className={`dot absolute left-1 top-1 w-6 h-6 rounded-full shadow-lg transition-transform ${isGameEnabled ? 'transform translate-x-6 bg-green-500' : 'bg-gray-400'}`}></div></div>
-                        <span className={`ml-3 font-bold text-lg ${isGameEnabled ? 'text-green-600' : 'text-gray-500'}`}>{isGameEnabled ? 'MỞ' : 'ĐÓNG'}</span>
-                    </label>
+                {/* Redesigned Room Status Toggle (Link: ON/OFF style) */}
+                <div className="inline-flex items-center bg-white px-5 py-3 rounded-2xl shadow-sm border border-gray-100 mb-8 transition-all hover:shadow-md">
+                    <span className="text-[1.1rem] font-extrabold text-slate-700 mr-4 tracking-tight">LINK:</span>
+                    <button 
+                        onClick={() => setGameStatus(classroomId, !isGameEnabled)}
+                        className="flex items-center gap-3 group outline-none focus:outline-none"
+                    >
+                        <div className="relative w-14 h-7 bg-[#e2e8f0] rounded-full p-1 transition-colors duration-300">
+                            <div className={`w-5 h-5 rounded-full shadow-md transition-all duration-300 transform ${isGameEnabled ? 'translate-x-7 bg-[#22c55e]' : 'translate-x-0 bg-red-600'}`}></div>
+                        </div>
+                        <span className={`text-[1.1rem] font-black w-14 text-left transition-colors duration-300 ${isGameEnabled ? 'text-[#22c55e]' : 'text-red-600'}`}>
+                            {isGameEnabled ? 'ON' : 'OFF'}
+                        </span>
+                    </button>
                 </div>
+
                 <div className="mb-6 flex gap-4 flex-wrap">
-                    <button onClick={() => { setViewingUnit(null); setViewingTopic(null); setActiveTab('dashboard'); }} className={`px-6 py-3 font-bold rounded-lg transition-all ${activeTab === 'dashboard' ? 'bg-green-600 text-white shadow-lg ring-4 ring-green-100' : 'bg-white text-gray-600 border'}`}>Bảng điều khiển</button>
-                    <button onClick={() => { setViewingUnit(null); setViewingTopic(null); setActiveTab('units_12'); }} className={`px-6 py-3 font-bold rounded-lg transition-all ${activeTab === 'units_12' ? 'bg-red-600 text-white shadow-lg ring-4 ring-red-100' : 'bg-white text-gray-600 border'}`}>{dashboardConfig.unitsTabLabel}</button>
-                    <button onClick={() => { setViewingUnit(null); setViewingTopic(null); setActiveTab('topics'); }} className={`px-6 py-3 font-bold rounded-lg transition-all ${activeTab === 'topics' ? 'bg-blue-600 text-white shadow-lg ring-4 ring-blue-100' : 'bg-white text-gray-600 border'}`}>{dashboardConfig.topicsTabLabel}</button>
+                    <button 
+                        onClick={() => { setViewingUnit(null); setViewingTopic(null); setActiveTab('dashboard'); }} 
+                        className={`px-6 py-3 font-bold rounded-lg transition-all bg-green-600 text-white ${activeTab === 'dashboard' ? 'shadow-xl ring-4 ring-green-200 scale-105 z-10' : 'opacity-85 hover:opacity-100 hover:shadow-md'}`}
+                    >
+                        HOME
+                    </button>
+                    <button 
+                        onClick={() => { setViewingUnit(null); setViewingTopic(null); setActiveTab('units_12'); }} 
+                        className={`px-6 py-3 font-bold rounded-lg transition-all bg-red-600 text-white ${activeTab === 'units_12' ? 'shadow-xl ring-4 ring-red-200 scale-105 z-10' : 'opacity-85 hover:opacity-100 hover:shadow-md'}`}
+                    >
+                        {dashboardConfig.unitsTabLabel}
+                    </button>
+                    <button 
+                        onClick={() => { setViewingUnit(null); setViewingTopic(null); setActiveTab('topics'); }} 
+                        className={`px-6 py-3 font-bold rounded-lg transition-all bg-blue-600 text-white ${activeTab === 'topics' ? 'shadow-xl ring-4 ring-blue-200 scale-105 z-10' : 'opacity-85 hover:opacity-100 hover:shadow-md'}`}
+                    >
+                        {dashboardConfig.topicsTabLabel}
+                    </button>
                 </div>
                 {viewingUnit ? (
                     <div className="p-4 bg-white/70 backdrop-blur-sm rounded-lg shadow-md border border-gray-200 tab-content-enter space-y-8">
                         <div className="flex justify-between items-center"><button onClick={() => setViewingUnit(null)} className="flex items-center gap-2 text-blue-600 font-semibold hover:underline"><svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" /></svg><span>Quay lại danh sách</span></button><h2 className="text-2xl font-bold text-indigo-800">Quản lý chi tiết: UNIT {viewingUnit.unit}</h2></div>
                         <div className="p-4 border rounded-lg bg-sky-50 border-sky-200 grid grid-cols-1 lg:grid-cols-2 gap-6 shadow-inner">
                             <div><label className="font-semibold text-teal-700 block mb-1">1. Dán danh sách từ vựng:</label><textarea value={unitVocabList} onChange={(e) => setUnitVocabList(e.target.value)} placeholder="Dán từ vựng tại đây..." className="w-full h-96 p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 font-mono text-sm bg-white" /></div>
-                            <div className="flex flex-col justify-between"><div className="space-y-4"><label className="font-semibold text-teal-700">2. Tùy chỉnh yêu cầu cho AI:</label><div className="bg-white p-2 rounded-md border border-gray-200"><label className="block text-xs font-bold text-blue-600 mb-1">HỌC TỪ VỰNG</label><textarea value={unitActivityPrompts.learn} onChange={(e) => setUnitActivityPrompts(p => ({...p, learn: e.target.value}))} className="w-full p-2 border rounded-md text-xs bg-sky-100 focus:outline-none" rows={2}/></div><div className="bg-white p-2 rounded-md border border-gray-200"><label className="block text-xs font-bold text-green-600 mb-1">TRẮC NGHIỆM</label><textarea value={unitActivityPrompts.quiz} onChange={(e) => setUnitActivityPrompts(p => ({...p, quiz: e.target.value}))} className="w-full p-2 border rounded-md text-xs bg-sky-100 focus:outline-none" rows={2}/></div></div><button onClick={() => handleGenerateActivities('unit')} disabled={isGeneratingUnitActivities} className="bg-purple-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-purple-700 shadow-md transition-all active:scale-95 disabled:bg-gray-400 mt-4 w-full">{isGeneratingUnitActivities ? 'Đang tạo bài...' : '✨ Tạo hoạt động với AI'}</button></div>
+                            <div className="flex flex-col justify-between"><div className="space-y-4"><label className="font-semibold text-teal-700">2. Tùy chỉnh yêu cầu cho AI:</label><div className="bg-white p-2 rounded-md border border-gray-200"><label className="block text-xs font-bold text-blue-600 mb-1">HỌC TỪ VỰNG</label><textarea value={unitActivityPrompts.learn} onChange={(e) => setUnitActivityPrompts(p => ({...p, learn: e.target.value}))} className="w-full p-2 border rounded-md text-xs bg-sky-100 focus:outline-none" rows={2}/></div><div className="bg-white p-2 rounded-md border border-gray-200"><label className="block text-xs font-bold text-green-600 mb-1">TRẮC NGỐM</label><textarea value={unitActivityPrompts.quiz} onChange={(e) => setUnitActivityPrompts(p => ({...p, quiz: e.target.value}))} className="w-full p-2 border rounded-md text-xs bg-sky-100 focus:outline-none" rows={2}/></div></div><button onClick={() => handleGenerateActivities('unit')} disabled={isGeneratingUnitActivities} className="bg-purple-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-purple-700 shadow-md transition-all active:scale-95 disabled:bg-gray-400 mt-4 w-full">{isGeneratingUnitActivities ? 'Đang tạo bài...' : '✨ Tạo hoạt động với AI'}</button></div>
                         </div>
                         <h3 className="text-xl font-bold text-indigo-700 border-l-4 border-indigo-600 pl-3">Kết quả làm bài (UNIT {viewingUnit.unit})</h3>
                         {renderResultsTable(groupedUnitResults, 'unit', setSelectedResult, setDeletingUnitStudent)}
