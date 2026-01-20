@@ -43,21 +43,8 @@ const formatDate = (timestamp?: number) => {
     return `${h}:${m}:${s} ${d}/${mo}/${y}`;
 };
 
-const VOCAB_PLACEHOLDER = `Dán danh sách từ vựng của bạn vào đây.
-Định dạng mong muốn:
-Từ Tiếng Anh - (Từ loại) /Phiên âm/ - Nghĩa Tiếng Việt
-
-Ví dụ:
-vocabulary - (n) /vəˈkæbjələri/ - từ vựng
-pronunciation - (n) /prəˌnʌnsiˈeɪʃn/ - cách phát âm
-intermediate - (adj) /ˌɪntərˈmiːdiət/ - trung cấp`;
-
-const EMPTY_ACTIVITY_PROMPTS = {
-    learn: '',
-    match: '',
-    spell: '',
-    quiz: ''
-};
+const VOCAB_PLACEHOLDER = `Dán danh sách từ vựng của bạn vào đây...`;
+const EMPTY_ACTIVITY_PROMPTS = { learn: '', match: '', spell: '', quiz: '' };
 
 const DEFAULT_DASHBOARD_CONFIG: DashboardConfig = {
     unitsTabLabel: 'Quản lý UNITs _ English 12',
@@ -102,49 +89,29 @@ const ResultDetailModal: React.FC<{ result: GameResult; onClose: () => void }> =
     return (
         <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4" onClick={onClose}>
             <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col" onClick={e => e.stopPropagation()}>
-                <div className="p-4 border-b flex justify-between items-center">
-                    <h2 className="text-xl font-bold text-gray-800">Chi tiết kết quả - {result.playerName}</h2>
-                    <button onClick={onClose} className="text-gray-500 hover:text-gray-800 text-2xl font-bold">&times;</button>
-                </div>
+                <div className="p-4 border-b flex justify-between items-center"><h2 className="text-xl font-bold text-gray-800">Chi tiết - {result.playerName}</h2><button onClick={onClose} className="text-gray-500 hover:text-gray-800 text-2xl font-bold">&times;</button></div>
                 <div className="overflow-y-auto p-6 space-y-4">
-                    {result.details.map((detail, index) => {
-                        const isCorrect = detail.status === 'correct';
-                        const userDidAnswer = detail.status !== null;
-                        let resultColorClass = 'border-gray-300 bg-gray-50';
-                        if (userDidAnswer) {
-                            resultColorClass = isCorrect ? 'border-green-400 bg-green-50' : 'border-red-400 bg-red-50';
-                        }
-                        const userChoiceText = detail.userAnswer ? `"${detail.userAnswer}"` : "Chưa trả lời";
-
-                        return (
-                             <div key={index} className={`p-4 rounded-lg border-2 ${resultColorClass}`}>
-                                <p className="font-bold text-gray-900 mb-2">Câu {index + 1}: <span className="font-normal">{detail.question.replace('______', '...')}</span></p>
-                                <p className="text-sm text-gray-600 italic mb-2">{detail.translation.replace('______', '...')}</p>
-                                <p><span className="font-semibold">Bạn đã chọn:</span> <span className={`font-bold ${!userDidAnswer ? 'text-gray-500' : isCorrect ? 'text-green-700' : 'text-red-700'}`}>{userChoiceText}</span></p>
-                                <p><span className="font-semibold">Đáp án đúng:</span> <span className="font-bold text-green-700">"{detail.correctAnswer}"</span></p>
-                                <div className="mt-2 p-2 bg-blue-50 rounded text-sm border-l-4 border-blue-400">
-                                    <p className="text-gray-800"><strong className="text-blue-800">Giải thích:</strong> {detail.explanation}</p>
-                                </div>
-                            </div>
-                        )
-                    })}
+                    {result.details.map((detail, index) => (
+                        <div key={index} className={`p-4 rounded-lg border-2 ${detail.status === 'correct' ? 'border-green-400 bg-green-50' : 'border-red-400 bg-red-50'}`}>
+                            <p className="font-bold text-gray-900 mb-2">Câu {index + 1}: <span className="font-normal">{detail.question}</span></p>
+                            <p><span className="font-semibold">Bạn đã chọn:</span> <span className={`font-bold ${detail.status === 'correct' ? 'text-green-700' : 'text-red-700'}`}>{detail.userAnswer || "Chưa trả lời"}</span></p>
+                            <p><span className="font-semibold">Đáp án đúng:</span> <span className="font-bold text-green-700">"{detail.correctAnswer}"</span></p>
+                            <div className="mt-2 p-2 bg-blue-50 rounded text-sm border-l-4 border-blue-400"><p className="text-gray-800"><strong>Giải thích:</strong> {detail.explanation}</p></div>
+                        </div>
+                    ))}
                 </div>
-                 <div className="p-4 border-t text-right">
-                    <button onClick={onClose} className="bg-indigo-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-indigo-700 transition shadow-md">Đóng</button>
-                </div>
+                <div className="p-4 border-t text-right"><button onClick={onClose} className="bg-indigo-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-indigo-700">Đóng</button></div>
             </div>
         </div>
     );
 };
 
 const getPlayerKey = (playerName: string, playerClass: string) => {
-    const normalizedClass = (playerClass || '').trim().toUpperCase();
-    const normalizedName = (playerName || '').trim();
-    const combined = `${normalizedClass}_${normalizedName}`;
+    const combined = `${(playerClass || '').trim().toUpperCase()}_${(playerName || '').trim()}`;
     return combined.replace(/[.#$[\]]/g, '_');
 };
 
-const getGameTypeStyle = (gameType?: 'quiz' | 'spelling' | 'matching' | 'vocabulary') => {
+const getGameTypeStyle = (gameType?: string) => {
     switch (gameType) {
         case 'quiz': return 'text-green-800 bg-green-100 border-green-200';
         case 'spelling': return 'text-orange-800 bg-orange-100 border-orange-200';
@@ -154,7 +121,7 @@ const getGameTypeStyle = (gameType?: 'quiz' | 'spelling' | 'matching' | 'vocabul
     }
 };
 
-const getGameTypeLabel = (gameType?: 'quiz' | 'spelling' | 'matching' | 'vocabulary') => {
+const getGameTypeLabel = (gameType?: string) => {
     switch (gameType) {
         case 'quiz': return 'Trắc nghiệm';
         case 'spelling': return 'Chính tả';
@@ -178,34 +145,26 @@ const unitCardStyles = [
 ];
 
 const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }> = ({ classroomId, onGoHome }) => {
-    // Main Dashboard State
     const [results, setResults] = useState<GameResult[]>([]);
     const [sortConfig, setSortConfig] = useState<{ key: keyof GameResult | null; direction: 'ascending' | 'descending' }>({ key: 'timestamp', direction: 'descending' });
     const [selectedClass, setSelectedClass] = useState('all');
     const [onlineStudents, setOnlineStudents] = useState<{name: string, class: string}[]>([]);
     const [cheatCounts, setCheatCounts] = useState<Record<string, number>>({});
     const [studentProgress, setStudentProgress] = useState<Record<string, StudentProgress>>({});
-    const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[]>([]);
     const [refreshKey, setRefreshKey] = useState(0);
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
     const [activeTab, setActiveTab] = useState<Tab>('dashboard');
-    
-    // Welcome & Dashboard Config
     const [welcomeConfig, setWelcomeConfig] = useState<WelcomeScreenConfig | null>(null);
     const [dashboardConfig, setDashboardConfig] = useState<DashboardConfig>(DEFAULT_DASHBOARD_CONFIG);
     const [exerciseSelectionConfig, setExerciseSelectionConfig] = useState<ExerciseSelectionConfig>(DEFAULT_EXERCISE_CONFIG);
     const [isEditWelcomeModalOpen, setIsEditWelcomeModalOpen] = useState(false);
     const [isEditDashboardModalOpen, setIsEditDashboardModalOpen] = useState(false);
     const [isEditExerciseModalOpen, setIsEditExerciseModalOpen] = useState(false);
-
-    // Modal & Editing State
     const [selectedResult, setSelectedResult] = useState<GameResult | null>(null);
     const [quizForEditing, setQuizForEditing] = useState<QuizQuestion[] | null>(null);
     const [isEditVocabModalOpen, setIsEditVocabModalOpen] = useState(false);
     const [vocabForEditing, setVocabForEditing] = useState<VocabularyWord[]>([]);
-    
-    // Units State
     const [unitsStatus12, setUnitsStatus12] = useState<UnitsState>({});
     const [viewingUnit, setViewingUnit] = useState<{ grade: number, unit: number } | null>(null);
     const [processedUnitResults, setProcessedUnitResults] = useState<StudentUnitSummary[]>([]);
@@ -218,8 +177,6 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
     const [deletingUnitStudent, setDeletingUnitStudent] = useState<GameResult | null>(null);
     const [isClearingUnit, setIsClearingUnit] = useState(false);
     const [unitActivityPrompts, setUnitActivityPrompts] = useState(EMPTY_ACTIVITY_PROMPTS);
-
-    // Topics State
     const [topicsStatus, setTopicsStatus] = useState<UnitsState>({});
     const [viewingTopic, setViewingTopic] = useState<number | null>(null);
     const [processedTopicResults, setProcessedTopicResults] = useState<StudentUnitSummary[]>([]);
@@ -232,274 +189,134 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
     const [deletingTopicStudent, setDeletingTopicStudent] = useState<GameResult | null>(null);
     const [isClearingTopic, setIsClearingTopic] = useState(false);
     const [topicActivityPrompts, setTopicActivityPrompts] = useState(EMPTY_ACTIVITY_PROMPTS);
-
     const [isGameEnabled, setIsGameEnabled] = useState(true);
 
-    useEffect(() => {
-        if (notification) {
-            const timer = setTimeout(() => setNotification(null), 4000);
-            return () => clearTimeout(timer);
-        }
-    }, [notification]);
+    useEffect(() => { if (notification) { const timer = setTimeout(() => setNotification(null), 4000); return () => clearTimeout(timer); } }, [notification]);
 
-    // Main data listeners
     useEffect(() => {
-        let unsubscribeResults: () => void;
-        let unsubscribeStatus: () => void;
-        let unsubscribeOnline: () => void;
-        let unsubscribeCheats: () => void;
-        let unsubscribeProgress: () => void;
-        let unsubscribeQuiz: () => void;
-        let unsubscribeUnits12: () => void;
-        let unsubscribeTopics: () => void;
-        let unsubscribeWelcome: () => void;
-        let unsubscribeDashboard: () => void;
-        let unsubscribeExercise: () => void;
-    
+        let unsubscribeResults: () => void, unsubscribeStatus: () => void, unsubscribeOnline: () => void, unsubscribeCheats: () => void, unsubscribeProgress: () => void, unsubscribeQuiz: () => void, unsubscribeUnits12: () => void, unsubscribeTopics: () => void, unsubscribeWelcome: () => void, unsubscribeDashboard: () => void, unsubscribeExercise: () => void;
         (async () => {
-            try {
-                await checkAndSyncQuizVersion(classroomId, QUIZ_VERSION);
-            } catch (error) {
-                console.error("Initialization failed.");
-            }
-    
+            try { await checkAndSyncQuizVersion(classroomId, QUIZ_VERSION); } catch (e) {}
             unsubscribeResults = listenToResults(classroomId, (data) => setResults(data ? Object.values(data) : []));
             unsubscribeStatus = getGameStatus(classroomId, setIsGameEnabled);
             unsubscribeOnline = listenToOnlineStudents(classroomId, (students) => setOnlineStudents(students ? Object.values(students) : []));
             unsubscribeCheats = listenToCheatCounts(classroomId, (counts) => setCheatCounts(counts || {}));
             unsubscribeProgress = listenToStudentProgress(classroomId, (progress) => setStudentProgress(progress || {}));
-            unsubscribeQuiz = listenToQuizQuestions(classroomId, (questions) => setQuizQuestions(questions || []));
             unsubscribeUnits12 = listenToUnitsStatusByGrade(classroomId, 12, (status) => setUnitsStatus12(status || {}));
             unsubscribeTopics = listenToTopicsStatus(classroomId, (status) => setTopicsStatus(status || {}));
-            unsubscribeWelcome = listenToWelcomeConfig(classroomId, (config) => setWelcomeConfig(config));
-            unsubscribeDashboard = listenToDashboardConfig(classroomId, (config) => {
-                if (config) setDashboardConfig(config);
-            });
-            unsubscribeExercise = listenToExerciseSelectionConfig(classroomId, (config) => {
-                if (config) setExerciseSelectionConfig(config);
-            });
+            unsubscribeWelcome = listenToWelcomeConfig(classroomId, setWelcomeConfig);
+            unsubscribeDashboard = listenToDashboardConfig(classroomId, (config) => config && setDashboardConfig(config));
+            unsubscribeExercise = listenToExerciseSelectionConfig(classroomId, (config) => config && setExerciseSelectionConfig(config));
         })();
-    
-        return () => {
-            if (unsubscribeResults) unsubscribeResults();
-            if (unsubscribeStatus) unsubscribeStatus();
-            if (unsubscribeOnline) unsubscribeOnline();
-            if (unsubscribeCheats) unsubscribeCheats();
-            if (unsubscribeProgress) unsubscribeProgress();
-            if (unsubscribeQuiz) unsubscribeQuiz();
-            if (unsubscribeUnits12) unsubscribeUnits12();
-            if (unsubscribeTopics) unsubscribeTopics();
-            if (unsubscribeWelcome) unsubscribeWelcome();
-            if (unsubscribeDashboard) unsubscribeDashboard();
-            if (unsubscribeExercise) unsubscribeExercise();
-        };
+        return () => { unsubscribeResults?.(); unsubscribeStatus?.(); unsubscribeOnline?.(); unsubscribeCheats?.(); unsubscribeProgress?.(); unsubscribeUnits12?.(); unsubscribeTopics?.(); unsubscribeWelcome?.(); unsubscribeDashboard?.(); unsubscribeExercise?.(); };
     }, [classroomId, refreshKey]);
 
     useEffect(() => {
         if (viewingUnit === null) return;
         const { grade, unit } = viewingUnit;
-        const unitId = `unit_${unit}`;
-        const unsubQuiz = listenToUnitQuizQuestionsByGrade(classroomId, grade, unitId, (questions) => setCurrentUnitQuiz(questions || []));
-        const unsubResults = listenToUnitResultsByGrade(classroomId, grade, unitId, (data) => {
+        const id = `unit_${unit}`;
+        const unsubQuiz = listenToUnitQuizQuestionsByGrade(classroomId, grade, id, setCurrentUnitQuiz);
+        const unsubResults = listenToUnitResultsByGrade(classroomId, grade, id, (data) => {
             if (!data) { setProcessedUnitResults([]); return; }
-            const processedData: StudentUnitSummary[] = Object.entries(data).map(([playerKey, resultsObj]): StudentUnitSummary | null => {
+            const processed = Object.entries(data).map(([playerKey, resultsObj]): StudentUnitSummary | null => {
                 const resultsArray = resultsObj ? Object.entries(resultsObj).map(([activityId, result]) => ({ ...result as GameResult, activityId })) : [];
                 if (resultsArray.length === 0) return null;
                 resultsArray.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
                 return { playerKey, playerName: resultsArray[0].playerName, playerClass: resultsArray[0].playerClass, results: resultsArray };
             }).filter((item): item is StudentUnitSummary => item !== null);
-            setProcessedUnitResults(processedData);
+            setProcessedUnitResults(processed);
         });
-        const unsubVocab = listenToUnitVocabularyByGrade(classroomId, grade, unitId, (vocab) => setCurrentUnitVocabulary(vocab || []));
+        const unsubVocab = listenToUnitVocabularyByGrade(classroomId, grade, id, (v) => setCurrentUnitVocabulary(v || []));
         return () => { unsubQuiz(); unsubResults(); unsubVocab(); };
     }, [viewingUnit, classroomId]);
 
     useEffect(() => {
         if (viewingTopic === null) return;
-        const topicId = `topic_${viewingTopic}`;
-        const unsubQuiz = listenToTopicQuizQuestions(classroomId, topicId, (questions) => setCurrentTopicQuiz(questions || []));
-        const unsubResults = listenToTopicResults(classroomId, topicId, (data) => {
+        const id = `topic_${viewingTopic}`;
+        const unsubQuiz = listenToTopicQuizQuestions(classroomId, id, setCurrentTopicQuiz);
+        const unsubResults = listenToTopicResults(classroomId, id, (data) => {
             if (!data) { setProcessedTopicResults([]); return; }
-            const processedData: StudentUnitSummary[] = Object.entries(data).map(([playerKey, resultsObj]): StudentUnitSummary | null => {
+            const processed = Object.entries(data).map(([playerKey, resultsObj]): StudentUnitSummary | null => {
                 const resultsArray = resultsObj ? Object.entries(resultsObj).map(([activityId, result]) => ({ ...result as GameResult, activityId })) : [];
                 if (resultsArray.length === 0) return null;
                 resultsArray.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
                 return { playerKey, playerName: resultsArray[0].playerName, playerClass: resultsArray[0].playerClass, results: resultsArray };
             }).filter((item): item is StudentUnitSummary => item !== null);
-            setProcessedTopicResults(processedData);
+            setProcessedTopicResults(processed);
         });
-        const unsubVocab = listenToTopicVocabulary(classroomId, topicId, (vocab) => setCurrentTopicVocabulary(vocab || []));
+        const unsubVocab = listenToTopicVocabulary(classroomId, id, (v) => setCurrentTopicVocabulary(v || []));
         return () => { unsubQuiz(); unsubResults(); unsubVocab(); };
     }, [viewingTopic, classroomId]);
 
-    const handleToggleGameStatus = useCallback(() => setGameStatus(classroomId, !isGameEnabled), [classroomId, isGameEnabled]);
-    const handleToggleUnitStatus = useCallback(async (grade: number, unitNumber: number, isEnabled: boolean) => {
-        const unitId = `unit_${unitNumber}`;
-        try { await setUnitStatusByGrade(classroomId, grade, unitId, isEnabled); } catch (error) { setNotification({ message: `Lỗi UNIT ${unitNumber}.`, type: 'error' }); }
-    }, [classroomId]);
-    const handleToggleTopicStatus = useCallback(async (topicNumber: number, isEnabled: boolean) => {
-        const topicId = `topic_${topicNumber}`;
-        try { await setTopicStatus(classroomId, topicId, isEnabled); } catch (error) { setNotification({ message: `Lỗi TOPIC ${topicNumber}.`, type: 'error' }); }
-    }, [classroomId]);
-
-    const handleClearUnitResults = useCallback(async () => {
-        if (!viewingUnit || isClearingUnit) return;
-        setIsClearingUnit(true);
-        try { await clearUnitResultsByGrade(classroomId, viewingUnit.grade, `unit_${viewingUnit.unit}`); setNotification({ message: `Đã xóa hết kết quả của UNIT ${viewingUnit.unit}!`, type: 'success' }); } catch (error) { setNotification({ message: 'Xóa thất bại.', type: 'error' }); } finally { setIsClearingUnit(false); }
-    }, [classroomId, viewingUnit, isClearingUnit]);
-
-    const handleClearTopicResults = useCallback(async () => {
-        if (!viewingTopic || isClearingTopic) return;
-        setIsClearingTopic(true);
-        try { await clearTopicResults(classroomId, `topic_${viewingTopic}`); setNotification({ message: `Đã xóa hết kết quả của TOPIC ${viewingTopic}!`, type: 'success' }); } catch (error) { setNotification({ message: 'Xóa thất bại.', type: 'error' }); } finally { setIsClearingTopic(false); }
-    }, [classroomId, viewingTopic, isClearingTopic]);
-
-    const handleSaveEditedQuiz = useCallback(async (editedQuestions: QuizQuestion[]) => {
-        if (editedQuestions.length === 0) { setNotification({ message: 'Không thể lưu đề trống.', type: 'error' }); setQuizForEditing(null); return; }
-        try {
-            if (viewingUnit !== null) { await saveUnitQuizQuestionsByGrade(classroomId, viewingUnit.grade, `unit_${viewingUnit.unit}`, editedQuestions); setNotification({ message: `Cập nhật UNIT ${viewingUnit.unit}!`, type: 'success' }); }
-            else if (viewingTopic !== null) { await saveTopicQuizQuestions(classroomId, `topic_${viewingTopic}`, editedQuestions); setNotification({ message: `Cập nhật TOPIC ${viewingTopic}!`, type: 'success' }); }
-            else { await saveQuizQuestions(classroomId, editedQuestions); setNotification({ message: 'Cập nhật đề chung!', type: 'success' }); }
-        } catch (error) { setNotification({ message: 'Lưu thất bại.', type: 'error' }); } finally { setQuizForEditing(null); }
-    }, [classroomId, viewingUnit, viewingTopic]);
-
-    const handleSaveVocabulary = useCallback(async (editedVocab: VocabularyWord[]) => {
-        try {
-            if (viewingUnit !== null) { await saveUnitVocabularyByGrade(classroomId, viewingUnit.grade, `unit_${viewingUnit.unit}`, editedVocab); setNotification({ message: `Cập nhật UNIT ${viewingUnit.unit}!`, type: 'success' }); }
-            else if (viewingTopic !== null) { await saveTopicVocabulary(classroomId, `topic_${viewingTopic}`, editedVocab); setNotification({ message: `Cập nhật TOPIC ${viewingTopic}!`, type: 'success' }); }
-        } catch (error) { setNotification({ message: 'Lưu thất bại.', type: 'error' }); }
-    }, [classroomId, viewingUnit, viewingTopic]);
-
-    const handleRefresh = useCallback(() => { setIsRefreshing(true); setRefreshKey(prev => prev + 1); setTimeout(() => setIsRefreshing(false), 1000); }, []);
-
-    const handleSaveWelcomeConfig = async (config: WelcomeScreenConfig) => { try { await saveWelcomeConfig(classroomId, config); setNotification({ message: 'Đã lưu!', type: 'success' }); } catch (error) { setNotification({ message: 'Thất bại.', type: 'error' }); } };
-    const handleSaveDashboardConfig = async (config: DashboardConfig) => { try { await saveDashboardConfig(classroomId, config); setNotification({ message: 'Đã lưu!', type: 'success' }); } catch (error) { setNotification({ message: 'Thất bại.', type: 'error' }); } };
-    const handleSaveExerciseSelectionConfig = async (config: ExerciseSelectionConfig) => { try { await saveExerciseSelectionConfig(classroomId, config); setNotification({ message: 'Đã lưu!', type: 'success' }); } catch (error) { setNotification({ message: 'Thất bại.', type: 'error' }); } };
-
     const uniqueClasses = useMemo(() => {
         const allResults = [...results, ...processedUnitResults.flatMap(s => s.results), ...processedTopicResults.flatMap(s => s.results)];
-        if (!allResults || allResults.length === 0) return ['all'];
         const classSet = new Set(allResults.map(r => (r.playerClass || '').trim().toUpperCase()));
         return ['all', ...Array.from(classSet).sort()];
     }, [results, processedUnitResults, processedTopicResults]);
 
     const flattenedUnitResults = useMemo(() => {
-        const list = processedUnitResults.flatMap(student => 
-            student.results.map(res => ({ ...res, playerKey: student.playerKey }))
-        );
+        const list = processedUnitResults.flatMap(student => student.results.map(res => ({ ...res, playerKey: student.playerKey })));
         let filtered = list.filter(r => selectedUnitClass === 'all' || r.playerClass.toUpperCase() === selectedUnitClass.toUpperCase());
-        if (unitSortConfig.key) {
-            filtered.sort((a, b) => {
-                const aVal = a[unitSortConfig.key!] ?? 0;
-                const bVal = b[unitSortConfig.key!] ?? 0;
-                let cmp = 0;
-                if (typeof aVal === 'number' && typeof bVal === 'number') cmp = aVal - bVal;
-                else cmp = String(aVal).localeCompare(String(bVal));
-                return unitSortConfig.direction === 'ascending' ? cmp : -cmp;
-            });
-        }
+        const { key, direction } = unitSortConfig;
+        if (key) filtered.sort((a, b) => { const vA = a[key] ?? 0, vB = b[key] ?? 0; let cmp = (typeof vA === 'number' && typeof vB === 'number') ? vA - vB : String(vA).localeCompare(String(vB)); return direction === 'ascending' ? cmp : -cmp; });
         return filtered;
     }, [processedUnitResults, selectedUnitClass, unitSortConfig]);
 
     const flattenedTopicResults = useMemo(() => {
-        const list = processedTopicResults.flatMap(student => 
-            student.results.map(res => ({ ...res, playerKey: student.playerKey }))
-        );
+        const list = processedTopicResults.flatMap(student => student.results.map(res => ({ ...res, playerKey: student.playerKey })));
         let filtered = list.filter(r => selectedTopicClass === 'all' || r.playerClass.toUpperCase() === selectedTopicClass.toUpperCase());
-        if (topicSortConfig.key) {
-            filtered.sort((a, b) => {
-                const aVal = a[topicSortConfig.key!] ?? 0;
-                const bVal = b[topicSortConfig.key!] ?? 0;
-                let cmp = 0;
-                if (typeof aVal === 'number' && typeof bVal === 'number') cmp = aVal - bVal;
-                else cmp = String(aVal).localeCompare(String(bVal));
-                return topicSortConfig.direction === 'ascending' ? cmp : -cmp;
-            });
-        }
+        const { key, direction } = topicSortConfig;
+        if (key) filtered.sort((a, b) => { const vA = a[key] ?? 0, vB = b[key] ?? 0; let cmp = (typeof vA === 'number' && typeof vB === 'number') ? vA - vB : String(vA).localeCompare(String(vB)); return direction === 'ascending' ? cmp : -cmp; });
         return filtered;
     }, [processedTopicResults, selectedTopicClass, topicSortConfig]);
 
     const renderResultsTable = (data: any[], type: 'unit' | 'topic', onRowClick: (r: GameResult) => void, onDeleteRow: (r: any) => void) => {
         const setSort = type === 'unit' ? setUnitSortConfig : setTopicSortConfig;
         const config = type === 'unit' ? unitSortConfig : topicSortConfig;
-        
-        const toggleSort = (key: keyof GameResult) => {
-            setSort({ key, direction: config.key === key && config.direction === 'descending' ? 'ascending' : 'descending' });
-        };
-
-        const currentClass = type === 'unit' ? selectedUnitClass : selectedTopicClass;
+        const toggleSort = (key: keyof GameResult) => setSort({ key, direction: config.key === key && config.direction === 'descending' ? 'ascending' : 'descending' });
+        const curClass = type === 'unit' ? selectedUnitClass : selectedTopicClass;
         const setClass = type === 'unit' ? setSelectedUnitClass : setSelectedTopicClass;
 
         return (
             <div className="bg-white rounded-xl shadow-lg border border-gray-300 overflow-hidden mt-8">
-                {/* Control Header */}
                 <div className="p-4 border-b border-gray-300 bg-white flex flex-col sm:flex-row justify-between items-center gap-4">
-                    <div className="flex items-center gap-3">
-                        <select 
-                            value={currentClass} 
-                            onChange={(e) => setClass(e.target.value)}
-                            className="px-4 py-2 bg-white border-2 border-gray-300 rounded-lg font-bold text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-200 shadow-sm"
-                        >
-                            {uniqueClasses.map(c => <option key={c} value={c}>{c === 'all' ? 'Tất cả các lớp' : c}</option>)}
-                        </select>
-                    </div>
-                    <button 
-                        onClick={type === 'unit' ? handleClearUnitResults : handleClearTopicResults}
-                        disabled={type === 'unit' ? isClearingUnit : isClearingTopic}
-                        className="p-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition shadow-md disabled:bg-gray-400"
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                    </button>
+                    <select value={curClass} onChange={(e) => setClass(e.target.value)} className="px-4 py-2 bg-white border-2 border-gray-300 rounded-lg font-bold text-gray-700 shadow-sm">{uniqueClasses.map(c => <option key={c} value={c}>{c === 'all' ? 'Tất cả các lớp' : c}</option>)}</select>
+                    <button onClick={type === 'unit' ? () => clearUnitResultsByGrade(classroomId, viewingUnit!.grade, `unit_${viewingUnit!.unit}`) : () => clearTopicResults(classroomId, `topic_${viewingTopic}`)} className="p-2 bg-red-600 text-white rounded-lg hover:bg-red-700 shadow-md disabled:bg-gray-400"><svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>
                 </div>
-
-                {/* Table with visible grid structure */}
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse table-fixed min-w-[1100px]">
                         <thead>
                             <tr className="bg-[#fff2e0]">
                                 <th className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-14 text-center">STT</th>
-                                <th onClick={() => toggleSort('playerName')} className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-40 cursor-pointer hover:bg-orange-100 uppercase tracking-tight">HỌ VÀ TÊN {config.key === 'playerName' && (config.direction === 'ascending' ? '↑' : '↓')}</th>
-                                <th onClick={() => toggleSort('playerClass')} className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-20 cursor-pointer hover:bg-orange-100 uppercase tracking-tight text-center">LỚP {config.key === 'playerClass' && (config.direction === 'ascending' ? '↑' : '↓')}</th>
-                                <th onClick={() => toggleSort('score')} className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-20 cursor-pointer hover:bg-orange-100 uppercase tracking-tight text-center">ĐIỂM {config.key === 'score' && (config.direction === 'ascending' ? '↑' : '↓')} ▼</th>
-                                <th onClick={() => toggleSort('gameType')} className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-40 cursor-pointer hover:bg-orange-100 uppercase tracking-tight text-center">NỘI DUNG THAM GIA {config.key === 'gameType' && (config.direction === 'ascending' ? '↑' : '↓')} ↑</th>
-                                <th className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-20 uppercase tracking-tight text-center">LẦN LÀM ↑</th>
-                                <th className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-16 uppercase tracking-tight text-center">ĐÚNG ↑</th>
-                                <th className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-16 uppercase tracking-tight text-center">SAI ↑</th>
-                                <th onClick={() => toggleSort('timeTakenSeconds')} className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-28 cursor-pointer hover:bg-orange-100 uppercase tracking-tight text-center">THỜI GIAN {config.key === 'timeTakenSeconds' && (config.direction === 'ascending' ? '↑' : '↓')} ↑</th>
-                                <th onClick={() => toggleSort('timestamp')} className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-48 cursor-pointer hover:bg-orange-100 uppercase tracking-tight text-center">NGÀY LÀM {config.key === 'timestamp' && (config.direction === 'ascending' ? '↑' : '↓')} ↑</th>
-                                <th className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-28 uppercase tracking-tight text-center">HÀNH ĐỘNG</th>
+                                <th onClick={() => toggleSort('playerName')} className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-40 cursor-pointer hover:bg-orange-100 uppercase">HỌ VÀ TÊN {config.key === 'playerName' && (config.direction === 'ascending' ? '↑' : '↓')}</th>
+                                <th onClick={() => toggleSort('playerClass')} className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-20 cursor-pointer hover:bg-orange-100 uppercase text-center">LỚP {config.key === 'playerClass' && (config.direction === 'ascending' ? '↑' : '↓')}</th>
+                                <th onClick={() => toggleSort('score')} className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-20 cursor-pointer hover:bg-orange-100 uppercase text-center">ĐIỂM {config.key === 'score' && (config.direction === 'ascending' ? '↑' : '↓')} ▼</th>
+                                <th onClick={() => toggleSort('gameType')} className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-40 cursor-pointer hover:bg-orange-100 uppercase text-center">NỘI DUNG {config.key === 'gameType' && (config.direction === 'ascending' ? '↑' : '↓')} ↑</th>
+                                <th className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-20 text-center uppercase">LẦN LÀM ↑</th>
+                                <th className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-16 text-center uppercase">ĐÚNG ↑</th>
+                                <th className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-16 text-center uppercase">SAI ↑</th>
+                                <th onClick={() => toggleSort('timeTakenSeconds')} className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-28 cursor-pointer hover:bg-orange-100 uppercase text-center">THỜI GIAN {config.key === 'timeTakenSeconds' && (config.direction === 'ascending' ? '↑' : '↓')} ↑</th>
+                                <th onClick={() => toggleSort('timestamp')} className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-48 cursor-pointer hover:bg-orange-100 uppercase text-center">NGÀY LÀM {config.key === 'timestamp' && (config.direction === 'ascending' ? '↑' : '↓')} ↑</th>
+                                <th className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-28 text-center uppercase">HÀNH ĐỘNG</th>
                             </tr>
                         </thead>
                         <tbody className="bg-white">
                             {data.map((res, idx) => (
-                                <tr key={`${res.playerKey}_${res.activityId}`} onClick={() => onRowClick(res)} className="hover:bg-blue-50/50 transition-colors cursor-pointer text-[14px] font-bold">
+                                <tr key={`${res.playerKey}_${res.activityId}`} onClick={() => onRowClick(res)} className="hover:bg-blue-50 transition-colors cursor-pointer text-[14px] font-bold">
                                     <td className="p-3 border border-gray-300 text-blue-600 font-black text-center">{idx + 1}</td>
                                     <td className="p-3 border border-gray-300 text-[#E91E63] truncate">{res.playerName}</td>
                                     <td className="p-3 border border-gray-300 text-[#8E44AD] text-center">{res.playerClass}</td>
                                     <td className="p-3 border border-gray-300 text-red-600 text-lg font-black text-center">{res.score}</td>
-                                    <td className="p-3 border border-gray-300 text-center">
-                                        <span className={`px-4 py-1.5 rounded-full text-[12px] font-bold border ${getGameTypeStyle(res.gameType)}`}>
-                                            {getGameTypeLabel(res.gameType)}
-                                        </span>
-                                    </td>
+                                    <td className="p-3 border border-gray-300 text-center"><span className={`px-4 py-1.5 rounded-full text-[12px] font-bold border ${getGameTypeStyle(res.gameType)}`}>{getGameTypeLabel(res.gameType)}</span></td>
                                     <td className="p-3 border border-gray-300 text-red-600 text-center">{res.attempts || 1}</td>
                                     <td className="p-3 border border-gray-300 text-green-600 text-center">{res.correct}</td>
                                     <td className="p-3 border border-gray-300 text-red-600 text-center">{res.incorrect}</td>
-                                    <td className="p-3 border border-gray-300 text-[#c05621] text-center font-['Nunito'] font-black">{formatTime(res.timeTakenSeconds || 0)}</td>
-                                    <td className="p-3 border border-gray-300 text-slate-800 text-[13px] text-center font-['Nunito']">{formatDate(res.timestamp)}</td>
-                                    <td className="p-3 border border-gray-300 text-center">
-                                        <button 
-                                            onClick={(e) => { e.stopPropagation(); onDeleteRow(res); }}
-                                            className="p-1.5 bg-red-100 text-red-600 rounded-full hover:bg-red-200 transition"
-                                        >
-                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                                        </button>
-                                    </td>
+                                    <td className="p-3 border border-gray-300 text-[#c05621] text-center font-black">{formatTime(res.timeTakenSeconds || 0)}</td>
+                                    <td className="p-3 border border-gray-300 text-slate-800 text-[13px] text-center">{formatDate(res.timestamp)}</td>
+                                    <td className="p-3 border border-gray-300 text-center"><button onClick={(e) => { e.stopPropagation(); onDeleteRow(res); }} className="p-1.5 bg-red-100 text-red-600 rounded-full hover:bg-red-200 transition"><svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button></td>
                                 </tr>
                             ))}
-                            {data.length === 0 && (
-                                <tr><td colSpan={11} className="p-12 text-center text-gray-400 font-bold border border-gray-300">Chưa có kết quả nào.</td></tr>
-                            )}
+                            {data.length === 0 && <tr><td colSpan={11} className="p-12 text-center text-gray-400 font-bold border border-gray-300">Chưa có kết quả nào.</td></tr>}
                         </tbody>
                     </table>
                 </div>
@@ -507,362 +324,110 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
         );
     };
 
-    const renderUnitDetailView = (grade: number, unitNumber: number) => {
-        return (
-            <div className="p-4 bg-white/70 backdrop-blur-sm rounded-lg shadow-md border border-gray-200 tab-content-enter space-y-8">
-                <div className="flex justify-between items-center gap-4">
-                    <div className="flex items-center gap-4">
-                        <button onClick={() => setViewingUnit(null)} className="flex items-center gap-2 text-blue-600 font-semibold hover:underline">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
-                            <span className="text-lime-700">Quay lại danh sách</span>
-                        </button>
-                        <h2 className="text-2xl font-bold text-indigo-800">Quản lý chi tiết: <span className="text-red-500">UNIT</span> {unitNumber}</h2>
-                    </div>
-                     <button onClick={handleRefresh} className="bg-blue-600 text-white font-bold p-2 rounded-full hover:bg-blue-700 transition shadow-sm disabled:bg-gray-500" title="Làm mới dữ liệu" disabled={isRefreshing}><svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 ${isRefreshing ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h5M20 20v-5h-5M4 4l1.5 1.5A9 9 0 0120.5 12M20 20v-5h-5M4 4l1.5 1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 003.5 12" /></svg></button>
-                </div>
-                
-                <div className="p-4 border rounded-lg bg-sky-50 border-sky-200 space-y-4">
-                    <h3 className="text-xl font-bold text-purple-700">Soạn bài</h3>
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <div className="space-y-2">
-                            <label htmlFor="vocab-list" className="font-semibold text-teal-700">1. Dán danh sách từ vựng:</label>
-                            <textarea id="vocab-list" value={unitVocabList} onChange={(e) => setUnitVocabList(e.target.value)} placeholder={VOCAB_PLACEHOLDER} className="w-full h-96 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm bg-white text-slate-900" disabled={isGeneratingUnitActivities}/>
-                            <div className="flex justify-end">
-                                <button onClick={() => { setVocabForEditing(currentUnitVocabulary); setIsEditVocabModalOpen(true); }} className="text-sm flex items-center gap-1 bg-white border border-gray-300 px-3 py-1.5 rounded-md hover:bg-gray-50 text-blue-600 font-bold transition shadow-sm">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" /></svg>
-                                    Chỉnh sửa chi tiết
-                                </button>
-                            </div>
-                        </div>
-                        <div className="flex flex-col">
-                            <div className="space-y-2">
-                                <label className="font-semibold text-teal-700">2. Tùy chỉnh yêu cầu cho AI:</label>
-                                <div className="space-y-2">
-                                    <div className="bg-white p-2 rounded-md border border-gray-200 shadow-sm">
-                                        <label htmlFor="prompt-learn" className="block text-sm font-bold text-blue-600 mb-1">Học từ vựng</label>
-                                        <textarea id="prompt-learn" value={unitActivityPrompts.learn} onChange={(e) => setUnitActivityPrompts(prev => ({...prev, learn: e.target.value}))} placeholder="VD: tạo 10 thẻ từ vựng..." className="w-full p-2 border border-gray-300 rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-blue-400 bg-sky-100 text-slate-900" rows={2} disabled={isGeneratingUnitActivities}/>
-                                    </div>
-                                    <div className="bg-white p-2 rounded-md border border-gray-200 shadow-sm">
-                                        <label htmlFor="prompt-quiz" className="block text-sm font-bold text-green-600 mb-1">Bài tập trắc nghiệm</label>
-                                        <textarea id="prompt-quiz" value={unitActivityPrompts.quiz} onChange={(e) => setUnitActivityPrompts(prev => ({...prev, quiz: e.target.value}))} placeholder="VD: tạo 10 câu hỏi trắc nghiệm..." className="w-full p-2 border border-gray-300 rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-green-400 bg-sky-100 text-slate-900" rows={2} disabled={isGeneratingUnitActivities}/>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="flex-grow flex items-end">
-                                <button onClick={handleGenerateUnitActivities} disabled={isGeneratingUnitActivities || (Object.values(unitActivityPrompts).every(p => !String(p).trim()))} className="bg-purple-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-purple-700 transition disabled:bg-gray-500 disabled:cursor-not-allowed flex items-center justify-center gap-2 w-full mt-4">
-                                    {isGeneratingUnitActivities ? (<span>Đang tạo...</span>) : ('✨ Tạo hoạt động với AI')}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    const handleGenerateActivities = async (type: 'unit' | 'topic') => {
+        const isUnit = type === 'unit';
+        const setter = isUnit ? setIsGeneratingUnitActivities : setIsGeneratingTopicActivities;
+        const currentVocab = isUnit ? currentUnitVocabulary : currentTopicVocabulary;
+        const vocabListText = isUnit ? unitVocabList : topicVocabList;
+        const prompts = isUnit ? unitActivityPrompts : topicActivityPrompts;
+        const gradeVal = isUnit ? viewingUnit?.grade : 'topics';
+        const idVal = isUnit ? `unit_${viewingUnit?.unit}` : `topic_${viewingTopic}`;
 
-                <div className="space-y-4">
-                    <h3 className="text-xl font-bold text-indigo-700 border-l-4 border-indigo-600 pl-3">Kết quả làm bài (UNIT {unitNumber})</h3>
-                    {renderResultsTable(flattenedUnitResults, 'unit', setSelectedResult, (res) => setDeletingUnitStudent(res))}
-                </div>
-            </div>
-        );
-    };
-
-    const renderTopicDetailView = (topicNumber: number) => {
-        return (
-            <div className="p-4 bg-white/70 backdrop-blur-sm rounded-lg shadow-md border border-gray-200 tab-content-enter space-y-8">
-                <div className="flex justify-between items-center gap-4">
-                    <div className="flex items-center gap-4">
-                        <button onClick={() => setViewingTopic(null)} className="flex items-center gap-2 text-blue-600 font-semibold hover:underline">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
-                            <span className="text-lime-700">Quay lại danh sách</span>
-                        </button>
-                        <h2 className="text-2xl font-bold text-indigo-800">Quản lý chi tiết: <span className="text-blue-500">TOPIC</span> {topicNumber}</h2>
-                    </div>
-                     <button onClick={handleRefresh} className="bg-blue-600 text-white font-bold p-2 rounded-full hover:bg-blue-700 transition shadow-sm disabled:bg-gray-500" title="Làm mới dữ liệu" disabled={isRefreshing}><svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 ${isRefreshing ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h5M20 20v-5h-5M4 4l1.5 1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 003.5 12" /></svg></button>
-                </div>
-                
-                <div className="p-4 border rounded-lg bg-sky-50 border-sky-200 space-y-4">
-                    <h3 className="text-xl font-bold text-purple-700">Soạn bài</h3>
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <div className="space-y-2">
-                            <label htmlFor="topic-vocab-list" className="font-semibold text-teal-700">1. Dán danh sách từ vựng:</label>
-                            <textarea id="topic-vocab-list" value={topicVocabList} onChange={(e) => setTopicVocabList(e.target.value)} placeholder={VOCAB_PLACEHOLDER} className="w-full h-96 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm bg-white text-slate-900" disabled={isGeneratingTopicActivities}/>
-                            <div className="flex justify-end">
-                                <button onClick={() => { setVocabForEditing(currentTopicVocabulary); setIsEditVocabModalOpen(true); }} className="text-sm flex items-center gap-1 bg-white border border-gray-300 px-4 py-2 rounded-md hover:bg-gray-50 text-blue-600 font-bold transition shadow-sm">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" /></svg>
-                                    Chỉnh sửa chi tiết
-                                </button>
-                            </div>
-                        </div>
-                        <div className="flex flex-col">
-                            <div className="space-y-4">
-                                <label className="font-semibold text-teal-700">2. Tùy chỉnh yêu cầu cho AI:</label>
-                                <div className="space-y-4">
-                                    <div className="bg-white p-3 rounded-lg border border-gray-200 shadow-sm">
-                                        <label htmlFor="topic-prompt-learn" className="block text-sm font-bold text-blue-600 mb-2 uppercase">Học từ vựng</label>
-                                        <textarea id="topic-prompt-learn" value={topicActivityPrompts.learn} onChange={(e) => setTopicActivityPrompts(prev => ({...prev, learn: e.target.value}))} placeholder="VD: tạo 10 thẻ từ vựng..." className="w-full p-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-400 bg-sky-50 text-slate-900" rows={3} disabled={isGeneratingTopicActivities}/>
-                                    </div>
-                                    <div className="bg-white p-3 rounded-lg border border-gray-200 shadow-sm">
-                                        <label htmlFor="topic-prompt-quiz" className="block text-sm font-bold text-green-600 mb-2 uppercase">Bài tập trắc nghiệm</label>
-                                        <textarea id="topic-prompt-quiz" value={topicActivityPrompts.quiz} onChange={(e) => setTopicActivityPrompts(prev => ({...prev, quiz: e.target.value}))} placeholder="VD: tạo 10 câu hỏi trắc nghiệm..." className="w-full p-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-green-400 bg-sky-50 text-slate-900" rows={3} disabled={isGeneratingTopicActivities}/>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="flex-grow flex items-end">
-                                <button onClick={handleGenerateTopicActivities} disabled={isGeneratingTopicActivities || (Object.values(topicActivityPrompts).every(p => !String(p).trim()))} className="bg-slate-500 text-white font-bold py-4 px-8 rounded-lg hover:bg-slate-600 transition disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center gap-2 w-full mt-6 shadow-md">
-                                    {isGeneratingTopicActivities ? (<span>Đang tạo...</span>) : ('✨ Tạo hoạt động với AI')}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="space-y-4">
-                    <h3 className="text-xl font-bold text-indigo-700 border-l-4 border-indigo-600 pl-3">Kết quả làm bài (TOPIC {topicNumber})</h3>
-                    {renderResultsTable(flattenedTopicResults, 'topic', setSelectedResult, (res) => setDeletingTopicStudent(res))}
-                </div>
-            </div>
-        );
-    };
-
-    const summaryStats = useMemo(() => {
-        const totalStudents = results.length;
-        if (totalStudents === 0) return { totalStudents: 0, avgScore: 0, avgTime: 0 };
-        const totalScore = results.reduce((sum, result) => sum + parseFloat(result.score), 0);
-        const totalTime = results.reduce((sum, result) => sum + result.timeTakenSeconds, 0);
-        return { totalStudents, avgScore: (totalScore / totalStudents).toFixed(1), avgTime: Math.round(totalTime / totalStudents) };
-    }, [results]);
-
-    const handleToggleTopicStatus_Local = useCallback(async (topicNumber: number, isEnabled: boolean) => {
-        const topicId = `topic_${topicNumber}`;
-        try { await setTopicStatus(classroomId, topicId, isEnabled); } catch (error) { setNotification({ message: 'Lỗi TOPIC.', type: 'error' }); }
-    }, [classroomId]);
-
-    const handleConfirmDeleteUnitResult = async () => {
-        if (!deletingUnitStudent || !viewingUnit) return;
+        setter(true);
         try {
-            const { grade, unit } = viewingUnit;
-            const unitId = `unit_${unit}`;
-            await deleteUnitStudentResultByGrade(classroomId, grade, unitId, deletingUnitStudent.playerName, deletingUnitStudent.playerClass, deletingUnitStudent.activityId || '');
-            setNotification({ message: `Đã xóa kết quả của ${deletingUnitStudent.playerName}!`, type: 'success' });
-        } catch (error) { setNotification({ message: 'Xóa thất bại.', type: 'error' }); } finally { setDeletingUnitStudent(null); }
+            let source = vocabListText.trim();
+            if (!source && currentVocab.length > 0) source = currentVocab.map(v => `${v.word} - (${v.type}) /${v.phonetic}/ - ${v.translation}`).join('\n');
+            if (!source) throw new Error();
+            if (prompts.learn.trim()) {
+                const vocabData = await generateVocabularyList(`Context: ${source}\n\nInstruction: ${prompts.learn}`);
+                isUnit ? await saveUnitVocabularyByGrade(classroomId, gradeVal as number, idVal, vocabData) : await saveTopicVocabulary(classroomId, idVal, vocabData);
+            }
+            if (prompts.quiz.trim()) {
+                const questions = await generateQuizFromCustomPrompt(`Context: ${source}\n\nInstruction: ${prompts.quiz}`);
+                isUnit ? await saveUnitQuizQuestionsByGrade(classroomId, gradeVal as number, idVal, questions) : await saveTopicQuizQuestions(classroomId, idVal, questions);
+            }
+            setNotification({ message: 'Thành công!', type: 'success' });
+        } catch (e) { setNotification({ message: 'Thất bại.', type: 'error' }); } finally { setter(false); }
     };
 
-    const handleConfirmDeleteTopicResult = async () => {
-        if (!deletingTopicStudent || !viewingTopic) return;
-        try {
-            const topicId = `topic_${viewingTopic}`;
-            await deleteTopicStudentResult(classroomId, topicId, deletingTopicStudent.playerName, deletingTopicStudent.playerClass, deletingTopicStudent.activityId || '');
-            setNotification({ message: `Đã xóa kết quả của ${deletingTopicStudent.playerName}!`, type: 'success' });
-        } catch (error) { setNotification({ message: 'Xóa thất bại.', type: 'error' }); } finally { setDeletingTopicStudent(null); }
-    };
-
-    const handleGenerateUnitActivities = useCallback(async () => {
-        if (!viewingUnit) return;
-        setIsGeneratingUnitActivities(true);
-        try {
-            const { grade, unit } = viewingUnit;
-            const unitId = `unit_${unit}`;
-            let vocabSourceText = unitVocabList.trim();
-            if (!vocabSourceText && currentUnitVocabulary.length > 0) vocabSourceText = currentUnitVocabulary.map(v => `${v.word} - (${v.type}) /${v.phonetic}/ - ${v.translation}`).join('\n');
-            if (!vocabSourceText) throw new Error('No vocab source');
-
-            if (unitActivityPrompts.learn.trim()) {
-                const vocabData = await generateVocabularyList(`Context: ${vocabSourceText}\n\nInstruction: ${unitActivityPrompts.learn}`);
-                await saveUnitVocabularyByGrade(classroomId, grade, unitId, vocabData);
-            }
-            if (unitActivityPrompts.quiz.trim()) {
-                const questions = await generateQuizFromCustomPrompt(`Context: ${vocabSourceText}\n\nInstruction: ${unitActivityPrompts.quiz}`);
-                await saveUnitQuizQuestionsByGrade(classroomId, grade, unitId, questions);
-            }
-            setNotification({ message: `Cập nhật thành công UNIT ${unit}!`, type: 'success' });
-        } catch (error) { setNotification({ message: 'Tạo hoạt động thất bại.', type: 'error' }); } finally { setIsGeneratingUnitActivities(false); }
-    }, [unitVocabList, currentUnitVocabulary, unitActivityPrompts, viewingUnit, classroomId]);
-
-    const handleGenerateTopicActivities = useCallback(async () => {
-        if (!viewingTopic) return;
-        setIsGeneratingTopicActivities(true);
-        try {
-            const topicId = `topic_${viewingTopic}`;
-            let vocabSourceText = topicVocabList.trim();
-            if (!vocabSourceText && currentTopicVocabulary.length > 0) vocabSourceText = currentTopicVocabulary.map(v => `${v.word} - (${v.type}) /${v.phonetic}/ - ${v.translation}`).join('\n');
-            if (!vocabSourceText) throw new Error('No vocab source');
-
-            if (topicActivityPrompts.learn.trim()) {
-                const vocabData = await generateVocabularyList(`Context: ${vocabSourceText}\n\nInstruction: ${topicActivityPrompts.learn}`);
-                await saveTopicVocabulary(classroomId, topicId, vocabData);
-            }
-            if (topicActivityPrompts.quiz.trim()) {
-                const questions = await generateQuizFromCustomPrompt(`Context: ${vocabSourceText}\n\nInstruction: ${topicActivityPrompts.quiz}`);
-                await saveTopicQuizQuestions(classroomId, topicId, questions);
-            }
-            setNotification({ message: `Cập nhật thành công TOPIC ${viewingTopic}!`, type: 'success' });
-        } catch (error) { setNotification({ message: 'Tạo hoạt động thất bại.', type: 'error' }); } finally { setIsGeneratingTopicActivities(false); }
-    }, [topicVocabList, currentTopicVocabulary, topicActivityPrompts, viewingTopic, classroomId]);
-
-    const renderContent = () => {
-        if (viewingUnit) return renderUnitDetailView(viewingUnit.grade, viewingUnit.unit);
-        if (viewingTopic) return renderTopicDetailView(viewingTopic);
-
-        switch (activeTab) {
-            case 'units_12':
-                return (
-                    <div className="p-6 bg-gradient-to-br from-green-700 via-green-800 to-green-900 rounded-lg shadow-2xl border border-green-700/50 tab-content-enter">
-                         <div className="flex justify-between items-start mb-8">
-                            <div>
-                                <h2 className="font-bold" style={{ fontSize: `${dashboardConfig.sectionTitleFontSize}rem`, color: dashboardConfig.sectionTitleColor }}>{dashboardConfig.unitsTabLabel}</h2>
-                                <p className="text-slate-400 mt-2">Kích hoạt, quản lý nội dung và xem kết quả cho từng bài học.</p>
-                            </div>
-                            <button onClick={handleRefresh} className="bg-slate-700/50 text-white font-bold p-2 rounded-full hover:bg-slate-600/50 transition shadow-md border border-slate-600 disabled:bg-gray-500" title="Làm mới dữ liệu" disabled={isRefreshing}><svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 ${isRefreshing ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h5M20 20v-5h-5M4 4l1.5 1.5A9 9 0 0120.5 12M20 20v-5h-5M4 4l1.5 1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 003.5 12" /></svg></button>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                            {Array.from({ length: 10 }, (_, i) => i + 1).map(unitNumber => {
-                                const unitId = `unit_${unitNumber}`;
-                                const isEnabled = unitsStatus12[unitId]?.enabled ?? false;
-                                const style = unitCardStyles[unitNumber - 1];
-                                return (
-                                    <div key={unitNumber} className={`rounded-2xl p-1.5 transition-all duration-300 ease-in-out group ${isEnabled ? `bg-gradient-to-br ${style.gradient} shadow-lg ${style.hoverShadow} hover:-translate-y-1` : 'bg-slate-700/50'}`}>
-                                        <div className="bg-slate-800/90 backdrop-blur-sm rounded-xl h-full flex flex-col p-5">
-                                            <div className="flex justify-end items-start">
-                                                <label className="flex items-center cursor-pointer">
-                                                    <div className="relative">
-                                                        <input type="checkbox" className="sr-only" checked={isEnabled} onChange={(e) => handleToggleUnitStatus(12, unitNumber, e.target.checked)}/>
-                                                        <div className="block w-14 h-8 rounded-full bg-slate-700"></div>
-                                                        <div className={`dot absolute left-1 top-1 w-6 h-6 rounded-full shadow-lg transition-transform ${isEnabled ? 'transform translate-x-6 bg-gradient-to-r from-cyan-300 to-blue-400' : 'bg-slate-500'}`}></div>
-                                                    </div>
-                                                </label>
-                                            </div>
-                                            <div className="flex-grow flex flex-col items-center justify-center">
-                                                <span className="font-bold" style={{ fontSize: `${dashboardConfig.cardLabelFontSize}rem`, color: dashboardConfig.cardLabelColor }}>{dashboardConfig.cardUnitLabel}</span>
-                                                <span className={`font-black bg-clip-text text-transparent bg-gradient-to-br ${isEnabled ? style.textColor : 'from-slate-400 to-slate-600'} mb-2 -mt-2`} style={{ fontSize: `${dashboardConfig.cardValueFontSize}rem` }}>{unitNumber}</span>
-                                                <span className={`font-semibold text-xs px-2 py-0.5 rounded-full self-center ${isEnabled ? 'bg-green-500/20 text-green-300' : 'bg-red-500/20 text-red-400'}`}>{isEnabled ? 'Đang Mở' : 'Đã Đóng'}</span>
-                                            </div>
-                                            <button onClick={isEnabled ? () => setViewingUnit({ grade: 12, unit: unitNumber }) : undefined} disabled={!isEnabled} className={`w-full font-bold px-4 rounded-lg transition-all duration-300 ease-in-out shadow-lg flex items-center justify-center gap-2 mt-4 ${isEnabled ? 'text-white hover:brightness-110 border border-black/20' : 'bg-slate-700 text-slate-500 cursor-not-allowed border border-slate-600'}`} style={isEnabled ? { backgroundColor: dashboardConfig.manageButtonColor, fontSize: `${dashboardConfig.manageButtonFontSize}rem`, padding: '0.75rem 1rem' } : {}}><span>{dashboardConfig.manageButtonText}</span></button>
-                                        </div>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    </div>
-                );
-            case 'topics':
-                return (
-                    <div className="p-6 bg-gradient-to-br from-blue-700 via-blue-800 to-blue-900 rounded-lg shadow-2xl border border-blue-700/50 tab-content-enter">
-                         <div className="flex justify-between items-start mb-8">
-                            <div>
-                                <h2 className="font-bold" style={{ fontSize: `${dashboardConfig.sectionTitleFontSize}rem`, color: dashboardConfig.sectionTitleColor }}>{dashboardConfig.topicsTabLabel}</h2>
-                                <p className="text-slate-400 mt-2">Kích hoạt, quản lý nội dung và xem kết quả cho từng chủ đề.</p>
-                            </div>
-                            <button onClick={handleRefresh} className="bg-slate-700/50 text-white font-bold p-2 rounded-full hover:bg-slate-600/50 transition shadow-md border border-slate-600 disabled:bg-gray-500" title="Làm mới dữ liệu" disabled={isRefreshing}><svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 ${isRefreshing ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h5M20 20v-5h-5M4 4l1.5 1.5A9 9 0 0120.5 12M20 20v-5h-5M4 4l1.5 1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 003.5 12" /></svg></button>
-                        </div>
-                        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                            {Array.from({ length: 60 }, (_, i) => i + 1).map(topicNumber => {
-                                const topicId = `topic_${topicNumber}`;
-                                const isEnabled = topicsStatus[topicId]?.enabled ?? false;
-                                const style = unitCardStyles[(topicNumber - 1) % unitCardStyles.length];
-                                return (
-                                    <div key={topicNumber} className={`rounded-2xl p-1.5 transition-all duration-300 ease-in-out group ${isEnabled ? `bg-gradient-to-br ${style.gradient} shadow-lg ${style.hoverShadow} hover:-translate-y-1` : 'bg-slate-700/50'}`}>
-                                        <div className="bg-slate-800/90 backdrop-blur-sm rounded-xl h-full flex flex-col p-4">
-                                            <div className="flex justify-end items-start">
-                                                <label className="flex items-center cursor-pointer">
-                                                    <div className="relative"><input type="checkbox" className="sr-only" checked={isEnabled} onChange={(e) => handleToggleTopicStatus_Local(topicNumber, e.target.checked)} /><div className="block w-14 h-8 rounded-full bg-slate-700"></div><div className={`dot absolute left-1 top-1 w-6 h-6 rounded-full shadow-lg transition-transform ${isEnabled ? 'transform translate-x-6 bg-gradient-to-r from-cyan-300 to-blue-400' : 'bg-slate-500'}`}></div></div>
-                                                </label>
-                                            </div>
-                                            <div className="flex-grow flex flex-col items-center justify-center text-center">
-                                                <span className="font-bold" style={{ fontSize: `${dashboardConfig.cardLabelFontSize * 0.75}rem`, color: dashboardConfig.cardLabelColor }}>{dashboardConfig.cardTopicLabel}</span>
-                                                <span className={`font-black bg-clip-text text-transparent bg-gradient-to-br ${isEnabled ? style.textColor : 'from-slate-400 to-slate-600'} mb-1 -mt-1`} style={{ fontSize: `${dashboardConfig.cardValueFontSize * 0.75}rem` }}>{topicNumber}</span>
-                                                <span className={`font-semibold text-[10px] px-2 py-0.5 rounded-full self-center ${isEnabled ? 'bg-green-500/20 text-green-300' : 'bg-red-500/20 text-red-400'}`}>{isEnabled ? 'Mở' : 'Đóng'}</span>
-                                            </div>
-                                            <button onClick={isEnabled ? () => setViewingTopic(topicNumber) : undefined} disabled={!isEnabled} className={`w-full font-bold px-2 rounded-lg transition-all duration-300 ease-in-out shadow-lg flex items-center justify-center gap-1 mt-3 text-sm ${isEnabled ? 'text-white hover:brightness-110 border border-black/20' : 'bg-slate-700 text-slate-500 cursor-not-allowed border border-slate-600'}`} style={isEnabled ? { backgroundColor: dashboardConfig.manageButtonColor, fontSize: `${dashboardConfig.manageButtonFontSize * 0.8}rem`, padding: '0.5rem 0.5rem' } : {}}><span>{dashboardConfig.manageButtonText}</span></button>
-                                        </div>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    </div>
-                );
-            case 'dashboard':
-            default:
-                return (
-                    <div className="tab-content-enter bg-white p-6 rounded-xl shadow-lg space-y-8">
-                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                             <div className="p-4 bg-teal-50 border border-teal-100 rounded-xl flex flex-col items-center text-center">
-                                 <div className="p-3 bg-white rounded-full shadow mb-3 text-teal-600"><svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" /></svg></div>
-                                 <h4 className="font-bold text-teal-800 mb-2">Màn hình Đăng nhập</h4>
-                                 <button onClick={() => setIsEditWelcomeModalOpen(true)} className="mt-auto px-4 py-2 bg-teal-600 text-white font-bold rounded-lg hover:bg-teal-700 transition text-sm shadow-md">⚙️ Chỉnh sửa thiết kế</button>
-                             </div>
-                             <div className="p-4 bg-red-50 border border-red-100 rounded-xl flex flex-col items-center text-center">
-                                 <div className="p-3 bg-white rounded-full shadow mb-3 text-red-600"><svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" /></svg></div>
-                                 <h4 className="font-bold text-red-800 mb-2">Màn hình Chọn bài tập</h4>
-                                 <button onClick={() => setIsEditExerciseModalOpen(true)} className="mt-auto px-4 py-2 bg-red-600 text-white font-bold rounded-lg hover:bg-teal-700 transition text-sm shadow-md">🎨 Chỉnh sửa thiết kế HS</button>
-                             </div>
-                             <div className="p-4 bg-blue-50 border border-blue-100 rounded-xl flex flex-col items-center text-center">
-                                 <div className="p-3 bg-white rounded-full shadow mb-3 text-blue-600"><svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg></div>
-                                 <h4 className="font-bold text-blue-800 mb-2">Màn hình Quản lý Admin</h4>
-                                 <button onClick={() => setIsEditDashboardModalOpen(true)} className="mt-auto px-4 py-2 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition text-sm shadow-md">🛠️ Chỉnh sửa thiết kế GV</button>
-                             </div>
-                         </div>
-                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                            <div className="bg-white p-4 rounded-lg shadow-md text-center border-l-4 border-blue-500"><p className="text-sm font-bold text-gray-600">Đã nộp bài</p><p className="text-3xl font-extrabold text-blue-600">{summaryStats.totalStudents}</p></div>
-                            <div className="bg-white p-4 rounded-lg shadow-md text-center border-l-4 border-green-500"><p className="text-sm font-bold text-gray-600">Điểm TB</p><p className="text-3xl font-extrabold text-green-600">{summaryStats.avgScore}</p></div>
-                            <div className="bg-white p-4 rounded-lg shadow-md text-center border-l-4 border-orange-500"><p className="text-sm font-bold text-gray-600">Thời gian TB</p><p className="text-3xl font-extrabold text-orange-600">{formatTime(summaryStats.avgTime)}</p></div>
-                            <div className="bg-white p-4 rounded-lg shadow-md text-center border-l-4 border-teal-500"><p className="text-sm font-bold text-gray-600">Đang làm bài</p><p className="text-3xl font-extrabold text-teal-600">{onlineStudents.length}</p></div>
-                        </div>
-                    </div>
-                );
-        }
-    };
-    
     return (
         <div className="w-full bg-sky-100 min-h-screen">
-            {notification && (
-                <div className={`fixed top-5 right-5 shadow-lg rounded-lg p-4 text-center z-[150] transition-transform transform ${notification.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                    <p className="font-bold">{notification.message}</p>
-                </div>
-            )}
-            <header className="flex justify-between items-center p-4 bg-white shadow-md">
-                <div><h1 className="text-3xl font-extrabold text-slate-800 tracking-wider">FOR TEACHERTUY</h1><div className="flex mt-1"><div className="h-1 w-24 bg-red-500 rounded-full"></div><div className="h-1 w-12 bg-blue-500 ml-1 rounded-full"></div></div></div>
-                <div className="flex items-center gap-2">
-                    <button onClick={() => (window as any).aistudio?.openSelectKey()} className="bg-white text-gray-700 border border-gray-300 font-bold py-2 px-4 rounded-lg hover:bg-gray-50 transition shadow-sm flex items-center gap-2"><span>🔑 Đổi API Key</span></button>
-                    <button onClick={onGoHome} className="bg-red-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-red-700 transition shadow-md">Logout</button>
-                </div>
-            </header>
+            {notification && <div className={`fixed top-5 right-5 shadow-lg rounded-lg p-4 z-[150] ${notification.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}><p className="font-bold">{notification.message}</p></div>}
+            <header className="flex justify-between items-center p-4 bg-white shadow-md"><div><h1 className="text-3xl font-extrabold text-slate-800">FOR TEACHERTUY</h1></div><div className="flex gap-2"><button onClick={() => (window as any).aistudio?.openSelectKey()} className="bg-white text-gray-700 border border-gray-300 font-bold py-2 px-4 rounded-lg">🔑 Đổi API Key</button><button onClick={onGoHome} className="bg-red-600 text-white font-bold py-2 px-6 rounded-lg">Logout</button></div></header>
             <div className="p-6">
-                <div className="bg-white rounded-lg shadow-md p-3 mb-6 flex items-center">
-                    <span className="text-lg font-bold text-gray-700 mr-4">Trạng thái phòng:</span>
-                    <label className="flex items-center cursor-pointer">
-                        <div className="relative"><input type="checkbox" className="sr-only" checked={isGameEnabled} onChange={handleToggleGameStatus} /><div className="block w-14 h-8 rounded-full bg-gray-200"></div><div className={`dot absolute left-1 top-1 w-6 h-6 rounded-full shadow-lg transition-transform ${isGameEnabled ? 'transform translate-x-6 bg-green-500' : 'bg-gray-400'}`}></div></div>
-                        <span className={`ml-3 font-bold text-lg ${isGameEnabled ? 'text-green-600' : 'text-gray-500'}`}>{isGameEnabled ? 'MỞ' : 'ĐÓNG'}</span>
-                    </label>
-                </div>
-                <div className="mb-6 flex items-center flex-wrap gap-4">
-                    <button onClick={() => { setViewingUnit(null); setViewingTopic(null); setActiveTab('dashboard'); }} className={`px-6 py-3 font-bold rounded-lg transition-colors ${activeTab === 'dashboard' ? 'bg-green-600 text-white shadow-lg ring-4 ring-green-100' : 'bg-white text-gray-600 hover:bg-gray-50 border'}`}>Bảng điều khiển</button>
-                    <button onClick={() => { setViewingUnit(null); setViewingTopic(null); setActiveTab('units_12'); }} className={`px-6 py-3 font-bold rounded-lg transition-colors ${activeTab === 'units_12' ? 'bg-red-600 text-white shadow-lg ring-4 ring-red-100' : 'bg-white text-gray-600 hover:bg-gray-50 border'}`}>{dashboardConfig.unitsTabLabel}</button>
-                    <button onClick={() => { setViewingUnit(null); setViewingTopic(null); setActiveTab('topics'); }} className={`px-6 py-3 font-bold rounded-lg transition-colors ${activeTab === 'topics' ? 'bg-blue-600 text-white shadow-lg ring-4 ring-blue-100' : 'bg-white text-gray-600 hover:bg-gray-50 border'}`}>{dashboardConfig.topicsTabLabel}</button>
-                </div>
-                <div>{renderContent()}</div>
+                <div className="mb-6 flex gap-4"><button onClick={() => { setViewingUnit(null); setViewingTopic(null); setActiveTab('dashboard'); }} className={`px-6 py-3 font-bold rounded-lg ${activeTab === 'dashboard' ? 'bg-green-600 text-white' : 'bg-white text-gray-600'}`}>Bảng điều khiển</button><button onClick={() => { setViewingUnit(null); setViewingTopic(null); setActiveTab('units_12'); }} className={`px-6 py-3 font-bold rounded-lg ${activeTab === 'units_12' ? 'bg-red-600 text-white' : 'bg-white text-gray-600'}`}>{dashboardConfig.unitsTabLabel}</button><button onClick={() => { setViewingUnit(null); setViewingTopic(null); setActiveTab('topics'); }} className={`px-6 py-3 font-bold rounded-lg ${activeTab === 'topics' ? 'bg-blue-600 text-white' : 'bg-white text-gray-600'}`}>{dashboardConfig.topicsTabLabel}</button></div>
+                {viewingUnit ? (
+                    <div className="p-4 bg-white/70 rounded-lg shadow-md space-y-8">
+                        <div className="flex justify-between items-center"><button onClick={() => setViewingUnit(null)} className="flex items-center gap-2 text-blue-600 font-semibold"><svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" /></svg><span>Quay lại</span></button><h2 className="text-2xl font-bold">Quản lý: UNIT {viewingUnit.unit}</h2></div>
+                        <div className="p-4 border rounded-lg bg-sky-50 grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div><label className="font-semibold text-teal-700">1. Từ vựng:</label><textarea value={unitVocabList} onChange={(e) => setUnitVocabList(e.target.value)} className="w-full h-96 p-3 border border-gray-300 rounded-md font-mono text-sm bg-white" /></div>
+                            <div className="flex flex-col"><div className="space-y-2"><label className="font-semibold">2. Yêu cầu AI:</label><textarea value={unitActivityPrompts.learn} onChange={(e) => setUnitActivityPrompts(p => ({...p, learn: e.target.value}))} placeholder="Học từ vựng..." className="w-full p-2 border rounded-md text-xs bg-sky-100" rows={2}/><textarea value={unitActivityPrompts.quiz} onChange={(e) => setUnitActivityPrompts(p => ({...p, quiz: e.target.value}))} placeholder="Trắc nghiệm..." className="w-full p-2 border rounded-md text-xs bg-sky-100" rows={2}/></div><button onClick={() => handleGenerateActivities('unit')} disabled={isGeneratingUnitActivities} className="bg-purple-600 text-white font-bold py-3 px-8 rounded-lg mt-4 w-full">{isGeneratingUnitActivities ? 'Đang tạo...' : '✨ Tạo hoạt động'}</button></div>
+                        </div>
+                        {renderResultsTable(flattenedUnitResults, 'unit', setSelectedResult, (res) => setDeletingUnitStudent(res))}
+                    </div>
+                ) : viewingTopic ? (
+                    <div className="p-4 bg-white/70 rounded-lg shadow-md space-y-8">
+                        <div className="flex justify-between items-center"><button onClick={() => setViewingTopic(null)} className="flex items-center gap-2 text-blue-600 font-semibold">Quay lại</button><h2 className="text-2xl font-bold">Quản lý: TOPIC {viewingTopic}</h2></div>
+                        <div className="p-4 border rounded-lg bg-sky-50 grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div><textarea value={topicVocabList} onChange={(e) => setTopicVocabList(e.target.value)} className="w-full h-96 p-3 border rounded-md font-mono text-sm bg-white" /></div>
+                            <div className="flex flex-col"><div className="space-y-4"><textarea value={topicActivityPrompts.learn} onChange={(e) => setTopicActivityPrompts(p => ({...p, learn: e.target.value}))} className="w-full p-2 border rounded-md text-sm bg-sky-50" rows={3}/><textarea value={topicActivityPrompts.quiz} onChange={(e) => setTopicActivityPrompts(p => ({...p, quiz: e.target.value}))} className="w-full p-2 border rounded-md text-sm bg-sky-50" rows={3}/></div><button onClick={() => handleGenerateActivities('topic')} disabled={isGeneratingTopicActivities} className="bg-slate-500 text-white font-bold py-4 px-8 rounded-lg mt-6 shadow-md">{isGeneratingTopicActivities ? 'Đang tạo...' : '✨ Tạo hoạt động'}</button></div>
+                        </div>
+                        {renderResultsTable(flattenedTopicResults, 'topic', setSelectedResult, (res) => setDeletingTopicStudent(res))}
+                    </div>
+                ) : activeTab === 'units_12' ? (
+                    <div className="p-6 bg-green-800 rounded-lg shadow-2xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {Array.from({ length: 10 }, (_, i) => i + 1).map(unit => {
+                            const isEnabled = unitsStatus12[`unit_${unit}`]?.enabled ?? false;
+                            const style = unitCardStyles[unit - 1];
+                            return (
+                                <div key={unit} className={`rounded-2xl p-1.5 transition-all group ${isEnabled ? `bg-gradient-to-br ${style.gradient}` : 'bg-slate-700/50'}`}>
+                                    <div className="bg-slate-800/90 rounded-xl h-full flex flex-col p-5">
+                                        <div className="flex justify-end"><input type="checkbox" checked={isEnabled} onChange={(e) => setUnitStatusByGrade(classroomId, 12, `unit_${unit}`, e.target.checked)} className="w-6 h-6" /></div>
+                                        <div className="flex-grow flex flex-col items-center justify-center"><span className="font-bold text-yellow-300">UNIT</span><span className={`font-black ${isEnabled ? 'text-white' : 'text-slate-500'} text-6xl`}>{unit}</span></div>
+                                        <button onClick={() => setViewingUnit({ grade: 12, unit })} disabled={!isEnabled} className={`w-full font-bold px-4 py-3 rounded-lg mt-4 ${isEnabled ? 'bg-red-600 text-white' : 'bg-slate-700 text-slate-500'}`}>Quản lý Nội dung</button>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                ) : activeTab === 'topics' ? (
+                    <div className="p-6 bg-blue-800 rounded-lg shadow-2xl grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                        {Array.from({ length: 60 }, (_, i) => i + 1).map(topic => {
+                            const isEnabled = topicsStatus[`topic_${topic}`]?.enabled ?? false;
+                            const style = unitCardStyles[(topic - 1) % unitCardStyles.length];
+                            return (
+                                <div key={topic} className={`rounded-2xl p-1.5 transition-all ${isEnabled ? `bg-gradient-to-br ${style.gradient}` : 'bg-slate-700/50'}`}>
+                                    <div className="bg-slate-800/90 rounded-xl h-full flex flex-col p-4">
+                                        <div className="flex justify-end"><input type="checkbox" checked={isEnabled} onChange={(e) => setTopicStatus(classroomId, `topic_${topic}`, e.target.checked)} className="w-5 h-5" /></div>
+                                        <div className="flex-grow flex flex-col items-center justify-center"><span className="font-bold text-yellow-300 text-xs">TOPIC</span><span className={`font-black ${isEnabled ? 'text-white' : 'text-slate-500'} text-3xl`}>{topic}</span></div>
+                                        <button onClick={() => setViewingTopic(topic)} disabled={!isEnabled} className={`w-full font-bold px-2 py-2 rounded-lg mt-3 text-xs ${isEnabled ? 'bg-red-600 text-white' : 'bg-slate-700 text-slate-500'}`}>Quản lý</button>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                ) : (
+                    <div className="bg-white p-6 rounded-xl shadow-lg space-y-8">
+                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                             <div className="p-4 bg-teal-50 border rounded-xl text-center"><h4 className="font-bold mb-2">Đăng nhập</h4><button onClick={() => setIsEditWelcomeModalOpen(true)} className="px-4 py-2 bg-teal-600 text-white font-bold rounded-lg text-sm">⚙️ Thiết kế</button></div>
+                             <div className="p-4 bg-red-50 border rounded-xl text-center"><h4 className="font-bold mb-2">Chọn bài tập</h4><button onClick={() => setIsEditExerciseModalOpen(true)} className="px-4 py-2 bg-red-600 text-white font-bold rounded-lg text-sm">🎨 Thiết kế HS</button></div>
+                             <div className="p-4 bg-blue-50 border rounded-xl text-center"><h4 className="font-bold mb-2">Admin</h4><button onClick={() => setIsEditDashboardModalOpen(true)} className="px-4 py-2 bg-blue-600 text-white font-bold rounded-lg text-sm">🛠️ Thiết kế GV</button></div>
+                         </div>
+                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div className="bg-white p-4 rounded-lg shadow-md text-center border-l-4 border-blue-500"><p className="text-sm font-bold text-gray-600">Đã nộp bài</p><p className="text-3xl font-black text-blue-600">{results.length}</p></div>
+                            <div className="bg-white p-4 rounded-lg shadow-md text-center border-l-4 border-teal-500"><p className="text-sm font-bold text-gray-600">Đang học</p><p className="text-3xl font-black text-teal-600">{onlineStudents.length}</p></div>
+                        </div>
+                    </div>
+                )}
             </div>
-
-            <EditWelcomeScreenModal show={isEditWelcomeModalOpen} onClose={() => setIsEditWelcomeModalOpen(false)} onSave={handleSaveWelcomeConfig} currentConfig={welcomeConfig} />
-            <EditDashboardConfigModal show={isEditDashboardModalOpen} onClose={() => setIsEditDashboardModalOpen(false)} onSave={handleSaveDashboardConfig} currentConfig={dashboardConfig} />
-            <EditExerciseSelectionModal show={isEditExerciseModalOpen} onClose={() => setIsEditExerciseModalOpen(false)} onSave={handleSaveExerciseSelectionConfig} currentConfig={exerciseSelectionConfig} />
-            
-            {quizForEditing && <EditQuizModal questions={quizForEditing} onClose={() => setQuizForEditing(null)} onSave={handleSaveEditedQuiz} />}
-            {isEditVocabModalOpen && <EditVocabularyModal vocabulary={vocabForEditing} onClose={() => setIsEditVocabModalOpen(false)} onSave={handleSaveVocabulary} />}
+            <EditWelcomeScreenModal show={isEditWelcomeModalOpen} onClose={() => setIsEditWelcomeModalOpen(false)} onSave={async (c) => { await saveWelcomeConfig(classroomId, c); setNotification({ message: 'Lưu!', type: 'success' }); }} currentConfig={welcomeConfig} />
+            <EditDashboardConfigModal show={isEditDashboardModalOpen} onClose={() => setIsEditDashboardModalOpen(false)} onSave={async (c) => { await saveDashboardConfig(classroomId, c); setNotification({ message: 'Lưu!', type: 'success' }); }} currentConfig={dashboardConfig} />
+            <EditExerciseSelectionModal show={isEditExerciseModalOpen} onClose={() => setIsEditExerciseModalOpen(false)} onSave={async (c) => { await saveExerciseSelectionConfig(classroomId, c); setNotification({ message: 'Lưu!', type: 'success' }); }} currentConfig={exerciseSelectionConfig} />
+            {quizForEditing && <EditQuizModal questions={quizForEditing} onClose={() => setQuizForEditing(null)} onSave={async (q) => { await saveQuizQuestions(classroomId, q); setQuizForEditing(null); }} />}
+            {isEditVocabModalOpen && <EditVocabularyModal vocabulary={vocabForEditing} onClose={() => setIsEditVocabModalOpen(false)} onSave={async (v) => { if(viewingUnit) await saveUnitVocabularyByGrade(classroomId, viewingUnit.grade, `unit_${viewingUnit.unit}`, v); else if(viewingTopic) await saveTopicVocabulary(classroomId, `topic_${viewingTopic}`, v); }} />}
             {selectedResult && <ResultDetailModal result={selectedResult} onClose={() => setSelectedResult(null)} />}
-            
-            <ConfirmationModal 
-                show={!!deletingUnitStudent} 
-                title="Xác nhận xóa" 
-                message={`Bạn có chắc chắn muốn xóa kết quả của ${deletingUnitStudent?.playerName}?`} 
-                onConfirm={handleConfirmDeleteUnitResult} 
-                onCancel={() => setDeletingUnitStudent(null)} 
-            />
-            <ConfirmationModal 
-                show={!!deletingTopicStudent} 
-                title="Xác nhận xóa" 
-                message={`Bạn có chắc chắn muốn xóa kết quả của ${deletingTopicStudent?.playerName}?`} 
-                onConfirm={handleConfirmDeleteTopicResult} 
-                onCancel={() => setDeletingTopicStudent(null)} 
-            />
+            <ConfirmationModal show={!!deletingUnitStudent} title="Xác nhận" message="Xóa kết quả này?" onConfirm={async () => { await deleteUnitStudentResultByGrade(classroomId, viewingUnit!.grade, `unit_${viewingUnit!.unit}`, deletingUnitStudent!.playerName, deletingUnitStudent!.playerClass, deletingUnitStudent!.activityId!); setDeletingUnitStudent(null); }} onCancel={() => setDeletingUnitStudent(null)} />
+            <ConfirmationModal show={!!deletingTopicStudent} title="Xác nhận" message="Xóa kết quả này?" onConfirm={async () => { await deleteTopicStudentResult(classroomId, `topic_${viewingTopic}`, deletingTopicStudent!.playerName, deletingTopicStudent!.playerClass, deletingTopicStudent!.activityId!); setDeletingTopicStudent(null); }} onCancel={() => setDeletingTopicStudent(null)} />
         </div>
     );
 };
