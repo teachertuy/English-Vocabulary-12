@@ -2,7 +2,7 @@
 // ... existing imports
 import { initializeApp, FirebaseApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getDatabase, ref, set, get, onValue, remove, Unsubscribe, Database, onDisconnect, runTransaction, update, push, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-import { GameResult, PlayerData, QuizQuestion, StudentProgress, UnitsState, VocabularyWord, WelcomeScreenConfig } from "../types";
+import { GameResult, PlayerData, QuizQuestion, StudentProgress, UnitsState, VocabularyWord, WelcomeScreenConfig, DashboardConfig, ExerciseSelectionConfig } from "../types";
 
 const firebaseConfig = {
     apiKey: "AIzaSyDL_Jg9VrJuV3sVyy_Gb5a4iLzy_QaTBGo",
@@ -304,7 +304,7 @@ export const listenToTopicsStatus = (classroomId: string, callback: (s: any) => 
 export const updateVocabularyAudio = async (classroomId: string, grade: any, unitId: string, word: string, base64Audio: string) => {
     const db = checkFirebase();
     const basePath = grade === 'topics' ? `topics/${unitId}/vocabulary` : `units_${grade}/${unitId}/vocabulary`;
-    const snapshot = await get(ref(db, `classrooms/${classroomId}/${basePath}`));
+    const snapshot = await get(ref(db, `classroomId/${classroomId}/${basePath}`));
     const vocabList = snapshot.val() as VocabularyWord[];
     if (vocabList) {
         const index = vocabList.findIndex(v => v.word === word);
@@ -312,9 +312,6 @@ export const updateVocabularyAudio = async (classroomId: string, grade: any, uni
     }
 };
 
-/**
- * Cập nhật link ảnh chất lượng cao vào Database
- */
 export const updateVocabularyImage = async (classroomId: string, grade: any, unitId: string, word: string, imageUrl: string) => {
     const db = checkFirebase();
     const basePath = grade === 'topics' ? `topics/${unitId}/vocabulary` : `units_${grade}/${unitId}/vocabulary`;
@@ -344,4 +341,24 @@ export const saveWelcomeConfig = async (classroomId: string, config: WelcomeScre
 export const listenToWelcomeConfig = (classroomId: string, callback: (config: WelcomeScreenConfig | null) => void): Unsubscribe => {
     const db = checkFirebase();
     return onValue(ref(db, `classrooms/${classroomId}/welcomeConfig`), (snapshot) => callback(snapshot.val()));
+};
+
+export const saveDashboardConfig = async (classroomId: string, config: DashboardConfig): Promise<void> => {
+    const db = checkFirebase();
+    await set(ref(db, `classrooms/${classroomId}/dashboardConfig`), config);
+};
+
+export const listenToDashboardConfig = (classroomId: string, callback: (config: DashboardConfig | null) => void): Unsubscribe => {
+    const db = checkFirebase();
+    return onValue(ref(db, `classrooms/${classroomId}/dashboardConfig`), (snapshot) => callback(snapshot.val()));
+};
+
+export const saveExerciseSelectionConfig = async (classroomId: string, config: ExerciseSelectionConfig): Promise<void> => {
+    const db = checkFirebase();
+    await set(ref(db, `classrooms/${classroomId}/exerciseSelectionConfig`), config);
+};
+
+export const listenToExerciseSelectionConfig = (classroomId: string, callback: (config: ExerciseSelectionConfig | null) => void): Unsubscribe => {
+    const db = checkFirebase();
+    return onValue(ref(db, `classrooms/${classroomId}/exerciseSelectionConfig`), (snapshot) => callback(snapshot.val()));
 };

@@ -11,8 +11,8 @@ interface WelcomeScreenProps {
 
 const DEFAULT_CONFIG: WelcomeScreenConfig = {
     titleText: 'ENGLISH VOCABULARY 12',
-    titleFontSize: 2.2,
-    titleFontSizeLine2: 1.87, // 2.2 * 0.85 approx
+    titleFontSize: 1.8,
+    titleFontSizeLine2: 1.6,
     titleColor: '#facc15',
     inputNameWidth: 100,
     inputNameFontSize: 1.25,
@@ -94,7 +94,8 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
     if (manualLines.length > 1) return manualLines.slice(0, 2);
 
     const text = config.titleText.trim();
-    if (text.length > 12 && config.titleFontSize > 2.8) {
+    // Only auto-split if the text is very long and font is very large
+    if (text.length > 25 && config.titleFontSize > 2.5) {
         const mid = Math.floor(text.length / 2);
         const splitIndex = text.lastIndexOf(' ', mid + 5);
         if (splitIndex !== -1) {
@@ -107,16 +108,14 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
   const line2LetterSpacing = useMemo(() => {
     if (titleLines.length > 1) {
         const line2 = titleLines[1].trim();
-        // If the second line is exactly "12", bring the digits closer together
         if (line2 === '12') {
             return '-0.08em';
         }
-        // If it contains "12" anywhere, use a tighter spacing than the default airy one
         if (line2.includes('12')) {
             return '0.05em';
         }
     }
-    return '0.35em'; // Default "airy" spacing for other text
+    return '0.35em';
   }, [titleLines]);
   
   return (
@@ -139,18 +138,18 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
       
       {/* Main Content Wrapper */}
       <div className="w-full max-w-md mt-0 space-y-0 z-10 flex flex-col items-center">
-            {/* Curved Title - Increased height to accommodate shifted line 2 (h-36 -> h-44) */}
-            <div className={`w-full transition-all duration-500 ${titleLines.length > 1 ? 'h-44' : 'h-20'} relative mt-24`}>
-                 <svg viewBox={titleLines.length > 1 ? "0 0 500 180" : "0 0 500 80"} className="w-full h-full overflow-visible">
-                    {/* Hàng 1 - Đường cong chuẩn */}
-                    <path id="curve1" d={titleLines.length > 1 ? "M 50, 60 Q 250, 15 450, 60" : "M 50, 70 Q 250, 25 450, 70"} stroke="transparent" fill="transparent"/>
+            {/* Curved Title - Flattened Path for Single Line */}
+            <div className={`w-full transition-all duration-500 ${titleLines.length > 1 ? 'h-44' : 'h-24'} relative mt-24`}>
+                 <svg viewBox={titleLines.length > 1 ? "0 0 500 180" : "0 0 500 100"} className="w-full h-full overflow-visible">
+                    {/* Hàng 1 - Flattened curve for more text */}
+                    <path id="curve1" d={titleLines.length > 1 ? "M 50, 60 Q 250, 15 450, 60" : "M 20, 75 Q 250, 30 480, 75"} stroke="transparent" fill="transparent"/>
                     <text width="500" style={{ fill: config.titleColor, filter: 'drop-shadow(2px 2px 2px rgba(0,0,0,0.4))', fontSize: `${config.titleFontSize}rem` }} className="font-black tracking-wider uppercase">
                         <textPath href="#curve1" startOffset="50%" textAnchor="middle">
                             {titleLines[0]}
                         </textPath>
                     </text>
                     
-                    {/* Hàng 2 - Dịch xuống dưới (y=130 -> y=160) */}
+                    {/* Hàng 2 */}
                     {titleLines.length > 1 && (
                         <>
                             <path id="curve2" d="M 10, 160 Q 250, 110 490, 160" stroke="transparent" fill="transparent"/>
@@ -164,7 +163,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
                  </svg>
             </div>
 
-            {/* Pointing Finger - Adjusted margin to keep it neat after moving text down (-mt-8 -> -mt-10) */}
+            {/* Pointing Finger */}
             <div className="flex justify-center -mt-10 mb-2 relative z-20">
                  <div className="text-5xl pointing-finger-down filter drop-shadow-xl transform hover:scale-110 transition-transform cursor-default">
                     👇

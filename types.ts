@@ -84,3 +84,35 @@ export interface WelcomeScreenConfig {
     inputClassColor: string;
     inputClassPlaceholder: string;
 }
+
+export interface DashboardConfig {
+    unitsTabLabel: string;
+    topicsTabLabel: string;
+    tabFontSize: number;
+    tabPadding: number;
+    sectionTitleFontSize: number;
+    sectionTitleColor: string;
+    cardUnitLabel: string;
+    cardTopicLabel: string;
+    cardLabelFontSize: number;
+    cardLabelColor: string;
+    cardValueFontSize: number;
+    manageButtonText: string;
+    manageButtonFontSize: number;
+    manageButtonColor: string;
+}
+
+export interface ExerciseSelectionConfig {
+    mainTitle: string;
+    mainTitleFontSize: number;
+    mainTitleColor: string;
+    card1Title: string;
+    card1Icon: string;
+    card1Color: string;
+    card2Title: string;
+    card2Icon: string;
+    card2Color: string;
+    cardFontSize: number;
+    cardHeight: number; // rem
+    cardBorderRadius: number; // px
+}
