@@ -291,12 +291,12 @@ const MatchingGameScreen: React.FC<MatchingGameScreenProps> = ({ playerData, voc
                         <div className="bg-white rounded-[10px] p-0.5">
                             <div className="bg-black rounded-[8px] p-0.5">
                                 <div className="bg-white rounded-[6px]">
-                                    <div className="px-3 pt-6 pb-4 text-center flex flex-col items-center gap-4">
-                                        <div className="w-full flex items-center justify-center">
+                                    <div className={`px-3 pt-5 text-center flex flex-col items-center transition-all duration-500 ${selectedEnglish ? 'pb-5' : 'pb-1'}`}>
+                                        <div className="w-full flex items-center justify-center mb-4">
                                             <p className="text-orange-600 font-extrabold text-xl sm:text-2xl leading-none text-center pb-0.5">{currentVietnamese?.translation}</p>
                                         </div>
                                         
-                                        <div className="w-3/4 border-b border-gray-300"></div>
+                                        <div className="w-3/4 border-b border-gray-300 mb-4"></div>
     
                                         <div className="w-full flex items-center justify-center">
                                             <div className="w-full py-1 border border-dashed border-black rounded flex items-center justify-center min-h-[40px]">
@@ -306,7 +306,7 @@ const MatchingGameScreen: React.FC<MatchingGameScreenProps> = ({ playerData, voc
                                             </div>
                                         </div>
                                         
-                                        <div className={`w-full overflow-hidden transition-all duration-500 ease-in-out flex justify-center ${selectedEnglish ? 'opacity-100 max-h-32 mt-2' : 'opacity-0 max-h-0 mt-0'}`}>
+                                        <div className={`w-full overflow-hidden transition-all duration-500 ease-in-out flex justify-center ${selectedEnglish ? 'opacity-100 max-h-32 mt-4' : 'opacity-0 max-h-0 mt-0'}`}>
                                             <button 
                                                 onClick={handleCheckAnswer} 
                                                 disabled={!selectedEnglish}
