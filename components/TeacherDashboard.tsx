@@ -25,7 +25,7 @@ import EditExerciseSelectionModal from './EditExerciseSelectionModal';
 
 type Tab = 'dashboard' | 'units_12' | 'topics';
 
-// Define the interface that was missing
+// Define the interface for student grouping
 interface StudentUnitSummary {
     playerKey: string;
     playerName: string;
@@ -256,12 +256,22 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
     }, [results, processedUnitResults, processedTopicResults]);
 
     const getGroupedData = (rawStudents: StudentUnitSummary[], currentClass: string) => {
-        // Filter by class first
         const filtered = rawStudents.filter(s => currentClass === 'all' || s.playerClass.toUpperCase() === currentClass.toUpperCase());
-        
-        // Merge summaries by normalized identity (class + name in uppercase)
         const mergedMap: Record<string, StudentGroupedResult> = {};
         
+        // Helper to count uppercase characters (including Vietnamese accented characters)
+        const countUpper = (str: string) => {
+            let count = 0;
+            for (let i = 0; i < str.length; i++) {
+                const char = str[i];
+                // Check if char is uppercase and not identical to its lowercase (excludes numbers/punctuation)
+                if (char === char.toUpperCase() && char !== char.toLowerCase()) {
+                    count++;
+                }
+            }
+            return count;
+        };
+
         filtered.forEach(s => {
             const identityKey = `${s.playerClass.toUpperCase()}_${s.playerName.toUpperCase()}`;
             if (!mergedMap[identityKey]) {
@@ -274,26 +284,33 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                 };
             }
             
-            // Add all results from this record to the merged group
             mergedMap[identityKey].attempts.push(...s.results);
             
-            // Calculate group's latest activity for sorting
             const groupLatest = s.results.length > 0 ? Math.max(...s.results.map(r => r.timestamp || 0)) : 0;
+            
+            // Prefer the display name with the most uppercase characters (e.g. "Mỹ" wins over "mỹ")
+            const currentNameCapCount = countUpper(mergedMap[identityKey].playerName);
+            const incomingNameCapCount = countUpper(s.playerName);
+
+            if (incomingNameCapCount > currentNameCapCount) {
+                mergedMap[identityKey].playerName = s.playerName;
+            } else if (incomingNameCapCount === currentNameCapCount) {
+                // If same cap count, prefer the name used in the most recent activity
+                if (groupLatest > mergedMap[identityKey].latestTimestamp) {
+                    mergedMap[identityKey].playerName = s.playerName;
+                }
+            }
+
             if (groupLatest > mergedMap[identityKey].latestTimestamp) {
                 mergedMap[identityKey].latestTimestamp = groupLatest;
-                // Prefer the version of the name associated with the latest activity
-                mergedMap[identityKey].playerName = s.playerName;
             }
         });
 
         const groups = Object.values(mergedMap);
-        
-        // Sort attempts within each group by timestamp descending
         groups.forEach(g => {
             g.attempts.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
         });
 
-        // Sort groups by their most recent activity descending
         return groups.sort((a, b) => b.latestTimestamp - a.latestTimestamp);
     };
 
