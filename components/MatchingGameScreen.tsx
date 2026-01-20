@@ -291,16 +291,16 @@ const MatchingGameScreen: React.FC<MatchingGameScreenProps> = ({ playerData, voc
                         <div className="bg-white rounded-[10px] p-0.5">
                             <div className="bg-black rounded-[8px] p-0.5">
                                 <div className="bg-white rounded-[6px]">
-                                    <div className="px-3 py-2 text-center flex flex-col items-center gap-1.5">
+                                    <div className="px-3 py-5 text-center flex flex-col items-center gap-4">
                                         <div className="w-full flex items-center justify-center">
-                                            <p className="text-orange-600 font-extrabold text-lg sm:text-xl leading-none text-center pb-0.5">{currentVietnamese?.translation}</p>
+                                            <p className="text-orange-600 font-extrabold text-xl sm:text-2xl leading-none text-center pb-0.5">{currentVietnamese?.translation}</p>
                                         </div>
                                         
                                         <div className="w-3/4 border-b border-gray-300"></div>
     
                                         <div className="w-full flex items-center justify-center">
-                                            <div className="w-full py-1 border border-dashed border-black rounded flex items-center justify-center min-h-[28px]">
-                                                <p className={`font-bold text-base transition-colors ${selectedEnglish ? 'text-blue-700' : 'text-gray-400'}`}>
+                                            <div className="w-full py-1 border border-dashed border-black rounded flex items-center justify-center min-h-[40px]">
+                                                <p className={`font-bold text-lg transition-colors ${selectedEnglish ? 'text-blue-700' : 'text-gray-400'}`}>
                                                     {selectedEnglish ? selectedEnglish.word : '...'}
                                                 </p>
                                             </div>
@@ -309,7 +309,7 @@ const MatchingGameScreen: React.FC<MatchingGameScreenProps> = ({ playerData, voc
                                         <button 
                                             onClick={handleCheckAnswer} 
                                             disabled={!selectedEnglish}
-                                            className={`w-full mt-0.5 font-bold py-1 rounded-full shadow-sm transform transition-all duration-300 text-xs focus:outline-none relative overflow-hidden group ${
+                                            className={`w-auto mt-1 font-bold py-5 px-6 rounded-full shadow-sm transform transition-all duration-300 text-lg focus:outline-none relative overflow-hidden group ${
                                                 !selectedEnglish 
                                                 ? "bg-gray-200 text-gray-400 cursor-not-allowed shadow-none" 
                                                 : "text-white border border-gray-600 hover:shadow-lg hover:shadow-white/20 hover:-translate-y-0.5"
@@ -326,13 +326,13 @@ const MatchingGameScreen: React.FC<MatchingGameScreenProps> = ({ playerData, voc
                                             } : {}}
                                         >
                                            {selectedEnglish ? (
-                                                <div className="relative z-10 flex items-center justify-center gap-1">
-                                                    <span className="text-[10px] animate-pulse">✨</span>
-                                                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-gray-200 to-gray-400 uppercase">CHECK ANSWER</span>
-                                                    <span className="text-[10px] animate-pulse delay-75">✨</span>
+                                                <div className="relative z-10 flex items-center justify-center gap-2">
+                                                    <span className="text-xs animate-pulse">✨</span>
+                                                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-gray-200 to-gray-400 uppercase tracking-widest font-black">CHECK ANSWER</span>
+                                                    <span className="text-xs animate-pulse delay-75">✨</span>
                                                 </div>
                                             ) : (
-                                                "CHECK ANSWER"
+                                                <span className="uppercase tracking-widest font-black">CHECK ANSWER</span>
                                             )}
                                         </button>
                                     </div>
