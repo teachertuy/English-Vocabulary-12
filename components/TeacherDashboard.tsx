@@ -158,7 +158,7 @@ const getColorForName = (name: string) => {
 
 const getGameTypeStyle = (gameType?: 'quiz' | 'spelling' | 'matching' | 'vocabulary') => {
     switch (gameType) {
-        case 'quiz': return 'text-purple-800 bg-purple-100 border-purple-200';
+        case 'quiz': return 'text-green-800 bg-green-100 border-green-200';
         case 'spelling': return 'text-orange-800 bg-orange-100 border-orange-200';
         case 'matching': return 'text-purple-700 bg-purple-50 border-purple-200';
         case 'vocabulary': return 'text-blue-800 bg-blue-100 border-blue-200';
@@ -241,7 +241,7 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
     const [isGeneratingUnitActivities, setIsGeneratingUnitActivities] = useState(false);
     const [unitSortConfig, setUnitSortConfig] = useState<{ key: keyof GameResult | null; direction: 'ascending' | 'descending' }>({ key: 'score', direction: 'descending' });
     const [selectedUnitClass, setSelectedUnitClass] = useState('all');
-    const [deletingUnitStudent, setDeletingUnitStudent] = useState<{activityId: string, playerName: string} | null>(null);
+    const [deletingUnitStudent, setDeletingUnitStudent] = useState<GameResult | null>(null);
     const [isClearingUnit, setIsClearingUnit] = useState(false);
     const [unitActivityPrompts, setUnitActivityPrompts] = useState(EMPTY_ACTIVITY_PROMPTS);
 
@@ -255,7 +255,7 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
     const [isGeneratingTopicActivities, setIsGeneratingTopicActivities] = useState(false);
     const [topicSortConfig, setTopicSortConfig] = useState<{ key: keyof GameResult | null; direction: 'ascending' | 'descending' }>({ key: 'score', direction: 'descending' });
     const [selectedTopicClass, setSelectedTopicClass] = useState('all');
-    const [deletingTopicStudent, setDeletingTopicStudent] = useState<{activityId: string, playerName: string} | null>(null);
+    const [deletingTopicStudent, setDeletingTopicStudent] = useState<GameResult | null>(null);
     const [isClearingTopic, setIsClearingTopic] = useState(false);
     const [topicActivityPrompts, setTopicActivityPrompts] = useState(EMPTY_ACTIVITY_PROMPTS);
 
@@ -334,7 +334,6 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
         const unsubQuiz = listenToUnitQuizQuestionsByGrade(classroomId, grade, unitId, (questions) => setCurrentUnitQuiz(questions || []));
         const unsubResults = listenToUnitResultsByGrade(classroomId, grade, unitId, (data) => {
             if (!data) { setProcessedUnitResults([]); return; }
-            // Added explicit Return Type to the map callback to satisfy StudentUnitSummary interface compatibility
             const processedData: StudentUnitSummary[] = Object.entries(data).map(([playerKey, resultsObj]): StudentUnitSummary | null => {
                 const resultsArray = resultsObj ? Object.entries(resultsObj).map(([activityId, result]) => ({ ...result as GameResult, activityId })) : [];
                 if (resultsArray.length === 0) return null;
@@ -353,7 +352,6 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
         const unsubQuiz = listenToTopicQuizQuestions(classroomId, topicId, (questions) => setCurrentTopicQuiz(questions || []));
         const unsubResults = listenToTopicResults(classroomId, topicId, (data) => {
             if (!data) { setProcessedTopicResults([]); return; }
-            // Added explicit Return Type to the map callback to satisfy StudentUnitSummary interface compatibility
             const processedData: StudentUnitSummary[] = Object.entries(data).map(([playerKey, resultsObj]): StudentUnitSummary | null => {
                 const resultsArray = resultsObj ? Object.entries(resultsObj).map(([activityId, result]) => ({ ...result as GameResult, activityId })) : [];
                 if (resultsArray.length === 0) return null;
@@ -422,6 +420,13 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
     const handleSaveDashboardConfig = async (config: DashboardConfig) => { try { await saveDashboardConfig(classroomId, config); setNotification({ message: 'Đã lưu thay đổi!', type: 'success' }); } catch (error) { setNotification({ message: 'Lưu thất bại.', type: 'error' }); } };
     const handleSaveExerciseSelectionConfig = async (config: ExerciseSelectionConfig) => { try { await saveExerciseSelectionConfig(classroomId, config); setNotification({ message: 'Đã lưu thay đổi!', type: 'success' }); } catch (error) { setNotification({ message: 'Lưu thất bại.', type: 'error' }); } };
 
+    const uniqueClasses = useMemo(() => {
+        const allResults = [...results, ...processedUnitResults.flatMap(s => s.results), ...processedTopicResults.flatMap(s => s.results)];
+        if (!allResults || allResults.length === 0) return ['all'];
+        const classSet = new Set(allResults.map(r => (r.playerClass || '').trim().toUpperCase()));
+        return ['all', ...Array.from(classSet).sort()];
+    }, [results, processedUnitResults, processedTopicResults]);
+
     const flattenedUnitResults = useMemo(() => {
         const list = processedUnitResults.flatMap(student => 
             student.results.map(res => ({ ...res, playerKey: student.playerKey }))
@@ -470,13 +475,14 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
         const setClass = type === 'unit' ? setSelectedUnitClass : setSelectedTopicClass;
 
         return (
-            <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden mt-8">
-                <div className="p-4 border-b bg-white flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div className="bg-white rounded-xl shadow-lg border-2 border-gray-200 overflow-hidden mt-8">
+                {/* Control Header */}
+                <div className="p-4 border-b-2 border-gray-200 bg-white flex flex-col sm:flex-row justify-between items-center gap-4">
                     <div className="flex items-center gap-3">
                         <select 
                             value={currentClass} 
                             onChange={(e) => setClass(e.target.value)}
-                            className="px-4 py-2 bg-white border border-gray-300 rounded-lg font-bold text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-200 shadow-sm"
+                            className="px-4 py-2 bg-white border-2 border-gray-300 rounded-lg font-bold text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-200 shadow-sm"
                         >
                             {uniqueClasses.map(c => <option key={c} value={c}>{c === 'all' ? 'Tất cả các lớp' : c}</option>)}
                         </select>
@@ -487,61 +493,57 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                         className="p-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition shadow-md disabled:bg-gray-400"
                         title="Xóa tất cả kết quả"
                     >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                     </button>
                 </div>
+
+                {/* Table with visible grid borders */}
                 <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse">
+                    <table className="w-full text-left border-collapse table-fixed min-w-[1200px]">
                         <thead>
                             <tr className="bg-[#fff2e0]">
-                                {['STT', 'HỌ VÀ TÊN', 'LỚP', 'ĐIỂM', 'NỘI DUNG THAM GIA', 'LẦN LÀM', 'ĐÚNG', 'SAI', 'THỜI GIAN', 'NGÀY LÀM', 'HÀNH ĐỘNG'].map((label, i) => {
-                                    const keys: (keyof GameResult | null)[] = [null, 'playerName', 'playerClass', 'score', 'gameType', 'attempts', 'correct', 'incorrect', 'timeTakenSeconds', 'timestamp', null];
-                                    const key = keys[i];
-                                    return (
-                                        <th key={label} onClick={key ? () => toggleSort(key) : undefined} className={`p-4 text-[13px] font-black text-[#c05621] border-b border-gray-200 ${key ? 'cursor-pointer hover:bg-orange-100' : ''}`}>
-                                            <div className="flex items-center gap-1 uppercase tracking-tight">
-                                                {label}
-                                                {key && config.key === key && (
-                                                    <span className="text-[10px]">{config.direction === 'ascending' ? '↑' : '↓'}</span>
-                                                )}
-                                                {key && config.key !== key && (i === 3 || i === 9) && (
-                                                    <span className="text-[10px] opacity-30">{i === 3 ? '▼' : '↑'}</span>
-                                                )}
-                                            </div>
-                                        </th>
-                                    );
-                                })}
+                                <th className="p-4 border-2 border-gray-200 text-[13px] font-black text-[#c05621] w-16 text-center">STT</th>
+                                <th onClick={() => toggleSort('playerName')} className="p-4 border-2 border-gray-200 text-[13px] font-black text-[#c05621] w-48 cursor-pointer hover:bg-orange-100 transition-colors uppercase tracking-tight">HỌ VÀ TÊN {config.key === 'playerName' && (config.direction === 'ascending' ? '↑' : '↓')}</th>
+                                <th onClick={() => toggleSort('playerClass')} className="p-4 border-2 border-gray-200 text-[13px] font-black text-[#c05621] w-24 cursor-pointer hover:bg-orange-100 transition-colors uppercase tracking-tight text-center">LỚP {config.key === 'playerClass' && (config.direction === 'ascending' ? '↑' : '↓')}</th>
+                                <th onClick={() => toggleSort('score')} className="p-4 border-2 border-gray-200 text-[13px] font-black text-[#c05621] w-24 cursor-pointer hover:bg-orange-100 transition-colors uppercase tracking-tight text-center">ĐIỂM {config.key === 'score' && (config.direction === 'ascending' ? '↑' : '↓')} ▼</th>
+                                <th className="p-4 border-2 border-gray-200 text-[13px] font-black text-[#c05621] w-44 uppercase tracking-tight text-center">NỘI DUNG THAM GIA ↑</th>
+                                <th className="p-4 border-2 border-gray-200 text-[13px] font-black text-[#c05621] w-24 uppercase tracking-tight text-center">LẦN LÀM ↑</th>
+                                <th className="p-4 border-2 border-gray-200 text-[13px] font-black text-[#c05621] w-20 uppercase tracking-tight text-center">ĐÚNG ↑</th>
+                                <th className="p-4 border-2 border-gray-200 text-[13px] font-black text-[#c05621] w-20 uppercase tracking-tight text-center">SAI ↑</th>
+                                <th className="p-4 border-2 border-gray-200 text-[13px] font-black text-[#c05621] w-32 uppercase tracking-tight text-center">THỜI GIAN ↑</th>
+                                <th onClick={() => toggleSort('timestamp')} className="p-4 border-2 border-gray-200 text-[13px] font-black text-[#c05621] w-52 cursor-pointer hover:bg-orange-100 transition-colors uppercase tracking-tight text-center">NGÀY LÀM {config.key === 'timestamp' && (config.direction === 'ascending' ? '↑' : '↓')} ↑</th>
+                                <th className="p-4 border-2 border-gray-200 text-[13px] font-black text-[#c05621] w-32 uppercase tracking-tight text-center">HÀNH ĐỘNG</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-100">
+                        <tbody className="bg-white">
                             {data.map((res, idx) => (
-                                <tr key={`${res.playerKey}_${res.activityId}`} onClick={() => onRowClick(res)} className="hover:bg-blue-50/30 transition-colors cursor-pointer text-[14px] font-bold">
-                                    <td className="p-4 text-blue-600 font-black">{idx + 1}</td>
-                                    <td className="p-4 text-[#E91E63]">{res.playerName}</td>
-                                    <td className="p-4 text-[#8E44AD]">{res.playerClass}</td>
-                                    <td className="p-4 text-red-600 text-lg font-black">{res.score}</td>
-                                    <td className="p-4">
-                                        <span className={`px-4 py-1.5 rounded-full text-[12px] font-bold border ${getGameTypeStyle(res.gameType)}`}>
+                                <tr key={`${res.playerKey}_${res.activityId}`} onClick={() => onRowClick(res)} className="hover:bg-blue-50/50 transition-colors cursor-pointer text-[14px] font-bold">
+                                    <td className="p-4 border-2 border-gray-200 text-blue-600 font-black text-center">{idx + 1}</td>
+                                    <td className="p-4 border-2 border-gray-200 text-[#E91E63] truncate">{res.playerName}</td>
+                                    <td className="p-4 border-2 border-gray-200 text-[#8E44AD] text-center">{res.playerClass}</td>
+                                    <td className="p-4 border-2 border-gray-200 text-red-600 text-xl font-black text-center">{res.score}</td>
+                                    <td className="p-4 border-2 border-gray-200 text-center">
+                                        <span className={`px-4 py-1.5 rounded-full text-[12px] font-bold border-2 ${getGameTypeStyle(res.gameType)}`}>
                                             {getGameTypeLabel(res.gameType)}
                                         </span>
                                     </td>
-                                    <td className="p-4 text-red-600 text-center">{res.attempts}</td>
-                                    <td className="p-4 text-green-600 text-center">{res.correct}</td>
-                                    <td className="p-4 text-red-600 text-center">{res.incorrect}</td>
-                                    <td className="p-4 text-[#c05621]">{formatTime(res.timeTakenSeconds)}</td>
-                                    <td className="p-4 text-slate-800 text-[13px]">{formatDate(res.timestamp)}</td>
-                                    <td className="p-4">
+                                    <td className="p-4 border-2 border-gray-200 text-red-600 text-center text-lg">{res.attempts}</td>
+                                    <td className="p-4 border-2 border-gray-200 text-green-600 text-center text-lg">{res.correct}</td>
+                                    <td className="p-4 border-2 border-gray-200 text-red-600 text-center text-lg">{res.incorrect}</td>
+                                    <td className="p-4 border-2 border-gray-200 text-[#c05621] text-center font-['Nunito'] text-base">{formatTime(res.timeTakenSeconds)}</td>
+                                    <td className="p-4 border-2 border-gray-200 text-slate-700 text-[13px] text-center font-['Nunito'] font-medium">{formatDate(res.timestamp)}</td>
+                                    <td className="p-4 border-2 border-gray-200 text-center">
                                         <button 
                                             onClick={(e) => { e.stopPropagation(); onDeleteRow(res); }}
-                                            className="p-1.5 bg-red-100 text-red-600 rounded-full hover:bg-red-200 transition"
+                                            className="p-2 bg-red-50 text-red-500 rounded-full hover:bg-red-500 hover:text-white transition-all border-2 border-red-200"
                                         >
-                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                                         </button>
                                     </td>
                                 </tr>
                             ))}
                             {data.length === 0 && (
-                                <tr><td colSpan={11} className="p-10 text-center text-gray-400 font-medium">Chưa có kết quả nào.</td></tr>
+                                <tr><td colSpan={11} className="p-16 text-center text-gray-400 font-bold text-lg border-2 border-gray-200">Chưa có kết quả nào.</td></tr>
                             )}
                         </tbody>
                     </table>
@@ -561,7 +563,7 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                         </button>
                         <h2 className="text-2xl font-bold text-indigo-800">Quản lý chi tiết: <span className="text-red-500">UNIT</span> {unitNumber}</h2>
                     </div>
-                     <button onClick={handleRefresh} className="bg-blue-600 text-white font-bold p-2 rounded-full hover:bg-blue-700 transition shadow-sm disabled:bg-gray-500" title="Làm mới dữ liệu" disabled={isRefreshing}><svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 ${isRefreshing ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h5M20 20v-5h-5M4 4l1.5 1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 003.5 12" /></svg></button>
+                     <button onClick={handleRefresh} className="bg-blue-600 text-white font-bold p-2 rounded-full hover:bg-blue-700 transition shadow-sm disabled:bg-gray-500" title="Làm mới dữ liệu" disabled={isRefreshing}><svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 ${isRefreshing ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h5M20 20v-5h-5M4 4l1.5 1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 003.5 12" /></svg></button>
                 </div>
                 
                 <div className="p-4 border rounded-lg bg-sky-50 border-sky-200 space-y-4">
@@ -619,7 +621,7 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                         </button>
                         <h2 className="text-2xl font-bold text-indigo-800">Quản lý chi tiết: <span className="text-blue-500">TOPIC</span> {topicNumber}</h2>
                     </div>
-                     <button onClick={handleRefresh} className="bg-blue-600 text-white font-bold p-2 rounded-full hover:bg-blue-700 transition shadow-sm disabled:bg-gray-500" title="Làm mới dữ liệu" disabled={isRefreshing}><svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 ${isRefreshing ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h5M20 20v-5h-5M4 4l1.5 1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 003.5 12" /></svg></button>
+                     <button onClick={handleRefresh} className="bg-blue-600 text-white font-bold p-2 rounded-full hover:bg-blue-700 transition shadow-sm disabled:bg-gray-500" title="Làm mới dữ liệu" disabled={isRefreshing}><svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 ${isRefreshing ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h5M20 20v-5h-5M4 4l1.5 1.5A9 9 0 0120.5 12M20 20v-5h-5M4 4l1.5 1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 003.5 12" /></svg></button>
                 </div>
                 
                 <div className="p-4 border rounded-lg bg-sky-50 border-sky-200 space-y-4">
@@ -645,7 +647,7 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                                     </div>
                                     <div className="bg-white p-3 rounded-lg border border-gray-200 shadow-sm">
                                         <label htmlFor="topic-prompt-quiz" className="block text-sm font-bold text-green-600 mb-2 uppercase">Bài tập trắc nghiệm</label>
-                                        <textarea id="topic-prompt-quiz" value={topicActivityPrompts.quiz} onChange={(e) => setTopicActivityPrompts(prev => ({...prev, quiz: e.target.value}))} placeholder="VD: tạo 10 câu hỏi trắc nghiệm..." className="w-full p-2 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-green-400 bg-sky-50 text-slate-900" rows={3} disabled={isGeneratingTopicActivities}/>
+                                        <textarea id="topic-prompt-quiz" value={topicActivityPrompts.quiz} onChange={(e) => setTopicActivityPrompts(prev => ({...prev, quiz: e.target.value}))} placeholder="VD: tạo 10 câu hỏi trắc nghiệm..." className="w-full p-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-green-400 bg-sky-50 text-slate-900" rows={3} disabled={isGeneratingTopicActivities}/>
                                     </div>
                                 </div>
                             </div>
@@ -673,13 +675,6 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
         const totalTime = results.reduce((sum, result) => sum + result.timeTakenSeconds, 0);
         return { totalStudents, avgScore: (totalScore / totalStudents).toFixed(1), avgTime: Math.round(totalTime / totalStudents) };
     }, [results]);
-
-    const uniqueClasses = useMemo(() => {
-        const allResults = [...results, ...processedUnitResults.flatMap(s => s.results), ...processedTopicResults.flatMap(s => s.results)];
-        if (!allResults || allResults.length === 0) return ['all'];
-        const classSet = new Set(allResults.map(r => (r.playerClass || '').trim().toUpperCase()));
-        return ['all', ...Array.from(classSet).sort()];
-    }, [results, processedUnitResults, processedTopicResults]);
 
     const sortedResults = useMemo(() => {
         let itemsWithCheats: GameResult[] = results.map(result => ({ ...result, cheatAttempts: cheatCounts[getPlayerKey(result.playerName, result.playerClass)] || 0 }));
@@ -714,7 +709,7 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
         try {
             const { grade, unit } = viewingUnit;
             const unitId = `unit_${unit}`;
-            await deleteUnitStudentResultByGrade(classroomId, grade, unitId, deletingUnitStudent.playerName, '', deletingUnitStudent.activityId);
+            await deleteUnitStudentResultByGrade(classroomId, grade, unitId, deletingUnitStudent.playerName, deletingUnitStudent.playerClass, deletingUnitStudent.activityId || '');
             setNotification({ message: `Đã xóa kết quả của ${deletingUnitStudent.playerName}!`, type: 'success' });
         } catch (error) { setNotification({ message: 'Xóa kết quả thất bại.', type: 'error' }); } finally { setDeletingUnitStudent(null); }
     };
@@ -723,7 +718,7 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
         if (!deletingTopicStudent || !viewingTopic) return;
         try {
             const topicId = `topic_${viewingTopic}`;
-            await deleteTopicStudentResult(classroomId, topicId, deletingTopicStudent.playerName, '', deletingTopicStudent.activityId);
+            await deleteTopicStudentResult(classroomId, topicId, deletingTopicStudent.playerName, deletingTopicStudent.playerClass, deletingTopicStudent.activityId || '');
             setNotification({ message: `Đã xóa kết quả của ${deletingTopicStudent.playerName}!`, type: 'success' });
         } catch (error) { setNotification({ message: 'Xóa kết quả thất bại.', type: 'error' }); } finally { setDeletingTopicStudent(null); }
     };
@@ -873,7 +868,7 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                              <div className="p-4 bg-red-50 border border-red-100 rounded-xl flex flex-col items-center text-center">
                                  <div className="p-3 bg-white rounded-full shadow mb-3 text-red-600"><svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" /></svg></div>
                                  <h4 className="font-bold text-red-800 mb-2">Màn hình Chọn bài tập</h4>
-                                 <button onClick={() => setIsEditExerciseModalOpen(true)} className="mt-auto px-4 py-2 bg-red-600 text-white font-bold rounded-lg hover:bg-red-700 transition text-sm shadow-md">🎨 Chỉnh sửa thiết kế HS</button>
+                                 <button onClick={() => setIsEditExerciseModalOpen(true)} className="mt-auto px-4 py-2 bg-red-600 text-white font-bold rounded-lg hover:bg-teal-700 transition text-sm shadow-md">🎨 Chỉnh sửa thiết kế HS</button>
                              </div>
                              <div className="p-4 bg-blue-50 border border-blue-100 rounded-xl flex flex-col items-center text-center">
                                  <div className="p-3 bg-white rounded-full shadow mb-3 text-blue-600"><svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg></div>
