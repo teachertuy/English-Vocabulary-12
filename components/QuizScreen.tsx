@@ -1,6 +1,7 @@
+
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { PlayerData, QuizQuestion, GameResult, QuizAnswerDetail } from '../types';
-import { updateUnitActivityResult, trackStudentPresence, incrementCheatCount, listenForKickedStatus, getGameStatus, removeStudentPresence, updateStudentProgress } from '../services/firebaseService';
+import { updateUnitActivityResult, trackStudentPresence, incrementCheatCount, listenForKickedStatus, getGameStatus, removeStudentPresence, updateStudentProgress, updateUnitActivityProgress } from '../services/firebaseService';
 
 const QUIZ_DURATION_SECONDS = 30 * 60; // 30 minutes
 
@@ -81,7 +82,20 @@ const QuizScreen: React.FC<QuizScreenProps> = ({ playerData, questions, unitNumb
         updateStudentProgress(classroomId, playerData.name, playerData.class, correctCount, incorrectCount)
             .catch(err => console.error("Failed to update student progress:", err));
 
-    }, [quizDetails, classroomId, playerData.name, playerData.class]);
+        // Also update the unit-specific activity record so the teacher can see it in the table
+        const unitIdentifier = grade === 'topics' ? `topic_${unitNumber}` : `unit_${unitNumber}`;
+        const progressData = {
+            score: score.toFixed(1),
+            correct: correctCount,
+            incorrect: incorrectCount,
+            answered: quizDetails.length,
+            totalQuestions: questions.length,
+            details: quizDetails
+        };
+        updateUnitActivityProgress(classroomId, grade, unitIdentifier, playerData, activityId, progressData)
+            .catch(err => console.error("Failed to update unit activity progress:", err));
+
+    }, [quizDetails, classroomId, playerData, questions.length, score, grade, unitNumber, activityId]);
 
     const finishQuiz = useCallback(async (forceExit = false) => {
         if (isQuizOver) return;
@@ -279,7 +293,7 @@ const QuizScreen: React.FC<QuizScreenProps> = ({ playerData, questions, unitNumb
                 </div>
             )}
             <div className="w-full max-w-3xl mx-auto p-2 flex justify-between items-center bg-amber-50 rounded-xl mb-4 border border-amber-200 shadow-sm">
-                <button onClick={onBack} className="group flex items-center text-blue-600 font-bold text-base hover:text-blue-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50 rounded">
+                <button onClick={onBack} className="group flex items-center text-blue-600 font-bold text-sm hover:text-blue-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50 rounded">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1 transition-transform group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
                     </svg>

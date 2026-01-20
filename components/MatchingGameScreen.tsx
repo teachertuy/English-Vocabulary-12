@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { PlayerData, VocabularyWord, GameResult, QuizAnswerDetail } from '../types';
-import { updateUnitActivityResult, trackStudentPresence, incrementCheatCount, listenForKickedStatus, getGameStatus, removeStudentPresence } from '../services/firebaseService';
+import { updateUnitActivityResult, trackStudentPresence, incrementCheatCount, listenForKickedStatus, getGameStatus, removeStudentPresence, updateStudentProgress, updateUnitActivityProgress } from '../services/firebaseService';
 
 const GAME_DURATION_SECONDS = 20 * 60; // 20 minutes
 
@@ -92,6 +92,33 @@ const MatchingGameScreen: React.FC<MatchingGameScreenProps> = ({ playerData, voc
             setCurrentVietnamese(shuffledForPrompt[0]);
         }
     }, [vocabulary]);
+
+    // Update real-time progress for the teacher dashboard
+    useEffect(() => {
+        if (!classroomId || gameDetails.length === 0) return;
+
+        const correctCount = gameDetails.filter(d => d.status === 'correct').length;
+        const incorrectCount = gameDetails.filter(d => d.status === 'incorrect').length;
+        
+        // Update general dashboard progress
+        updateStudentProgress(classroomId, playerData.name, playerData.class, correctCount, incorrectCount)
+            .catch(err => console.error("Failed to update student progress:", err));
+
+        // Update the unit-specific activity record
+        const unitIdentifier = grade === 'topics' ? `topic_${unitNumber}` : `unit_${unitNumber}`;
+        const currentScore = ((correctCount / vocabulary.length) * 10).toFixed(1);
+        const progressData = {
+            score: currentScore,
+            correct: correctCount,
+            incorrect: incorrectCount,
+            answered: gameDetails.length,
+            totalQuestions: vocabulary.length,
+            details: gameDetails
+        };
+        updateUnitActivityProgress(classroomId, grade, unitIdentifier, playerData, activityId, progressData)
+            .catch(err => console.error("Failed to update unit activity progress:", err));
+
+    }, [gameDetails, classroomId, playerData, vocabulary.length, grade, unitNumber, activityId]);
 
     const finishGame = useCallback(async (forceExit = false) => {
         if (isGameOver) return;

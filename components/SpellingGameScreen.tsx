@@ -1,6 +1,7 @@
+
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { PlayerData, VocabularyWord, GameResult, QuizAnswerDetail } from '../types';
-import { updateUnitActivityResult, trackStudentPresence, incrementCheatCount, listenForKickedStatus, getGameStatus, removeStudentPresence, updateVocabularyAudio } from '../services/firebaseService';
+import { updateUnitActivityResult, trackStudentPresence, incrementCheatCount, listenForKickedStatus, getGameStatus, removeStudentPresence, updateVocabularyAudio, updateStudentProgress, updateUnitActivityProgress } from '../services/firebaseService';
 import { generateSpeech } from '../services/geminiService';
 
 const GAME_DURATION_SECONDS = 20 * 60; // 20 minutes
@@ -110,6 +111,32 @@ const SpellingGameScreen: React.FC<SpellingGameScreenProps> = ({ playerData, voc
     const currentWord = shuffledVocabulary[currentIndex];
     const incorrectAnswers = useMemo(() => gameDetails.filter(d => d.status === 'incorrect').length, [gameDetails]);
 
+    // Update real-time progress for the teacher dashboard
+    useEffect(() => {
+        if (!classroomId || gameDetails.length === 0) return;
+
+        const correctCount = gameDetails.filter(d => d.status === 'correct').length;
+        const incorrectCount = gameDetails.filter(d => d.status === 'incorrect').length;
+        
+        // Update general dashboard progress
+        updateStudentProgress(classroomId, playerData.name, playerData.class, correctCount, incorrectCount)
+            .catch(err => console.error("Failed to update student progress:", err));
+
+        // Update the unit-specific activity record
+        const unitIdentifier = grade === 'topics' ? `topic_${unitNumber}` : `unit_${unitNumber}`;
+        const currentScore = ((correctCount / shuffledVocabulary.length) * 10).toFixed(1);
+        const progressData = {
+            score: currentScore,
+            correct: correctCount,
+            incorrect: incorrectCount,
+            answered: gameDetails.length,
+            totalQuestions: shuffledVocabulary.length,
+            details: gameDetails
+        };
+        updateUnitActivityProgress(classroomId, grade, unitIdentifier, playerData, activityId, progressData)
+            .catch(err => console.error("Failed to update unit activity progress:", err));
+
+    }, [gameDetails, classroomId, playerData, shuffledVocabulary.length, grade, unitNumber, activityId]);
 
     // --- Core Game Logic ---
     const finishGame = useCallback(async (forceExit = false) => {

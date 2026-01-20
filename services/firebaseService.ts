@@ -221,12 +221,19 @@ export const startUnitActivity = async (classroomId: string, grade: any, unitId:
     
     await runTransaction(ref(db, `classrooms/${classroomId}/${basePath}/results/${playerKey}`), (curr: any) => {
         const attempts = curr ? Object.values(curr).filter((r: any) => r.gameType === gameType).length : 0;
-        const newResult = { playerName: player.name, playerClass: player.class, score: '0', correct: 0, incorrect: 0, answered: 0, totalQuestions: 0, timeTakenSeconds: 0, details: [], gameType, status: gameType === 'vocabulary' ? 'completed' : 'in-progress', attempts: attempts + 1 };
+        const newResult = { playerName: player.name, playerClass: player.class, score: '0', correct: 0, incorrect: 0, answered: 0, totalQuestions: 0, timeTakenSeconds: 0, details: [], gameType, status: 'in-progress', attempts: attempts + 1 };
         const updates = { ...curr };
         updates[activityId] = newResult;
         return updates;
     });
     return activityId;
+};
+
+export const updateUnitActivityProgress = async (classroomId: string, grade: any, unitId: string, player: PlayerData, activityId: string, result: any) => {
+    const db = checkFirebase();
+    const playerKey = getPlayerKey(player.name, player.class);
+    const basePath = grade === 'topics' ? `topics/${unitId}` : `units_${grade}/${unitId}`;
+    await update(ref(db, `classrooms/${classroomId}/${basePath}/results/${playerKey}/${activityId}`), result);
 };
 
 export const updateUnitActivityResult = async (classroomId: string, grade: any, unitId: string, player: PlayerData, activityId: string, result: any) => {
