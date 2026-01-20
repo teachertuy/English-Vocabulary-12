@@ -1,5 +1,4 @@
 
-// ... existing imports
 import { initializeApp, FirebaseApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getDatabase, ref, set, get, onValue, remove, Unsubscribe, Database, onDisconnect, runTransaction, update, push, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 import { GameResult, PlayerData, QuizQuestion, StudentProgress, UnitsState, VocabularyWord, WelcomeScreenConfig, DashboardConfig, ExerciseSelectionConfig } from "../types";
@@ -196,10 +195,10 @@ export const clearUnitResultsByGrade = async (classroomId: string, grade: number
     await set(ref(db, `classrooms/${classroomId}/units_${grade}/${unitId}/results`), null);
 };
 
-export const deleteUnitStudentResultByGrade = async (classroomId: string, grade: number, unitId: string, name: string, className: string) => {
+export const deleteUnitStudentResultByGrade = async (classroomId: string, grade: number, unitId: string, name: string, className: string, activityId: string) => {
     const db = checkFirebase();
     const playerKey = getPlayerKey(name, className);
-    await remove(ref(db, `classrooms/${classroomId}/units_${grade}/${unitId}/results/${playerKey}`));
+    await remove(ref(db, `classrooms/${classroomId}/units_${grade}/${unitId}/results/${playerKey}/${activityId}`));
 };
 
 export const setUnitStatusByGrade = async (classroomId: string, grade: number, unitId: string, isEnabled: boolean) => {
@@ -285,10 +284,10 @@ export const clearTopicResults = async (classroomId: string, topicId: string) =>
     await set(ref(db, `classrooms/${classroomId}/topics/${topicId}/results`), null);
 };
 
-export const deleteTopicStudentResult = async (classroomId: string, topicId: string, name: string, className: string) => {
+export const deleteTopicStudentResult = async (classroomId: string, topicId: string, name: string, className: string, activityId: string) => {
     const db = checkFirebase();
     const playerKey = getPlayerKey(name, className);
-    await remove(ref(db, `classrooms/${classroomId}/topics/${topicId}/results/${playerKey}`));
+    await remove(ref(db, `classrooms/${classroomId}/topics/${topicId}/results/${playerKey}/${activityId}`));
 };
 
 export const setTopicStatus = async (classroomId: string, topicId: string, isEnabled: boolean) => {
@@ -304,7 +303,7 @@ export const listenToTopicsStatus = (classroomId: string, callback: (s: any) => 
 export const updateVocabularyAudio = async (classroomId: string, grade: any, unitId: string, word: string, base64Audio: string) => {
     const db = checkFirebase();
     const basePath = grade === 'topics' ? `topics/${unitId}/vocabulary` : `units_${grade}/${unitId}/vocabulary`;
-    const snapshot = await get(ref(db, `classroomId/${classroomId}/${basePath}`));
+    const snapshot = await get(ref(db, `classrooms/${classroomId}/${basePath}`));
     const vocabList = snapshot.val() as VocabularyWord[];
     if (vocabList) {
         const index = vocabList.findIndex(v => v.word === word);

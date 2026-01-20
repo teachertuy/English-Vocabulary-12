@@ -37,6 +37,8 @@ export interface GameResult {
   gameType?: 'quiz' | 'spelling' | 'matching' | 'vocabulary';
   attempts?: number;
   status?: 'in-progress' | 'completed';
+  // activityId is added to hold the Firebase push key for results tracking
+  activityId?: string;
 }
 
 export interface SavedQuiz {
