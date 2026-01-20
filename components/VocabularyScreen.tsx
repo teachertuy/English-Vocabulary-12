@@ -99,29 +99,33 @@ const VocabularyScreen: React.FC<VocabularyScreenProps> = ({ unitNumber, vocabul
 
     const handleBackWithSave = async () => {
         if (isFinishing) return;
+        setIsFinishing(true);
         const endTime = Date.now();
         const timeTakenSeconds = Math.round((endTime - startTime) / 1000);
-        const resultData: Partial<GameResult> = { score: '10.0', correct: localVocabulary.length, incorrect: 0, answered: localVocabulary.length, totalQuestions: localVocabulary.length, timeTakenSeconds: timeTakenSeconds, details: localVocabulary.map(v => ({ question: v.word, translation: v.translation, options: [], userAnswer: v.word, correctAnswer: v.word, status: 'correct', explanation: `Bạn đã học từ: ${v.word}` })) };
+        // Change score to 'ĐÃ HỌC' and set correct/incorrect to 0 for vocabulary
+        const resultData: Partial<GameResult> = { 
+            score: 'ĐÃ HỌC', 
+            correct: 0, 
+            incorrect: 0, 
+            answered: localVocabulary.length, 
+            totalQuestions: localVocabulary.length, 
+            timeTakenSeconds: timeTakenSeconds, 
+            details: localVocabulary.map(v => ({ 
+                question: v.word, 
+                translation: v.translation, 
+                options: [], 
+                userAnswer: v.word, 
+                correctAnswer: v.word, 
+                status: 'correct', 
+                explanation: `Bạn đã học từ: ${v.word}` 
+            })) 
+        };
         try {
             const unitIdentifier = grade === 'topics' ? `topic_${unitNumber}` : `unit_${unitNumber}`;
             await updateUnitActivityResult(classroomId, grade, unitIdentifier, playerData, activityId, resultData);
             await removeStudentPresence(classroomId, playerData.name, playerData.class);
         } catch (e) { console.error(e); }
         onBack();
-    };
-
-    const handleFinish = async () => {
-        if (isFinishing) return;
-        setIsFinishing(true);
-        const endTime = Date.now();
-        const timeTakenSeconds = Math.round((endTime - startTime) / 1000);
-        const resultData: Partial<GameResult> = { score: '10.0', correct: localVocabulary.length, incorrect: 0, answered: localVocabulary.length, totalQuestions: localVocabulary.length, timeTakenSeconds: timeTakenSeconds, details: localVocabulary.map(v => ({ question: v.word, translation: v.translation, options: [], userAnswer: v.word, correctAnswer: v.word, status: 'correct', explanation: `Học từ vựng: ${v.word}` })) };
-        try {
-            const unitIdentifier = grade === 'topics' ? `topic_${unitNumber}` : `unit_${unitNumber}`;
-            await updateUnitActivityResult(classroomId, grade, unitIdentifier, playerData, activityId, resultData);
-            await removeStudentPresence(classroomId, playerData.name, playerData.class);
-            onFinish({ ...resultData, playerName: playerData.name, playerClass: playerData.class, gameType: 'vocabulary' } as GameResult);
-        } catch (error) { setIsFinishing(false); }
     };
 
     const handlePlaySound = useCallback(async (wordItem: VocabularyWord, e: React.MouseEvent) => {
@@ -151,7 +155,7 @@ const VocabularyScreen: React.FC<VocabularyScreenProps> = ({ unitNumber, vocabul
                     <span>Back</span>
                 </button>
                  <h1 className="text-2xl font-extrabold text-center text-gray-800 uppercase tracking-wide">{grade === 'topics' ? `Topic ${unitNumber} Vocabulary` : `Unit ${unitNumber} Vocabulary`}</h1>
-                <button onClick={handleFinish} disabled={isFinishing} className="bg-green-600 text-white font-bold py-2 px-6 rounded-full shadow-lg hover:bg-green-700 transition disabled:bg-gray-400">{isFinishing ? 'Gửi bài...' : 'Nộp bài'}</button>
+                 <div className="w-20"></div> {/* Spacer for alignment */}
             </div>
             {(fetchingImages.size > 0 || fetchingWords.size > 0) && <div className="mb-4 px-4 py-2 bg-blue-50 text-blue-700 text-sm font-bold rounded-lg border border-blue-200 flex items-center gap-2 animate-pulse self-center"><div className="w-2 h-2 bg-blue-600 rounded-full animate-ping"></div><span>AI đang đồng bộ Ảnh & Âm thanh...</span></div>}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 overflow-y-auto flex-grow px-2 pb-8 max-w-7xl mx-auto w-full">

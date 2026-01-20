@@ -362,15 +362,16 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                                                 </>
                                             )}
                                             {/* Per Attempt Columns */}
-                                            <td className="p-3 border border-gray-300 text-red-600 text-lg font-black text-center">{res.score}</td>
+                                            <td className="p-3 border border-gray-300 text-red-600 text-lg font-black text-center whitespace-nowrap">{res.score}</td>
                                             <td className="p-3 border border-gray-300 text-center">
                                                 <span className={`px-4 py-1.5 rounded-full text-[12px] font-bold border ${getGameTypeStyle(res.gameType)}`}>
                                                     {getGameTypeLabel(res.gameType)}
                                                 </span>
                                             </td>
                                             <td className="p-3 border border-gray-300 text-red-600 text-center">{res.attempts || 1}</td>
-                                            <td className="p-3 border border-gray-300 text-green-600 text-center">{res.correct}</td>
-                                            <td className="p-3 border border-gray-300 text-red-600 text-center">{res.incorrect}</td>
+                                            {/* Correct/Incorrect Columns: Display '-' for vocabulary activity */}
+                                            <td className="p-3 border border-gray-300 text-green-600 text-center">{res.gameType === 'vocabulary' ? '-' : res.correct}</td>
+                                            <td className="p-3 border border-gray-300 text-red-600 text-center">{res.gameType === 'vocabulary' ? '-' : res.incorrect}</td>
                                             <td className="p-3 border border-gray-300 text-[#c05621] text-center font-['Nunito'] font-black">{formatTime(res.timeTakenSeconds || 0)}</td>
                                             <td className="p-3 border border-gray-300 text-slate-800 text-[13px] text-center font-['Nunito']">{formatDate(res.timestamp)}</td>
                                             <td className="p-3 border border-gray-300 text-center">
