@@ -447,10 +447,14 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
     }, [isGeneratingFromText]);
 
     const areAllUnitPromptsEmpty = useMemo(() => Object.values(unitActivityPrompts).every(prompt => !String(prompt).trim()), [unitActivityPrompts]);
+    const areAllTopicPromptsEmpty = useMemo(() => Object.values(topicActivityPrompts).every(prompt => !String(prompt).trim()), [topicActivityPrompts]);
 
-    // Added missing handleUnitPromptChange
     const handleUnitPromptChange = useCallback((field: keyof typeof EMPTY_ACTIVITY_PROMPTS, value: string) => {
         setUnitActivityPrompts(prev => ({ ...prev, [field]: value }));
+    }, []);
+
+    const handleTopicPromptChange = useCallback((field: keyof typeof EMPTY_ACTIVITY_PROMPTS, value: string) => {
+        setTopicActivityPrompts(prev => ({ ...prev, [field]: value }));
     }, []);
 
     const handleGenerateUnitActivities = useCallback(async () => {
@@ -489,6 +493,42 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
             setIsGeneratingUnitActivities(false);
         }
     }, [unitVocabList, viewingUnit, classroomId, unitActivityPrompts, areAllUnitPromptsEmpty, currentUnitVocabulary]);
+
+    const handleGenerateTopicActivities = useCallback(async () => {
+        if (areAllTopicPromptsEmpty || viewingTopic === null) return;
+        let vocabSourceText = topicVocabList.trim();
+        if (!vocabSourceText && currentTopicVocabulary.length > 0) vocabSourceText = currentTopicVocabulary.map(v => `${v.word} - (${v.type}) /${v.phonetic}/ - ${v.translation}`).join('\n');
+        if (!vocabSourceText) { setNotification({ message: 'Không có từ vựng nào.', type: 'error' }); return; }
+        setIsGeneratingTopicActivities(true);
+        setNotification(null);
+        const topicId = `topic_${viewingTopic}`;
+        let generatedActivityNames: string[] = [];
+        let hasError = false;
+        try {
+            const generationPromises: Promise<void>[] = [];
+            if (topicVocabList.trim() && String(topicActivityPrompts.learn).trim()) {
+                const vocabPrompt = `You are an expert English teacher creating a vocabulary list. Instruction: "${topicActivityPrompts.learn}" List: """${vocabSourceText}"""`;
+                generationPromises.push((async () => {
+                    const vocabData = await generateVocabularyList(vocabPrompt);
+                    await saveTopicVocabulary(classroomId, topicId, vocabData);
+                    generatedActivityNames.push(`${vocabData.length} thẻ từ vựng`);
+                })());
+            }
+            if (String(topicActivityPrompts.quiz).trim()) {
+                const quizPrompt = `You are an expert English teacher creating a multiple-choice quiz. Instruction: "${topicActivityPrompts.quiz}" List: """${vocabSourceText}"""`;
+                generationPromises.push((async () => {
+                    const quizQuestions = await generateQuizFromCustomPrompt(quizPrompt);
+                    await saveTopicQuizQuestions(classroomId, topicId, quizQuestions);
+                    generatedActivityNames.push(`${quizQuestions.length} câu hỏi trắc nghiệm`);
+                })());
+            }
+            await Promise.all(generationPromises);
+        } catch (error) { hasError = true; } finally {
+            if (hasError) setNotification({ message: 'Tạo hoạt động thất bại.', type: 'error' });
+            else if (generatedActivityNames.length > 0) setNotification({ message: `Đã cập nhật thành công: ${generatedActivityNames.join(' và ')} cho TOPIC ${viewingTopic}!`, type: 'success' });
+            setIsGeneratingTopicActivities(false);
+        }
+    }, [topicVocabList, viewingTopic, classroomId, topicActivityPrompts, areAllTopicPromptsEmpty, currentTopicVocabulary]);
 
     const handleSaveEditedQuiz = useCallback(async (editedQuestions: QuizQuestion[]) => {
         if (editedQuestions.length === 0) { setNotification({ message: 'Không thể lưu một đề trống.', type: 'error' }); setQuizForEditing(null); return; }
@@ -607,9 +647,49 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                         <svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 ${isRefreshing ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h5M20 20v-5h-5M4 4l1.5 1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 003.5 12" /></svg>
                     </button>
                 </div>
+                
+                {/* SECTION: SOẠN BÀI - REDESIGNED BASED ON IMAGE */}
                 <div className="p-4 border rounded-lg bg-sky-50 border-sky-200 space-y-4">
                     <h3 className="text-xl font-bold text-purple-700">Soạn bài</h3>
-                    {/* ... rest of topic soạn bài UI ... */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                            <label htmlFor="topic-vocab-list" className="font-semibold text-teal-700">1. Dán danh sách từ vựng:</label>
+                            <textarea id="topic-vocab-list" value={topicVocabList} onChange={(e) => setTopicVocabList(e.target.value)} placeholder={VOCAB_PLACEHOLDER} className="w-full h-96 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm bg-white text-slate-900" disabled={isGeneratingTopicActivities}/>
+                            <div className="flex justify-end">
+                                <button onClick={handleOpenVocabEdit} className="text-sm flex items-center gap-1 bg-white border border-gray-300 px-4 py-2 rounded-md hover:bg-gray-50 text-blue-600 font-bold transition shadow-sm" title="Chỉnh sửa chi tiết danh sách hiện có">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" /></svg>
+                                    Chỉnh sửa chi tiết
+                                </button>
+                            </div>
+                        </div>
+                        <div className="flex flex-col">
+                            <div className="space-y-4">
+                                <label className="font-semibold text-teal-700">2. Tùy chỉnh yêu cầu cho AI:</label>
+                                <div className="space-y-4">
+                                    <div className="bg-white p-3 rounded-lg border border-gray-200 shadow-sm">
+                                        <label htmlFor="topic-prompt-learn" className="block text-sm font-bold text-blue-600 mb-2 uppercase">Học từ vựng</label>
+                                        <textarea id="topic-prompt-learn" value={topicActivityPrompts.learn} onChange={(e) => handleTopicPromptChange('learn', e.target.value)} placeholder="VD: tạo 10 thẻ từ vựng..." className="w-full p-2 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-400 bg-sky-50 text-slate-900" rows={3} disabled={isGeneratingTopicActivities}/>
+                                    </div>
+                                    <div className="bg-white p-3 rounded-lg border border-gray-200 shadow-sm">
+                                        <label htmlFor="topic-prompt-quiz" className="block text-sm font-bold text-green-600 mb-2 uppercase">Bài tập trắc nghiệm</label>
+                                        <textarea id="topic-prompt-quiz" value={topicActivityPrompts.quiz} onChange={(e) => handleTopicPromptChange('quiz', e.target.value)} placeholder="VD: tạo 10 câu hỏi trắc nghiệm..." className="w-full p-2 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-green-400 bg-sky-50 text-slate-900" rows={3} disabled={isGeneratingTopicActivities}/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="flex-grow flex items-end">
+                                <button onClick={handleGenerateTopicActivities} disabled={isGeneratingTopicActivities || areAllTopicPromptsEmpty} className="bg-slate-500 text-white font-bold py-4 px-8 rounded-lg hover:bg-slate-600 transition disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center gap-2 w-full mt-6 shadow-md">
+                                    {isGeneratingTopicActivities ? (
+                                        <span className="flex items-center gap-2">
+                                            <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                            Đang tạo dữ liệu...
+                                        </span>
+                                    ) : (
+                                        <span className="flex items-center gap-2">✨ Tạo hoạt động với AI</span>
+                                    )}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         );
@@ -823,7 +903,22 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
             <EditWelcomeScreenModal show={isEditWelcomeModalOpen} onClose={() => setIsEditWelcomeModalOpen(false)} onSave={handleSaveWelcomeConfig} currentConfig={welcomeConfig} />
             <EditDashboardConfigModal show={isEditDashboardModalOpen} onClose={() => setIsEditDashboardModalOpen(false)} onSave={handleSaveDashboardConfig} currentConfig={dashboardConfig} />
             <EditExerciseSelectionModal show={isEditExerciseModalOpen} onClose={() => setIsEditExerciseModalOpen(false)} onSave={handleSaveExerciseSelectionConfig} currentConfig={exerciseSelectionConfig} />
-            {/* Other modals code ... */}
+            
+            {/* Modal components used for editing */}
+            {quizForEditing && (
+                <EditQuizModal 
+                    questions={quizForEditing} 
+                    onClose={() => setQuizForEditing(null)} 
+                    onSave={handleSaveEditedQuiz} 
+                />
+            )}
+            {isEditVocabModalOpen && (
+                <EditVocabularyModal 
+                    vocabulary={vocabForEditing} 
+                    onClose={() => setIsEditVocabModalOpen(false)} 
+                    onSave={handleSaveVocabulary} 
+                />
+            )}
         </div>
     );
 };
