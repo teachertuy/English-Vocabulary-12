@@ -41,6 +41,7 @@ const DEFAULT_CONFIG: ExerciseSelectionConfig = {
     unitCardHeight: 7,
     unitCardWidth: 100,
     unitCardBorderRadius: 8,
+    unitItemsPerRow: 5,
 
     topicLabelText: 'TOPIC',
     topicCardColors: DEFAULT_UNIT_COLORS,
@@ -50,6 +51,7 @@ const DEFAULT_CONFIG: ExerciseSelectionConfig = {
     topicCardHeight: 6,
     topicCardWidth: 100,
     topicCardBorderRadius: 12,
+    topicItemsPerRow: 6,
 
     exitButtonText: 'Thoát',
     dividerColor1: '#ffffff',
@@ -240,6 +242,10 @@ const EditExerciseSelectionModal: React.FC<EditExerciseSelectionModalProps> = ({
                                         <input type="text" value={config.unitLabelText} onChange={e => handleChange('unitLabelText', e.target.value)} className="w-full p-2 border rounded font-bold text-teal-700" />
                                     </div>
                                     <div>
+                                        <label className="block text-sm font-bold text-gray-700 mb-1">Số ô mỗi hàng: <span className="text-teal-600">{config.unitItemsPerRow} ô</span></label>
+                                        <input type="range" min="1" max="10" step="1" value={config.unitItemsPerRow} onChange={e => handleChange('unitItemsPerRow', parseInt(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-teal-600" />
+                                    </div>
+                                    <div>
                                         <label className="block text-sm font-bold text-gray-700 mb-1">Màu nhãn loại ô</label>
                                         <input type="color" value={config.unitCardLabelColor} onChange={e => handleChange('unitCardLabelColor', e.target.value)} className="w-full h-10 p-0 border-0 cursor-pointer" />
                                     </div>
@@ -249,7 +255,7 @@ const EditExerciseSelectionModal: React.FC<EditExerciseSelectionModalProps> = ({
                                     </div>
                                     <div>
                                         <label className="block text-sm font-bold text-gray-700 mb-1">Độ rộng ô: <span className="text-teal-600">{config.unitCardWidth}%</span></label>
-                                        <input type="range" min="50" max="100" step="1" value={config.unitCardWidth} onChange={e => handleChange('unitCardWidth', parseInt(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-teal-600" />
+                                        <input type="range" min="20" max="100" step="1" value={config.unitCardWidth} onChange={e => handleChange('unitCardWidth', parseInt(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-teal-600" />
                                     </div>
                                     <div>
                                         <label className="block text-sm font-bold text-gray-700 mb-1">Chiều cao ô: <span className="text-teal-600">{config.unitCardHeight}rem</span></label>
@@ -285,6 +291,10 @@ const EditExerciseSelectionModal: React.FC<EditExerciseSelectionModalProps> = ({
                                         <input type="text" value={config.topicLabelText} onChange={e => handleChange('topicLabelText', e.target.value)} className="w-full p-2 border rounded font-bold text-purple-700" />
                                     </div>
                                     <div>
+                                        <label className="block text-sm font-bold text-gray-700 mb-1">Số ô mỗi hàng: <span className="text-purple-600">{config.topicItemsPerRow} ô</span></label>
+                                        <input type="range" min="1" max="12" step="1" value={config.topicItemsPerRow} onChange={e => handleChange('topicItemsPerRow', parseInt(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-purple-600" />
+                                    </div>
+                                    <div>
                                         <label className="block text-sm font-bold text-gray-700 mb-1">Màu nhãn loại ô</label>
                                         <input type="color" value={config.topicCardLabelColor} onChange={e => handleChange('topicCardLabelColor', e.target.value)} className="w-full h-10 p-0 border-0 cursor-pointer" />
                                     </div>
@@ -294,7 +304,7 @@ const EditExerciseSelectionModal: React.FC<EditExerciseSelectionModalProps> = ({
                                     </div>
                                     <div>
                                         <label className="block text-sm font-bold text-gray-700 mb-1">Độ rộng ô: <span className="text-purple-600">{config.topicCardWidth}%</span></label>
-                                        <input type="range" min="50" max="100" step="1" value={config.topicCardWidth} onChange={e => handleChange('topicCardWidth', parseInt(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-purple-600" />
+                                        <input type="range" min="20" max="100" step="1" value={config.topicCardWidth} onChange={e => handleChange('topicCardWidth', parseInt(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-purple-600" />
                                     </div>
                                     <div>
                                         <label className="block text-sm font-bold text-gray-700 mb-1">Chiều cao ô: <span className="text-purple-600">{config.topicCardHeight}rem</span></label>

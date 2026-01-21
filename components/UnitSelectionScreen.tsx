@@ -49,6 +49,7 @@ const DEFAULT_EXERCISE_CONFIG: ExerciseSelectionConfig = {
     unitCardHeight: 7,
     unitCardWidth: 100,
     unitCardBorderRadius: 8,
+    unitItemsPerRow: 5,
 
     topicLabelText: 'TOPIC',
     topicCardColors: DEFAULT_UNIT_COLORS,
@@ -58,6 +59,7 @@ const DEFAULT_EXERCISE_CONFIG: ExerciseSelectionConfig = {
     topicCardHeight: 6,
     topicCardWidth: 100,
     topicCardBorderRadius: 12,
+    topicItemsPerRow: 6,
 
     exitButtonText: 'Thoát',
     dividerColor1: '#ffffff',
@@ -140,6 +142,7 @@ const UnitSelectionScreen: React.FC<UnitSelectionScreenProps> = ({ playerData, c
     const cardBorderRadius = isTopics ? exerciseConfig.topicCardBorderRadius : exerciseConfig.unitCardBorderRadius;
     const labelColor = isTopics ? exerciseConfig.topicCardLabelColor : exerciseConfig.unitCardLabelColor;
     const textColor = isTopics ? exerciseConfig.topicCardTextColor : exerciseConfig.unitCardTextColor;
+    const itemsPerRow = isTopics ? (exerciseConfig.topicItemsPerRow || 6) : (exerciseConfig.unitItemsPerRow || 5);
     
     const displayTitle = isTopics ? exerciseConfig.card2Title.toUpperCase() : welcomeConfig.titleText;
     const subtitleText = isTopics ? exerciseConfig.subtitle : `(Từ vựng Tiếng Anh Lớp ${grade})`;
@@ -228,17 +231,23 @@ const UnitSelectionScreen: React.FC<UnitSelectionScreenProps> = ({ playerData, c
                     </div>
                 )}
                 
-                <div className={`grid ${isTopics ? 'grid-cols-2 sm:grid-cols-4 md:grid-cols-6' : 'grid-cols-2 sm:grid-cols-5'} gap-x-4 gap-y-2 max-h-[500px] overflow-y-auto px-4 py-2 custom-scrollbar w-full justify-items-center`}>
+                <div 
+                    style={{ 
+                        display: 'grid', 
+                        gridTemplateColumns: `repeat(${itemsPerRow}, minmax(0, 1fr))`,
+                    }}
+                    className="gap-x-4 gap-y-2 max-h-[500px] overflow-y-auto px-4 py-2 custom-scrollbar w-full justify-items-center"
+                >
                     {items.map((itemNumber, index) => {
                         const unitId = `${itemPrefix}${itemNumber}`;
                         const isEnabled = unitsStatus[unitId]?.enabled ?? false;
                         const cardColor = getCardColor(index);
-                        const isAtDividerRow = (index === 5 && !isTopics) || (isTopics && index > 0 && index % 6 === 0);
+                        const isAtDividerRow = index > 0 && index % itemsPerRow === 0;
 
                         return (
                             <React.Fragment key={itemNumber}>
                                 {isAtDividerRow && (
-                                    <div className={`${isTopics ? 'col-span-2 sm:col-span-4 md:col-span-6' : 'col-span-2 sm:col-span-5'} w-full my-6 space-y-1`}>
+                                    <div style={{ gridColumn: `span ${itemsPerRow}` }} className="w-full my-6 space-y-1">
                                         <div className="h-0.5 w-full" style={{ backgroundColor: exerciseConfig.dividerColor1 }}></div>
                                         <div className="h-0.5 w-full" style={{ backgroundColor: exerciseConfig.dividerColor2 }}></div>
                                         <div className="h-0.5 w-full" style={{ backgroundColor: exerciseConfig.dividerColor1 }}></div>

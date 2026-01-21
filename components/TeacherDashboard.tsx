@@ -103,6 +103,7 @@ const DEFAULT_EXERCISE_CONFIG: ExerciseSelectionConfig = {
     unitCardHeight: 7,
     unitCardWidth: 100,
     unitCardBorderRadius: 8,
+    unitItemsPerRow: 5,
 
     topicLabelText: 'TOPIC',
     topicCardColors: DEFAULT_UNIT_COLORS,
@@ -112,6 +113,7 @@ const DEFAULT_EXERCISE_CONFIG: ExerciseSelectionConfig = {
     topicCardHeight: 6,
     topicCardWidth: 100,
     topicCardBorderRadius: 12,
+    topicItemsPerRow: 6,
 
     exitButtonText: 'Thoát',
     dividerColor1: '#ffffff',

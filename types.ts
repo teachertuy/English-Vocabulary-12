@@ -134,6 +134,7 @@ export interface ExerciseSelectionConfig {
     unitCardHeight: number;
     unitCardWidth: number;
     unitCardBorderRadius: number;
+    unitItemsPerRow: number;
 
     // Topic Grid Config
     topicLabelText: string;
@@ -144,6 +145,7 @@ export interface ExerciseSelectionConfig {
     topicCardHeight: number;
     topicCardWidth: number;
     topicCardBorderRadius: number;
+    topicItemsPerRow: number;
 
     // Design Global
     exitButtonText: string;
