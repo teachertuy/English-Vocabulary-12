@@ -78,6 +78,7 @@ const DEFAULT_EXERCISE_CONFIG: ExerciseSelectionConfig = {
     matchingDuration: 20,
 };
 
+// Fix: Added missing startButtonSize property to match WelcomeScreenConfig interface
 const DEFAULT_WELCOME_CONFIG: WelcomeScreenConfig = {
     titleText: 'ENGLISH VOCABULARY 12',
     titleFontSize: 1.8,
@@ -91,7 +92,8 @@ const DEFAULT_WELCOME_CONFIG: WelcomeScreenConfig = {
     inputClassFontSize: 1.25,
     inputClassColor: '#facc15',
     inputClassPlaceholder: 'Lớp...',
-    startButtonText: 'START'
+    startButtonText: 'START',
+    startButtonSize: 4
 };
 
 const UnitSelectionScreen: React.FC<UnitSelectionScreenProps> = ({ playerData, classroomId, grade, onStartQuiz, onLearnVocabulary, onStartSpellingGame, onStartMatchingGame, onBack, selectedUnit, onUnitSelect, onCloseActivityModal }) => {
@@ -209,13 +211,14 @@ const UnitSelectionScreen: React.FC<UnitSelectionScreenProps> = ({ playerData, c
                     onStartMatchingGame={(v) => onStartMatchingGame(v, selectedUnit)}
                 />
             )}
-            <button onClick={onBack} className="absolute top-4 right-4 bg-black/20 text-white font-semibold py-2 px-4 rounded-full hover:bg-black/30 transition shadow-md z-10">
+            {/* Moved exit button to top-left corner */}
+            <button onClick={onBack} className="absolute top-4 left-4 bg-black/20 text-white font-semibold py-2 px-4 rounded-full hover:bg-black/30 transition shadow-md z-10">
                 {exerciseConfig.exitButtonText}
             </button>
 
             <div className="w-full max-w-5xl mx-auto flex flex-col items-center">
                  <div className={`w-full transition-all duration-300 ${titleLines.length > 1 ? 'h-48' : 'h-24'} mb-2`}>
-                    <svg viewBox={titleLines.length > 1 ? "0 0 500 160" : "0 0 500 80"} className="w-full h-full overflow-visible">
+                    <svg viewBox={titleLines.length > 1 ? "0 0 500 170" : "0 0 500 80"} className="w-full h-full overflow-visible">
                         <path id="unit-curve1" d={titleLines.length > 1 ? "M 50, 50 Q 250, 10 450, 50" : "M 20, 60 Q 250, 25 480, 60"} stroke="transparent" fill="transparent"/>
                         <text width="500" style={{fill: welcomeConfig.titleColor, textShadow: '2px 2px 4px rgba(0,0,0,0.5)', fontSize: `${innerFontSize1}rem` }} className="font-extrabold tracking-wider uppercase">
                             <textPath href="#unit-curve1" startOffset="50%" textAnchor="middle">
@@ -225,13 +228,14 @@ const UnitSelectionScreen: React.FC<UnitSelectionScreenProps> = ({ playerData, c
                         
                         {titleLines.length > 1 ? (
                              <>
-                                <path id="unit-curve2" d="M 50, 120 Q 250, 80 450, 120" stroke="transparent" fill="transparent"/>
+                                {/* Adjusted curve2 and subtitle position to lower "12" and Vietnamese text */}
+                                <path id="unit-curve2" d="M 50, 130 Q 250, 100 450, 130" stroke="transparent" fill="transparent"/>
                                 <text width="500" style={{fill: welcomeConfig.titleColor, textShadow: '2px 2px 4px rgba(0,0,0,0.5)', fontSize: `${innerFontSize2}rem`, letterSpacing: line2LetterSpacing }} className="font-black tracking-wider uppercase">
                                     <textPath href="#unit-curve2" startOffset="50%" textAnchor="middle">
                                         {titleLines[1]}
                                     </textPath>
                                 </text>
-                                <text x="250" y="150" textAnchor="middle" className="fill-current text-white text-lg font-bold tracking-normal opacity-80" style={{textShadow: '1px 1px 2px rgba(0,0,0,0.5)'}}>
+                                <text x="250" y="160" textAnchor="middle" className="fill-current text-white text-lg font-bold tracking-normal opacity-80" style={{textShadow: '1px 1px 2px rgba(0,0,0,0.5)'}}>
                                     {subtitleText}
                                 </text>
                              </>

@@ -85,6 +85,7 @@ export interface WelcomeScreenConfig {
     inputClassColor: string;
     inputClassPlaceholder: string;
     startButtonText: string;
+    startButtonSize: number;
 }
 
 export interface DashboardConfig {

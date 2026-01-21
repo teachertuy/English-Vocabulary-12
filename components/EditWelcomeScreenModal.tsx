@@ -22,7 +22,8 @@ const DEFAULT_CONFIG: WelcomeScreenConfig = {
     inputClassFontSize: 1.25,
     inputClassColor: '#facc15',
     inputClassPlaceholder: 'Lớp...',
-    startButtonText: 'START'
+    startButtonText: 'START',
+    startButtonSize: 4
 };
 
 const EditWelcomeScreenModal: React.FC<EditWelcomeScreenModalProps> = ({ show, onClose, onSave, currentConfig }) => {
@@ -80,6 +81,10 @@ const EditWelcomeScreenModal: React.FC<EditWelcomeScreenModalProps> = ({ show, o
                                 <div>
                                     <label className="block text-sm font-semibold text-gray-600 mb-1">Văn bản nút Bắt đầu (START)</label>
                                     <input type="text" value={config.startButtonText} onChange={e => handleChange('startButtonText', e.target.value)} className="w-full p-2 border rounded font-black text-center text-red-600" />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-semibold text-gray-600 mb-1">Kích thước nút START: <span className="text-red-600 font-bold">{config.startButtonSize}rem</span></label>
+                                    <input type="range" min="3" max="10" step="0.5" value={config.startButtonSize} onChange={e => handleChange('startButtonSize', parseFloat(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-red-600" />
                                 </div>
                                 <div>
                                     <label className="block text-sm font-semibold text-gray-600 mb-1">Màu sắc tiêu đề</label>

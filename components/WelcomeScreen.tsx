@@ -22,7 +22,8 @@ const DEFAULT_CONFIG: WelcomeScreenConfig = {
     inputClassFontSize: 1.25,
     inputClassColor: '#facc15',
     inputClassPlaceholder: 'Lớp...',
-    startButtonText: 'START'
+    startButtonText: 'START',
+    startButtonSize: 4
 };
 
 const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, classroomId }) => {
@@ -121,9 +122,9 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
          className="absolute top-6 left-6 z-50 flex flex-col items-center group cursor-pointer focus:outline-none focus:ring-4 focus:ring-yellow-400 focus:ring-opacity-50 rounded-full transition-transform transform hover:scale-105"
          title="Teacher Login"
        >
-         <img src="https://i.postimg.cc/132B8h0t/11zon-cropped-1.png" alt="Logo" className="w-20 h-20 rounded-full border-4 border-yellow-300 shadow-lg group-hover:border-yellow-400" />
+         <img src="https://i.postimg.cc/132B8h0t/11zon-cropped-1.png" alt="Logo" className="w-16 h-16 rounded-full border-4 border-yellow-300 shadow-lg group-hover:border-yellow-400" />
          <p
-           className="text-white font-bold text-sm pointer-events-none select-none -mt-2 group-hover:text-yellow-300"
+           className="text-white font-bold text-[10px] pointer-events-none select-none -mt-1.5 group-hover:text-yellow-300"
            style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}
            aria-hidden="true"
          >
@@ -131,9 +132,11 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
          </p>
        </button>
       
-      <div className="w-full max-w-md mt-0 space-y-0 z-10 flex flex-col items-center">
-            <div className={`w-full transition-all duration-500 ${titleLines.length > 1 ? 'h-44' : 'h-24'} relative mt-24`}>
-                 <svg viewBox={titleLines.length > 1 ? "0 0 500 180" : "0 0 500 100"} className="w-full h-full overflow-visible">
+      {/* Container narrowed to max-w-[350px] */}
+      <div className="w-full max-w-[350px] mt-0 space-y-0 z-10 flex flex-col items-center">
+            {/* Title margin reduced from mt-24 to mt-12 */}
+            <div className={`w-full transition-all duration-500 ${titleLines.length > 1 ? 'h-40' : 'h-20'} relative mt-12`}>
+                 <svg viewBox={titleLines.length > 1 ? "0 0 500 170" : "0 0 500 90"} className="w-full h-full overflow-visible">
                     <path id="curve1" d={titleLines.length > 1 ? "M 50, 60 Q 250, 15 450, 60" : "M 20, 75 Q 250, 30 480, 75"} stroke="transparent" fill="transparent"/>
                     <text width="500" style={{ fill: config.titleColor, filter: 'drop-shadow(2px 2px 2px rgba(0,0,0,0.4))', fontSize: `${config.titleFontSize}rem` }} className="font-black tracking-wider uppercase">
                         <textPath href="#curve1" startOffset="50%" textAnchor="middle">
@@ -143,7 +146,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
                     
                     {titleLines.length > 1 && (
                         <>
-                            <path id="curve2" d="M 10, 160 Q 250, 110 490, 160" stroke="transparent" fill="transparent"/>
+                            <path id="curve2" d="M 10, 150 Q 250, 100 490, 150" stroke="transparent" fill="transparent"/>
                             <text width="500" style={{ fill: config.titleColor, filter: 'drop-shadow(2px 2px 2px rgba(0,0,0,0.4))', fontSize: `${config.titleFontSizeLine2 || (config.titleFontSize * 0.85)}rem`, letterSpacing: line2LetterSpacing }} className="font-black uppercase opacity-95">
                                 <textPath href="#curve2" startOffset="50%" textAnchor="middle">
                                     {titleLines[1]}
@@ -154,8 +157,8 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
                  </svg>
             </div>
 
-            <div className="flex justify-center -mt-10 mb-2 relative z-20">
-                 <div className="text-5xl pointing-finger-down filter drop-shadow-xl transform hover:scale-110 transition-transform cursor-default">
+            <div className="flex justify-center -mt-8 mb-2 relative z-20">
+                 <div className="text-4xl pointing-finger-down filter drop-shadow-xl transform hover:scale-110 transition-transform cursor-default">
                     👇
                 </div>
             </div>
@@ -168,7 +171,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
                         onChange={(e) => setPlayerName(e.target.value)} 
                         placeholder={config.inputNamePlaceholder || "Nhập họ và tên của bạn.."} 
                         style={{ fontSize: `${config.inputNameFontSize}rem`, color: config.inputNameColor }}
-                        className={`w-full px-6 py-4 rounded-3xl text-center font-black bg-gradient-to-r from-teal-400 to-cyan-500 border-2 border-white focus:outline-none focus:border-yellow-300 focus:ring-4 focus:ring-cyan-300/40 placeholder-teal-100 shadow-[0_10px_20px_rgba(0,0,0,0.2)] transition-all transform group-hover:-translate-y-0.5 group-hover:shadow-[0_15px_25px_rgba(0,0,0,0.3)] ${shakeName ? 'animate-pulse border-red-500' : ''}`}
+                        className={`w-full px-5 py-3.5 rounded-3xl text-center font-black bg-gradient-to-r from-teal-400 to-cyan-500 border-2 border-white focus:outline-none focus:border-yellow-300 focus:ring-4 focus:ring-cyan-300/40 placeholder-teal-100 shadow-[0_10px_20px_rgba(0,0,0,0.2)] transition-all transform group-hover:-translate-y-0.5 group-hover:shadow-[0_15px_25px_rgba(0,0,0,0.3)] ${shakeName ? 'animate-pulse border-red-500' : ''}`}
                     />
                  </div>
                  <div className="relative group flex justify-center">
@@ -186,7 +189,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
                             fontSize: `${config.inputClassFontSize}rem`,
                             color: config.inputClassColor
                         }}
-                        className={`px-2 py-3 rounded-2xl text-center font-black border-2 border-white focus:outline-none focus:border-white focus:ring-4 focus:ring-yellow-200/50 placeholder-gray-600 shadow-lg transition-all transform group-hover:-translate-y-1 ${shakeClass ? 'animate-pulse border-red-600' : ''}`}
+                        className={`px-2 py-2.5 rounded-2xl text-center font-black border-2 border-white focus:outline-none focus:border-white focus:ring-4 focus:ring-yellow-200/50 placeholder-gray-600 shadow-lg transition-all transform group-hover:-translate-y-1 ${shakeClass ? 'animate-pulse border-red-600' : ''}`}
                     />
                  </div>
             </div>
@@ -195,14 +198,19 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
                  {error && <p className="text-red-100 font-bold bg-red-600/90 px-4 py-0.5 rounded-full inline-block shadow-lg animate-bounce text-[10px]">{error}</p>}
             </div>
 
-            <div className="flex justify-center pt-8 pb-0">
+            <div className="flex justify-center pt-6 pb-2">
                 <button 
                     onClick={handleStartClick} 
                     disabled={isButtonDisabled}
-                    className="group relative w-20 h-20 rounded-full bg-yellow-400 text-red-600 font-black text-lg transition-all border-2 border-white flex items-center justify-center hover:scale-110 hover:bg-yellow-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none shadow-md"
+                    style={{ 
+                        width: `${config.startButtonSize}rem`, 
+                        height: `${config.startButtonSize}rem`,
+                        fontSize: `${(config.startButtonSize || 4) * 0.25}rem`
+                    }}
+                    className="group relative rounded-full bg-yellow-400 text-red-600 font-black transition-all border-2 border-white flex items-center justify-center hover:scale-110 hover:bg-yellow-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none shadow-md"
                 >
                     {isCheckingStatus ? (
-                        <svg className="animate-spin h-6 w-6 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <svg className="animate-spin h-5 w-5 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
