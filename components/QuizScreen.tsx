@@ -198,12 +198,31 @@ const QuizScreen: React.FC<QuizScreenProps> = ({ playerData, questions, unitNumb
                     <div className="grid grid-cols-1 gap-3 w-full">
                         {currentQuestion.options.map((option, i) => {
                             let btnClass = 'p-3 rounded-lg text-left font-semibold text-base border-2 focus:outline-none transition bg-blue-100 border-blue-400 text-blue-800 hover:bg-orange-500 hover:text-white';
+                            
                             if (isAnswered) {
-                                btnClass = 'p-3 rounded-lg text-left font-semibold text-base border-2 focus:outline-none transition bg-gray-200 border-gray-400 text-gray-600 cursor-not-allowed';
-                                if (option === currentQuestion.answer) btnClass = 'p-3 rounded-lg text-left font-semibold text-base border-2 focus:outline-none transition bg-green-50 text-green-700 border-green-500 cursor-not-allowed';
-                                else if (option === selectedAnswer) btnClass = 'p-3 rounded-lg text-left font-semibold text-base border-2 focus:outline-none transition bg-red-50 text-red-700 border-red-500 cursor-not-allowed';
-                            } else if (option === selectedAnswer) btnClass = 'p-3 rounded-lg text-left font-semibold text-base border-2 focus:outline-none transition bg-orange-500 text-white border-orange-600';
-                            return (<button key={i} onClick={() => handleAnswerSelect(option)} disabled={isAnswered} className={btnClass}><span className="font-bold mr-2 font-['Nunito']">{optionLabels[i]}.</span><span dangerouslySetInnerHTML={{ __html: option }} /></button>)
+                                if (option === currentQuestion.answer) {
+                                    // Đáp án ĐÚNG: Nền xanh lá rực rỡ
+                                    btnClass = 'p-3 rounded-lg text-left font-bold text-base border-2 focus:outline-none transition bg-[#22c55e] text-white border-[#22c55e] cursor-not-allowed shadow-md scale-[1.02]';
+                                } else if (option === selectedAnswer) {
+                                    // Đáp án SAI: Nền đỏ rực rỡ
+                                    btnClass = 'p-3 rounded-lg text-left font-bold text-base border-2 focus:outline-none transition bg-red-600 text-white border-red-600 cursor-not-allowed shadow-md';
+                                } else {
+                                    // Các đáp án còn lại: Làm mờ đi
+                                    btnClass = 'p-3 rounded-lg text-left font-semibold text-base border-2 focus:outline-none transition bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed opacity-60';
+                                }
+                            } else if (option === selectedAnswer) {
+                                // Đang chọn (chưa kiểm tra)
+                                btnClass = 'p-3 rounded-lg text-left font-semibold text-base border-2 focus:outline-none transition bg-orange-500 text-white border-orange-600 shadow-md';
+                            }
+
+                            return (
+                                <button key={i} onClick={() => handleAnswerSelect(option)} disabled={isAnswered} className={btnClass}>
+                                    <span className={`font-black mr-2 font-['Nunito'] ${isAnswered && (option === currentQuestion.answer || option === selectedAnswer) ? 'text-white' : 'text-inherit'}`}>
+                                        {optionLabels[i]}.
+                                    </span>
+                                    <span dangerouslySetInnerHTML={{ __html: option }} />
+                                </button>
+                            );
                         })}
                     </div>
                     <div className="mt-4 flex justify-center space-x-4">
