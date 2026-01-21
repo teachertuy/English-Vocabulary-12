@@ -200,35 +200,36 @@ const SpellingGameScreen: React.FC<SpellingGameScreenProps> = ({ playerData, voc
     return (
         <div className="flex flex-col items-center justify-start p-4 bg-white min-h-[600px] relative">
             <div className="w-full max-w-4xl mx-auto flex justify-between items-center mb-6 pt-2">
-                {/* Back button moved to top row */}
+                {/* Back button */}
                 <button onClick={handleExitPrematurely} className="group flex items-center text-blue-600 font-extrabold text-lg hover:text-blue-800 transition-colors focus:outline-none rounded">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-1 transition-transform group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="4"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
                     <span className="border-b-2 border-current pb-0.5">Back</span>
                 </button>
 
-                <div className="flex items-center gap-4">
-                    {/* Progress Indicator */}
-                    <div className="bg-white px-4 py-1.5 rounded-2xl border border-gray-200 flex items-center shadow-sm">
-                        <span className="text-blue-600 text-lg font-black font-['Nunito']">{currentIndex + 1} / {shuffledVocabulary.length}</span>
+                {/* Central stacked indicators */}
+                <div className="flex flex-col items-center gap-1.5">
+                    {/* Correct/Incorrect Redesigned Indicator (Top) */}
+                    <div className="bg-white px-5 py-1 rounded-full border-4 border-double border-red-500 flex items-center gap-3 shadow-md">
+                        <span className="text-xl font-black text-green-600 font-['Nunito']">{correctAnswers}</span>
+                        <span className="text-lg font-bold text-gray-200">|</span>
+                        <span className="text-xl font-black text-red-600 font-['Nunito']">{incorrectAnswers}</span>
                     </div>
 
-                    {/* Correct/Incorrect Redesigned Indicator */}
-                    <div className="bg-white px-5 py-1.5 rounded-full border-4 border-double border-red-500 flex items-center gap-3 shadow-md">
-                        <span className="text-green-600 text-xl font-black font-['Nunito']">{correctAnswers}</span>
-                        <span className="text-lg font-bold text-gray-300">|</span>
-                        <span className="text-red-600 text-xl font-black font-['Nunito']">{incorrectAnswers}</span>
+                    {/* Progress Indicator (Bottom) */}
+                    <div className="bg-white px-4 py-0.5 rounded-2xl border border-gray-100 flex items-center shadow-sm min-w-[80px] justify-center">
+                        <span className="text-blue-600 text-sm font-black font-['Nunito']">{currentIndex + 1} / {shuffledVocabulary.length}</span>
                     </div>
                 </div>
 
                 {/* Timer Indicator */}
-                <div className="bg-white px-4 py-1.5 rounded-2xl border border-red-200 flex items-center shadow-sm">
+                <div className="bg-white px-4 py-1.5 rounded-2xl border border-red-100 flex items-center shadow-sm">
                     <span className="text-red-700 text-lg font-black font-['Nunito']">{formatTime(timeLeft)}</span>
                 </div>
             </div>
 
             <div className="flex flex-col items-center justify-start mt-4 flex-grow w-full max-w-sm">
                 <button onClick={handlePlayAudio} type="button" disabled={isRateLimited || isLoadingAudio || isPlayingAudio} className={`mb-6 w-24 h-24 rounded-full flex items-center justify-center shadow-xl transition-all ${isPlayingAudio ? 'bg-blue-50 scale-105 ring-4 ring-blue-100' : 'bg-white border-2 border-gray-200 hover:scale-105'}`}>
-                    {isLoadingAudio ? <svg className="animate-spin h-10 w-10 text-blue-600" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> : <div className="relative">{isPlayingAudio && <div className="absolute rounded-full border-2 border-blue-400 opacity-0 animate-[ping_1.5s_cubic-bezier(0,0,0.2,1)_infinite] h-full w-full inset-0"></div>}<svg className="h-12 w-12 text-gray-700" viewBox="0 0 24 24" fill="currentColor"><path d="M14.016 3.234q3.047 0.656 5.016 3.117t1.969 5.648-1.969 5.648-5.016 3.117v-2.063q2.203-0.656 3.586-2.484t1.383-4.219-1.383-4.219-3.586-2.484v-2.063zM16.5 12q0 2.813-2.484 4.031v-8.063q1.031 0.516 1.758 1.688t0.727 2.344zM3 9h3.984l5.016-5.016v16.031l-5.016-5.016h-3.984v-6z"></path></svg></div>}
+                    {isLoadingAudio ? <svg className="animate-spin h-10 w-10 text-blue-600" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> : <div className="relative">{isPlayingAudio && <div className="absolute rounded-full border-2 border-blue-400 opacity-0 animate-[ping_1.5s_cubic-bezier(0,0,0.2,1)_infinite] h-full w-full inset-0"></div>}<svg className="h-12 w-12 text-gray-700" viewBox="0 0 24 24" fill="currentColor"><path d="M14.016 3.234q3.047 0.656 5.016 3.117t1.969 5.648-1.969 5.648-1.969 5.648-5.016 3.117v-2.063q2.203-0.656 3.586-2.484t1.383-4.219-1.383-4.219-3.586-2.484v-2.063zM16.5 12q0 2.813-2.484 4.031v-8.063q1.031 0.516 1.758 1.688t0.727 2.344zM3 9h3.984l5.016-5.016v16.031l-5.016-5.016h-3.984v-6z"></path></svg></div>}
                 </button>
                 <p className="text-orange-500 font-black text-3xl sm:text-4xl mb-6 text-center drop-shadow-sm">{currentWord?.translation}</p>
                 <form onSubmit={(e) => { e.preventDefault(); handleCheckAnswer(); }} className="w-full space-y-4 flex flex-col items-center">
