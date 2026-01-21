@@ -73,7 +73,6 @@ const DEFAULT_EXERCISE_CONFIG: ExerciseSelectionConfig = {
     activitySpellDesc: 'Viết từ tiếng Anh tương ứng',
     activityQuizLabel: 'Làm bài trắc nghiệm',
     activityQuizDesc: 'Kiểm tra kiến thức của bạn',
-    // Added missing properties
     quizDuration: 30,
     spellingDuration: 30,
     matchingDuration: 20,
@@ -138,7 +137,6 @@ const UnitSelectionScreen: React.FC<UnitSelectionScreenProps> = ({ playerData, c
     const itemCount = isTopics ? 60 : 10;
     const itemPrefix = isTopics ? 'topic_' : 'unit_';
     
-    // Choose config based on mode
     const itemLabel = isTopics ? exerciseConfig.topicLabelText : exerciseConfig.unitLabelText;
     const cardHeight = isTopics ? exerciseConfig.topicCardHeight : exerciseConfig.unitCardHeight;
     const cardWidth = isTopics ? exerciseConfig.topicCardWidth : exerciseConfig.unitCardWidth;
@@ -157,13 +155,29 @@ const UnitSelectionScreen: React.FC<UnitSelectionScreenProps> = ({ playerData, c
 
     const titleLines = useMemo(() => {
         const lines = displayTitle.split('\n').filter(l => l.trim() !== '');
-        if (lines.length === 1 && displayTitle.length > 20) {
-             const mid = Math.floor(displayTitle.length / 2);
-             const splitIndex = displayTitle.lastIndexOf(' ', mid + 5);
-             if (splitIndex !== -1) return [displayTitle.substring(0, splitIndex), displayTitle.substring(splitIndex + 1)];
+        if (lines.length === 1) {
+            const text = displayTitle.trim();
+            // Handle specific English Vocabulary 12 case to match image request
+            if (text.endsWith(" 12")) {
+                return [text.substring(0, text.length - 3).trim(), "12"];
+            }
+            if (text.length > 20) {
+                 const mid = Math.floor(text.length / 2);
+                 const splitIndex = text.lastIndexOf(' ', mid + 5);
+                 if (splitIndex !== -1) return [text.substring(0, splitIndex), text.substring(splitIndex + 1)];
+            }
         }
         return lines.slice(0, 2);
     }, [displayTitle]);
+
+    const line2LetterSpacing = useMemo(() => {
+        if (titleLines.length > 1) {
+            const line2 = titleLines[1].trim();
+            if (line2 === '12') return '-0.08em';
+            if (line2.includes('12')) return '0.05em';
+        }
+        return '0.1em';
+    }, [titleLines]);
 
     const items = Array.from({ length: itemCount }, (_, i) => i + 1);
 
@@ -172,12 +186,12 @@ const UnitSelectionScreen: React.FC<UnitSelectionScreenProps> = ({ playerData, c
         return unitsStatus[unitId]?.enabled ?? false;
     });
 
-    const getCardColor = (idx: number) => {
+    const getCardColor = (index: number) => {
         const colors = isTopics 
             ? (exerciseConfig.topicCardColors || DEFAULT_UNIT_COLORS)
             : (exerciseConfig.unitCardColors || DEFAULT_UNIT_COLORS);
         
-        return colors[idx % colors.length] || '#00A9C3';
+        return colors[index % colors.length] || '#00A9C3';
     };
 
     return (
@@ -200,8 +214,8 @@ const UnitSelectionScreen: React.FC<UnitSelectionScreenProps> = ({ playerData, c
             </button>
 
             <div className="w-full max-w-5xl mx-auto flex flex-col items-center">
-                 <div className={`w-full transition-all duration-300 ${titleLines.length > 1 ? 'h-36' : 'h-24'} mb-2`}>
-                    <svg viewBox={titleLines.length > 1 ? "0 0 500 120" : "0 0 500 80"} className="w-full h-full overflow-visible">
+                 <div className={`w-full transition-all duration-300 ${titleLines.length > 1 ? 'h-48' : 'h-24'} mb-2`}>
+                    <svg viewBox={titleLines.length > 1 ? "0 0 500 160" : "0 0 500 80"} className="w-full h-full overflow-visible">
                         <path id="unit-curve1" d={titleLines.length > 1 ? "M 50, 50 Q 250, 10 450, 50" : "M 20, 60 Q 250, 25 480, 60"} stroke="transparent" fill="transparent"/>
                         <text width="500" style={{fill: welcomeConfig.titleColor, textShadow: '2px 2px 4px rgba(0,0,0,0.5)', fontSize: `${innerFontSize1}rem` }} className="font-extrabold tracking-wider uppercase">
                             <textPath href="#unit-curve1" startOffset="50%" textAnchor="middle">
@@ -211,13 +225,13 @@ const UnitSelectionScreen: React.FC<UnitSelectionScreenProps> = ({ playerData, c
                         
                         {titleLines.length > 1 ? (
                              <>
-                                <path id="unit-curve2" d="M 50, 90 Q 250, 50 450, 90" stroke="transparent" fill="transparent"/>
-                                <text width="500" style={{fill: welcomeConfig.titleColor, textShadow: '2px 2px 4px rgba(0,0,0,0.5)', fontSize: `${innerFontSize2}rem` }} className="font-extrabold tracking-wider uppercase">
+                                <path id="unit-curve2" d="M 50, 120 Q 250, 80 450, 120" stroke="transparent" fill="transparent"/>
+                                <text width="500" style={{fill: welcomeConfig.titleColor, textShadow: '2px 2px 4px rgba(0,0,0,0.5)', fontSize: `${innerFontSize2}rem`, letterSpacing: line2LetterSpacing }} className="font-black tracking-wider uppercase">
                                     <textPath href="#unit-curve2" startOffset="50%" textAnchor="middle">
                                         {titleLines[1]}
                                     </textPath>
                                 </text>
-                                <text x="250" y="115" textAnchor="middle" className="fill-current text-white text-lg font-bold tracking-normal opacity-80" style={{textShadow: '1px 1px 2px rgba(0,0,0,0.5)'}}>
+                                <text x="250" y="150" textAnchor="middle" className="fill-current text-white text-lg font-bold tracking-normal opacity-80" style={{textShadow: '1px 1px 2px rgba(0,0,0,0.5)'}}>
                                     {subtitleText}
                                 </text>
                              </>
@@ -230,7 +244,7 @@ const UnitSelectionScreen: React.FC<UnitSelectionScreenProps> = ({ playerData, c
                 </div>
                 
                  {firstEnabledIndex !== -1 && (
-                    <div className="text-4xl pointing-finger-down z-10 mb-4">
+                    <div className="text-4xl pointing-finger-down z-10 mb-4 mt-2">
                         <span>👇</span>
                     </div>
                 )}
@@ -240,7 +254,7 @@ const UnitSelectionScreen: React.FC<UnitSelectionScreenProps> = ({ playerData, c
                         display: 'grid', 
                         gridTemplateColumns: `repeat(${itemsPerRow}, minmax(0, 1fr))`,
                     }}
-                    className="gap-x-4 gap-y-2 max-h-[500px] overflow-y-auto px-4 py-2 custom-scrollbar w-full justify-items-center"
+                    className="gap-x-4 gap-y-2 max-h-[500px] overflow-y-auto px-4 py-2 custom-scrollbar w-full justify-items-center mt-2"
                 >
                     {items.map((itemNumber, index) => {
                         const unitId = `${itemPrefix}${itemNumber}`;
