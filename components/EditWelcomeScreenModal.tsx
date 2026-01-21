@@ -22,6 +22,7 @@ const DEFAULT_CONFIG: WelcomeScreenConfig = {
     inputClassFontSize: 1.25,
     inputClassColor: '#facc15',
     inputClassPlaceholder: 'Lớp...',
+    startButtonText: 'START'
 };
 
 const EditWelcomeScreenModal: React.FC<EditWelcomeScreenModalProps> = ({ show, onClose, onSave, currentConfig }) => {
@@ -30,7 +31,7 @@ const EditWelcomeScreenModal: React.FC<EditWelcomeScreenModalProps> = ({ show, o
 
     useEffect(() => {
         if (show) {
-            setConfig(currentConfig || DEFAULT_CONFIG);
+            setConfig({ ...DEFAULT_CONFIG, ...(currentConfig || {}) });
         }
     }, [show, currentConfig]);
 
@@ -57,19 +58,18 @@ const EditWelcomeScreenModal: React.FC<EditWelcomeScreenModalProps> = ({ show, o
         <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[100] p-4" onClick={onClose}>
             <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col" onClick={e => e.stopPropagation()}>
                 <div className="p-6 border-b flex justify-between items-center bg-gray-50 rounded-t-2xl">
-                    <h2 className="text-2xl font-bold text-gray-800">Chỉnh sửa nội dung thông tin màn hình đăng nhập</h2>
+                    <h2 className="text-2xl font-bold text-gray-800">Chỉnh sửa màn hình đăng nhập</h2>
                     <button onClick={onClose} className="text-gray-400 hover:text-gray-800 text-3xl">&times;</button>
                 </div>
 
                 <div className="flex-grow overflow-y-auto p-6 space-y-8">
-                    {/* Section: Title */}
                     <div className="space-y-4">
                         <h3 className="text-lg font-bold text-blue-700 border-b pb-2 flex items-center gap-2">
-                            <span>🏷️</span> Tiêu đề
+                            <span>🏷️</span> Tiêu đề & Nút bấm
                         </h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label className="block text-sm font-semibold text-gray-600 mb-1">Nội dung văn bản</label>
+                                <label className="block text-sm font-semibold text-gray-600 mb-1">Nội dung tiêu đề (Dùng \n để ngắt dòng)</label>
                                 <textarea 
                                     value={config.titleText} 
                                     onChange={e => handleChange('titleText', e.target.value.toUpperCase())}
@@ -78,22 +78,17 @@ const EditWelcomeScreenModal: React.FC<EditWelcomeScreenModalProps> = ({ show, o
                             </div>
                             <div className="space-y-4">
                                 <div>
+                                    <label className="block text-sm font-semibold text-gray-600 mb-1">Văn bản nút Bắt đầu (START)</label>
+                                    <input type="text" value={config.startButtonText} onChange={e => handleChange('startButtonText', e.target.value)} className="w-full p-2 border rounded font-black text-center text-red-600" />
+                                </div>
+                                <div>
                                     <label className="block text-sm font-semibold text-gray-600 mb-1">Màu sắc tiêu đề</label>
                                     <input type="color" value={config.titleColor} onChange={e => handleChange('titleColor', e.target.value)} className="w-full h-10 p-0 border-0 cursor-pointer" />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-semibold text-gray-600 mb-1">Cỡ chữ Hàng 1: <span className="text-blue-600">{config.titleFontSize}rem</span></label>
-                                    <input type="range" min="1" max="5" step="0.1" value={config.titleFontSize} onChange={e => handleChange('titleFontSize', parseFloat(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-semibold text-gray-600 mb-1">Cỡ chữ Hàng 2: <span className="text-blue-600">{config.titleFontSizeLine2}rem</span></label>
-                                    <input type="range" min="1" max="5" step="0.1" value={config.titleFontSizeLine2} onChange={e => handleChange('titleFontSizeLine2', parseFloat(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    {/* Section: Name Input */}
                     <div className="space-y-4">
                         <h3 className="text-lg font-bold text-teal-700 border-b pb-2 flex items-center gap-2">
                             <span>👤</span> Khung nhập Họ tên
@@ -111,10 +106,6 @@ const EditWelcomeScreenModal: React.FC<EditWelcomeScreenModalProps> = ({ show, o
                             </div>
                             <div className="space-y-4">
                                 <div>
-                                    <label className="block text-sm font-semibold text-gray-600 mb-1">Màu chữ nhập</label>
-                                    <input type="color" value={config.inputNameColor} onChange={e => handleChange('inputNameColor', e.target.value)} className="w-full h-10 p-0 border-0 cursor-pointer" />
-                                </div>
-                                <div>
                                     <label className="block text-sm font-semibold text-gray-600 mb-1">Gợi ý (Placeholder)</label>
                                     <input type="text" value={config.inputNamePlaceholder} onChange={e => handleChange('inputNamePlaceholder', e.target.value)} className="w-full p-2 border border-gray-300 rounded" />
                                 </div>
@@ -122,7 +113,6 @@ const EditWelcomeScreenModal: React.FC<EditWelcomeScreenModalProps> = ({ show, o
                         </div>
                     </div>
 
-                    {/* Section: Class Input */}
                     <div className="space-y-4">
                         <h3 className="text-lg font-bold text-orange-700 border-b pb-2 flex items-center gap-2">
                             <span>🏫</span> Khung nhập Lớp
@@ -133,16 +123,8 @@ const EditWelcomeScreenModal: React.FC<EditWelcomeScreenModalProps> = ({ show, o
                                     <label className="block text-sm font-semibold text-gray-600 mb-1">Độ rộng khung (rem): <span className="text-orange-600">{config.inputClassWidth}rem</span></label>
                                     <input type="range" min="4" max="20" step="0.5" value={config.inputClassWidth} onChange={e => handleChange('inputClassWidth', parseFloat(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-orange-600" />
                                 </div>
-                                <div>
-                                    <label className="block text-sm font-semibold text-gray-600 mb-1">Cỡ chữ lớp: <span className="text-orange-600">{config.inputClassFontSize}rem</span></label>
-                                    <input type="range" min="0.8" max="3" step="0.05" value={config.inputClassFontSize} onChange={e => handleChange('inputClassFontSize', parseFloat(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-orange-600" />
-                                </div>
                             </div>
                             <div className="space-y-4">
-                                <div>
-                                    <label className="block text-sm font-semibold text-gray-600 mb-1">Màu chữ lớp</label>
-                                    <input type="color" value={config.inputClassColor} onChange={e => handleChange('inputClassColor', e.target.value)} className="w-full h-10 p-0 border-0 cursor-pointer" />
-                                </div>
                                 <div>
                                     <label className="block text-sm font-semibold text-gray-600 mb-1">Gợi ý (Placeholder)</label>
                                     <input type="text" value={config.inputClassPlaceholder} onChange={e => handleChange('inputClassPlaceholder', e.target.value)} className="w-full p-2 border border-gray-300 rounded" />

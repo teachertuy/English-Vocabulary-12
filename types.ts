@@ -37,7 +37,6 @@ export interface GameResult {
   gameType?: 'quiz' | 'spelling' | 'matching' | 'vocabulary';
   attempts?: number;
   status?: 'in-progress' | 'completed';
-  // activityId is added to hold the Firebase push key for results tracking
   activityId?: string;
 }
 
@@ -65,11 +64,11 @@ export interface UnitsState {
 
 export interface VocabularyWord {
   word: string;
-  type: string; // e.g., 'n', 'v', 'adj'
+  type: string;
   phonetic: string;
   translation: string;
-  image?: string; // URL to the image
-  audio?: string; // Base64 audio string
+  image?: string;
+  audio?: string;
 }
 
 export interface WelcomeScreenConfig {
@@ -85,6 +84,7 @@ export interface WelcomeScreenConfig {
     inputClassFontSize: number;
     inputClassColor: string;
     inputClassPlaceholder: string;
+    startButtonText: string;
 }
 
 export interface DashboardConfig {
@@ -105,9 +105,16 @@ export interface DashboardConfig {
 }
 
 export interface ExerciseSelectionConfig {
+    // Header & Global
     mainTitle: string;
     mainTitleFontSize: number;
     mainTitleColor: string;
+    subtitle: string;
+    subtitleFontSize: number;
+    subtitleColor: string;
+    backButtonText: string;
+
+    // Main Category Cards
     card1Title: string;
     card1Icon: string;
     card1Color: string;
@@ -115,6 +122,31 @@ export interface ExerciseSelectionConfig {
     card2Icon: string;
     card2Color: string;
     cardFontSize: number;
-    cardHeight: number; // rem
-    cardBorderRadius: number; // px
+    cardHeight: number;
+    cardBorderRadius: number;
+
+    // Unit/Topic Grid
+    unitLabelText: string;
+    topicLabelText: string;
+    exitButtonText: string;
+    unitCardBgColor: string; // Default/Fallback
+    unitCardColors: string[]; // Array of colors for Units 1-10
+    topicCardColors: string[]; // Array of colors for Topics (repeating)
+    unitCardTextColor: string;
+    unitCardLabelColor: string;
+    unitCardFontSize: number;
+    unitCardHeight: number;
+    unitCardBorderRadius: number;
+    dividerColor1: string; // Line 1
+    dividerColor2: string; // Line 2
+
+    // Activity Labels & Descriptions
+    activityLearnLabel: string;
+    activityLearnDesc: string;
+    activityMatchLabel: string;
+    activityMatchDesc: string;
+    activitySpellLabel: string;
+    activitySpellDesc: string;
+    activityQuizLabel: string;
+    activityQuizDesc: string;
 }

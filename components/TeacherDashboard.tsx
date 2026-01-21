@@ -71,10 +71,15 @@ const DEFAULT_DASHBOARD_CONFIG: DashboardConfig = {
     manageButtonColor: '#dc2626',
 };
 
+// Fixed missing properties in DEFAULT_EXERCISE_CONFIG
 const DEFAULT_EXERCISE_CONFIG: ExerciseSelectionConfig = {
     mainTitle: 'TỪ VỰNG TIẾNG ANH 12 & TỪ VỰNG THEO CHỦ ĐỀ',
     mainTitleFontSize: 1.875,
     mainTitleColor: '#dc2626',
+    subtitle: '(Chọn một mục bên dưới để bắt đầu luyện tập)',
+    subtitleFontSize: 1.125,
+    subtitleColor: '#4b5563',
+    backButtonText: 'Quay lại',
     card1Title: 'English 12',
     card1Icon: '📝',
     card1Color: '#3b82f6',
@@ -84,6 +89,27 @@ const DEFAULT_EXERCISE_CONFIG: ExerciseSelectionConfig = {
     cardFontSize: 1.5,
     cardHeight: 10,
     cardBorderRadius: 16,
+    unitLabelText: 'UNIT',
+    topicLabelText: 'TOPIC',
+    exitButtonText: 'Thoát',
+    unitCardBgColor: '#00A9C3',
+    unitCardColors: ['#00ACC1', '#2E7D32', '#AFB42B', '#D84315', '#C62828', '#D81B60', '#7B1FA2', '#1976D2', '#37474F', '#00897B'],
+    topicCardColors: ['#00ACC1', '#2E7D32', '#AFB42B', '#D84315', '#C62828', '#D81B60', '#7B1FA2', '#1976D2', '#37474F', '#00897B'],
+    dividerColor1: '#ffffff',
+    dividerColor2: '#facc15',
+    unitCardTextColor: '#ffffff',
+    unitCardLabelColor: '#fde047',
+    unitCardFontSize: 2.25,
+    unitCardHeight: 7,
+    unitCardBorderRadius: 8,
+    activityLearnLabel: 'Học từ vựng',
+    activityLearnDesc: 'Xem lại danh sách từ của bài',
+    activityMatchLabel: 'Trò chơi Ghép cặp',
+    activityMatchDesc: 'Nối từ tiếng Anh với nghĩa Việt',
+    activitySpellLabel: 'Trò chơi Viết Chính tả',
+    activitySpellDesc: 'Viết từ tiếng Anh tương ứng',
+    activityQuizLabel: 'Làm bài trắc nghiệm',
+    activityQuizDesc: 'Kiểm tra kiến thức của bạn',
 };
 
 interface StudentGroupedResult {

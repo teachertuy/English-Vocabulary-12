@@ -22,6 +22,7 @@ const DEFAULT_CONFIG: WelcomeScreenConfig = {
     inputClassFontSize: 1.25,
     inputClassColor: '#facc15',
     inputClassPlaceholder: 'Lớp...',
+    startButtonText: 'START'
 };
 
 const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, classroomId }) => {
@@ -49,7 +50,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
 
     const unsubscribeConfig = listenToWelcomeConfig(classroomId, (newConfig) => {
         if (newConfig) {
-            setConfig(newConfig);
+            setConfig({ ...DEFAULT_CONFIG, ...newConfig });
         }
     });
 
@@ -94,7 +95,6 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
     if (manualLines.length > 1) return manualLines.slice(0, 2);
 
     const text = config.titleText.trim();
-    // Only auto-split if the text is very long and font is very large
     if (text.length > 25 && config.titleFontSize > 2.5) {
         const mid = Math.floor(text.length / 2);
         const splitIndex = text.lastIndexOf(' ', mid + 5);
@@ -108,19 +108,14 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
   const line2LetterSpacing = useMemo(() => {
     if (titleLines.length > 1) {
         const line2 = titleLines[1].trim();
-        if (line2 === '12') {
-            return '-0.08em';
-        }
-        if (line2.includes('12')) {
-            return '0.05em';
-        }
+        if (line2 === '12') return '-0.08em';
+        if (line2.includes('12')) return '0.05em';
     }
     return '0.35em';
   }, [titleLines]);
   
   return (
     <div className="flex flex-col items-center justify-center p-4 text-center min-h-[500px] blueprint-bg relative overflow-hidden">
-       {/* Teacher Login / Avatar */}
        <button 
          onClick={onHostRequest} 
          className="absolute top-6 left-6 z-50 flex flex-col items-center group cursor-pointer focus:outline-none focus:ring-4 focus:ring-yellow-400 focus:ring-opacity-50 rounded-full transition-transform transform hover:scale-105"
@@ -136,12 +131,9 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
          </p>
        </button>
       
-      {/* Main Content Wrapper */}
       <div className="w-full max-w-md mt-0 space-y-0 z-10 flex flex-col items-center">
-            {/* Curved Title - Flattened Path for Single Line */}
             <div className={`w-full transition-all duration-500 ${titleLines.length > 1 ? 'h-44' : 'h-24'} relative mt-24`}>
                  <svg viewBox={titleLines.length > 1 ? "0 0 500 180" : "0 0 500 100"} className="w-full h-full overflow-visible">
-                    {/* Hàng 1 - Flattened curve for more text */}
                     <path id="curve1" d={titleLines.length > 1 ? "M 50, 60 Q 250, 15 450, 60" : "M 20, 75 Q 250, 30 480, 75"} stroke="transparent" fill="transparent"/>
                     <text width="500" style={{ fill: config.titleColor, filter: 'drop-shadow(2px 2px 2px rgba(0,0,0,0.4))', fontSize: `${config.titleFontSize}rem` }} className="font-black tracking-wider uppercase">
                         <textPath href="#curve1" startOffset="50%" textAnchor="middle">
@@ -149,7 +141,6 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
                         </textPath>
                     </text>
                     
-                    {/* Hàng 2 */}
                     {titleLines.length > 1 && (
                         <>
                             <path id="curve2" d="M 10, 160 Q 250, 110 490, 160" stroke="transparent" fill="transparent"/>
@@ -163,14 +154,12 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
                  </svg>
             </div>
 
-            {/* Pointing Finger */}
             <div className="flex justify-center -mt-10 mb-2 relative z-20">
                  <div className="text-5xl pointing-finger-down filter drop-shadow-xl transform hover:scale-110 transition-transform cursor-default">
                     👇
                 </div>
             </div>
 
-            {/* Input Fields */}
             <div className="mt-2 space-y-3 w-full flex flex-col items-center">
                  <div className="relative group w-full flex justify-center" style={{ width: `${config.inputNameWidth}%` }}>
                     <input 
@@ -182,7 +171,6 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
                         className={`w-full px-6 py-4 rounded-3xl text-center font-black bg-gradient-to-r from-teal-400 to-cyan-500 border-2 border-white focus:outline-none focus:border-yellow-300 focus:ring-4 focus:ring-cyan-300/40 placeholder-teal-100 shadow-[0_10px_20px_rgba(0,0,0,0.2)] transition-all transform group-hover:-translate-y-0.5 group-hover:shadow-[0_15px_25px_rgba(0,0,0,0.3)] ${shakeName ? 'animate-pulse border-red-500' : ''}`}
                     />
                  </div>
-                 {/* Class Input */}
                  <div className="relative group flex justify-center">
                     <input 
                         type="text" 
@@ -207,7 +195,6 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
                  {error && <p className="text-red-100 font-bold bg-red-600/90 px-4 py-0.5 rounded-full inline-block shadow-lg animate-bounce text-[10px]">{error}</p>}
             </div>
 
-            {/* Start Button */}
             <div className="flex justify-center pt-8 pb-0">
                 <button 
                     onClick={handleStartClick} 
@@ -222,7 +209,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
                     ) : isSubmitting ? (
                         <span className="animate-pulse">...</span>
                     ) : (
-                        <span style={{ textShadow: '1px 1px 0px rgba(255,255,255,0.5)' }}>START</span>
+                        <span className="uppercase" style={{ textShadow: '1px 1px 0px rgba(255,255,255,0.5)' }}>{config.startButtonText}</span>
                     )}
                 </button>
             </div>

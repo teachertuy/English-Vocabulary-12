@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { PlayerData, QuizQuestion, UnitsState, VocabularyWord, WelcomeScreenConfig } from '../types';
-import { listenToUnitsStatusByGrade, listenToTopicsStatus, listenToWelcomeConfig } from '../services/firebaseService';
+import { PlayerData, QuizQuestion, UnitsState, VocabularyWord, WelcomeScreenConfig, ExerciseSelectionConfig } from '../types';
+import { listenToUnitsStatusByGrade, listenToTopicsStatus, listenToWelcomeConfig, listenToExerciseSelectionConfig } from '../services/firebaseService';
 import ActivitySelectionModal from './ActivitySelectionModal';
 
 interface UnitSelectionScreenProps {
@@ -18,21 +18,52 @@ interface UnitSelectionScreenProps {
   onCloseActivityModal: () => void;
 }
 
-// Colors based on the provided image
-const unitColors = [
-    'bg-[#00A9C3]', // Unit 1 - Teal
-    'bg-[#00A859]', // Unit 2 - Green
-    'bg-[#AF8A00]', // Unit 3 - Olive
-    'bg-[#D36D2C]', // Unit 4 - Orange
-    'bg-[#C3423F]', // Unit 5 - Red-brown
-    'bg-[#D8507F]', // Unit 6 - Pink
-    'bg-[#8E44AD]', // Unit 7 - Purple
-    'bg-[#3498DB]', // Unit 8 - Blue
-    'bg-[#2C3E50]', // Unit 9 - Dark Blue
-    'bg-[#16A085]', // Unit 10 - Dark Teal
+const DEFAULT_UNIT_COLORS = [
+    '#00ACC1', '#2E7D32', '#AFB42B', '#D84315', '#C62828',
+    '#D81B60', '#7B1FA2', '#1976D2', '#37474F', '#00897B'
 ];
 
-const DEFAULT_CONFIG: WelcomeScreenConfig = {
+const DEFAULT_EXERCISE_CONFIG: ExerciseSelectionConfig = {
+    mainTitle: 'TỪ VỰNG TIẾNG ANH 12 & TỪ VỰNG THEO CHỦ ĐỀ',
+    mainTitleFontSize: 1.875,
+    mainTitleColor: '#dc2626',
+    subtitle: '(Chọn một mục bên dưới để bắt đầu luyện tập)',
+    subtitleFontSize: 1.125,
+    subtitleColor: '#4b5563',
+    backButtonText: 'Quay lại',
+    card1Title: 'English 12',
+    card1Icon: '📝',
+    card1Color: '#3b82f6',
+    card2Title: 'Topic-based vocabulary',
+    card2Icon: '📰',
+    card2Color: '#a855f7',
+    cardFontSize: 1.5,
+    cardHeight: 10,
+    cardBorderRadius: 16,
+    unitLabelText: 'UNIT',
+    topicLabelText: 'TOPIC',
+    exitButtonText: 'Thoát',
+    unitCardBgColor: '#00A9C3',
+    unitCardColors: DEFAULT_UNIT_COLORS,
+    topicCardColors: DEFAULT_UNIT_COLORS,
+    unitCardTextColor: '#ffffff',
+    unitCardLabelColor: '#fde047',
+    unitCardFontSize: 2.25,
+    unitCardHeight: 7,
+    unitCardBorderRadius: 8,
+    dividerColor1: '#ffffff',
+    dividerColor2: '#facc15',
+    activityLearnLabel: 'Học từ vựng',
+    activityLearnDesc: 'Xem lại danh sách từ của bài',
+    activityMatchLabel: 'Trò chơi Ghép cặp',
+    activityMatchDesc: 'Nối từ tiếng Anh với nghĩa Việt',
+    activitySpellLabel: 'Trò chơi Viết Chính tả',
+    activitySpellDesc: 'Viết từ tiếng Anh tương ứng',
+    activityQuizLabel: 'Làm bài trắc nghiệm',
+    activityQuizDesc: 'Kiểm tra kiến thức của bạn',
+};
+
+const DEFAULT_WELCOME_CONFIG: WelcomeScreenConfig = {
     titleText: 'ENGLISH VOCABULARY 12',
     titleFontSize: 1.8,
     titleFontSizeLine2: 1.6,
@@ -45,11 +76,13 @@ const DEFAULT_CONFIG: WelcomeScreenConfig = {
     inputClassFontSize: 1.25,
     inputClassColor: '#facc15',
     inputClassPlaceholder: 'Lớp...',
+    startButtonText: 'START'
 };
 
 const UnitSelectionScreen: React.FC<UnitSelectionScreenProps> = ({ playerData, classroomId, grade, onStartQuiz, onLearnVocabulary, onStartSpellingGame, onStartMatchingGame, onBack, selectedUnit, onUnitSelect, onCloseActivityModal }) => {
     const [unitsStatus, setUnitsStatus] = useState<UnitsState>({});
-    const [config, setConfig] = useState<WelcomeScreenConfig>(DEFAULT_CONFIG);
+    const [welcomeConfig, setWelcomeConfig] = useState<WelcomeScreenConfig>(DEFAULT_WELCOME_CONFIG);
+    const [exerciseConfig, setExerciseConfig] = useState<ExerciseSelectionConfig>(DEFAULT_EXERCISE_CONFIG);
 
     useEffect(() => {
         let unsubscribe: () => void;
@@ -63,13 +96,18 @@ const UnitSelectionScreen: React.FC<UnitSelectionScreenProps> = ({ playerData, c
             });
         }
         
-        const unsubConfig = listenToWelcomeConfig(classroomId, (newConfig) => {
-            if (newConfig) setConfig(newConfig);
+        const unsubWelcome = listenToWelcomeConfig(classroomId, (newConfig) => {
+            if (newConfig) setWelcomeConfig({ ...DEFAULT_WELCOME_CONFIG, ...newConfig });
+        });
+
+        const unsubExercise = listenToExerciseSelectionConfig(classroomId, (newConfig) => {
+            if (newConfig) setExerciseConfig({ ...DEFAULT_EXERCISE_CONFIG, ...newConfig });
         });
 
         return () => {
             unsubscribe();
-            unsubConfig();
+            unsubWelcome();
+            unsubExercise();
         };
     }, [classroomId, grade]);
     
@@ -83,20 +121,17 @@ const UnitSelectionScreen: React.FC<UnitSelectionScreenProps> = ({ playerData, c
     const isTopics = grade === 'topics';
     const itemCount = isTopics ? 60 : 10;
     const itemPrefix = isTopics ? 'topic_' : 'unit_';
-    const itemLabel = isTopics ? 'Topic' : 'Unit';
+    const itemLabel = isTopics ? exerciseConfig.topicLabelText : exerciseConfig.unitLabelText;
     
-    // Yêu cầu: Đổi tên phần Topics thành VOCABULARY BY TOPIC
-    const displayTitle = isTopics ? 'VOCABULARY BY TOPIC' : config.titleText;
-    const subtitle = isTopics ? '(Từ vựng theo chủ đề)' : `(Từ vựng Tiếng Anh Lớp ${grade})`;
+    const displayTitle = isTopics ? exerciseConfig.card2Title.toUpperCase() : welcomeConfig.titleText;
+    const subtitleText = isTopics ? exerciseConfig.subtitle : `(Từ vựng Tiếng Anh Lớp ${grade})`;
     
-    // Hệ số thu nhỏ cho màn hình bên trong (30% nhỏ hơn so với màn hình chào)
     const scaleFactor = 0.7;
-    const innerFontSize1 = config.titleFontSize * scaleFactor;
-    const innerFontSize2 = (config.titleFontSizeLine2 || (config.titleFontSize * 0.9)) * scaleFactor;
+    const innerFontSize1 = welcomeConfig.titleFontSize * scaleFactor;
+    const innerFontSize2 = (welcomeConfig.titleFontSizeLine2 || (welcomeConfig.titleFontSize * 0.9)) * scaleFactor;
 
     const titleLines = useMemo(() => {
         const lines = displayTitle.split('\n').filter(l => l.trim() !== '');
-        // Logic tự động ngắt dòng nếu quá dài
         if (lines.length === 1 && displayTitle.length > 20) {
              const mid = Math.floor(displayTitle.length / 2);
              const splitIndex = displayTitle.lastIndexOf(' ', mid + 5);
@@ -111,6 +146,14 @@ const UnitSelectionScreen: React.FC<UnitSelectionScreenProps> = ({ playerData, c
         const unitId = `${itemPrefix}${itemNumber}`;
         return unitsStatus[unitId]?.enabled ?? false;
     });
+
+    const getCardColor = (idx: number) => {
+        const colors = isTopics 
+            ? (exerciseConfig.topicCardColors || exerciseConfig.unitCardColors || DEFAULT_UNIT_COLORS)
+            : (exerciseConfig.unitCardColors || DEFAULT_UNIT_COLORS);
+        
+        return colors[idx % colors.length] || exerciseConfig.unitCardBgColor;
+    };
 
     return (
         <div className="flex flex-col items-center justify-center p-6 text-center min-h-[600px] blueprint-bg relative">
@@ -128,36 +171,34 @@ const UnitSelectionScreen: React.FC<UnitSelectionScreenProps> = ({ playerData, c
                 />
             )}
             <button onClick={onBack} className="absolute top-4 right-4 bg-black/20 text-white font-semibold py-2 px-4 rounded-full hover:bg-black/30 transition shadow-md z-10">
-                Thoát
+                {exerciseConfig.exitButtonText}
             </button>
 
             <div className="w-full max-w-5xl mx-auto">
                  <div className={`w-full transition-all duration-300 ${titleLines.length > 1 ? 'h-36' : 'h-24'} mb-2`}>
                     <svg viewBox={titleLines.length > 1 ? "0 0 500 120" : "0 0 500 80"} className="w-full h-full overflow-visible">
-                        {/* Hàng 1 - Làm phẳng đường cong hơn một chút cho chữ nhỏ */}
                         <path id="unit-curve1" d={titleLines.length > 1 ? "M 50, 50 Q 250, 10 450, 50" : "M 20, 60 Q 250, 25 480, 60"} stroke="transparent" fill="transparent"/>
-                        <text width="500" style={{fill: config.titleColor, textShadow: '2px 2px 4px rgba(0,0,0,0.5)', fontSize: `${innerFontSize1}rem` }} className="font-extrabold tracking-wider uppercase">
+                        <text width="500" style={{fill: welcomeConfig.titleColor, textShadow: '2px 2px 4px rgba(0,0,0,0.5)', fontSize: `${innerFontSize1}rem` }} className="font-extrabold tracking-wider uppercase">
                             <textPath href="#unit-curve1" startOffset="50%" textAnchor="middle">
                                 {titleLines[0]}
                             </textPath>
                         </text>
                         
-                        {/* Hàng 2 (nếu có) */}
                         {titleLines.length > 1 ? (
                              <>
                                 <path id="unit-curve2" d="M 50, 90 Q 250, 50 450, 90" stroke="transparent" fill="transparent"/>
-                                <text width="500" style={{fill: config.titleColor, textShadow: '2px 2px 4px rgba(0,0,0,0.5)', fontSize: `${innerFontSize2}rem` }} className="font-extrabold tracking-wider uppercase">
+                                <text width="500" style={{fill: welcomeConfig.titleColor, textShadow: '2px 2px 4px rgba(0,0,0,0.5)', fontSize: `${innerFontSize2}rem` }} className="font-extrabold tracking-wider uppercase">
                                     <textPath href="#unit-curve2" startOffset="50%" textAnchor="middle">
                                         {titleLines[1]}
                                     </textPath>
                                 </text>
                                 <text x="250" y="115" text-anchor="middle" className="fill-current text-white text-lg font-bold tracking-normal opacity-80" style={{textShadow: '1px 1px 2px rgba(0,0,0,0.5)'}}>
-                                    {subtitle}
+                                    {subtitleText}
                                 </text>
                              </>
                         ) : (
                             <text x="250" y="75" text-anchor="middle" className="fill-current text-white text-xl font-bold tracking-normal opacity-80" style={{textShadow: '1px 1px 2px rgba(0,0,0,0.5)'}}>
-                                {subtitle}
+                                {subtitleText}
                             </text>
                         )}
                     </svg>
@@ -169,35 +210,51 @@ const UnitSelectionScreen: React.FC<UnitSelectionScreenProps> = ({ playerData, c
                     </div>
                 )}
                 
-                <div className="grid grid-cols-5 gap-4">
+                <div className={`grid ${isTopics ? 'grid-cols-6' : 'grid-cols-5'} gap-x-4 gap-y-2 max-h-[500px] overflow-y-auto px-4 py-2 custom-scrollbar`}>
                     {items.map((itemNumber, index) => {
                         const unitId = `${itemPrefix}${itemNumber}`;
                         const isEnabled = unitsStatus[unitId]?.enabled ?? false;
-                        const color = isEnabled ? unitColors[(itemNumber - 1) % unitColors.length] : 'bg-gray-500';
+                        const cardColor = getCardColor(index);
+                        const isAtDividerRow = (index === 5 && !isTopics) || (isTopics && index > 0 && index % 6 === 0);
 
                         return (
                             <React.Fragment key={itemNumber}>
+                                {/* Double Horizontal Divider */}
+                                {isAtDividerRow && (
+                                    <div className={`${isTopics ? 'col-span-6' : 'col-span-5'} my-6 space-y-1`}>
+                                        <div className="h-0.5 w-full" style={{ backgroundColor: exerciseConfig.dividerColor1 }}></div>
+                                        <div className="h-0.5 w-full" style={{ backgroundColor: exerciseConfig.dividerColor2 }}></div>
+                                        <div className="h-0.5 w-full" style={{ backgroundColor: exerciseConfig.dividerColor1 }}></div>
+                                    </div>
+                                )}
+                                
                                 <div className="relative">
                                     <button 
                                         onClick={() => handleUnitSelect(itemNumber)}
                                         disabled={!isEnabled}
-                                        className={`w-full h-28 rounded-lg flex flex-col items-center justify-center text-white transition-transform transform hover:scale-105 disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none ${color}`}
+                                        style={{ 
+                                            backgroundColor: isEnabled ? cardColor : '#374151', 
+                                            height: `${exerciseConfig.unitCardHeight}rem`,
+                                            borderRadius: `${exerciseConfig.unitCardBorderRadius}px`,
+                                            boxShadow: isEnabled ? `0 10px 15px -3px ${cardColor}55, 0 4px 6px -2px ${cardColor}33` : 'none'
+                                        }}
+                                        className="w-full flex flex-col items-center justify-center text-white transition-all transform hover:scale-105 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none border border-white/20"
                                     >
-                                        <span className="text-sm uppercase font-extrabold text-yellow-300">{itemLabel}</span>
-                                        <span className="text-4xl font-black -mt-1 font-['Nunito']">{itemNumber}</span>
+                                        <span style={{ color: exerciseConfig.unitCardLabelColor }} className="text-[11px] uppercase font-black tracking-widest">{itemLabel}</span>
+                                        <span style={{ color: exerciseConfig.unitCardTextColor, fontSize: `${exerciseConfig.unitCardFontSize}rem` }} className="font-black -mt-2 font-['Nunito'] leading-tight drop-shadow-md">{itemNumber}</span>
                                     </button>
                                 </div>
-                                {!isTopics && index === 4 && (
-                                    <div className="col-span-5 my-4">
-                                        <div className="h-1 bg-white w-full rounded-full"></div>
-                                        <div className="h-1 bg-yellow-300 w-full rounded-full mt-1"></div>
-                                    </div>
-                                )}
                             </React.Fragment>
                         );
                     })}
                 </div>
             </div>
+            <style>{`
+                .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+                .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 10px; }
+                .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+                .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.4); }
+            `}</style>
         </div>
     );
 };
