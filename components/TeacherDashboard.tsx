@@ -71,6 +71,11 @@ const DEFAULT_DASHBOARD_CONFIG: DashboardConfig = {
     manageButtonColor: '#dc2626',
 };
 
+const DEFAULT_UNIT_COLORS = [
+    '#00ACC1', '#2E7D32', '#AFB42B', '#D84315', '#C62828',
+    '#D81B60', '#7B1FA2', '#1976D2', '#37474F', '#00897B'
+];
+
 // Fixed missing properties in DEFAULT_EXERCISE_CONFIG
 const DEFAULT_EXERCISE_CONFIG: ExerciseSelectionConfig = {
     mainTitle: 'TỪ VỰNG TIẾNG ANH 12 & TỪ VỰNG THEO CHỦ ĐỀ',
@@ -89,19 +94,29 @@ const DEFAULT_EXERCISE_CONFIG: ExerciseSelectionConfig = {
     cardFontSize: 1.5,
     cardHeight: 10,
     cardBorderRadius: 16,
+
     unitLabelText: 'UNIT',
-    topicLabelText: 'TOPIC',
-    exitButtonText: 'Thoát',
-    unitCardBgColor: '#00A9C3',
-    unitCardColors: ['#00ACC1', '#2E7D32', '#AFB42B', '#D84315', '#C62828', '#D81B60', '#7B1FA2', '#1976D2', '#37474F', '#00897B'],
-    topicCardColors: ['#00ACC1', '#2E7D32', '#AFB42B', '#D84315', '#C62828', '#D81B60', '#7B1FA2', '#1976D2', '#37474F', '#00897B'],
-    dividerColor1: '#ffffff',
-    dividerColor2: '#facc15',
+    unitCardColors: DEFAULT_UNIT_COLORS,
     unitCardTextColor: '#ffffff',
     unitCardLabelColor: '#fde047',
     unitCardFontSize: 2.25,
     unitCardHeight: 7,
+    unitCardWidth: 100,
     unitCardBorderRadius: 8,
+
+    topicLabelText: 'TOPIC',
+    topicCardColors: DEFAULT_UNIT_COLORS,
+    topicCardTextColor: '#ffffff',
+    topicCardLabelColor: '#fde047',
+    topicCardFontSize: 1.8,
+    topicCardHeight: 6,
+    topicCardWidth: 100,
+    topicCardBorderRadius: 12,
+
+    exitButtonText: 'Thoát',
+    dividerColor1: '#ffffff',
+    dividerColor2: '#facc15',
+
     activityLearnLabel: 'Học từ vựng',
     activityLearnDesc: 'Xem lại danh sách từ của bài',
     activityMatchLabel: 'Trò chơi Ghép cặp',

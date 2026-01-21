@@ -125,20 +125,30 @@ export interface ExerciseSelectionConfig {
     cardHeight: number;
     cardBorderRadius: number;
 
-    // Unit/Topic Grid
+    // Unit Grid Config
     unitLabelText: string;
-    topicLabelText: string;
-    exitButtonText: string;
-    unitCardBgColor: string; // Default/Fallback
-    unitCardColors: string[]; // Array of colors for Units 1-10
-    topicCardColors: string[]; // Array of colors for Topics (repeating)
+    unitCardColors: string[];
     unitCardTextColor: string;
     unitCardLabelColor: string;
     unitCardFontSize: number;
     unitCardHeight: number;
+    unitCardWidth: number;
     unitCardBorderRadius: number;
-    dividerColor1: string; // Line 1
-    dividerColor2: string; // Line 2
+
+    // Topic Grid Config
+    topicLabelText: string;
+    topicCardColors: string[];
+    topicCardTextColor: string;
+    topicCardLabelColor: string;
+    topicCardFontSize: number;
+    topicCardHeight: number;
+    topicCardWidth: number;
+    topicCardBorderRadius: number;
+
+    // Design Global
+    exitButtonText: string;
+    dividerColor1: string;
+    dividerColor2: string;
 
     // Activity Labels & Descriptions
     activityLearnLabel: string;

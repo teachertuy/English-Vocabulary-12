@@ -40,19 +40,29 @@ const DEFAULT_EXERCISE_CONFIG: ExerciseSelectionConfig = {
     cardFontSize: 1.5,
     cardHeight: 10,
     cardBorderRadius: 16,
+
     unitLabelText: 'UNIT',
-    topicLabelText: 'TOPIC',
-    exitButtonText: 'Thoát',
-    unitCardBgColor: '#00A9C3',
     unitCardColors: DEFAULT_UNIT_COLORS,
-    topicCardColors: DEFAULT_UNIT_COLORS,
     unitCardTextColor: '#ffffff',
     unitCardLabelColor: '#fde047',
     unitCardFontSize: 2.25,
     unitCardHeight: 7,
+    unitCardWidth: 100,
     unitCardBorderRadius: 8,
+
+    topicLabelText: 'TOPIC',
+    topicCardColors: DEFAULT_UNIT_COLORS,
+    topicCardTextColor: '#ffffff',
+    topicCardLabelColor: '#fde047',
+    topicCardFontSize: 1.8,
+    topicCardHeight: 6,
+    topicCardWidth: 100,
+    topicCardBorderRadius: 12,
+
+    exitButtonText: 'Thoát',
     dividerColor1: '#ffffff',
     dividerColor2: '#facc15',
+
     activityLearnLabel: 'Học từ vựng',
     activityLearnDesc: 'Xem lại danh sách từ của bài',
     activityMatchLabel: 'Trò chơi Ghép cặp',
@@ -121,7 +131,15 @@ const UnitSelectionScreen: React.FC<UnitSelectionScreenProps> = ({ playerData, c
     const isTopics = grade === 'topics';
     const itemCount = isTopics ? 60 : 10;
     const itemPrefix = isTopics ? 'topic_' : 'unit_';
+    
+    // Choose config based on mode
     const itemLabel = isTopics ? exerciseConfig.topicLabelText : exerciseConfig.unitLabelText;
+    const cardHeight = isTopics ? exerciseConfig.topicCardHeight : exerciseConfig.unitCardHeight;
+    const cardWidth = isTopics ? exerciseConfig.topicCardWidth : exerciseConfig.unitCardWidth;
+    const cardFontSize = isTopics ? exerciseConfig.topicCardFontSize : exerciseConfig.unitCardFontSize;
+    const cardBorderRadius = isTopics ? exerciseConfig.topicCardBorderRadius : exerciseConfig.unitCardBorderRadius;
+    const labelColor = isTopics ? exerciseConfig.topicCardLabelColor : exerciseConfig.unitCardLabelColor;
+    const textColor = isTopics ? exerciseConfig.topicCardTextColor : exerciseConfig.unitCardTextColor;
     
     const displayTitle = isTopics ? exerciseConfig.card2Title.toUpperCase() : welcomeConfig.titleText;
     const subtitleText = isTopics ? exerciseConfig.subtitle : `(Từ vựng Tiếng Anh Lớp ${grade})`;
@@ -149,10 +167,10 @@ const UnitSelectionScreen: React.FC<UnitSelectionScreenProps> = ({ playerData, c
 
     const getCardColor = (idx: number) => {
         const colors = isTopics 
-            ? (exerciseConfig.topicCardColors || exerciseConfig.unitCardColors || DEFAULT_UNIT_COLORS)
+            ? (exerciseConfig.topicCardColors || DEFAULT_UNIT_COLORS)
             : (exerciseConfig.unitCardColors || DEFAULT_UNIT_COLORS);
         
-        return colors[idx % colors.length] || exerciseConfig.unitCardBgColor;
+        return colors[idx % colors.length] || '#00A9C3';
     };
 
     return (
@@ -174,7 +192,7 @@ const UnitSelectionScreen: React.FC<UnitSelectionScreenProps> = ({ playerData, c
                 {exerciseConfig.exitButtonText}
             </button>
 
-            <div className="w-full max-w-5xl mx-auto">
+            <div className="w-full max-w-5xl mx-auto flex flex-col items-center">
                  <div className={`w-full transition-all duration-300 ${titleLines.length > 1 ? 'h-36' : 'h-24'} mb-2`}>
                     <svg viewBox={titleLines.length > 1 ? "0 0 500 120" : "0 0 500 80"} className="w-full h-full overflow-visible">
                         <path id="unit-curve1" d={titleLines.length > 1 ? "M 50, 50 Q 250, 10 450, 50" : "M 20, 60 Q 250, 25 480, 60"} stroke="transparent" fill="transparent"/>
@@ -210,7 +228,7 @@ const UnitSelectionScreen: React.FC<UnitSelectionScreenProps> = ({ playerData, c
                     </div>
                 )}
                 
-                <div className={`grid ${isTopics ? 'grid-cols-6' : 'grid-cols-5'} gap-x-4 gap-y-2 max-h-[500px] overflow-y-auto px-4 py-2 custom-scrollbar`}>
+                <div className={`grid ${isTopics ? 'grid-cols-2 sm:grid-cols-4 md:grid-cols-6' : 'grid-cols-2 sm:grid-cols-5'} gap-x-4 gap-y-2 max-h-[500px] overflow-y-auto px-4 py-2 custom-scrollbar w-full justify-items-center`}>
                     {items.map((itemNumber, index) => {
                         const unitId = `${itemPrefix}${itemNumber}`;
                         const isEnabled = unitsStatus[unitId]?.enabled ?? false;
@@ -219,29 +237,29 @@ const UnitSelectionScreen: React.FC<UnitSelectionScreenProps> = ({ playerData, c
 
                         return (
                             <React.Fragment key={itemNumber}>
-                                {/* Double Horizontal Divider */}
                                 {isAtDividerRow && (
-                                    <div className={`${isTopics ? 'col-span-6' : 'col-span-5'} my-6 space-y-1`}>
+                                    <div className={`${isTopics ? 'col-span-2 sm:col-span-4 md:col-span-6' : 'col-span-2 sm:col-span-5'} w-full my-6 space-y-1`}>
                                         <div className="h-0.5 w-full" style={{ backgroundColor: exerciseConfig.dividerColor1 }}></div>
                                         <div className="h-0.5 w-full" style={{ backgroundColor: exerciseConfig.dividerColor2 }}></div>
                                         <div className="h-0.5 w-full" style={{ backgroundColor: exerciseConfig.dividerColor1 }}></div>
                                     </div>
                                 )}
                                 
-                                <div className="relative">
+                                <div className="flex justify-center w-full">
                                     <button 
                                         onClick={() => handleUnitSelect(itemNumber)}
                                         disabled={!isEnabled}
                                         style={{ 
                                             backgroundColor: isEnabled ? cardColor : '#374151', 
-                                            height: `${exerciseConfig.unitCardHeight}rem`,
-                                            borderRadius: `${exerciseConfig.unitCardBorderRadius}px`,
+                                            height: `${cardHeight}rem`,
+                                            width: `${cardWidth}%`,
+                                            borderRadius: `${cardBorderRadius}px`,
                                             boxShadow: isEnabled ? `0 10px 15px -3px ${cardColor}55, 0 4px 6px -2px ${cardColor}33` : 'none'
                                         }}
-                                        className="w-full flex flex-col items-center justify-center text-white transition-all transform hover:scale-105 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none border border-white/20"
+                                        className="flex flex-col items-center justify-center text-white transition-all transform hover:scale-105 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none border border-white/20"
                                     >
-                                        <span style={{ color: exerciseConfig.unitCardLabelColor }} className="text-[11px] uppercase font-black tracking-widest">{itemLabel}</span>
-                                        <span style={{ color: exerciseConfig.unitCardTextColor, fontSize: `${exerciseConfig.unitCardFontSize}rem` }} className="font-black -mt-2 font-['Nunito'] leading-tight drop-shadow-md">{itemNumber}</span>
+                                        <span style={{ color: labelColor }} className="text-[11px] uppercase font-black tracking-widest">{itemLabel}</span>
+                                        <span style={{ color: textColor, fontSize: `${cardFontSize}rem` }} className="font-black -mt-2 font-['Nunito'] leading-tight drop-shadow-md">{itemNumber}</span>
                                     </button>
                                 </div>
                             </React.Fragment>
