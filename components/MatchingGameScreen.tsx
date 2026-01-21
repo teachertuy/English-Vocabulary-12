@@ -3,8 +3,6 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { PlayerData, VocabularyWord, GameResult, QuizAnswerDetail } from '../types';
 import { updateUnitActivityResult, trackStudentPresence, incrementCheatCount, listenForKickedStatus, getGameStatus, removeStudentPresence, updateStudentProgress, updateUnitActivityProgress } from '../services/firebaseService';
 
-const GAME_DURATION_SECONDS = 20 * 60; // 20 minutes
-
 declare const Tone: any;
 
 const synth = typeof Tone !== 'undefined' ? new Tone.Synth().toDestination() : null;
@@ -61,14 +59,15 @@ interface MatchingGameScreenProps {
   classroomId: string | null;
   activityId: string;
   onBack: () => void;
+  durationSeconds: number;
 }
 
-const MatchingGameScreen: React.FC<MatchingGameScreenProps> = ({ playerData, vocabulary, unitNumber, grade, onFinish, onForceExit, classroomId, activityId, onBack }) => {
+const MatchingGameScreen: React.FC<MatchingGameScreenProps> = ({ playerData, vocabulary, unitNumber, grade, onFinish, onForceExit, classroomId, activityId, onBack, durationSeconds }) => {
     const [remainingWords, setRemainingWords] = useState<VocabularyWord[]>([]);
     const [currentVietnamese, setCurrentVietnamese] = useState<VocabularyWord | null>(null);
     const [selectedEnglish, setSelectedEnglish] = useState<VocabularyWord | null>(null);
     const [score, setScore] = useState(0);
-    const [timeLeft, setTimeLeft] = useState(GAME_DURATION_SECONDS);
+    const [timeLeft, setTimeLeft] = useState(durationSeconds || 1200);
     const [gameDetails, setGameDetails] = useState<QuizAnswerDetail[]>([]);
     const [isGameOver, setIsGameOver] = useState(false);
     const [feedback, setFeedback] = useState<string | null>(null);
@@ -148,7 +147,6 @@ const MatchingGameScreen: React.FC<MatchingGameScreenProps> = ({ playerData, voc
         return () => clearInterval(timer);
     }, [finishGame, classroomId, playerData.name, playerData.class]);
     useEffect(() => { if (classroomId) { const u = getGameStatus(classroomId, i => !i && finishGame(true)); return () => u(); } }, [classroomId, finishGame]);
-    // Fix: Using listenForKickedStatus instead of listenToKickedStatus
     useEffect(() => { if (classroomId) { const u = listenForKickedStatus(classroomId, playerData.name, playerData.class, () => finishGame(true)); return () => u(); } }, [classroomId, playerData.name, playerData.class, finishGame]);
     useEffect(() => { const h = () => document.hidden && classroomId && incrementCheatCount(classroomId, playerData.name, playerData.class); document.addEventListener('visibilitychange', h); return () => document.removeEventListener('visibilitychange', h); }, [classroomId, playerData.name, playerData.class]);
 
@@ -170,19 +168,28 @@ const MatchingGameScreen: React.FC<MatchingGameScreenProps> = ({ playerData, voc
     return (
         <div className="flex flex-col items-center justify-center p-2 sm:p-4 bg-white min-h-[500px] relative w-full">
             {feedback && <div className="fixed top-5 right-5 shadow-lg rounded-lg p-3 text-sm text-center z-50 bg-red-100 text-red-800"><p className="font-bold">{feedback}</p></div>}
-            <div className="w-full max-w-3xl mx-auto mb-2">
+            <div className="w-full max-w-4xl mx-auto mb-2 pt-2">
                 <div className="flex justify-between items-center">
-                    <button onClick={handleExitPrematurely} className="group flex items-center text-blue-600 font-bold text-sm hover:text-blue-800 transition-colors focus:outline-none rounded">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 transition-transform group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
+                    <button onClick={handleExitPrematurely} className="group flex items-center text-blue-600 font-extrabold text-lg hover:text-blue-800 transition-colors focus:outline-none rounded">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-1 transition-transform group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="4"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
                         <span className="border-b-2 border-current pb-0.5">Back</span>
                     </button>
-                    {/* Updated Correct/Incorrect Indicator */}
-                    <div className="bg-white px-3 py-1 rounded-2xl border border-blue-300 flex items-center gap-2 shadow-sm">
-                        <span className="text-lg font-black text-green-600 font-['Nunito']">{score}</span>
-                        <span className="text-lg font-bold text-gray-300">/</span>
-                        <span className="text-lg font-black text-red-600 font-['Nunito']">{incorrectMatches}</span>
+                    
+                    <div className="flex flex-col items-center gap-1.5">
+                        {/* Correct/Incorrect Redesigned Indicator (Top) */}
+                        <div className="bg-white px-5 py-1 rounded-full border-4 border-double border-red-500 flex items-center gap-3 shadow-md">
+                            <span className="text-xl font-black text-green-600 font-['Nunito']">{score}</span>
+                            <span className="text-lg font-bold text-gray-200">|</span>
+                            <span className="text-xl font-black text-red-600 font-['Nunito']">{incorrectMatches}</span>
+                        </div>
+
+                        {/* Progress Indicator (Bottom) */}
+                        <div className="bg-white px-4 py-0.5 rounded-2xl border border-gray-100 flex items-center shadow-sm min-w-[80px] justify-center">
+                            <span className="text-blue-600 text-sm font-black font-['Nunito']">{remainingWords.length} left</span>
+                        </div>
                     </div>
-                    <div className="bg-gray-50 px-2 py-0.5 rounded-lg border border-red-300 flex items-center gap-1 font-['Nunito'] font-black text-red-700">{formatTime(timeLeft)}</div>
+
+                    <div className="bg-white px-4 py-1.5 rounded-2xl border border-red-100 flex items-center shadow-sm font-['Nunito'] font-black text-red-700 text-lg">{formatTime(timeLeft)}</div>
                 </div>
             </div>
             <div className="w-full max-w-2xl my-1"><div className="border-t border-black"></div><div className="border-t border-gray-400 mt-0.5"></div></div>

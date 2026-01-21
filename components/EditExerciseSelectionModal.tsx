@@ -65,6 +65,10 @@ const DEFAULT_CONFIG: ExerciseSelectionConfig = {
     activitySpellDesc: 'Viết từ tiếng Anh tương ứng',
     activityQuizLabel: 'Làm bài trắc nghiệm',
     activityQuizDesc: 'Kiểm tra kiến thức của bạn',
+
+    quizDuration: 30,
+    spellingDuration: 30,
+    matchingDuration: 20,
 };
 
 const EditExerciseSelectionModal: React.FC<EditExerciseSelectionModalProps> = ({ show, onClose, onSave, currentConfig }) => {
@@ -351,7 +355,23 @@ const EditExerciseSelectionModal: React.FC<EditExerciseSelectionModalProps> = ({
                     {activeTab === 'activities' && (
                         <div className="space-y-6 tab-content-enter">
                             <div className="p-6 border rounded-2xl bg-orange-50 border-orange-100">
-                                <h3 className="font-bold text-orange-800 mb-6 flex items-center gap-2"><span>🏆</span> Văn bản các hoạt động phần thi</h3>
+                                <h3 className="font-bold text-orange-800 mb-6 flex items-center gap-2"><span>🏆</span> Văn bản & Thời gian các hoạt động</h3>
+                                
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 bg-white p-4 rounded-xl border border-orange-200">
+                                    <div>
+                                        <label className="block text-xs font-bold text-gray-500 uppercase mb-1">⏱️ Trắc nghiệm (phút)</label>
+                                        <input type="number" min="1" max="180" value={config.quizDuration} onChange={e => handleChange('quizDuration', parseInt(e.target.value))} className="w-full p-2 border rounded font-bold text-green-700" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-bold text-gray-500 uppercase mb-1">⏱️ Chính tả (phút)</label>
+                                        <input type="number" min="1" max="180" value={config.spellingDuration} onChange={e => handleChange('spellingDuration', parseInt(e.target.value))} className="w-full p-2 border rounded font-bold text-orange-700" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-bold text-gray-500 uppercase mb-1">⏱️ Ghép cặp (phút)</label>
+                                        <input type="number" min="1" max="180" value={config.matchingDuration} onChange={e => handleChange('matchingDuration', parseInt(e.target.value))} className="w-full p-2 border rounded font-bold text-purple-700" />
+                                    </div>
+                                </div>
+
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                     {/* Học từ vựng */}
                                     <div className="p-4 bg-white rounded-xl border border-orange-200 shadow-sm space-y-3">

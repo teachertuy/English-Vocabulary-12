@@ -65,6 +65,10 @@ const DEFAULT_CONFIG: ExerciseSelectionConfig = {
     activitySpellDesc: 'Viết từ tiếng Anh tương ứng',
     activityQuizLabel: 'Làm bài trắc nghiệm',
     activityQuizDesc: 'Kiểm tra kiến thức của bạn',
+    // Added missing properties
+    quizDuration: 30,
+    spellingDuration: 30,
+    matchingDuration: 20,
 };
 
 const Card: React.FC<{ title: string, icon: string, color: string, fontSize: number, height: number, borderRadius: number, onClick: () => void }> = ({ title, icon, color, fontSize, height, borderRadius, onClick }) => (

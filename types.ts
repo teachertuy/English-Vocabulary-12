@@ -161,4 +161,9 @@ export interface ExerciseSelectionConfig {
     activitySpellDesc: string;
     activityQuizLabel: string;
     activityQuizDesc: string;
+
+    // Activity Durations (in minutes)
+    quizDuration: number;
+    spellingDuration: number;
+    matchingDuration: number;
 }

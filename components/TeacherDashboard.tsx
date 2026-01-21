@@ -127,6 +127,10 @@ const DEFAULT_EXERCISE_CONFIG: ExerciseSelectionConfig = {
     activitySpellDesc: 'Viết từ tiếng Anh tương ứng',
     activityQuizLabel: 'Làm bài trắc nghiệm',
     activityQuizDesc: 'Kiểm tra kiến thức của bạn',
+    // Added missing properties
+    quizDuration: 30,
+    spellingDuration: 30,
+    matchingDuration: 20,
 };
 
 interface StudentGroupedResult {
@@ -461,6 +465,8 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
         } catch (e) { setNotification({ message: 'Thất bại.', type: 'error' }); } finally { setter(false); }
     };
 
+    const isGameEnabledToggle = isGameEnabled;
+
     return (
         <div className="w-full bg-sky-100 min-h-screen">
             {notification && <div className={`fixed top-5 right-5 shadow-lg rounded-lg p-4 z-[150] transition-transform animate-bounce ${notification.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}><p className="font-bold">{notification.message}</p></div>}
@@ -476,14 +482,14 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                 <div className="inline-flex items-center bg-white px-5 py-3 rounded-2xl shadow-sm border border-gray-100 mb-8 transition-all hover:shadow-md">
                     <span className="text-[1.1rem] font-extrabold text-slate-700 mr-4 tracking-tight">LINK:</span>
                     <button 
-                        onClick={() => setGameStatus(classroomId, !isGameEnabled)}
+                        onClick={() => setGameStatus(classroomId, !isGameEnabledToggle)}
                         className="flex items-center gap-3 group outline-none focus:outline-none"
                     >
                         <div className="relative w-14 h-7 bg-[#e2e8f0] rounded-full p-1 transition-colors duration-300">
-                            <div className={`w-5 h-5 rounded-full shadow-md transition-all duration-300 transform ${isGameEnabled ? 'translate-x-7 bg-[#22c55e]' : 'translate-x-0 bg-red-600'}`}></div>
+                            <div className={`w-5 h-5 rounded-full shadow-md transition-all duration-300 transform ${isGameEnabledToggle ? 'translate-x-7 bg-[#22c55e]' : 'translate-x-0 bg-red-600'}`}></div>
                         </div>
-                        <span className={`text-[1.1rem] font-black w-14 text-left transition-colors duration-300 ${isGameEnabled ? 'text-[#22c55e]' : 'text-red-600'}`}>
-                            {isGameEnabled ? 'ON' : 'OFF'}
+                        <span className={`text-[1.1rem] font-black w-14 text-left transition-colors duration-300 ${isGameEnabledToggle ? 'text-[#22c55e]' : 'text-red-600'}`}>
+                            {isGameEnabledToggle ? 'ON' : 'OFF'}
                         </span>
                     </button>
                 </div>

@@ -71,6 +71,10 @@ const DEFAULT_CONFIG: ExerciseSelectionConfig = {
     activitySpellDesc: 'Viết từ tiếng Anh tương ứng',
     activityQuizLabel: 'Làm bài trắc nghiệm',
     activityQuizDesc: 'Kiểm tra kiến thức của bạn',
+    // Added missing properties
+    quizDuration: 30,
+    spellingDuration: 30,
+    matchingDuration: 20,
 };
 
 const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, unitNumber, grade, onClose, classroomId, onStartQuiz, onLearnVocabulary, onStartSpellingGame, onStartMatchingGame }) => {

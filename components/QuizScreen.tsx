@@ -3,8 +3,6 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { PlayerData, QuizQuestion, GameResult, QuizAnswerDetail } from '../types';
 import { updateUnitActivityResult, trackStudentPresence, incrementCheatCount, listenForKickedStatus, getGameStatus, removeStudentPresence, updateStudentProgress, updateUnitActivityProgress } from '../services/firebaseService';
 
-const QUIZ_DURATION_SECONDS = 30 * 60; // 30 minutes
-
 declare const Tone: any;
 
 const synth = typeof Tone !== 'undefined' ? new Tone.Synth().toDestination() : null;
@@ -48,12 +46,13 @@ interface QuizScreenProps {
   classroomId: string | null;
   activityId: string;
   onBack: () => void;
+  durationSeconds: number;
 }
 
-const QuizScreen: React.FC<QuizScreenProps> = ({ playerData, questions, unitNumber, grade, onFinish, onForceExit, classroomId, activityId, onBack }) => {
+const QuizScreen: React.FC<QuizScreenProps> = ({ playerData, questions, unitNumber, grade, onFinish, onForceExit, classroomId, activityId, onBack, durationSeconds }) => {
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [score, setScore] = useState(0);
-    const [timeLeft, setTimeLeft] = useState(QUIZ_DURATION_SECONDS);
+    const [timeLeft, setTimeLeft] = useState(durationSeconds || 1800);
     const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
     const [isAnswered, setIsAnswered] = useState(false);
     const [quizDetails, setQuizDetails] = useState<QuizAnswerDetail[]>([]);
@@ -162,17 +161,36 @@ const QuizScreen: React.FC<QuizScreenProps> = ({ playerData, questions, unitNumb
     const optionLabels = ['A', 'B', 'C', 'D'];
 
     return (
-        <div className="flex flex-col items-center px-4 py-4 relative min-h-[600px] bg-orange-50">
+        <div className="flex flex-col items-center px-4 py-4 relative min-h-[600px] bg-orange-50 w-full">
              {feedback && <div className={`fixed top-5 right-5 shadow-lg rounded-lg p-4 text-center z-50 ${feedback.isCorrect ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}><p className="font-bold">{feedback.message}</p></div>}
-            <div className="w-full max-w-3xl mx-auto p-2 flex justify-between items-center bg-amber-50 rounded-xl mb-4 border border-amber-200 shadow-sm">
-                <button onClick={handleExitPrematurely} className="group flex items-center text-blue-600 font-bold text-sm hover:text-blue-800 transition-colors focus:outline-none rounded">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1 transition-transform group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
+            
+            <div className="w-full max-w-4xl mx-auto p-2 flex justify-between items-center bg-amber-50 rounded-xl mb-4 border border-amber-200 shadow-sm pt-2">
+                {/* Back button */}
+                <button onClick={handleExitPrematurely} className="group flex items-center text-blue-600 font-extrabold text-lg hover:text-blue-800 transition-colors focus:outline-none rounded">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-1 transition-transform group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="4"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
                     <span className="border-b-2 border-current pb-0.5">Back</span>
                 </button>
-                <div className="bg-red-500 text-white font-bold py-0.5 px-2 rounded-lg shadow-md flex items-baseline"><span className="text-sm">Điểm:&nbsp;</span><span className="text-sm font-black font-['Nunito']">{score.toFixed(1)}</span></div>
-                <p className="text-base font-bold text-red-600 text-center font-['Nunito']">{`#${currentQuestionIndex + 1} / ${questions.length}`}</p>
-                <div className="bg-purple-800 text-white font-bold py-0.5 px-2 rounded-lg shadow-md"><span className="text-base font-black font-['Nunito']">{formatTime(timeLeft)}</span></div>
+
+                {/* Central stacked indicators */}
+                <div className="flex flex-col items-center gap-1.5">
+                    {/* Score Indicator (Top) */}
+                    <div className="bg-red-500 text-white font-bold py-1 px-4 rounded-full shadow-md flex items-center justify-center">
+                        <span className="text-sm mr-1 opacity-90">Điểm:</span>
+                        <span className="text-xl font-black font-['Nunito']">{score.toFixed(1)}</span>
+                    </div>
+
+                    {/* Progress Indicator (Bottom) */}
+                    <div className="bg-white px-4 py-0.5 rounded-2xl border border-gray-200 flex items-center shadow-sm min-w-[80px] justify-center">
+                        <span className="text-red-600 text-sm font-black font-['Nunito']">{currentQuestionIndex + 1} / {questions.length}</span>
+                    </div>
+                </div>
+
+                {/* Timer Indicator */}
+                <div className="bg-purple-800 text-white font-bold py-1.5 px-4 rounded-lg shadow-md">
+                    <span className="text-lg font-black font-['Nunito']">{formatTime(timeLeft)}</span>
+                </div>
             </div>
+
             <div className="flex flex-col items-center w-full flex-grow">
                 <div className="w-full max-w-3xl bg-white rounded-2xl border-4 border-green-500 px-2 py-4 shadow-lg flex flex-col flex-grow">
                     <p className="text-lg font-bold text-blue-900 mb-6 min-h-[56px] text-left">{currentQuestion.sentence.replace('______', '-----')}</p>

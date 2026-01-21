@@ -4,8 +4,6 @@ import { PlayerData, VocabularyWord, GameResult, QuizAnswerDetail } from '../typ
 import { updateUnitActivityResult, trackStudentPresence, incrementCheatCount, listenForKickedStatus, getGameStatus, removeStudentPresence, updateVocabularyAudio, updateStudentProgress, updateUnitActivityProgress } from '../services/firebaseService';
 import { generateSpeech } from '../services/geminiService';
 
-const GAME_DURATION_SECONDS = 30 * 60; // Adjusted to 30 minutes
-
 declare const Tone: any;
 
 const synth = typeof Tone !== 'undefined' ? new Tone.Synth().toDestination() : null;
@@ -74,12 +72,13 @@ interface SpellingGameScreenProps {
   classroomId: string | null;
   activityId: string;
   onBack: () => void;
+  durationSeconds: number;
 }
 
-const SpellingGameScreen: React.FC<SpellingGameScreenProps> = ({ playerData, vocabulary, unitNumber, grade, onFinish, onForceExit, classroomId, activityId, onBack }) => {
+const SpellingGameScreen: React.FC<SpellingGameScreenProps> = ({ playerData, vocabulary, unitNumber, grade, onFinish, onForceExit, classroomId, activityId, onBack, durationSeconds }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [correctAnswers, setCorrectAnswers] = useState(0);
-    const [timeLeft, setTimeLeft] = useState(GAME_DURATION_SECONDS);
+    const [timeLeft, setTimeLeft] = useState(durationSeconds || 1800);
     const [userInput, setUserInput] = useState('');
     const [gameDetails, setGameDetails] = useState<QuizAnswerDetail[]>([]);
     const [isGameOver, setIsGameOver] = useState(false);
@@ -198,7 +197,7 @@ const SpellingGameScreen: React.FC<SpellingGameScreenProps> = ({ playerData, voc
     if (inputStatus === 'incorrect') inputClasses = "w-full text-center text-xl font-bold bg-red-50 text-red-700 rounded-lg py-2 pl-4 pr-4 border-2 border-red-500 ring-2 ring-red-200";
     
     return (
-        <div className="flex flex-col items-center justify-start p-4 bg-white min-h-[600px] relative">
+        <div className="flex flex-col items-center justify-start p-4 bg-white min-h-[600px] relative w-full">
             <div className="w-full max-w-4xl mx-auto flex justify-between items-center mb-6 pt-2">
                 {/* Back button */}
                 <button onClick={handleExitPrematurely} className="group flex items-center text-blue-600 font-extrabold text-lg hover:text-blue-800 transition-colors focus:outline-none rounded">

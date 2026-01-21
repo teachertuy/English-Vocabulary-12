@@ -5,9 +5,9 @@ import QuizScreen from './components/QuizScreen';
 import ResultsScreen from './components/ResultsScreen';
 import TeacherDashboard from './components/TeacherDashboard';
 import PasswordModal from './components/PasswordModal';
-import { PlayerData, QuizQuestion, GameResult, VocabularyWord } from './types';
+import { PlayerData, QuizQuestion, GameResult, VocabularyWord, ExerciseSelectionConfig } from './types';
 import { FIXED_CLASSROOM_ID, TEACHER_PASSWORD } from './constants';
-import { removeStudentPresence, startUnitActivity } from './services/firebaseService';
+import { removeStudentPresence, startUnitActivity, listenToExerciseSelectionConfig } from './services/firebaseService';
 import UnitSelectionScreen from './components/UnitSelectionScreen';
 import VocabularyScreen from './components/VocabularyScreen';
 import SpellingGameScreen from './components/SpellingGameScreen';
@@ -28,6 +28,57 @@ enum Screen {
   LoggedOut,
 }
 
+const DEFAULT_EXERCISE_CONFIG: ExerciseSelectionConfig = {
+    mainTitle: 'TỪ VỰNG TIẾNG ANH 12 & TỪ VỰNG THEO CHỦ ĐỀ',
+    mainTitleFontSize: 1.875,
+    mainTitleColor: '#dc2626',
+    subtitle: '(Chọn một mục bên dưới để bắt đầu luyện tập)',
+    subtitleFontSize: 1.125,
+    subtitleColor: '#4b5563',
+    backButtonText: 'Quay lại',
+    card1Title: 'English 12',
+    card1Icon: '📝',
+    card1Color: '#3b82f6',
+    card2Title: 'Topic-based vocabulary',
+    card2Icon: '📰',
+    card2Color: '#a855f7',
+    cardFontSize: 1.5,
+    cardHeight: 10,
+    cardBorderRadius: 16,
+    unitLabelText: 'UNIT',
+    unitCardColors: [],
+    unitCardTextColor: '#ffffff',
+    unitCardLabelColor: '#fde047',
+    unitCardFontSize: 2.25,
+    unitCardHeight: 7,
+    unitCardWidth: 100,
+    unitCardBorderRadius: 8,
+    unitItemsPerRow: 5,
+    topicLabelText: 'TOPIC',
+    topicCardColors: [],
+    topicCardTextColor: '#ffffff',
+    topicCardLabelColor: '#fde047',
+    topicCardFontSize: 1.8,
+    topicCardHeight: 6,
+    topicCardWidth: 100,
+    topicCardBorderRadius: 12,
+    topicItemsPerRow: 6,
+    exitButtonText: 'Thoát',
+    dividerColor1: '#ffffff',
+    dividerColor2: '#facc15',
+    activityLearnLabel: 'Học từ vựng',
+    activityLearnDesc: 'Xem lại danh sách từ của bài',
+    activityMatchLabel: 'Trò chơi Ghép cặp',
+    activityMatchDesc: 'Nối từ tiếng Anh với nghĩa Việt',
+    activitySpellLabel: 'Trò chơi Viết Chính tả',
+    activitySpellDesc: 'Viết từ tiếng Anh tương ứng',
+    activityQuizLabel: 'Làm bài trắc nghiệm',
+    activityQuizDesc: 'Kiểm tra kiến thức của bạn',
+    quizDuration: 30,
+    spellingDuration: 30,
+    matchingDuration: 20,
+};
+
 const App: React.FC = () => {
   const [currentScreen, setCurrentScreen] = useState<Screen>(Screen.Welcome);
   const [playerData, setPlayerData] = useState<PlayerData | null>(null);
@@ -39,6 +90,14 @@ const App: React.FC = () => {
   const [isPasswordModalVisible, setIsPasswordModalVisible] = useState(false);
   const [currentActivityId, setCurrentActivityId] = useState<string | null>(null);
   const [selectedGrade, setSelectedGrade] = useState<number | 'topics' | null>(null);
+  const [exerciseConfig, setExerciseConfig] = useState<ExerciseSelectionConfig>(DEFAULT_EXERCISE_CONFIG);
+
+  useEffect(() => {
+    const unsub = listenToExerciseSelectionConfig(FIXED_CLASSROOM_ID, (config) => {
+      if (config) setExerciseConfig({ ...DEFAULT_EXERCISE_CONFIG, ...config });
+    });
+    return () => unsub();
+  }, []);
 
   const handleLogin = useCallback((player: PlayerData) => {
     setPlayerData(player);
@@ -222,11 +281,11 @@ const App: React.FC = () => {
             onCloseActivityModal={handleCloseActivityModal}
         />;
       case Screen.Quiz:
-        return playerData && selectedUnit && currentActivityId && selectedGrade && <QuizScreen playerData={playerData} questions={questions} unitNumber={selectedUnit} onFinish={handleFinishGame} onForceExit={handleForceExitToWelcome} classroomId={FIXED_CLASSROOM_ID} activityId={currentActivityId} onBack={handleReturnToActivitySelection} grade={selectedGrade} />;
+        return playerData && selectedUnit && currentActivityId && selectedGrade && <QuizScreen playerData={playerData} questions={questions} unitNumber={selectedUnit} onFinish={handleFinishGame} onForceExit={handleForceExitToWelcome} classroomId={FIXED_CLASSROOM_ID} activityId={currentActivityId} onBack={handleReturnToActivitySelection} grade={selectedGrade} durationSeconds={exerciseConfig.quizDuration * 60} />;
       case Screen.SpellingGame:
-        return playerData && selectedUnit && currentActivityId && selectedGrade && <SpellingGameScreen vocabulary={vocabulary} unitNumber={selectedUnit} playerData={playerData} onFinish={handleFinishGame} onForceExit={handleForceExitToWelcome} classroomId={FIXED_CLASSROOM_ID} activityId={currentActivityId} onBack={handleReturnToActivitySelection} grade={selectedGrade} />;
+        return playerData && selectedUnit && currentActivityId && selectedGrade && <SpellingGameScreen vocabulary={vocabulary} unitNumber={selectedUnit} playerData={playerData} onFinish={handleFinishGame} onForceExit={handleForceExitToWelcome} classroomId={FIXED_CLASSROOM_ID} activityId={currentActivityId} onBack={handleReturnToActivitySelection} grade={selectedGrade} durationSeconds={exerciseConfig.spellingDuration * 60} />;
       case Screen.MatchingGame:
-        return playerData && selectedUnit && currentActivityId && selectedGrade && <MatchingGameScreen vocabulary={vocabulary} unitNumber={selectedUnit} playerData={playerData} onFinish={handleFinishGame} onForceExit={handleForceExitToWelcome} classroomId={FIXED_CLASSROOM_ID} activityId={currentActivityId} onBack={handleReturnToActivitySelection} grade={selectedGrade} />;
+        return playerData && selectedUnit && currentActivityId && selectedGrade && <MatchingGameScreen vocabulary={vocabulary} unitNumber={selectedUnit} playerData={playerData} onFinish={handleFinishGame} onForceExit={handleForceExitToWelcome} classroomId={FIXED_CLASSROOM_ID} activityId={currentActivityId} onBack={handleReturnToActivitySelection} grade={selectedGrade} durationSeconds={exerciseConfig.matchingDuration * 60} />;
       case Screen.Vocabulary:
         return playerData && selectedUnit && selectedGrade && currentActivityId && <VocabularyScreen unitNumber={selectedUnit} vocabulary={vocabulary} onBack={handleReturnToActivitySelection} classroomId={FIXED_CLASSROOM_ID} grade={selectedGrade} playerData={playerData} activityId={currentActivityId} onFinish={handleFinishGame} />;
       case Screen.Results:

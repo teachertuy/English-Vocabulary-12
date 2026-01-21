@@ -73,6 +73,10 @@ const DEFAULT_EXERCISE_CONFIG: ExerciseSelectionConfig = {
     activitySpellDesc: 'Viết từ tiếng Anh tương ứng',
     activityQuizLabel: 'Làm bài trắc nghiệm',
     activityQuizDesc: 'Kiểm tra kiến thức của bạn',
+    // Added missing properties
+    quizDuration: 30,
+    spellingDuration: 30,
+    matchingDuration: 20,
 };
 
 const DEFAULT_WELCOME_CONFIG: WelcomeScreenConfig = {
@@ -213,12 +217,12 @@ const UnitSelectionScreen: React.FC<UnitSelectionScreenProps> = ({ playerData, c
                                         {titleLines[1]}
                                     </textPath>
                                 </text>
-                                <text x="250" y="115" text-anchor="middle" className="fill-current text-white text-lg font-bold tracking-normal opacity-80" style={{textShadow: '1px 1px 2px rgba(0,0,0,0.5)'}}>
+                                <text x="250" y="115" textAnchor="middle" className="fill-current text-white text-lg font-bold tracking-normal opacity-80" style={{textShadow: '1px 1px 2px rgba(0,0,0,0.5)'}}>
                                     {subtitleText}
                                 </text>
                              </>
                         ) : (
-                            <text x="250" y="75" text-anchor="middle" className="fill-current text-white text-xl font-bold tracking-normal opacity-80" style={{textShadow: '1px 1px 2px rgba(0,0,0,0.5)'}}>
+                            <text x="250" y="75" textAnchor="middle" className="fill-current text-white text-xl font-bold tracking-normal opacity-80" style={{textShadow: '1px 1px 2px rgba(0,0,0,0.5)'}}>
                                 {subtitleText}
                             </text>
                         )}
