@@ -233,7 +233,29 @@ const SpellingGameScreen: React.FC<SpellingGameScreenProps> = ({ playerData, voc
                 <p className="text-orange-500 font-black text-3xl sm:text-4xl mb-6 text-center drop-shadow-sm">{currentWord?.translation}</p>
                 <form onSubmit={(e) => { e.preventDefault(); handleCheckAnswer(); }} className="w-full space-y-4 flex flex-col items-center">
                     <div className="w-full relative max-w-sm"><span className="absolute left-3 top-1/2 -translate-y-1/2 text-3xl pointing-finger" style={{ top: 'calc(50% - 2px)' }}>👉</span><input ref={inputRef} type="text" value={userInput} onChange={(e) => setUserInput(e.target.value)} className={inputClasses} disabled={isChecking} autoComplete="off" placeholder="Write the English word..."/></div>
-                    <button type="submit" className="bg-black text-white font-black py-4 px-10 rounded-full shadow-xl hover:bg-gray-800 transition-all uppercase tracking-widest active:scale-95 disabled:bg-gray-400" disabled={isChecking || !userInput.trim()}>CHECK ANSWER</button>
+                    
+                    {/* Animated Check Answer Button */}
+                    <button 
+                        type="submit" 
+                        className="relative overflow-hidden bg-black text-white font-black py-4 px-10 rounded-full shadow-xl hover:bg-gray-800 transition-all uppercase tracking-widest active:scale-95 disabled:bg-gray-400 min-w-[240px]" 
+                        disabled={isChecking || !userInput.trim()}
+                    >
+                        {/* Snowflakes */}
+                        {!isChecking && userInput.trim() && Array.from({ length: 15 }).map((_, i) => (
+                            <div 
+                                key={i} 
+                                className="snow-particle" 
+                                style={{
+                                    left: `${Math.random() * 100}%`,
+                                    width: `${2 + Math.random() * 4}px`,
+                                    height: `${2 + Math.random() * 4}px`,
+                                    animationDuration: `${0.5 + Math.random() * 0.8}s`,
+                                    animationDelay: `${Math.random() * 2}s`
+                                }}
+                            />
+                        ))}
+                        <span className="relative z-10 animate-text-pulse inline-block">CHECK ANSWER</span>
+                    </button>
                 </form>
             </div>
             

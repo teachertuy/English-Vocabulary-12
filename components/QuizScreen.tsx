@@ -151,7 +151,7 @@ const QuizScreen: React.FC<QuizScreenProps> = ({ playerData, questions, unitNumb
 
     const handleAnswerSelect = (answer: string) => { if (!isAnswered) setSelectedAnswer(answer); }
     const handleCheckAnswer = () => {
-        if (!selectedAnswer) { setFeedback({ message: "Vui lòng chọn một đáp án!", isCorrect: false }); setTimeout(() => setFeedback(null), 3000); return; }
+        if (!selectedAnswer) return;
         setIsAnswered(true);
         const isCorrect = selectedAnswer === currentQuestion.answer;
         if(isCorrect) { setScore(prev => prev + pointsPerQuestion); playCorrectSound(); } else playIncorrectSound();
@@ -225,8 +225,37 @@ const QuizScreen: React.FC<QuizScreenProps> = ({ playerData, questions, unitNumb
                             );
                         })}
                     </div>
-                    <div className="mt-4 flex justify-center space-x-4">
-                         {!isAnswered ? <button onClick={handleCheckAnswer} className="bg-blue-600 text-white font-bold py-2 px-6 rounded-full text-lg hover:bg-blue-700 transition" disabled={!selectedAnswer}>Check Answer</button> : <button onClick={handleNextQuestion} className="bg-amber-500 text-white font-bold py-2 px-6 rounded-full text-lg hover:bg-amber-600 transition">{currentQuestionIndex < questions.length - 1 ? 'Next Question' : 'Finish Quiz'}</button>}
+                    
+                    <div className="mt-6 flex justify-center min-h-[64px] items-center">
+                         {!isAnswered ? (
+                            <button 
+                                onClick={handleCheckAnswer} 
+                                className={`relative overflow-hidden bg-red-600 text-white font-black py-4 px-10 rounded-full shadow-lg transition-all transform active:scale-95 uppercase tracking-widest min-w-[240px] ring-4 ring-white shadow-[0_0_0_8px_#dc2626] ${!selectedAnswer ? 'opacity-0 pointer-events-none scale-90' : 'opacity-100 scale-100'}`}
+                            >
+                                {/* Snowflakes - Fast and thick */}
+                                {selectedAnswer && Array.from({ length: 25 }).map((_, i) => (
+                                    <div 
+                                        key={i} 
+                                        className="snow-particle" 
+                                        style={{
+                                            left: `${Math.random() * 100}%`,
+                                            width: `${2 + Math.random() * 3}px`,
+                                            height: `${2 + Math.random() * 3}px`,
+                                            animationDuration: `${0.3 + Math.random() * 0.6}s`,
+                                            animationDelay: `${Math.random() * 2}s`
+                                        }}
+                                    />
+                                ))}
+                                <span className="relative z-10 animate-text-pulse inline-block text-lg">CHECK ANSWER</span>
+                            </button>
+                         ) : (
+                            <button 
+                                onClick={handleNextQuestion} 
+                                className="bg-amber-500 text-white font-black py-4 px-10 rounded-full text-lg hover:bg-amber-600 transition-all transform hover:scale-105 active:scale-95 shadow-xl min-w-[240px]"
+                            >
+                                {currentQuestionIndex < questions.length - 1 ? 'NEXT QUESTION' : 'FINISH QUIZ'}
+                            </button>
+                         )}
                     </div>
                 </div>
             </div>

@@ -201,7 +201,30 @@ const MatchingGameScreen: React.FC<MatchingGameScreenProps> = ({ playerData, voc
                             <p className="text-orange-600 font-extrabold text-xl sm:text-2xl leading-none text-center pb-0.5">{currentVietnamese?.translation}</p>
                             <div className="w-3/4 border-b border-gray-300 my-4"></div>
                             <div className="w-full py-1 border border-dashed border-black rounded flex items-center justify-center min-h-[40px]"><p className={`font-bold text-lg ${selectedEnglish ? 'text-blue-700' : 'text-gray-400'}`}>{selectedEnglish ? selectedEnglish.word : '...'}</p></div>
-                            <div className={`w-full overflow-hidden transition-all flex justify-center ${selectedEnglish ? 'opacity-100 max-h-32 mt-4' : 'opacity-0 max-h-0'}`}><button onClick={handleCheckAnswer} style={{backgroundColor:'#000', color:'#fff'}} className="px-6 py-5 rounded-full font-black uppercase tracking-widest">CHECK ANSWER</button></div>
+                            
+                            {/* Animated Check Answer Button */}
+                            <div className={`w-full overflow-hidden transition-all flex justify-center ${selectedEnglish ? 'opacity-100 max-h-32 mt-4' : 'opacity-0 max-h-0'}`}>
+                                <button 
+                                    onClick={handleCheckAnswer} 
+                                    className="relative overflow-hidden px-8 py-5 rounded-full font-black uppercase tracking-widest bg-black text-white hover:bg-gray-800 transition-all active:scale-95 min-w-[200px]"
+                                >
+                                    {/* Snowflakes */}
+                                    {selectedEnglish && Array.from({ length: 15 }).map((_, i) => (
+                                        <div 
+                                            key={i} 
+                                            className="snow-particle" 
+                                            style={{
+                                                left: `${Math.random() * 100}%`,
+                                                width: `${2 + Math.random() * 4}px`,
+                                                height: `${2 + Math.random() * 4}px`,
+                                                animationDuration: `${0.4 + Math.random() * 0.7}s`,
+                                                animationDelay: `${Math.random() * 2}s`
+                                            }}
+                                        />
+                                    ))}
+                                    <span className="relative z-10 animate-text-pulse inline-block">CHECK ANSWER</span>
+                                </button>
+                            </div>
                         </div>
                     </div></div></div></div>
                  </div>
