@@ -255,7 +255,7 @@ const EditExerciseSelectionModal: React.FC<EditExerciseSelectionModalProps> = ({
                                     </div>
                                     <div>
                                         <label className="block text-sm font-bold text-gray-700 mb-1">Độ rộng ô: <span className="text-teal-600">{config.unitCardWidth}%</span></label>
-                                        <input type="range" min="20" max="100" step="1" value={config.unitCardWidth} onChange={e => handleChange('unitCardWidth', parseInt(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-teal-600" />
+                                        <input type="range" min="20" max="200" step="1" value={config.unitCardWidth} onChange={e => handleChange('unitCardWidth', parseInt(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-teal-600" />
                                     </div>
                                     <div>
                                         <label className="block text-sm font-bold text-gray-700 mb-1">Chiều cao ô: <span className="text-teal-600">{config.unitCardHeight}rem</span></label>
@@ -304,7 +304,7 @@ const EditExerciseSelectionModal: React.FC<EditExerciseSelectionModalProps> = ({
                                     </div>
                                     <div>
                                         <label className="block text-sm font-bold text-gray-700 mb-1">Độ rộng ô: <span className="text-purple-600">{config.topicCardWidth}%</span></label>
-                                        <input type="range" min="20" max="100" step="1" value={config.topicCardWidth} onChange={e => handleChange('topicCardWidth', parseInt(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-purple-600" />
+                                        <input type="range" min="20" max="200" step="1" value={config.topicCardWidth} onChange={e => handleChange('topicCardWidth', parseInt(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-purple-600" />
                                     </div>
                                     <div>
                                         <label className="block text-sm font-bold text-gray-700 mb-1">Chiều cao ô: <span className="text-purple-600">{config.topicCardHeight}rem</span></label>
