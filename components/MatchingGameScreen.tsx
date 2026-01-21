@@ -148,6 +148,7 @@ const MatchingGameScreen: React.FC<MatchingGameScreenProps> = ({ playerData, voc
         return () => clearInterval(timer);
     }, [finishGame, classroomId, playerData.name, playerData.class]);
     useEffect(() => { if (classroomId) { const u = getGameStatus(classroomId, i => !i && finishGame(true)); return () => u(); } }, [classroomId, finishGame]);
+    // Fix: Using listenForKickedStatus instead of listenToKickedStatus
     useEffect(() => { if (classroomId) { const u = listenForKickedStatus(classroomId, playerData.name, playerData.class, () => finishGame(true)); return () => u(); } }, [classroomId, playerData.name, playerData.class, finishGame]);
     useEffect(() => { const h = () => document.hidden && classroomId && incrementCheatCount(classroomId, playerData.name, playerData.class); document.addEventListener('visibilitychange', h); return () => document.removeEventListener('visibilitychange', h); }, [classroomId, playerData.name, playerData.class]);
 
@@ -175,7 +176,12 @@ const MatchingGameScreen: React.FC<MatchingGameScreenProps> = ({ playerData, voc
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 transition-transform group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
                         <span className="border-b-2 border-current pb-0.5">Back</span>
                     </button>
-                    <div className="bg-gray-50 px-2 py-0.5 rounded-lg border border-indigo-300 flex items-center gap-2"><div className="flex items-center"><span className="text-sm font-black text-green-600 font-['Nunito']">{score}</span></div><div className="flex items-center"><span className="text-sm font-black text-red-600 font-['Nunito']">{incorrectMatches}</span></div></div>
+                    {/* Updated Correct/Incorrect Indicator */}
+                    <div className="bg-white px-3 py-1 rounded-2xl border border-blue-300 flex items-center gap-2 shadow-sm">
+                        <span className="text-lg font-black text-green-600 font-['Nunito']">{score}</span>
+                        <span className="text-lg font-bold text-gray-300">/</span>
+                        <span className="text-lg font-black text-red-600 font-['Nunito']">{incorrectMatches}</span>
+                    </div>
                     <div className="bg-gray-50 px-2 py-0.5 rounded-lg border border-red-300 flex items-center gap-1 font-['Nunito'] font-black text-red-700">{formatTime(timeLeft)}</div>
                 </div>
             </div>
