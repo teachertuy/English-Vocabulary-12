@@ -4,7 +4,7 @@ import { PlayerData, VocabularyWord, GameResult, QuizAnswerDetail } from '../typ
 import { updateUnitActivityResult, trackStudentPresence, incrementCheatCount, listenForKickedStatus, getGameStatus, removeStudentPresence, updateVocabularyAudio, updateStudentProgress, updateUnitActivityProgress } from '../services/firebaseService';
 import { generateSpeech } from '../services/geminiService';
 
-const GAME_DURATION_SECONDS = 20 * 60; // 20 minutes
+const GAME_DURATION_SECONDS = 30 * 60; // Adjusted to 30 minutes
 
 declare const Tone: any;
 
@@ -200,31 +200,44 @@ const SpellingGameScreen: React.FC<SpellingGameScreenProps> = ({ playerData, voc
     return (
         <div className="flex flex-col items-center justify-start p-4 bg-white min-h-[600px] relative">
             <div className="w-full max-w-4xl mx-auto flex justify-between items-center mb-6 pt-2">
-                <button onClick={handleExitPrematurely} className="group flex items-center text-blue-600 font-bold text-sm hover:text-blue-800 transition-colors focus:outline-none rounded">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 transition-transform group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
+                {/* Back button moved to top row */}
+                <button onClick={handleExitPrematurely} className="group flex items-center text-blue-600 font-extrabold text-lg hover:text-blue-800 transition-colors focus:outline-none rounded">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-1 transition-transform group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="4"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
                     <span className="border-b-2 border-current pb-0.5">Back</span>
                 </button>
+
                 <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-1.5 bg-white text-gray-700 font-bold px-3 py-1.5 rounded-xl border-2 border-gray-200 shadow-sm"><span className="text-blue-600 text-sm font-['Nunito']">{currentIndex + 1} / {shuffledVocabulary.length}</span></div>
-                    <div className="flex items-center gap-3 bg-white px-4 py-1.5 rounded-full border-4 border-double border-red-500 shadow-md">
-                        <div className="flex items-center gap-1"><span className="text-red-600 w-5 text-center text-lg font-['Nunito'] font-black">{correctAnswers}</span></div>
-                        <div className="h-4 w-0.5 bg-red-200"></div>
-                        <div className="flex items-center gap-1"><span className="text-red-600 w-5 text-center text-lg font-['Nunito'] font-black">{incorrectAnswers}</span></div>
+                    {/* Progress Indicator */}
+                    <div className="bg-white px-4 py-1.5 rounded-2xl border border-gray-200 flex items-center shadow-sm">
+                        <span className="text-blue-600 text-lg font-black font-['Nunito']">{currentIndex + 1} / {shuffledVocabulary.length}</span>
+                    </div>
+
+                    {/* Correct/Incorrect Redesigned Indicator */}
+                    <div className="bg-white px-5 py-1.5 rounded-full border-4 border-double border-red-500 flex items-center gap-3 shadow-md">
+                        <span className="text-green-600 text-xl font-black font-['Nunito']">{correctAnswers}</span>
+                        <span className="text-lg font-bold text-gray-300">|</span>
+                        <span className="text-red-600 text-xl font-black font-['Nunito']">{incorrectAnswers}</span>
                     </div>
                 </div>
-                 <div className="flex items-center gap-1.5 bg-white text-red-700 font-bold px-3 py-1.5 rounded-xl border-2 border-red-200 shadow-sm font-['Nunito'] font-black">{formatTime(timeLeft)}</div>
+
+                {/* Timer Indicator */}
+                <div className="bg-white px-4 py-1.5 rounded-2xl border border-red-200 flex items-center shadow-sm">
+                    <span className="text-red-700 text-lg font-black font-['Nunito']">{formatTime(timeLeft)}</span>
+                </div>
             </div>
+
             <div className="flex flex-col items-center justify-start mt-4 flex-grow w-full max-w-sm">
-                <button onClick={handlePlayAudio} type="button" disabled={isRateLimited || isLoadingAudio || isPlayingAudio} className={`mb-4 w-20 h-20 rounded-full flex items-center justify-center shadow-lg transition-all ${isPlayingAudio ? 'bg-blue-50 scale-105' : 'bg-white border-2 border-gray-200 hover:scale-105'}`}>
-                    {isLoadingAudio ? <svg className="animate-spin h-8 w-8 text-blue-600" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> : <div className="relative">{isPlayingAudio && <div className="absolute rounded-full border-2 border-blue-400 opacity-0 animate-[ping_1.5s_cubic-bezier(0,0,0.2,1)_infinite] h-full w-full inset-0"></div>}<svg className="h-10 w-10 text-gray-700" viewBox="0 0 24 24" fill="currentColor"><path d="M14.016 3.234q3.047 0.656 5.016 3.117t1.969 5.648-1.969 5.648-5.016 3.117v-2.063q2.203-0.656 3.586-2.484t1.383-4.219-1.383-4.219-3.586-2.484v-2.063zM16.5 12q0 2.813-2.484 4.031v-8.063q1.031 0.516 1.758 1.688t0.727 2.344zM3 9h3.984l5.016-5.016v16.031l-5.016-5.016h-3.984v-6z"></path></svg></div>}
+                <button onClick={handlePlayAudio} type="button" disabled={isRateLimited || isLoadingAudio || isPlayingAudio} className={`mb-6 w-24 h-24 rounded-full flex items-center justify-center shadow-xl transition-all ${isPlayingAudio ? 'bg-blue-50 scale-105 ring-4 ring-blue-100' : 'bg-white border-2 border-gray-200 hover:scale-105'}`}>
+                    {isLoadingAudio ? <svg className="animate-spin h-10 w-10 text-blue-600" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> : <div className="relative">{isPlayingAudio && <div className="absolute rounded-full border-2 border-blue-400 opacity-0 animate-[ping_1.5s_cubic-bezier(0,0,0.2,1)_infinite] h-full w-full inset-0"></div>}<svg className="h-12 w-12 text-gray-700" viewBox="0 0 24 24" fill="currentColor"><path d="M14.016 3.234q3.047 0.656 5.016 3.117t1.969 5.648-1.969 5.648-5.016 3.117v-2.063q2.203-0.656 3.586-2.484t1.383-4.219-1.383-4.219-3.586-2.484v-2.063zM16.5 12q0 2.813-2.484 4.031v-8.063q1.031 0.516 1.758 1.688t0.727 2.344zM3 9h3.984l5.016-5.016v16.031l-5.016-5.016h-3.984v-6z"></path></svg></div>}
                 </button>
-                <p className="text-orange-500 font-extrabold text-2xl sm:text-3xl mb-4 text-center drop-shadow-sm">{currentWord?.translation}</p>
-                <form onSubmit={(e) => { e.preventDefault(); handleCheckAnswer(); }} className="w-full space-y-3 flex flex-col items-center">
-                    <div className="w-full relative max-w-sm"><span className="absolute left-3 top-1/2 -translate-y-1/2 text-2xl pointing-finger" style={{ top: 'calc(50% - 2px)' }}>👉</span><input ref={inputRef} type="text" value={userInput} onChange={(e) => setUserInput(e.target.value)} className={inputClasses} disabled={isChecking} autoComplete="off"/></div>
-                    <button type="submit" className="bg-gradient-to-br from-yellow-400 to-orange-500 text-white font-bold py-2 px-6 rounded-full shadow-md hover:shadow-lg transition-all" disabled={isChecking || !userInput.trim()}>Check answer</button>
+                <p className="text-orange-500 font-black text-3xl sm:text-4xl mb-6 text-center drop-shadow-sm">{currentWord?.translation}</p>
+                <form onSubmit={(e) => { e.preventDefault(); handleCheckAnswer(); }} className="w-full space-y-4 flex flex-col items-center">
+                    <div className="w-full relative max-w-sm"><span className="absolute left-3 top-1/2 -translate-y-1/2 text-3xl pointing-finger" style={{ top: 'calc(50% - 2px)' }}>👉</span><input ref={inputRef} type="text" value={userInput} onChange={(e) => setUserInput(e.target.value)} className={inputClasses} disabled={isChecking} autoComplete="off" placeholder="Write the English word..."/></div>
+                    <button type="submit" className="bg-black text-white font-black py-4 px-10 rounded-full shadow-xl hover:bg-gray-800 transition-all uppercase tracking-widest active:scale-95 disabled:bg-gray-400" disabled={isChecking || !userInput.trim()}>CHECK ANSWER</button>
                 </form>
             </div>
-            <button onClick={() => finishGame(false)} className="absolute bottom-4 right-4 bg-green-600 text-white font-bold py-2 px-4 rounded-full text-xs">Finish Quiz</button>
+            
+            <button onClick={() => finishGame(false)} className="absolute bottom-6 left-6 bg-gray-100 text-gray-400 font-bold py-1.5 px-4 rounded-full text-xs hover:text-gray-600 transition-colors">Finish Early</button>
         </div>
     );
 };
