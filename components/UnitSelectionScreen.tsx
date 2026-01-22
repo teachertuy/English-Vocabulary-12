@@ -1,4 +1,6 @@
 
+// components/UnitSelectionScreen.tsx
+
 import React, { useState, useEffect, useMemo } from 'react';
 import { PlayerData, QuizQuestion, UnitsState, VocabularyWord, WelcomeScreenConfig, ExerciseSelectionConfig } from '../types';
 import { listenToUnitsStatusByGrade, listenToTopicsStatus, listenToWelcomeConfig, listenToExerciseSelectionConfig } from '../services/firebaseService';
@@ -78,7 +80,7 @@ const DEFAULT_EXERCISE_CONFIG: ExerciseSelectionConfig = {
     matchingDuration: 20,
 };
 
-// Fix: Added missing startButtonSize property to match WelcomeScreenConfig interface
+// Fix: Complete DEFAULT_WELCOME_CONFIG to match WelcomeScreenConfig interface
 const DEFAULT_WELCOME_CONFIG: WelcomeScreenConfig = {
     titleText: 'ENGLISH VOCABULARY 12',
     titleFontSize: 1.8,
@@ -88,12 +90,20 @@ const DEFAULT_WELCOME_CONFIG: WelcomeScreenConfig = {
     inputNameFontSize: 1.25,
     inputNameColor: '#ffffff',
     inputNamePlaceholder: 'Nhập họ và tên của bạn..',
+    inputNameBorderColor: '#ffffff',
+    inputNameBorderWidth: 2,
     inputClassWidth: 10,
     inputClassFontSize: 1.25,
     inputClassColor: '#facc15',
     inputClassPlaceholder: 'Lớp...',
+    inputClassBorderColor: '#ffffff',
+    inputClassBorderWidth: 2,
     startButtonText: 'START',
-    startButtonSize: 4
+    startButtonSize: 4,
+    startButtonBgColor: '#facc15',
+    startButtonTextColor: '#dc2626',
+    startButtonRingColor: '#ffffff',
+    startButtonRingWidth: 2
 };
 
 const UnitSelectionScreen: React.FC<UnitSelectionScreenProps> = ({ playerData, classroomId, grade, onStartQuiz, onLearnVocabulary, onStartSpellingGame, onStartMatchingGame, onBack, selectedUnit, onUnitSelect, onCloseActivityModal }) => {

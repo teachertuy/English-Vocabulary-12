@@ -80,12 +80,20 @@ export interface WelcomeScreenConfig {
     inputNameFontSize: number;
     inputNameColor: string;
     inputNamePlaceholder: string;
+    inputNameBorderColor: string;
+    inputNameBorderWidth: number;
     inputClassWidth: number;
     inputClassFontSize: number;
     inputClassColor: string;
     inputClassPlaceholder: string;
+    inputClassBorderColor: string;
+    inputClassBorderWidth: number;
     startButtonText: string;
     startButtonSize: number;
+    startButtonBgColor: string;
+    startButtonTextColor: string;
+    startButtonRingColor: string;
+    startButtonRingWidth: number;
 }
 
 export interface DashboardConfig {
