@@ -25,7 +25,6 @@ import EditExerciseSelectionModal from './EditExerciseSelectionModal';
 
 type Tab = 'dashboard' | 'units_12' | 'topics';
 
-// Define the interface for student grouping
 interface StudentUnitSummary {
     playerKey: string;
     playerName: string;
@@ -51,8 +50,23 @@ const formatDate = (timestamp?: number) => {
     return `${h}:${m}:${s} ${d}/${mo}/${y}`;
 };
 
-const VOCAB_PLACEHOLDER = `Dán danh sách từ vựng của bạn vào đây...`;
-const EMPTY_ACTIVITY_PROMPTS = { learn: '', match: '', spell: '', quiz: '' };
+// Cấu hình yêu cầu mặc định cho AI theo đúng quy trình
+const DEFAULT_ACTIVITY_PROMPTS = { 
+    learn: 'Sử dụng tất cả các từ cung cấp trong danh sách để tạo danh sách học từ vựng chi tiết (gồm từ, loại từ, phiên âm và nghĩa tiếng Việt).', 
+    match: 'Sử dụng tất cả các từ cung cấp trong danh sách để tạo trò chơi ghép cặp từ Anh sang Việt.', 
+    spell: 'Sử dụng tất cả các từ cung cấp trong danh sách để tạo trò chơi viết chính tả tiếng Anh.', 
+    quiz: 'Tạo bộ 40 câu hỏi trắc nghiệm dựa trên danh sách từ vựng: 20 câu kiểm tra nghĩa từ vựng, 10 câu về cách phát âm (underline phần phát âm khác biệt bằng thẻ <u>), 10 câu về trọng âm.' 
+};
+
+// Placeholder định dạng từ vựng như trong ảnh mẫu
+const VOCAB_INPUT_PLACEHOLDER = `Dán danh sách từ vựng của bạn vào đây.
+Định dạng mong muốn:
+Từ Tiếng Anh - (Từ loại) /Phiên âm/ - Nghĩa Tiếng Việt
+
+Ví dụ:
+vocabulary - (n) /vəˈkæbjələri/ - từ vựng
+pronunciation - (n) /prəˌnʌnsiˈeɪʃn/ - cách phát âm
+intermediate - (adj) /ˌɪntərˈmiːdiət/ - trung cấp`;
 
 const DEFAULT_DASHBOARD_CONFIG: DashboardConfig = {
     unitsTabLabel: 'Quản lý UNITs _ English 12',
@@ -76,7 +90,6 @@ const DEFAULT_UNIT_COLORS = [
     '#D81B60', '#7B1FA2', '#1976D2', '#37474F', '#00897B'
 ];
 
-// Fixed missing properties in DEFAULT_EXERCISE_CONFIG
 const DEFAULT_EXERCISE_CONFIG: ExerciseSelectionConfig = {
     mainTitle: 'TỪ VỰNG TIẾNG ANH 12 & TỪ VỰNG THEO CHỦ ĐỀ',
     mainTitleFontSize: 1.875,
@@ -127,7 +140,6 @@ const DEFAULT_EXERCISE_CONFIG: ExerciseSelectionConfig = {
     activitySpellDesc: 'Viết từ tiếng Anh tương ứng',
     activityQuizLabel: 'Làm bài trắc nghiệm',
     activityQuizDesc: 'Kiểm tra kiến thức của bạn',
-    // Added missing properties
     quizDuration: 30,
     spellingDuration: 30,
     matchingDuration: 20,
@@ -224,8 +236,7 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
     const [isGeneratingUnitActivities, setIsGeneratingUnitActivities] = useState(false);
     const [selectedUnitClass, setSelectedUnitClass] = useState('all');
     const [deletingUnitStudent, setDeletingUnitStudent] = useState<GameResult | null>(null);
-    const [isClearingUnit, setIsClearingUnit] = useState(false);
-    const [unitActivityPrompts, setUnitActivityPrompts] = useState(EMPTY_ACTIVITY_PROMPTS);
+    const [unitActivityPrompts, setUnitActivityPrompts] = useState(DEFAULT_ACTIVITY_PROMPTS);
     const [topicsStatus, setTopicsStatus] = useState<UnitsState>({});
     const [viewingTopic, setViewingTopic] = useState<number | null>(null);
     const [processedTopicResults, setProcessedTopicResults] = useState<StudentUnitSummary[]>([]);
@@ -235,14 +246,13 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
     const [isGeneratingTopicActivities, setIsGeneratingTopicActivities] = useState(false);
     const [selectedTopicClass, setSelectedTopicClass] = useState('all');
     const [deletingTopicStudent, setDeletingTopicStudent] = useState<GameResult | null>(null);
-    const [isClearingTopic, setIsClearingTopic] = useState(false);
-    const [topicActivityPrompts, setTopicActivityPrompts] = useState(EMPTY_ACTIVITY_PROMPTS);
+    const [topicActivityPrompts, setTopicActivityPrompts] = useState(DEFAULT_ACTIVITY_PROMPTS);
     const [isGameEnabled, setIsGameEnabled] = useState(true);
 
     useEffect(() => { if (notification) { const timer = setTimeout(() => setNotification(null), 4000); return () => clearTimeout(timer); } }, [notification]);
 
     useEffect(() => {
-        let unsubscribeResults: () => void, unsubscribeStatus: () => void, unsubscribeOnline: () => void, unsubscribeCheats: () => void, unsubscribeProgress: () => void, unsubscribeQuiz: () => void, unsubscribeUnits12: () => void, unsubscribeTopics: () => void, unsubscribeWelcome: () => void, unsubscribeDashboard: () => void, unsubscribeExercise: () => void;
+        let unsubscribeResults: () => void, unsubscribeStatus: () => void, unsubscribeOnline: () => void, unsubscribeCheats: () => void, unsubscribeProgress: () => void, unsubscribeUnits12: () => void, unsubscribeTopics: () => void, unsubscribeWelcome: () => void, unsubscribeDashboard: () => void, unsubscribeExercise: () => void;
         (async () => {
             try { await checkAndSyncQuizVersion(classroomId, QUIZ_VERSION); } catch (e) {}
             unsubscribeResults = listenToResults(classroomId, (data) => setResults(data ? Object.values(data) : []));
@@ -306,15 +316,11 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
         const filtered = rawStudents.filter(s => currentClass === 'all' || s.playerClass.toUpperCase() === currentClass.toUpperCase());
         const mergedMap: Record<string, StudentGroupedResult> = {};
         
-        // Helper to count uppercase characters (including Vietnamese accented characters)
         const countUpper = (str: string) => {
             let count = 0;
             for (let i = 0; i < str.length; i++) {
                 const char = str[i];
-                // Check if char is uppercase and not identical to its lowercase (excludes numbers/punctuation)
-                if (char === char.toUpperCase() && char !== char.toLowerCase()) {
-                    count++;
-                }
+                if (char === char.toUpperCase() && char !== char.toLowerCase()) count++;
             }
             return count;
         };
@@ -322,42 +328,18 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
         filtered.forEach(s => {
             const identityKey = `${s.playerClass.toUpperCase()}_${s.playerName.toUpperCase()}`;
             if (!mergedMap[identityKey]) {
-                mergedMap[identityKey] = {
-                    playerKey: identityKey,
-                    playerName: s.playerName,
-                    playerClass: s.playerClass,
-                    attempts: [],
-                    latestTimestamp: 0
-                };
+                mergedMap[identityKey] = { playerKey: identityKey, playerName: s.playerName, playerClass: s.playerClass, attempts: [], latestTimestamp: 0 };
             }
-            
             mergedMap[identityKey].attempts.push(...s.results);
-            
             const groupLatest = s.results.length > 0 ? Math.max(...s.results.map(r => r.timestamp || 0)) : 0;
-            
-            // Prefer the display name with the most uppercase characters (e.g. "Mỹ" wins over "mỹ")
             const currentNameCapCount = countUpper(mergedMap[identityKey].playerName);
             const incomingNameCapCount = countUpper(s.playerName);
-
-            if (incomingNameCapCount > currentNameCapCount) {
-                mergedMap[identityKey].playerName = s.playerName;
-            } else if (incomingNameCapCount === currentNameCapCount) {
-                // If same cap count, prefer the name used in the most recent activity
-                if (groupLatest > mergedMap[identityKey].latestTimestamp) {
-                    mergedMap[identityKey].playerName = s.playerName;
-                }
-            }
-
-            if (groupLatest > mergedMap[identityKey].latestTimestamp) {
-                mergedMap[identityKey].latestTimestamp = groupLatest;
-            }
+            if (incomingNameCapCount > currentNameCapCount) mergedMap[identityKey].playerName = s.playerName;
+            else if (incomingNameCapCount === currentNameCapCount && groupLatest > mergedMap[identityKey].latestTimestamp) mergedMap[identityKey].playerName = s.playerName;
+            if (groupLatest > mergedMap[identityKey].latestTimestamp) mergedMap[identityKey].latestTimestamp = groupLatest;
         });
-
         const groups = Object.values(mergedMap);
-        groups.forEach(g => {
-            g.attempts.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-        });
-
+        groups.forEach(g => g.attempts.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0)));
         return groups.sort((a, b) => b.latestTimestamp - a.latestTimestamp);
     };
 
@@ -400,7 +382,6 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                                 <React.Fragment key={group.playerKey}>
                                     {group.attempts.map((res, attemptIdx) => (
                                         <tr key={`${res.activityId}_${attemptIdx}`} onClick={() => onRowClick(res)} className="hover:bg-blue-50/50 transition-colors cursor-pointer text-[14px] font-bold">
-                                            {/* Merged Columns using rowSpan */}
                                             {attemptIdx === 0 && (
                                                 <>
                                                     <td rowSpan={group.attempts.length} className="p-3 border border-gray-300 text-blue-600 font-black text-center align-middle bg-white">{sttIdx + 1}</td>
@@ -408,7 +389,6 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                                                     <td rowSpan={group.attempts.length} className="p-3 border border-gray-300 text-[#8E44AD] text-center align-middle bg-white">{group.playerClass}</td>
                                                 </>
                                             )}
-                                            {/* Per Attempt Columns */}
                                             <td className="p-3 border border-gray-300 text-red-600 text-lg font-black text-center whitespace-nowrap">{res.score}</td>
                                             <td className="p-3 border border-gray-300 text-center">
                                                 <span className={`px-4 py-1.5 rounded-full text-[12px] font-bold border ${getGameTypeStyle(res.gameType)}`}>
@@ -416,7 +396,6 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                                                 </span>
                                             </td>
                                             <td className="p-3 border border-gray-300 text-red-600 text-center">{res.attempts || 1}</td>
-                                            {/* Correct/Incorrect Columns: Display '-' for vocabulary activity */}
                                             <td className="p-3 border border-gray-300 text-green-600 text-center">{res.gameType === 'vocabulary' ? '-' : res.correct}</td>
                                             <td className="p-3 border border-gray-300 text-red-600 text-center">{res.gameType === 'vocabulary' ? '-' : res.incorrect}</td>
                                             <td className="p-3 border border-gray-300 text-[#c05621] text-center font-['Nunito'] font-black">{formatTime(res.timeTakenSeconds || 0)}</td>
@@ -442,7 +421,6 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
     const handleGenerateActivities = async (type: 'unit' | 'topic') => {
         const isUnit = type === 'unit';
         const setter = isUnit ? setIsGeneratingUnitActivities : setIsGeneratingTopicActivities;
-        const currentVocab = isUnit ? currentUnitVocabulary : currentTopicVocabulary;
         const vocabListText = isUnit ? unitVocabList : topicVocabList;
         const prompts = isUnit ? unitActivityPrompts : topicActivityPrompts;
         const gradeVal = isUnit ? viewingUnit?.grade : 'topics';
@@ -450,11 +428,13 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
 
         setter(true);
         try {
-            let source = vocabListText.trim();
-            if (!source && currentVocab.length > 0) source = currentVocab.map(v => `${v.word} - (${v.type}) /${v.phonetic}/ - ${v.translation}`).join('\n');
-            if (!source) throw new Error();
-            if (prompts.learn.trim()) {
-                const vocabData = await generateVocabularyList(`Context: ${source}\n\nInstruction: ${prompts.learn}`);
+            const source = vocabListText.trim();
+            if (!source) throw new Error("Chưa nhập danh sách từ vựng.");
+
+            const activeVocabPrompts = [prompts.learn, prompts.match, prompts.spell].filter(p => p.trim() !== '');
+            if (activeVocabPrompts.length > 0) {
+                const combinedVocabPrompt = activeVocabPrompts.join(". ");
+                const vocabData = await generateVocabularyList(`Context: ${source}\n\nInstruction: ${combinedVocabPrompt}`);
                 isUnit ? await saveUnitVocabularyByGrade(classroomId, gradeVal as number, idVal, vocabData) : await saveTopicVocabulary(classroomId, idVal, vocabData);
             }
             if (prompts.quiz.trim()) {
@@ -462,7 +442,160 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                 isUnit ? await saveUnitQuizQuestionsByGrade(classroomId, gradeVal as number, idVal, questions) : await saveTopicQuizQuestions(classroomId, idVal, questions);
             }
             setNotification({ message: 'Thành công!', type: 'success' });
-        } catch (e) { setNotification({ message: 'Thất bại.', type: 'error' }); } finally { setter(false); }
+        } catch (e) { 
+            setNotification({ message: e instanceof Error ? e.message : 'Thất bại.', type: 'error' }); 
+        } finally { 
+            setter(false); 
+        }
+    };
+
+    const handleOpenEditQuiz = () => {
+        if (viewingUnit) {
+            setQuizForEditing(currentUnitQuiz);
+        } else if (viewingTopic) {
+            setQuizForEditing(currentTopicQuiz);
+        }
+    };
+
+    const handleOpenEditVocab = () => {
+        if (viewingUnit) {
+            setVocabForEditing(currentUnitVocabulary);
+            setIsEditVocabModalOpen(true);
+        } else if (viewingTopic) {
+            setVocabForEditing(currentTopicVocabulary);
+            setIsEditVocabModalOpen(true);
+        }
+    };
+
+    const renderManageContent = (type: 'unit' | 'topic') => {
+        const isUnit = type === 'unit';
+        const currentId = isUnit ? `UNIT ${viewingUnit?.unit}` : `TOPIC ${viewingTopic}`;
+        const vocabValue = isUnit ? unitVocabList : topicVocabList;
+        const setVocabValue = isUnit ? setUnitVocabList : setTopicVocabList;
+        const prompts = isUnit ? unitActivityPrompts : topicActivityPrompts;
+        const setPrompts = isUnit ? setUnitActivityPrompts : setTopicActivityPrompts;
+        const isGenerating = isUnit ? isGeneratingUnitActivities : isGeneratingTopicActivities;
+        const hasExistingVocab = isUnit ? currentUnitVocabulary.length > 0 : currentTopicVocabulary.length > 0;
+        const hasExistingQuiz = isUnit ? currentUnitQuiz.length > 0 : currentTopicQuiz.length > 0;
+
+        return (
+            <div className="p-4 bg-white/70 backdrop-blur-sm rounded-lg shadow-md border border-gray-200 tab-content-enter space-y-8">
+                <div className="flex justify-between items-center">
+                    <button onClick={() => isUnit ? setViewingUnit(null) : setViewingTopic(null)} className="flex items-center gap-2 text-blue-600 font-semibold hover:underline">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" /></svg>
+                        <span>Quay lại danh sách</span>
+                    </button>
+                    <h2 className="text-2xl font-bold text-indigo-800">Soạn bài: {currentId}</h2>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    {/* Phần 1: Dán từ vựng */}
+                    <div className="p-6 border rounded-2xl bg-white shadow-sm flex flex-col h-full border-gray-200">
+                        <label className="font-bold text-lg text-[#0d9488] block mb-3 border-b pb-2">1. Dán danh sách từ vựng (không bắt buộc nếu đã có):</label>
+                        <textarea 
+                            value={vocabValue} 
+                            onChange={(e) => setVocabValue(e.target.value)} 
+                            placeholder={VOCAB_INPUT_PLACEHOLDER} 
+                            className="flex-grow w-full h-[450px] p-4 border border-gray-300 rounded-xl focus:ring-4 focus:ring-teal-100 font-mono text-sm bg-slate-50 transition-all"
+                        />
+                    </div>
+
+                    {/* Phần 2: Tùy chỉnh AI */}
+                    <div className="flex flex-col h-full space-y-4">
+                        <label className="font-bold text-lg text-slate-800 block mb-1 border-b pb-2">2. Tùy chỉnh yêu cầu cho AI:</label>
+                        
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 flex-grow">
+                            {/* Card: Học từ vựng */}
+                            <div className="bg-blue-50 p-4 rounded-2xl border-2 border-blue-200 shadow-sm hover:shadow-md transition-shadow">
+                                <label className="block text-sm font-black text-blue-700 mb-2 flex items-center gap-2 uppercase tracking-tighter">
+                                    <span className="bg-blue-600 text-white px-2 py-0.5 rounded italic">01</span> Học từ vựng
+                                </label>
+                                <textarea 
+                                    value={prompts.learn} 
+                                    onChange={(e) => setPrompts(p => ({...p, learn: e.target.value}))} 
+                                    className="w-full p-3 border border-blue-200 rounded-xl text-[13px] h-28 focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
+                                />
+                            </div>
+
+                            {/* Card: Ghép cặp */}
+                            <div className="bg-purple-50 p-4 rounded-2xl border-2 border-purple-200 shadow-sm hover:shadow-md transition-shadow">
+                                <label className="block text-sm font-black text-purple-700 mb-2 flex items-center gap-2 uppercase tracking-tighter">
+                                    <span className="bg-purple-600 text-white px-2 py-0.5 rounded italic">02</span> Ghép cặp
+                                </label>
+                                <textarea 
+                                    value={prompts.match} 
+                                    onChange={(e) => setPrompts(p => ({...p, match: e.target.value}))} 
+                                    className="w-full p-3 border border-purple-200 rounded-xl text-[13px] h-28 focus:outline-none focus:ring-2 focus:ring-purple-400 bg-white"
+                                />
+                            </div>
+
+                            {/* Card: Viết chính tả */}
+                            <div className="bg-orange-50 p-4 rounded-2xl border-2 border-orange-200 shadow-sm hover:shadow-md transition-shadow">
+                                <label className="block text-sm font-black text-orange-700 mb-2 flex items-center gap-2 uppercase tracking-tighter">
+                                    <span className="bg-orange-600 text-white px-2 py-0.5 rounded italic">03</span> Viết chính tả
+                                </label>
+                                <textarea 
+                                    value={prompts.spell} 
+                                    onChange={(e) => setPrompts(p => ({...p, spell: e.target.value}))} 
+                                    className="w-full p-3 border border-orange-200 rounded-xl text-[13px] h-28 focus:outline-none focus:ring-2 focus:ring-orange-400 bg-white"
+                                />
+                            </div>
+
+                            {/* Card: Trắc nghiệm */}
+                            <div className="bg-green-50 p-4 rounded-2xl border-2 border-green-200 shadow-sm hover:shadow-md transition-shadow">
+                                <label className="block text-sm font-black text-green-700 mb-2 flex items-center gap-2 uppercase tracking-tighter">
+                                    <span className="bg-green-600 text-white px-2 py-0.5 rounded italic">04</span> Trắc nghiệm
+                                </label>
+                                <textarea 
+                                    value={prompts.quiz} 
+                                    onChange={(e) => setPrompts(p => ({...p, quiz: e.target.value}))} 
+                                    className="w-full p-3 border border-green-200 rounded-xl text-[13px] h-28 focus:outline-none focus:ring-2 focus:ring-green-400 bg-white"
+                                />
+                            </div>
+                        </div>
+
+                        <button 
+                            onClick={() => handleGenerateActivities(type)} 
+                            disabled={isGenerating} 
+                            className={`w-full py-4 px-8 rounded-2xl text-white font-black text-lg shadow-xl transform transition-all active:scale-95 flex items-center justify-center gap-3 ${isGenerating ? 'bg-slate-400 cursor-not-allowed' : 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 ring-4 ring-indigo-100'}`}
+                        >
+                            {isGenerating ? (
+                                <>
+                                    <svg className="animate-spin h-6 w-6 text-white" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                    <span>AI Đang xử lý...</span>
+                                </>
+                            ) : (
+                                <>
+                                    <span>✨ TẠO HOẠT ĐỘNG VỚI A.I</span>
+                                </>
+                            )}
+                        </button>
+
+                        <div className="grid grid-cols-2 gap-4 mt-2">
+                            <button 
+                                onClick={handleOpenEditVocab}
+                                disabled={!hasExistingVocab}
+                                className={`py-3 px-4 rounded-xl font-bold flex items-center justify-center gap-2 border-2 transition-all ${hasExistingVocab ? 'border-blue-500 text-blue-600 hover:bg-blue-50 shadow-sm active:scale-95' : 'border-gray-200 text-gray-300 cursor-not-allowed opacity-50'}`}
+                            >
+                                📝 Xem & Sửa Từ vựng
+                            </button>
+                            <button 
+                                onClick={handleOpenEditQuiz}
+                                disabled={!hasExistingQuiz}
+                                className={`py-3 px-4 rounded-xl font-bold flex items-center justify-center gap-2 border-2 transition-all ${hasExistingQuiz ? 'border-green-500 text-green-600 hover:bg-green-50 shadow-sm active:scale-95' : 'border-gray-200 text-gray-300 cursor-not-allowed opacity-50'}`}
+                            >
+                                📋 Xem & Sửa Trắc nghiệm
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="pt-8">
+                    <h3 className="text-xl font-bold text-indigo-700 border-l-4 border-indigo-600 pl-3 mb-4">Kết quả làm bài ({currentId})</h3>
+                    {renderResultsTable(isUnit ? groupedUnitResults : groupedTopicResults, type, setSelectedResult, isUnit ? setDeletingUnitStudent : setDeletingTopicStudent)}
+                </div>
+            </div>
+        );
     };
 
     const isGameEnabledToggle = isGameEnabled;
@@ -478,13 +611,9 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                 </div>
             </header>
             <div className="p-6">
-                {/* Redesigned Room Status Toggle (Link: ON/OFF style) */}
                 <div className="inline-flex items-center bg-white px-5 py-3 rounded-2xl shadow-sm border border-gray-100 mb-8 transition-all hover:shadow-md">
                     <span className="text-[1.1rem] font-extrabold text-slate-700 mr-4 tracking-tight">LINK:</span>
-                    <button 
-                        onClick={() => setGameStatus(classroomId, !isGameEnabledToggle)}
-                        className="flex items-center gap-3 group outline-none focus:outline-none"
-                    >
+                    <button onClick={() => setGameStatus(classroomId, !isGameEnabledToggle)} className="flex items-center gap-3 group outline-none focus:outline-none">
                         <div className="relative w-14 h-7 bg-[#e2e8f0] rounded-full p-1 transition-colors duration-300">
                             <div className={`w-5 h-5 rounded-full shadow-md transition-all duration-300 transform ${isGameEnabledToggle ? 'translate-x-7 bg-[#22c55e]' : 'translate-x-0 bg-red-600'}`}></div>
                         </div>
@@ -495,46 +624,12 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                 </div>
 
                 <div className="mb-6 flex gap-4 flex-wrap">
-                    <button 
-                        onClick={() => { setViewingUnit(null); setViewingTopic(null); setActiveTab('dashboard'); }} 
-                        className={`px-6 py-3 font-bold rounded-lg transition-all bg-green-600 text-white ${activeTab === 'dashboard' ? 'shadow-xl ring-4 ring-green-200 scale-105 z-10' : 'opacity-85 hover:opacity-100 hover:shadow-md'}`}
-                    >
-                        HOME
-                    </button>
-                    <button 
-                        onClick={() => { setViewingUnit(null); setViewingTopic(null); setActiveTab('units_12'); }} 
-                        className={`px-6 py-3 font-bold rounded-lg transition-all bg-red-600 text-white ${activeTab === 'units_12' ? 'shadow-xl ring-4 ring-red-200 scale-105 z-10' : 'opacity-85 hover:opacity-100 hover:shadow-md'}`}
-                    >
-                        {dashboardConfig.unitsTabLabel}
-                    </button>
-                    <button 
-                        onClick={() => { setViewingUnit(null); setViewingTopic(null); setActiveTab('topics'); }} 
-                        className={`px-6 py-3 font-bold rounded-lg transition-all bg-blue-600 text-white ${activeTab === 'topics' ? 'shadow-xl ring-4 ring-blue-200 scale-105 z-10' : 'opacity-85 hover:opacity-100 hover:shadow-md'}`}
-                    >
-                        {dashboardConfig.topicsTabLabel}
-                    </button>
+                    <button onClick={() => { setViewingUnit(null); setViewingTopic(null); setActiveTab('dashboard'); }} className={`px-6 py-3 font-bold rounded-lg transition-all bg-green-600 text-white ${activeTab === 'dashboard' ? 'shadow-xl ring-4 ring-green-200 scale-105 z-10' : 'opacity-85 hover:opacity-100 hover:shadow-md'}`}>HOME</button>
+                    <button onClick={() => { setViewingUnit(null); setViewingTopic(null); setActiveTab('units_12'); }} className={`px-6 py-3 font-bold rounded-lg transition-all bg-red-600 text-white ${activeTab === 'units_12' ? 'shadow-xl ring-4 ring-red-200 scale-105 z-10' : 'opacity-85 hover:opacity-100 hover:shadow-md'}`}>{dashboardConfig.unitsTabLabel}</button>
+                    <button onClick={() => { setViewingUnit(null); setViewingTopic(null); setActiveTab('topics'); }} className={`px-6 py-3 font-bold rounded-lg transition-all bg-blue-600 text-white ${activeTab === 'topics' ? 'shadow-xl ring-4 ring-blue-200 scale-105 z-10' : 'opacity-85 hover:opacity-100 hover:shadow-md'}`}>{dashboardConfig.topicsTabLabel}</button>
                 </div>
-                {viewingUnit ? (
-                    <div className="p-4 bg-white/70 backdrop-blur-sm rounded-lg shadow-md border border-gray-200 tab-content-enter space-y-8">
-                        <div className="flex justify-between items-center"><button onClick={() => setViewingUnit(null)} className="flex items-center gap-2 text-blue-600 font-semibold hover:underline"><svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" /></svg><span>Quay lại danh sách</span></button><h2 className="text-2xl font-bold text-indigo-800">Quản lý chi tiết: UNIT {viewingUnit.unit}</h2></div>
-                        <div className="p-4 border rounded-lg bg-sky-50 border-sky-200 grid grid-cols-1 lg:grid-cols-2 gap-6 shadow-inner">
-                            <div><label className="font-semibold text-teal-700 block mb-1">1. Dán danh sách từ vựng:</label><textarea value={unitVocabList} onChange={(e) => setUnitVocabList(e.target.value)} placeholder="Dán từ vựng tại đây..." className="w-full h-96 p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 font-mono text-sm bg-white" /></div>
-                            <div className="flex flex-col justify-between"><div className="space-y-4"><label className="font-semibold text-teal-700">2. Tùy chỉnh yêu cầu cho AI:</label><div className="bg-white p-2 rounded-md border border-gray-200"><label className="block text-xs font-bold text-blue-600 mb-1">HỌC TỪ VỰNG</label><textarea value={unitActivityPrompts.learn} onChange={(e) => setUnitActivityPrompts(p => ({...p, learn: e.target.value}))} className="w-full p-2 border rounded-md text-xs bg-sky-100 focus:outline-none" rows={2}/></div><div className="bg-white p-2 rounded-md border border-gray-200"><label className="block text-xs font-bold text-green-600 mb-1">TRẮC NGỐM</label><textarea value={unitActivityPrompts.quiz} onChange={(e) => setUnitActivityPrompts(p => ({...p, quiz: e.target.value}))} className="w-full p-2 border rounded-md text-xs bg-sky-100 focus:outline-none" rows={2}/></div></div><button onClick={() => handleGenerateActivities('unit')} disabled={isGeneratingUnitActivities} className="bg-purple-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-purple-700 shadow-md transition-all active:scale-95 disabled:bg-gray-400 mt-4 w-full">{isGeneratingUnitActivities ? 'Đang tạo bài...' : '✨ Tạo hoạt động với AI'}</button></div>
-                        </div>
-                        <h3 className="text-xl font-bold text-indigo-700 border-l-4 border-indigo-600 pl-3">Kết quả làm bài (UNIT {viewingUnit.unit})</h3>
-                        {renderResultsTable(groupedUnitResults, 'unit', setSelectedResult, setDeletingUnitStudent)}
-                    </div>
-                ) : viewingTopic ? (
-                    <div className="p-4 bg-white/70 backdrop-blur-sm rounded-lg shadow-md border border-gray-200 tab-content-enter space-y-8">
-                        <div className="flex justify-between items-center"><button onClick={() => setViewingTopic(null)} className="flex items-center gap-2 text-blue-600 font-semibold hover:underline">Quay lại danh sách</button><h2 className="text-2xl font-bold text-indigo-800">Quản lý chi tiết: TOPIC {viewingTopic}</h2></div>
-                        <div className="p-4 border rounded-lg bg-sky-50 border-sky-200 grid grid-cols-1 lg:grid-cols-2 gap-6 shadow-inner">
-                            <div><textarea value={topicVocabList} onChange={(e) => setTopicVocabList(e.target.value)} placeholder="Dán từ vựng tại đây..." className="w-full h-96 p-3 border border-gray-300 rounded-md font-mono text-sm bg-white" /></div>
-                            <div className="flex flex-col justify-between"><div className="space-y-4"><textarea value={topicActivityPrompts.learn} onChange={(e) => setTopicActivityPrompts(p => ({...p, learn: e.target.value}))} placeholder="Học từ vựng..." className="w-full p-2 border rounded-md text-sm bg-sky-50" rows={3}/><textarea value={topicActivityPrompts.quiz} onChange={(e) => setTopicActivityPrompts(p => ({...p, quiz: e.target.value}))} placeholder="Trắc nghiệm..." className="w-full p-2 border rounded-md text-sm bg-sky-50" rows={3}/></div><button onClick={() => handleGenerateActivities('topic')} disabled={isGeneratingTopicActivities} className="bg-slate-500 text-white font-bold py-4 px-8 rounded-lg hover:bg-slate-600 shadow-md transition-all active:scale-95 disabled:bg-gray-400 mt-6 w-full">{isGeneratingTopicActivities ? 'Đang tạo bài...' : '✨ Tạo hoạt động với AI'}</button></div>
-                        </div>
-                        <h3 className="text-xl font-bold text-indigo-700 border-l-4 border-indigo-600 pl-3">Kết quả làm bài (TOPIC {viewingTopic})</h3>
-                        {renderResultsTable(groupedTopicResults, 'topic', setSelectedResult, setDeletingTopicStudent)}
-                    </div>
-                ) : activeTab === 'units_12' ? (
+
+                {viewingUnit ? renderManageContent('unit') : viewingTopic ? renderManageContent('topic') : activeTab === 'units_12' ? (
                     <div className="p-6 bg-gradient-to-br from-green-700 via-green-800 to-green-900 rounded-lg shadow-2xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 tab-content-enter">
                         {Array.from({ length: 10 }, (_, i) => i + 1).map(unit => {
                             const isEnabled = unitsStatus12[`unit_${unit}`]?.enabled ?? false;
@@ -585,7 +680,15 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
             <EditWelcomeScreenModal show={isEditWelcomeModalOpen} onClose={() => setIsEditWelcomeModalOpen(false)} onSave={async (c) => { await saveWelcomeConfig(classroomId, c); setNotification({ message: 'Đã lưu thiết kế!', type: 'success' }); }} currentConfig={welcomeConfig} />
             <EditDashboardConfigModal show={isEditDashboardModalOpen} onClose={() => setIsEditDashboardModalOpen(false)} onSave={async (c) => { await saveDashboardConfig(classroomId, c); setNotification({ message: 'Đã lưu thiết kế!', type: 'success' }); }} currentConfig={dashboardConfig} />
             <EditExerciseSelectionModal show={isEditExerciseModalOpen} onClose={() => setIsEditExerciseModalOpen(false)} onSave={async (c) => { await saveExerciseSelectionConfig(classroomId, c); setNotification({ message: 'Đã lưu thiết kế!', type: 'success' }); }} currentConfig={exerciseSelectionConfig} />
-            {quizForEditing && <EditQuizModal questions={quizForEditing} onClose={() => setQuizForEditing(null)} onSave={async (q) => { await saveQuizQuestions(classroomId, q); setQuizForEditing(null); setNotification({ message: 'Cập nhật đề thành công!', type: 'success' }); }} />}
+            {quizForEditing && <EditQuizModal questions={quizForEditing} onClose={() => setQuizForEditing(null)} onSave={async (q) => { 
+                if (viewingUnit) {
+                    await saveUnitQuizQuestionsByGrade(classroomId, viewingUnit.grade, `unit_${viewingUnit.unit}`, q);
+                } else if (viewingTopic) {
+                    await saveTopicQuizQuestions(classroomId, `topic_${viewingTopic}`, q);
+                }
+                setQuizForEditing(null); 
+                setNotification({ message: 'Cập nhật đề thành công!', type: 'success' }); 
+            }} />}
             {isEditVocabModalOpen && <EditVocabularyModal vocabulary={vocabForEditing} onClose={() => setIsEditVocabModalOpen(false)} onSave={async (v) => { if(viewingUnit) await saveUnitVocabularyByGrade(classroomId, viewingUnit.grade, `unit_${viewingUnit.unit}`, v); else if(viewingTopic) await saveTopicVocabulary(classroomId, `topic_${viewingTopic}`, v); setNotification({ message: 'Cập nhật từ vựng thành công!', type: 'success' }); }} />}
             {selectedResult && <ResultDetailModal result={selectedResult} onClose={() => setSelectedResult(null)} />}
             <ConfirmationModal show={!!deletingUnitStudent} title="Xác nhận" message={`Xóa kết quả của ${deletingUnitStudent?.playerName}?`} onConfirm={async () => { await deleteUnitStudentResultByGrade(classroomId, viewingUnit!.grade, `unit_${viewingUnit!.unit}`, deletingUnitStudent!.playerName, deletingUnitStudent!.playerClass, deletingUnitStudent!.activityId!); setDeletingUnitStudent(null); setNotification({ message: 'Đã xóa!', type: 'success' }); }} onCancel={() => setDeletingUnitStudent(null)} />
