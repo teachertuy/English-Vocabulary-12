@@ -40,7 +40,7 @@ const getPlayerKey = (playerName: string, playerClass: string) => {
 export const submitResult = async (classroomId: string, result: GameResult): Promise<void> => {
     const db = checkFirebase();
     const playerKey = getPlayerKey(result.playerName, result.playerClass);
-    await set(ref(db, `classrooms/${classroomId}/results/${playerKey}`), result);
+    await set(ref(db, `classrooms/${classroomId}/results/${playerKey}`), { ...result, timestamp: serverTimestamp() });
 };
 
 export const listenToResults = (classroomId: string, callback: (results: Record<string, GameResult> | null) => void): Unsubscribe => {
@@ -201,6 +201,12 @@ export const deleteUnitStudentResultByGrade = async (classroomId: string, grade:
     await remove(ref(db, `classrooms/${classroomId}/units_${grade}/${unitId}/results/${playerKey}/${activityId}`));
 };
 
+export const deleteUnitStudentAllResultsByGrade = async (classroomId: string, grade: number, unitId: string, name: string, className: string) => {
+    const db = checkFirebase();
+    const playerKey = getPlayerKey(name, className);
+    await remove(ref(db, `classrooms/${classroomId}/units_${grade}/${unitId}/results/${playerKey}`));
+};
+
 export const setUnitStatusByGrade = async (classroomId: string, grade: number, unitId: string, isEnabled: boolean) => {
     const db = checkFirebase();
     await set(ref(db, `classrooms/${classroomId}/units_${grade}/${unitId}/enabled`), isEnabled);
@@ -218,13 +224,32 @@ export const startUnitActivity = async (classroomId: string, grade: any, unitId:
     const activityRef = push(ref(db, `classrooms/${classroomId}/${basePath}/results/${playerKey}`));
     const activityId = activityRef.key!;
     
+    const initialResult = { 
+        playerName: player.name, 
+        playerClass: player.class, 
+        score: '0', 
+        correct: 0, 
+        incorrect: 0, 
+        answered: 0, 
+        totalQuestions: 0, 
+        timeTakenSeconds: 0, 
+        details: [], 
+        gameType, 
+        status: 'in-progress', 
+        attempts: 1, 
+        timestamp: serverTimestamp() 
+    };
+
+    await set(ref(db, `classrooms/${classroomId}/${basePath}/results/${playerKey}/${activityId}`), initialResult);
+    
     await runTransaction(ref(db, `classrooms/${classroomId}/${basePath}/results/${playerKey}`), (curr: any) => {
-        const attempts = curr ? Object.values(curr).filter((r: any) => r.gameType === gameType).length : 0;
-        const newResult = { playerName: player.name, playerClass: player.class, score: '0', correct: 0, incorrect: 0, answered: 0, totalQuestions: 0, timeTakenSeconds: 0, details: [], gameType, status: 'in-progress', attempts: attempts + 1 };
-        const updates = { ...curr };
-        updates[activityId] = newResult;
-        return updates;
+        if (curr && curr[activityId]) {
+            const attempts = Object.values(curr).filter((r: any) => r.gameType === gameType && r.status === 'completed').length;
+            curr[activityId].attempts = attempts + 1;
+        }
+        return curr;
     });
+
     return activityId;
 };
 
@@ -232,7 +257,7 @@ export const updateUnitActivityProgress = async (classroomId: string, grade: any
     const db = checkFirebase();
     const playerKey = getPlayerKey(player.name, player.class);
     const basePath = grade === 'topics' ? `topics/${unitId}` : `units_${grade}/${unitId}`;
-    await update(ref(db, `classrooms/${classroomId}/${basePath}/results/${playerKey}/${activityId}`), result);
+    await update(ref(db, `classrooms/${classroomId}/${basePath}/results/${playerKey}/${activityId}`), { ...result, timestamp: serverTimestamp() });
 };
 
 export const updateUnitActivityResult = async (classroomId: string, grade: any, unitId: string, player: PlayerData, activityId: string, result: any) => {
@@ -288,6 +313,12 @@ export const deleteTopicStudentResult = async (classroomId: string, topicId: str
     const db = checkFirebase();
     const playerKey = getPlayerKey(name, className);
     await remove(ref(db, `classrooms/${classroomId}/topics/${topicId}/results/${playerKey}/${activityId}`));
+};
+
+export const deleteTopicStudentAllResults = async (classroomId: string, topicId: string, name: string, className: string) => {
+    const db = checkFirebase();
+    const playerKey = getPlayerKey(name, className);
+    await remove(ref(db, `classrooms/${classroomId}/topics/${topicId}/results/${playerKey}`));
 };
 
 export const setTopicStatus = async (classroomId: string, topicId: string, isEnabled: boolean) => {
@@ -354,7 +385,7 @@ export const listenToDashboardConfig = (classroomId: string, callback: (config: 
 
 export const saveExerciseSelectionConfig = async (classroomId: string, config: ExerciseSelectionConfig): Promise<void> => {
     const db = checkFirebase();
-    await set(ref(db, `classrooms/${classroomId}/exerciseSelectionConfig`), config);
+    await set(ref(db, `classroomId}/exerciseSelectionConfig`), config);
 };
 
 export const listenToExerciseSelectionConfig = (classroomId: string, callback: (config: ExerciseSelectionConfig | null) => void): Unsubscribe => {

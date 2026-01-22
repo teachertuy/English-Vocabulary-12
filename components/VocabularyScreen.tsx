@@ -1,8 +1,10 @@
 
 import React, { useState, useRef, useCallback, useEffect, useMemo } from 'react';
 import { VocabularyWord, PlayerData, GameResult } from '../types';
-import { generateSpeech, generateImagePrompt } from '../services/geminiService';
-import { updateVocabularyAudio, updateVocabularyImage, updateUnitActivityResult, removeStudentPresence, trackStudentPresence } from '../services/firebaseService';
+import { generateSpeech } from '../services/geminiService';
+import { fetchAndCacheImage, getPollinationsURL } from '../services/imageGeneratorService';
+import { getLocalImageURL } from '../services/imageStorageService';
+import { updateVocabularyAudio, updateVocabularyImage, updateUnitActivityResult, removeStudentPresence, trackStudentPresence, updateUnitActivityProgress } from '../services/firebaseService';
 
 function decode(base64: string): Uint8Array {
   const binaryString = atob(base64);
@@ -25,12 +27,42 @@ async function decodeAudioData(data: Uint8Array, ctx: AudioContext, sampleRate: 
 
 const CARD_COLORS = ['bg-[#FFF0F0]', 'bg-[#F0F8FF]', 'bg-[#F0FFF4]'];
 
-const ImageWithLoader: React.FC<{ src: string, alt: string, isProcessing?: boolean }> = ({ src, alt, isProcessing }) => {
+const ImageWithLoader: React.FC<{ word: string, translation: string, isProcessing?: boolean }> = ({ word, translation, isProcessing }) => {
     const [loaded, setLoaded] = useState(false);
+    const [imageSrc, setImageSrc] = useState<string>("");
+
+    useEffect(() => {
+        const loadImage = async () => {
+            // Bước 1: Kiểm tra IndexedDB
+            const localURL = await getLocalImageURL(word);
+            if (localURL) {
+                setImageSrc(localURL);
+                setLoaded(true);
+            } else {
+                // Bước 2: Nếu chưa có, tải từ AI và cache lại
+                const cachedURL = await fetchAndCacheImage(word, translation);
+                if (cachedURL) {
+                    setImageSrc(cachedURL);
+                } else {
+                    // Fallback URL trực tiếp
+                    setImageSrc(getPollinationsURL(word, translation));
+                }
+            }
+        };
+        loadImage();
+    }, [word, translation]);
+
     return (
         <div className="w-40 h-40 bg-white rounded-2xl shadow-sm p-3 mb-4 flex items-center justify-center relative overflow-hidden">
             {(!loaded || isProcessing) && <div className="absolute inset-0 flex items-center justify-center z-0"><svg className="animate-spin h-8 w-8 text-teal-400" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg></div>}
-            <img src={src} alt={alt} className={`max-h-full max-w-full object-contain rounded-xl relative z-10 transition-opacity duration-500 ${loaded && !isProcessing ? 'opacity-100' : 'opacity-0'}`} onLoad={() => setLoaded(true)} />
+            {imageSrc && (
+                <img 
+                    src={imageSrc} 
+                    alt={word} 
+                    className={`max-h-full max-w-full object-contain rounded-xl relative z-10 transition-opacity duration-500 ${loaded && !isProcessing ? 'opacity-100' : 'opacity-0'}`} 
+                    onLoad={() => setLoaded(true)} 
+                />
+            )}
         </div>
     );
 };
@@ -60,25 +92,27 @@ const VocabularyScreen: React.FC<VocabularyScreenProps> = ({ unitNumber, vocabul
 
     useEffect(() => {
         isComponentMounted.current = true;
-        if (classroomId) trackStudentPresence(classroomId, playerData.name, playerData.class);
+        if (classroomId) {
+            trackStudentPresence(classroomId, playerData.name, playerData.class);
+            const unitIdentifier = grade === 'topics' ? `topic_${unitNumber}` : `unit_${unitNumber}`;
+            updateUnitActivityProgress(classroomId, grade, unitIdentifier, playerData, activityId, {
+                score: 'ĐANG HỌC',
+                correct: 0,
+                incorrect: 0,
+                answered: 0,
+                totalQuestions: vocabulary.length,
+            }).catch(console.error);
+        }
         return () => { isComponentMounted.current = false; };
-    }, [classroomId, playerData]);
+    }, [classroomId, playerData, grade, unitNumber, activityId, vocabulary.length]);
 
     useEffect(() => {
         const startWorker = async () => {
             const unitId = grade === 'topics' ? `topic_${unitNumber}` : `unit_${unitNumber}`;
             for (const item of localVocabulary) {
                 if (!isComponentMounted.current) break;
-                if ((!item.image || item.image.includes('illustration_white_background')) && !fetchingImages.has(item.word)) {
-                    try {
-                        setFetchingImages(prev => new Set(prev).add(item.word));
-                        const highQualityUrl = await generateImagePrompt(item.word, item.translation);
-                        if (isComponentMounted.current) {
-                            updateVocabularyImage(classroomId, grade, unitId, item.word, highQualityUrl).catch(console.error);
-                            setLocalVocabulary(prev => prev.map(w => w.word === item.word ? { ...w, image: highQualityUrl } : w));
-                        }
-                    } catch (e) { } finally { if (isComponentMounted.current) setFetchingImages(prev => { const next = new Set(prev); next.delete(item.word); return next; }); }
-                }
+                
+                // Logic audio vẫn giữ nguyên
                 if (!item.audio && !errorWords.has(item.word) && !isRateLimited && !fetchingWords.has(item.word)) {
                     try {
                         setFetchingWords(prev => new Set(prev).add(item.word));
@@ -102,7 +136,6 @@ const VocabularyScreen: React.FC<VocabularyScreenProps> = ({ unitNumber, vocabul
         setIsFinishing(true);
         const endTime = Date.now();
         const timeTakenSeconds = Math.round((endTime - startTime) / 1000);
-        // Change score to 'ĐÃ HỌC' and set correct/incorrect to 0 for vocabulary
         const resultData: Partial<GameResult> = { 
             score: 'ĐÃ HỌC', 
             correct: 0, 
@@ -155,13 +188,13 @@ const VocabularyScreen: React.FC<VocabularyScreenProps> = ({ unitNumber, vocabul
                     <span>Back</span>
                 </button>
                  <h1 className="text-2xl font-extrabold text-center text-gray-800 uppercase tracking-wide">{grade === 'topics' ? `Topic ${unitNumber} Vocabulary` : `Unit ${unitNumber} Vocabulary`}</h1>
-                 <div className="w-20"></div> {/* Spacer for alignment */}
+                 <div className="w-20"></div>
             </div>
-            {(fetchingImages.size > 0 || fetchingWords.size > 0) && <div className="mb-4 px-4 py-2 bg-blue-50 text-blue-700 text-sm font-bold rounded-lg border border-blue-200 flex items-center gap-2 animate-pulse self-center"><div className="w-2 h-2 bg-blue-600 rounded-full animate-ping"></div><span>AI đang đồng bộ Ảnh & Âm thanh...</span></div>}
+            {(fetchingImages.size > 0 || fetchingWords.size > 0) && <div className="mb-4 px-4 py-2 bg-blue-50 text-blue-700 text-sm font-bold rounded-lg border border-blue-200 flex items-center gap-2 animate-pulse self-center"><div className="w-2 h-2 bg-blue-600 rounded-full animate-ping"></div><span>AI đang đồng bộ Âm thanh...</span></div>}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 overflow-y-auto flex-grow px-2 pb-8 max-w-7xl mx-auto w-full">
                 {localVocabulary.map((item, index) => (
                     <div key={index} className={`${CARD_COLORS[index % CARD_COLORS.length]} rounded-[2rem] p-6 flex flex-col items-center shadow-sm hover:shadow-md transition-shadow duration-300`}>
-                        <ImageWithLoader src={item.image || `https://image.pollinations.ai/prompt/${item.word.replace(/\s+/g, '_')}_illustration_white_background`} alt={item.word} isProcessing={fetchingImages.has(item.word)} />
+                        <ImageWithLoader word={item.word} translation={item.translation} isProcessing={fetchingImages.has(item.word)} />
                         <div className="text-center w-full mb-6">
                             <h2 className="text-2xl font-extrabold text-[#006064] mb-1">{item.word} <span className="text-lg text-[#E91E63]">({item.type})</span></h2>
                             <p className="text-[#00A0A0] font-bold text-lg font-serif mb-2">{item.phonetic}</p>

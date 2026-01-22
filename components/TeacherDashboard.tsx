@@ -7,13 +7,15 @@ import {
     checkAndSyncQuizVersion, listenToStudentProgress, saveQuizQuestions, 
     listenToQuizQuestions, listenToUnitsStatusByGrade, setUnitStatusByGrade,
     saveUnitQuizQuestionsByGrade, listenToUnitQuizQuestionsByGrade, listenToUnitResultsByGrade, clearUnitResultsByGrade,
-    deleteUnitStudentResultByGrade, saveUnitVocabularyByGrade, listenToUnitVocabularyByGrade, deleteCurrentQuiz,
+    deleteUnitStudentAllResultsByGrade, saveUnitVocabularyByGrade, listenToUnitVocabularyByGrade, deleteCurrentQuiz,
     listenToTopicsStatus, setTopicStatus, listenToTopicQuizQuestions, listenToTopicResults,
     listenToTopicVocabulary, saveTopicVocabulary, saveTopicQuizQuestions, clearTopicResults,
-    deleteTopicStudentResult, saveWelcomeConfig, listenToWelcomeConfig, saveDashboardConfig, listenToDashboardConfig,
+    deleteTopicStudentAllResults, saveWelcomeConfig, listenToWelcomeConfig, saveDashboardConfig, listenToDashboardConfig,
     saveExerciseSelectionConfig, listenToExerciseSelectionConfig
 } from '../services/firebaseService';
 import { QUIZ_VERSION, generateQuizFromCustomPrompt, generateQuizFromText, generateVocabularyList } from '../services/geminiService';
+import { fetchAndCacheImage } from '../services/imageGeneratorService';
+import { hasLocalImage } from '../services/imageStorageService';
 import TextToQuizModal from './TextToQuizModal';
 import EditQuizModal from './EditQuizModal';
 import AIQuizGeneratorModal from './AIQuizGeneratorModal';
@@ -50,7 +52,6 @@ const formatDate = (timestamp?: number) => {
     return `${h}:${m}:${s} ${d}/${mo}/${y}`;
 };
 
-// Cấu hình yêu cầu mặc định cho AI theo đúng quy trình
 const DEFAULT_ACTIVITY_PROMPTS = { 
     learn: 'Sử dụng tất cả các từ cung cấp trong danh sách để tạo danh sách học từ vựng chi tiết (gồm từ, loại từ, phiên âm và nghĩa tiếng Việt).', 
     match: 'Sử dụng tất cả các từ cung cấp trong danh sách để tạo trò chơi ghép cặp từ Anh sang Việt.', 
@@ -58,7 +59,6 @@ const DEFAULT_ACTIVITY_PROMPTS = {
     quiz: 'Tạo bộ 40 câu hỏi trắc nghiệm dựa trên danh sách từ vựng: 20 câu kiểm tra nghĩa từ vựng, 10 câu về cách phát âm (underline phần phát âm khác biệt bằng thẻ <u>), 10 câu về trọng âm.' 
 };
 
-// Placeholder định dạng từ vựng như trong ảnh mẫu
 const VOCAB_INPUT_PLACEHOLDER = `Dán danh sách từ vựng của bạn vào đây.
 Định dạng mong muốn:
 Từ Tiếng Anh - (Từ loại) /Phiên âm/ - Nghĩa Tiếng Việt
@@ -235,7 +235,7 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
     const [unitVocabList, setUnitVocabList] = useState('');
     const [isGeneratingUnitActivities, setIsGeneratingUnitActivities] = useState(false);
     const [selectedUnitClass, setSelectedUnitClass] = useState('all');
-    const [deletingUnitStudent, setDeletingUnitStudent] = useState<GameResult | null>(null);
+    const [deletingUnitStudent, setDeletingUnitStudent] = useState<StudentGroupedResult | null>(null);
     const [unitActivityPrompts, setUnitActivityPrompts] = useState(DEFAULT_ACTIVITY_PROMPTS);
     const [topicsStatus, setTopicsStatus] = useState<UnitsState>({});
     const [viewingTopic, setViewingTopic] = useState<number | null>(null);
@@ -245,9 +245,14 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
     const [topicVocabList, setTopicVocabList] = useState('');
     const [isGeneratingTopicActivities, setIsGeneratingTopicActivities] = useState(false);
     const [selectedTopicClass, setSelectedTopicClass] = useState('all');
-    const [deletingTopicStudent, setDeletingTopicStudent] = useState<GameResult | null>(null);
+    const [deletingTopicStudent, setDeletingTopicStudent] = useState<StudentGroupedResult | null>(null);
     const [topicActivityPrompts, setTopicActivityPrompts] = useState(DEFAULT_ACTIVITY_PROMPTS);
     const [isGameEnabled, setIsGameEnabled] = useState(true);
+
+    // AI Image Sync State
+    const [isSyncingImages, setIsSyncingImages] = useState(false);
+    const [syncProgress, setSyncProgress] = useState({ current: 0, total: 0 });
+    const [syncStatusMessage, setSyncStatusMessage] = useState("");
 
     useEffect(() => { if (notification) { const timer = setTimeout(() => setNotification(null), 4000); return () => clearTimeout(timer); } }, [notification]);
 
@@ -346,7 +351,57 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
     const groupedUnitResults = useMemo(() => getGroupedData(processedUnitResults, selectedUnitClass), [processedUnitResults, selectedUnitClass]);
     const groupedTopicResults = useMemo(() => getGroupedData(processedTopicResults, selectedTopicClass), [processedTopicResults, selectedTopicClass]);
 
-    const renderResultsTable = (groupedData: StudentGroupedResult[], type: 'unit' | 'topic', onRowClick: (r: GameResult) => void, onDeleteRow: (r: any) => void) => {
+    /**
+     * Cập nhật: Tải ảnh hàng loạt với Queue, Throttling và Retry
+     */
+    const handleSyncImages = async (vocab: VocabularyWord[]) => {
+        if (!vocab || vocab.length === 0) return;
+        setIsSyncingImages(true);
+        setSyncProgress({ current: 0, total: vocab.length });
+        setSyncStatusMessage("Đang khởi tạo hàng đợi tải ảnh...");
+
+        for (let i = 0; i < vocab.length; i++) {
+            const word = vocab[i];
+            const alreadyExists = await hasLocalImage(word.word);
+            
+            if (!alreadyExists) {
+                let success = false;
+                let retries = 0;
+                const maxRetries = 3;
+
+                while (!success && retries < maxRetries) {
+                    setSyncStatusMessage(`Đang tải ảnh: ${word.word}... (${i + 1}/${vocab.length})`);
+                    try {
+                        await fetchAndCacheImage(word.word, word.translation);
+                        success = true;
+                        setSyncStatusMessage(`Tải xong "${word.word}". Đang nghỉ 7s để ổn định...`);
+                        await new Promise(r => setTimeout(r, 7000)); // Nghỉ 7 giây sau mỗi ảnh thành công
+                    } catch (error: any) {
+                        retries++;
+                        if (error.message === "RATE_LIMIT") {
+                            setSyncStatusMessage(`Bị giới hạn tốc độ! Chờ 30s để thử lại lần ${retries}...`);
+                            await new Promise(r => setTimeout(r, 30000)); // Chờ 30s nếu bị 429
+                        } else {
+                            setSyncStatusMessage(`Lỗi kết nối. Thử lại sau 5s...`);
+                            await new Promise(r => setTimeout(r, 5000));
+                        }
+                        if (retries >= maxRetries) {
+                            console.error(`Bỏ qua từ ${word.word} sau ${maxRetries} lần thử thất bại.`);
+                        }
+                    }
+                }
+            } else {
+                setSyncStatusMessage(`Bỏ qua "${word.word}" (Đã tồn tại trong máy).`);
+            }
+            setSyncProgress({ current: i + 1, total: vocab.length });
+        }
+        
+        setIsSyncingImages(false);
+        setSyncStatusMessage("");
+        setNotification({ message: 'Đồng bộ ảnh hoàn tất!', type: 'success' });
+    };
+
+    const renderResultsTable = (groupedData: StudentGroupedResult[], type: 'unit' | 'topic', onRowClick: (r: GameResult) => void, onDeleteStudent: (group: StudentGroupedResult) => void) => {
         const curClass = type === 'unit' ? selectedUnitClass : selectedTopicClass;
         const setClass = type === 'unit' ? setSelectedUnitClass : setSelectedTopicClass;
 
@@ -400,11 +455,13 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                                             <td className="p-3 border border-gray-300 text-red-600 text-center">{res.gameType === 'vocabulary' ? '-' : res.incorrect}</td>
                                             <td className="p-3 border border-gray-300 text-[#c05621] text-center font-['Nunito'] font-black">{formatTime(res.timeTakenSeconds || 0)}</td>
                                             <td className="p-3 border border-gray-300 text-slate-800 text-[13px] text-center font-['Nunito']">{formatDate(res.timestamp)}</td>
-                                            <td className="p-3 border border-gray-300 text-center">
-                                                <button onClick={(e) => { e.stopPropagation(); onDeleteRow(res); }} className="p-1.5 bg-red-100 text-red-600 rounded-full hover:bg-red-200 transition shadow-sm">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                                                </button>
-                                            </td>
+                                            {attemptIdx === 0 && (
+                                                <td rowSpan={group.attempts.length} className="p-3 border border-gray-300 text-center align-middle bg-white">
+                                                    <button onClick={(e) => { e.stopPropagation(); onDeleteStudent(group); }} className="p-1.5 bg-red-100 text-red-600 rounded-full hover:bg-red-200 transition shadow-sm">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                                    </button>
+                                                </td>
+                                            )}
                                         </tr>
                                     ))}
                                 </React.Fragment>
@@ -416,6 +473,7 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
         );
     };
 
+    // Correctly declared handleRefresh using useCallback
     const handleRefresh = useCallback(() => { setIsRefreshing(true); setRefreshKey(prev => prev + 1); setTimeout(() => setIsRefreshing(false), 1000); }, []);
 
     const handleGenerateActivities = async (type: 'unit' | 'topic') => {
@@ -475,7 +533,8 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
         const prompts = isUnit ? unitActivityPrompts : topicActivityPrompts;
         const setPrompts = isUnit ? setUnitActivityPrompts : setTopicActivityPrompts;
         const isGenerating = isUnit ? isGeneratingUnitActivities : isGeneratingTopicActivities;
-        const hasExistingVocab = isUnit ? currentUnitVocabulary.length > 0 : currentTopicVocabulary.length > 0;
+        const currentVocabList = isUnit ? currentUnitVocabulary : currentTopicVocabulary;
+        const hasExistingVocab = currentVocabList.length > 0;
         const hasExistingQuiz = isUnit ? currentUnitQuiz.length > 0 : currentTopicQuiz.length > 0;
 
         return (
@@ -485,7 +544,30 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" /></svg>
                         <span>Quay lại danh sách</span>
                     </button>
-                    <h2 className="text-2xl font-bold text-indigo-800">Soạn bài: {currentId}</h2>
+                    <div className="flex items-center gap-4">
+                         {hasExistingVocab && (
+                            <button 
+                                onClick={() => handleSyncImages(currentVocabList)}
+                                disabled={isSyncingImages}
+                                className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold transition-all shadow-md active:scale-95 ${isSyncingImages ? 'bg-slate-400 text-white cursor-not-allowed' : 'bg-teal-500 text-white hover:bg-teal-600'}`}
+                            >
+                                {isSyncingImages ? (
+                                    <>
+                                        <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                        <div className="flex flex-col text-left text-xs">
+                                            <span>Đang tạo ảnh AI: {syncProgress.current}/{syncProgress.total}...</span>
+                                            <span className="font-normal opacity-80">{syncStatusMessage}</span>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <>
+                                        <span>🖼️ Tải trước dữ liệu ảnh (Sync)</span>
+                                    </>
+                                )}
+                            </button>
+                        )}
+                        <h2 className="text-2xl font-bold text-indigo-800">Soạn bài: {currentId}</h2>
+                    </div>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -691,8 +773,8 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
             }} />}
             {isEditVocabModalOpen && <EditVocabularyModal vocabulary={vocabForEditing} onClose={() => setIsEditVocabModalOpen(false)} onSave={async (v) => { if(viewingUnit) await saveUnitVocabularyByGrade(classroomId, viewingUnit.grade, `unit_${viewingUnit.unit}`, v); else if(viewingTopic) await saveTopicVocabulary(classroomId, `topic_${viewingTopic}`, v); setNotification({ message: 'Cập nhật từ vựng thành công!', type: 'success' }); }} />}
             {selectedResult && <ResultDetailModal result={selectedResult} onClose={() => setSelectedResult(null)} />}
-            <ConfirmationModal show={!!deletingUnitStudent} title="Xác nhận" message={`Xóa kết quả của ${deletingUnitStudent?.playerName}?`} onConfirm={async () => { await deleteUnitStudentResultByGrade(classroomId, viewingUnit!.grade, `unit_${viewingUnit!.unit}`, deletingUnitStudent!.playerName, deletingUnitStudent!.playerClass, deletingUnitStudent!.activityId!); setDeletingUnitStudent(null); setNotification({ message: 'Đã xóa!', type: 'success' }); }} onCancel={() => setDeletingUnitStudent(null)} />
-            <ConfirmationModal show={!!deletingTopicStudent} title="Xác nhận" message={`Xóa kết quả của ${deletingTopicStudent?.playerName}?`} onConfirm={async () => { await deleteTopicStudentResult(classroomId, `topic_${viewingTopic}`, deletingTopicStudent!.playerName, deletingTopicStudent!.playerClass, deletingTopicStudent!.activityId!); setDeletingTopicStudent(null); setNotification({ message: 'Đã xóa!', type: 'success' }); }} onCancel={() => setDeletingTopicStudent(null)} />
+            <ConfirmationModal show={!!deletingUnitStudent} title="Xác nhận" message={`Xóa TOÀN BỘ kết quả của ${deletingUnitStudent?.playerName}?`} onConfirm={async () => { await deleteUnitStudentAllResultsByGrade(classroomId, viewingUnit!.grade, `unit_${viewingUnit!.unit}`, deletingUnitStudent!.playerName, deletingUnitStudent!.playerClass); setDeletingUnitStudent(null); setNotification({ message: 'Đã xóa!', type: 'success' }); }} onCancel={() => setDeletingUnitStudent(null)} />
+            <ConfirmationModal show={!!deletingTopicStudent} title="Xác nhận" message={`Xóa TOÀN BỘ kết quả của ${deletingTopicStudent?.playerName}?`} onConfirm={async () => { await deleteTopicStudentAllResults(classroomId, `topic_${viewingTopic}`, deletingTopicStudent!.playerName, deletingTopicStudent!.playerClass); setDeletingTopicStudent(null); setNotification({ message: 'Đã xóa!', type: 'success' }); }} onCancel={() => setDeletingTopicStudent(null)} />
         </div>
     );
 };
