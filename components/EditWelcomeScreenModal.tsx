@@ -124,8 +124,8 @@ const EditWelcomeScreenModal: React.FC<EditWelcomeScreenModalProps> = ({ show, o
                                 />
                             </div>
                             <div className="space-y-4">
-                                <RangeInput label="Cỡ chữ Dòng 1 (VÍ DỤ: ENGLISH...)" value={config.titleFontSize} unit="rem" min={1} max={5} step={0.1} onChange={(v: number) => handleChange('titleFontSize', v)} />
-                                <RangeInput label="Cỡ chữ Dòng 2 (SỐ 12/10...)" value={config.titleFontSizeLine2} unit="rem" min={1} max={8} step={0.1} onChange={(v: number) => handleChange('titleFontSizeLine2', v)} />
+                                <RangeInput label="Cỡ chữ Dòng 1" value={config.titleFontSize} unit="rem" min={1} max={5} step={0.1} onChange={(v: number) => handleChange('titleFontSize', v)} />
+                                <RangeInput label="Cỡ chữ Dòng 2" value={config.titleFontSizeLine2} unit="rem" min={1} max={8} step={0.1} onChange={(v: number) => handleChange('titleFontSizeLine2', v)} />
                                 <ColorInput label="Màu sắc tiêu đề" value={config.titleColor} onChange={(v: string) => handleChange('titleColor', v)} />
                             </div>
                         </div>
@@ -144,7 +144,7 @@ const EditWelcomeScreenModal: React.FC<EditWelcomeScreenModalProps> = ({ show, o
                             </div>
                             <div className="space-y-4">
                                 <ColorInput label="Màu viền" value={config.inputNameBorderColor} onChange={(v: string) => handleChange('inputNameBorderColor', v)} />
-                                <RangeInput label="Độ rộng (%)" value={config.inputNameWidth} unit="%" min={20} max={100} step={1} onChange={(v: number) => handleChange('inputNameWidth', v)} />
+                                <RangeInput label="Độ rộng (%)" value={config.inputNameWidth} unit="%" min={5} max={100} step={1} onChange={(v: number) => handleChange('inputNameWidth', v)} />
                             </div>
                             <div className="space-y-4">
                                 <RangeInput label="Độ dày viền" value={config.inputNameBorderWidth} unit="px" min={0} max={10} step={1} onChange={(v: number) => handleChange('inputNameBorderWidth', v)} />
@@ -166,7 +166,7 @@ const EditWelcomeScreenModal: React.FC<EditWelcomeScreenModalProps> = ({ show, o
                             </div>
                             <div className="space-y-4">
                                 <ColorInput label="Màu viền" value={config.inputClassBorderColor} onChange={(v: string) => handleChange('inputClassBorderColor', v)} />
-                                <RangeInput label="Độ rộng (%)" value={config.inputClassWidth} unit="%" min={20} max={100} step={1} onChange={(v: number) => handleChange('inputClassWidth', v)} />
+                                <RangeInput label="Độ rộng (%)" value={config.inputClassWidth} unit="%" min={5} max={100} step={1} onChange={(v: number) => handleChange('inputClassWidth', v)} />
                             </div>
                             <div className="space-y-4">
                                 <RangeInput label="Độ dày viền" value={config.inputClassBorderWidth} unit="px" min={0} max={10} step={1} onChange={(v: number) => handleChange('inputClassBorderWidth', v)} />
@@ -185,7 +185,7 @@ const EditWelcomeScreenModal: React.FC<EditWelcomeScreenModalProps> = ({ show, o
                             </div>
                             <ColorInput label="Màu nền nút" value={config.startButtonBgColor} onChange={(v: string) => handleChange('startButtonBgColor', v)} />
                             <ColorInput label="Màu chữ" value={config.startButtonTextColor} onChange={(v: string) => handleChange('startButtonTextColor', v)} />
-                            <ColorInput label="Màu vòng nhẫn (Viền)" value={config.startButtonRingColor} onChange={(v: string) => handleChange('startButtonRingColor', v)} />
+                            <ColorInput label="Màu vòng nhẫn" value={config.startButtonRingColor} onChange={(v: string) => handleChange('startButtonRingColor', v)} />
                             <div className="md:col-span-2">
                                 <RangeInput label="Kích thước nút" value={config.startButtonSize} unit="px" min={40} max={200} step={1} onChange={(v: number) => handleChange('startButtonSize', v)} />
                             </div>

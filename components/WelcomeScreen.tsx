@@ -20,7 +20,7 @@ const DEFAULT_CONFIG: WelcomeScreenConfig = {
     inputNamePlaceholder: 'Nhập họ và tên của bạn..',
     inputNameBorderColor: '#ffffff',
     inputNameBorderWidth: 2,
-    inputClassWidth: 10,
+    inputClassWidth: 30,
     inputClassFontSize: 1.25,
     inputClassColor: '#facc15',
     inputClassPlaceholder: 'Lớp...',
@@ -185,7 +185,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
                         className={`w-full px-5 py-3.5 rounded-3xl text-center font-black bg-gradient-to-r from-teal-400 to-cyan-500 border-2 focus:outline-none focus:border-yellow-300 focus:ring-4 focus:ring-cyan-300/40 placeholder-teal-100 shadow-[0_10px_20px_rgba(0,0,0,0.2)] transition-all transform group-hover:-translate-y-0.5 group-hover:shadow-[0_15px_25px_rgba(0,0,0,0.3)] ${shakeName ? 'animate-pulse border-red-500' : ''}`}
                     />
                  </div>
-                 <div className="relative group flex justify-center">
+                 <div className="relative group w-full flex justify-center" style={{ width: `${config.inputClassWidth}%` }}>
                     <input 
                         type="text" 
                         value={playerClass} 
@@ -196,8 +196,8 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
                             backgroundSize: '30px 30px, 20px 20px',
                             backgroundPosition: '0 0, 10px 10px',
                             backgroundColor: '#050505',
-                            width: `${config.inputClassWidth}rem`,
-                            fontSize: `${config.inputClassFontSize}rem`,
+                            width: '100%',
+                            fontSize: `${config.inputClassFontSize}rem`, 
                             color: config.inputClassColor,
                             borderColor: config.inputClassBorderColor,
                             borderWidth: `${config.inputClassBorderWidth}px`
