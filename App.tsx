@@ -75,8 +75,11 @@ const DEFAULT_EXERCISE_CONFIG: ExerciseSelectionConfig = {
     activityQuizLabel: 'Làm bài trắc nghiệm',
     activityQuizDesc: 'Kiểm tra kiến thức của bạn',
     quizDuration: 30,
+    quizTimerEnabled: true,
     spellingDuration: 30,
+    spellingTimerEnabled: true,
     matchingDuration: 20,
+    matchingTimerEnabled: true,
 };
 
 const App: React.FC = () => {
@@ -281,11 +284,11 @@ const App: React.FC = () => {
             onCloseActivityModal={handleCloseActivityModal}
         />;
       case Screen.Quiz:
-        return playerData && selectedUnit && currentActivityId && selectedGrade && <QuizScreen playerData={playerData} questions={questions} unitNumber={selectedUnit} onFinish={handleFinishGame} onForceExit={handleForceExitToWelcome} classroomId={FIXED_CLASSROOM_ID} activityId={currentActivityId} onBack={handleReturnToActivitySelection} grade={selectedGrade} durationSeconds={exerciseConfig.quizDuration * 60} />;
+        return playerData && selectedUnit && currentActivityId && selectedGrade && <QuizScreen playerData={playerData} questions={questions} unitNumber={selectedUnit} onFinish={handleFinishGame} onForceExit={handleForceExitToWelcome} classroomId={FIXED_CLASSROOM_ID} activityId={currentActivityId} onBack={handleReturnToActivitySelection} grade={selectedGrade} durationSeconds={exerciseConfig.quizTimerEnabled ? (exerciseConfig.quizDuration * 60) : 0} />;
       case Screen.SpellingGame:
-        return playerData && selectedUnit && currentActivityId && selectedGrade && <SpellingGameScreen vocabulary={vocabulary} unitNumber={selectedUnit} playerData={playerData} onFinish={handleFinishGame} onForceExit={handleForceExitToWelcome} classroomId={FIXED_CLASSROOM_ID} activityId={currentActivityId} onBack={handleReturnToActivitySelection} grade={selectedGrade} durationSeconds={exerciseConfig.spellingDuration * 60} />;
+        return playerData && selectedUnit && currentActivityId && selectedGrade && <SpellingGameScreen vocabulary={vocabulary} unitNumber={selectedUnit} playerData={playerData} onFinish={handleFinishGame} onForceExit={handleForceExitToWelcome} classroomId={FIXED_CLASSROOM_ID} activityId={currentActivityId} onBack={handleReturnToActivitySelection} grade={selectedGrade} durationSeconds={exerciseConfig.spellingTimerEnabled ? (exerciseConfig.spellingDuration * 60) : 0} />;
       case Screen.MatchingGame:
-        return playerData && selectedUnit && currentActivityId && selectedGrade && <MatchingGameScreen vocabulary={vocabulary} unitNumber={selectedUnit} playerData={playerData} onFinish={handleFinishGame} onForceExit={handleForceExitToWelcome} classroomId={FIXED_CLASSROOM_ID} activityId={currentActivityId} onBack={handleReturnToActivitySelection} grade={selectedGrade} durationSeconds={exerciseConfig.matchingDuration * 60} />;
+        return playerData && selectedUnit && currentActivityId && selectedGrade && <MatchingGameScreen vocabulary={vocabulary} unitNumber={selectedUnit} playerData={playerData} onFinish={handleFinishGame} onForceExit={handleForceExitToWelcome} classroomId={FIXED_CLASSROOM_ID} activityId={currentActivityId} onBack={handleReturnToActivitySelection} grade={selectedGrade} durationSeconds={exerciseConfig.matchingTimerEnabled ? (exerciseConfig.matchingDuration * 60) : 0} />;
       case Screen.Vocabulary:
         return playerData && selectedUnit && selectedGrade && currentActivityId && <VocabularyScreen unitNumber={selectedUnit} vocabulary={vocabulary} onBack={handleReturnToActivitySelection} classroomId={FIXED_CLASSROOM_ID} grade={selectedGrade} playerData={playerData} activityId={currentActivityId} onFinish={handleFinishGame} />;
       case Screen.Results:

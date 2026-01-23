@@ -67,8 +67,11 @@ const DEFAULT_CONFIG: ExerciseSelectionConfig = {
     activityQuizDesc: 'Kiểm tra kiến thức của bạn',
 
     quizDuration: 30,
+    quizTimerEnabled: true,
     spellingDuration: 30,
+    spellingTimerEnabled: true,
     matchingDuration: 20,
+    matchingTimerEnabled: true,
 };
 
 const EditExerciseSelectionModal: React.FC<EditExerciseSelectionModalProps> = ({ show, onClose, onSave, currentConfig }) => {
@@ -77,12 +80,12 @@ const EditExerciseSelectionModal: React.FC<EditExerciseSelectionModalProps> = ({
     const [activeTab, setActiveTab] = useState<'titles' | 'cards' | 'units' | 'activities'>('titles');
 
     useEffect(() => {
-        if (show) {
+        if (show && currentConfig) {
             setConfig({ 
                 ...DEFAULT_CONFIG, 
-                ...(currentConfig || {}),
-                unitCardColors: currentConfig?.unitCardColors || DEFAULT_UNIT_COLORS,
-                topicCardColors: currentConfig?.topicCardColors || DEFAULT_UNIT_COLORS
+                ...currentConfig,
+                unitCardColors: currentConfig.unitCardColors || DEFAULT_UNIT_COLORS,
+                topicCardColors: currentConfig.topicCardColors || DEFAULT_UNIT_COLORS
             });
         }
     }, [show, currentConfig]);
@@ -113,13 +116,25 @@ const EditExerciseSelectionModal: React.FC<EditExerciseSelectionModalProps> = ({
 
     if (!show) return null;
 
+    const ToggleSwitch = ({ enabled, onToggle, label }: { enabled: boolean, onToggle: (v: boolean) => void, label: string }) => (
+        <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-bold text-gray-500 uppercase">{label}</span>
+            <button 
+                onClick={() => onToggle(!enabled)}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${enabled ? 'bg-green-500' : 'bg-gray-300'}`}
+            >
+                <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${enabled ? 'translate-x-6' : 'translate-x-1'}`} />
+            </button>
+        </div>
+    );
+
     return (
         <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[120] p-4" onClick={onClose}>
             <div className="bg-white rounded-2xl shadow-2xl w-full max-w-6xl max-h-[90vh] flex flex-col" onClick={e => e.stopPropagation()}>
                 <div className="p-6 border-b flex justify-between items-center bg-gray-50 rounded-t-2xl">
                     <div>
                         <h2 className="text-2xl font-bold text-gray-800">Thiết kế màn hình học tập HS</h2>
-                        <p className="text-sm text-gray-500 italic mt-1">Tùy chỉnh giao diện Unit và Topic riêng biệt</p>
+                        <p className="text-sm text-gray-500 italic mt-1">Tùy chỉnh giao diện và giới hạn thời gian</p>
                     </div>
                     <button onClick={onClose} className="text-gray-400 hover:text-gray-800 text-3xl font-bold transition">&times;</button>
                 </div>
@@ -355,45 +370,91 @@ const EditExerciseSelectionModal: React.FC<EditExerciseSelectionModalProps> = ({
                     {activeTab === 'activities' && (
                         <div className="space-y-6 tab-content-enter">
                             <div className="p-6 border rounded-2xl bg-orange-50 border-orange-100">
-                                <h3 className="font-bold text-orange-800 mb-6 flex items-center gap-2"><span>🏆</span> Văn bản & Thời gian các hoạt động</h3>
+                                <h3 className="font-bold text-orange-800 mb-2 flex items-center gap-2 text-xl">
+                                    <span>🏆</span> Thiết lập Thời gian & Tên bài thi
+                                </h3>
+                                <p className="text-sm text-orange-700 mb-6 bg-orange-100/50 p-2 rounded border border-orange-200 italic">
+                                    * Sử dụng nút gạt để bật/tắt giới hạn thời gian. Khi tắt, học sinh có thể làm bài vô hạn thời gian.
+                                </p>
                                 
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 bg-white p-4 rounded-xl border border-orange-200">
-                                    <div>
-                                        <label className="block text-xs font-bold text-gray-500 uppercase mb-1">⏱️ Trắc nghiệm (phút)</label>
-                                        <input type="number" min="1" max="180" value={config.quizDuration} onChange={e => handleChange('quizDuration', parseInt(e.target.value))} className="w-full p-2 border rounded font-bold text-green-700" />
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 bg-white p-6 rounded-xl border border-orange-200">
+                                    {/* Quiz Timer */}
+                                    <div className="p-4 bg-green-50 rounded-xl border border-green-200 shadow-sm transition-all">
+                                        <ToggleSwitch 
+                                            enabled={config.quizTimerEnabled} 
+                                            onToggle={(v) => handleChange('quizTimerEnabled', v)} 
+                                            label="⏱️ Đồng hồ Trắc nghiệm" 
+                                        />
+                                        <div className={`mt-2 transition-all duration-300 ${config.quizTimerEnabled ? 'opacity-100' : 'opacity-30'}`}>
+                                            <label className="block text-[10px] font-black text-green-700 uppercase mb-1">Số phút làm bài</label>
+                                            <input 
+                                                type="number" min="1" max="180" 
+                                                value={config.quizDuration} 
+                                                onChange={e => handleChange('quizDuration', parseInt(e.target.value) || 30)} 
+                                                className="w-full p-2 border border-green-200 rounded font-black text-green-800 focus:ring-2 focus:ring-green-300 outline-none" 
+                                                disabled={!config.quizTimerEnabled}
+                                            />
+                                        </div>
                                     </div>
-                                    <div>
-                                        <label className="block text-xs font-bold text-gray-500 uppercase mb-1">⏱️ Chính tả (phút)</label>
-                                        <input type="number" min="1" max="180" value={config.spellingDuration} onChange={e => handleChange('spellingDuration', parseInt(e.target.value))} className="w-full p-2 border rounded font-bold text-orange-700" />
+
+                                    {/* Spelling Timer */}
+                                    <div className="p-4 bg-orange-50 rounded-xl border border-orange-200 shadow-sm transition-all">
+                                        <ToggleSwitch 
+                                            enabled={config.spellingTimerEnabled} 
+                                            onToggle={(v) => handleChange('spellingTimerEnabled', v)} 
+                                            label="⏱️ Đồng hồ Chính tả" 
+                                        />
+                                        <div className={`mt-2 transition-all duration-300 ${config.spellingTimerEnabled ? 'opacity-100' : 'opacity-30'}`}>
+                                            <label className="block text-[10px] font-black text-orange-700 uppercase mb-1">Số phút làm bài</label>
+                                            <input 
+                                                type="number" min="1" max="180" 
+                                                value={config.spellingDuration} 
+                                                onChange={e => handleChange('spellingDuration', parseInt(e.target.value) || 30)} 
+                                                className="w-full p-2 border border-orange-200 rounded font-black text-orange-800 focus:ring-2 focus:ring-orange-300 outline-none" 
+                                                disabled={!config.spellingTimerEnabled}
+                                            />
+                                        </div>
                                     </div>
-                                    <div>
-                                        <label className="block text-xs font-bold text-gray-500 uppercase mb-1">⏱️ Ghép cặp (phút)</label>
-                                        <input type="number" min="1" max="180" value={config.matchingDuration} onChange={e => handleChange('matchingDuration', parseInt(e.target.value))} className="w-full p-2 border rounded font-bold text-purple-700" />
+
+                                    {/* Matching Timer */}
+                                    <div className="p-4 bg-purple-50 rounded-xl border border-purple-200 shadow-sm transition-all">
+                                        <ToggleSwitch 
+                                            enabled={config.matchingTimerEnabled} 
+                                            onToggle={(v) => handleChange('matchingTimerEnabled', v)} 
+                                            label="⏱️ Đồng hồ Ghép cặp" 
+                                        />
+                                        <div className={`mt-2 transition-all duration-300 ${config.matchingTimerEnabled ? 'opacity-100' : 'opacity-30'}`}>
+                                            <label className="block text-[10px] font-black text-purple-700 uppercase mb-1">Số phút làm bài</label>
+                                            <input 
+                                                type="number" min="1" max="180" 
+                                                value={config.matchingDuration} 
+                                                onChange={e => handleChange('matchingDuration', parseInt(e.target.value) || 20)} 
+                                                className="w-full p-2 border border-purple-200 rounded font-black text-purple-800 focus:ring-2 focus:ring-purple-300 outline-none" 
+                                                disabled={!config.matchingTimerEnabled}
+                                            />
+                                        </div>
                                     </div>
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                    {/* Học từ vựng */}
+                                    {/* Labels configuration */}
                                     <div className="p-4 bg-white rounded-xl border border-orange-200 shadow-sm space-y-3">
-                                        <label className="block text-xs font-bold text-blue-600 uppercase">Mục 1: Tên & Mô tả</label>
+                                        <label className="block text-xs font-bold text-blue-600 uppercase">Phần 1: Học từ vựng</label>
                                         <input type="text" value={config.activityLearnLabel} onChange={e => handleChange('activityLearnLabel', e.target.value)} className="w-full p-2 border rounded font-bold" />
                                         <textarea value={config.activityLearnDesc} onChange={e => handleChange('activityLearnDesc', e.target.value)} className="w-full p-2 border rounded text-xs text-gray-600" rows={2} placeholder="Dòng mô tả nhỏ bên dưới..." />
                                     </div>
-                                    {/* Ghép cặp */}
                                     <div className="p-4 bg-white rounded-xl border border-orange-200 shadow-sm space-y-3">
-                                        <label className="block text-xs font-bold text-purple-600 uppercase">Mục 2: Tên & Mô tả</label>
+                                        <label className="block text-xs font-bold text-purple-600 uppercase">Phần 2: Ghép cặp</label>
                                         <input type="text" value={config.activityMatchLabel} onChange={e => handleChange('activityMatchLabel', e.target.value)} className="w-full p-2 border rounded font-bold" />
                                         <textarea value={config.activityMatchDesc} onChange={e => handleChange('activityMatchDesc', e.target.value)} className="w-full p-2 border rounded text-xs text-gray-600" rows={2} />
                                     </div>
-                                    {/* Chính tả */}
                                     <div className="p-4 bg-white rounded-xl border border-orange-200 shadow-sm space-y-3">
-                                        <label className="block text-xs font-bold text-orange-600 uppercase">Mục 3: Tên & Mô tả</label>
+                                        <label className="block text-xs font-bold text-orange-600 uppercase">Phần 3: Chính tả</label>
                                         <input type="text" value={config.activitySpellLabel} onChange={e => handleChange('activitySpellLabel', e.target.value)} className="w-full p-2 border rounded font-bold" />
                                         <textarea value={config.activitySpellDesc} onChange={e => handleChange('activitySpellDesc', e.target.value)} className="w-full p-2 border rounded text-xs text-gray-600" rows={2} />
                                     </div>
-                                    {/* Trắc nghiệm */}
                                     <div className="p-4 bg-white rounded-xl border border-orange-200 shadow-sm space-y-3">
-                                        <label className="block text-xs font-bold text-green-600 uppercase">Mục 4: Tên & Mô tả</label>
+                                        <label className="block text-xs font-bold text-green-600 uppercase">Phần 4: Trắc nghiệm</label>
                                         <input type="text" value={config.activityQuizLabel} onChange={e => handleChange('activityQuizLabel', e.target.value)} className="w-full p-2 border rounded font-bold" />
                                         <textarea value={config.activityQuizDesc} onChange={e => handleChange('activityQuizDesc', e.target.value)} className="w-full p-2 border rounded text-xs text-gray-600" rows={2} />
                                     </div>

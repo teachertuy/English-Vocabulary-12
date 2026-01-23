@@ -52,7 +52,8 @@ interface QuizScreenProps {
 const QuizScreen: React.FC<QuizScreenProps> = ({ playerData, questions, unitNumber, grade, onFinish, onForceExit, classroomId, activityId, onBack, durationSeconds }) => {
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [score, setScore] = useState(0);
-    const [timeLeft, setTimeLeft] = useState(durationSeconds || 1800);
+    // Nếu durationSeconds = 0 thì timeLeft sẽ không có ý nghĩa, ta dùng 1 giá trị tượng trưng hoặc logic riêng
+    const [timeLeft, setTimeLeft] = useState(durationSeconds > 0 ? durationSeconds : 0);
     const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
     const [isAnswered, setIsAnswered] = useState(false);
     const [quizDetails, setQuizDetails] = useState<QuizAnswerDetail[]>([]);
@@ -142,10 +143,23 @@ const QuizScreen: React.FC<QuizScreenProps> = ({ playerData, questions, unitNumb
     }, [classroomId, playerData.name, playerData.class]);
 
     const currentQuestion = questions?.[currentQuestionIndex];
+    
     useEffect(() => {
-        const timer = setInterval(() => { setTimeLeft(prev => { if (prev <= 1) { clearInterval(timer); finishQuiz(); return 0; } return prev - 1; }); }, 1000);
+        // Chỉ chạy timer nếu durationSeconds > 0
+        if (durationSeconds <= 0) return;
+
+        const timer = setInterval(() => { 
+            setTimeLeft(prev => { 
+                if (prev <= 1) { 
+                    clearInterval(timer); 
+                    finishQuiz(); 
+                    return 0; 
+                } 
+                return prev - 1; 
+            }); 
+        }, 1000);
         return () => clearInterval(timer);
-    }, [finishQuiz]);
+    }, [finishQuiz, durationSeconds]);
 
     if (!currentQuestion) return null;
 
@@ -185,10 +199,17 @@ const QuizScreen: React.FC<QuizScreenProps> = ({ playerData, questions, unitNumb
                     </div>
                 </div>
 
-                {/* Timer Indicator */}
-                <div className="bg-purple-800 text-white font-bold py-1.5 px-4 rounded-lg shadow-md">
-                    <span className="text-lg font-black font-['Nunito']">{formatTime(timeLeft)}</span>
-                </div>
+                {/* Timer Indicator - Only show if durationSeconds > 0 */}
+                {durationSeconds > 0 ? (
+                    <div className="bg-purple-800 text-white font-bold py-1.5 px-4 rounded-lg shadow-md">
+                        <span className="text-lg font-black font-['Nunito']">{formatTime(timeLeft)}</span>
+                    </div>
+                ) : (
+                    <div className="bg-green-600 text-white font-bold py-1.5 px-4 rounded-lg shadow-md flex items-center gap-1">
+                        <span className="text-[12px] opacity-80">TIME:</span>
+                        <span className="text-lg font-black font-['Nunito']">∞</span>
+                    </div>
+                )}
             </div>
 
             <div className="flex flex-col items-center w-full flex-grow">

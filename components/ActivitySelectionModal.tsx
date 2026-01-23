@@ -20,7 +20,7 @@ const DEFAULT_UNIT_COLORS = [
     '#D81B60', '#7B1FA2', '#1976D2', '#37474F', '#00897B'
 ];
 
-// Fixed missing properties in DEFAULT_CONFIG
+// Fixed missing properties in DEFAULT_CONFIG: quizTimerEnabled, spellingTimerEnabled, matchingTimerEnabled
 const DEFAULT_CONFIG: ExerciseSelectionConfig = {
     mainTitle: 'TỪ VỰNG TIẾNG ANH 12 & TỪ VỰNG THEO CHỦ ĐỀ',
     mainTitleFontSize: 1.875,
@@ -73,8 +73,11 @@ const DEFAULT_CONFIG: ExerciseSelectionConfig = {
     activityQuizDesc: 'Kiểm tra kiến thức của bạn',
     // Added missing properties
     quizDuration: 30,
+    quizTimerEnabled: true,
     spellingDuration: 30,
+    spellingTimerEnabled: true,
     matchingDuration: 20,
+    matchingTimerEnabled: true,
 };
 
 const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, unitNumber, grade, onClose, classroomId, onStartQuiz, onLearnVocabulary, onStartSpellingGame, onStartMatchingGame }) => {

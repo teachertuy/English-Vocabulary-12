@@ -78,7 +78,7 @@ interface SpellingGameScreenProps {
 const SpellingGameScreen: React.FC<SpellingGameScreenProps> = ({ playerData, vocabulary, unitNumber, grade, onFinish, onForceExit, classroomId, activityId, onBack, durationSeconds }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [correctAnswers, setCorrectAnswers] = useState(0);
-    const [timeLeft, setTimeLeft] = useState(durationSeconds || 1800);
+    const [timeLeft, setTimeLeft] = useState(durationSeconds > 0 ? durationSeconds : 0);
     const [userInput, setUserInput] = useState('');
     const [gameDetails, setGameDetails] = useState<QuizAnswerDetail[]>([]);
     const [isGameOver, setIsGameOver] = useState(false);
@@ -185,9 +185,22 @@ const SpellingGameScreen: React.FC<SpellingGameScreenProps> = ({ playerData, voc
 
     useEffect(() => {
         if (classroomId) trackStudentPresence(classroomId, playerData.name, playerData.class);
-        const timer = setInterval(() => { setTimeLeft(prev => { if (prev <= 1) { clearInterval(timer); finishGame(); return 0; } return prev - 1; }); }, 1000);
-        return () => clearInterval(timer);
-    }, [finishGame, classroomId, playerData.name, playerData.class]);
+        
+        if (durationSeconds > 0) {
+            const timer = setInterval(() => { 
+                setTimeLeft(prev => { 
+                    if (prev <= 1) { 
+                        clearInterval(timer); 
+                        finishGame(); 
+                        return 0; 
+                    } 
+                    return prev - 1; 
+                }); 
+            }, 1000);
+            return () => clearInterval(timer);
+        }
+    }, [finishGame, classroomId, playerData.name, playerData.class, durationSeconds]);
+
     useEffect(() => { if (classroomId) { const u = getGameStatus(classroomId, i => !i && finishGame(true)); return () => u(); } }, [classroomId, finishGame]);
     useEffect(() => { if (classroomId) { const u = listenForKickedStatus(classroomId, playerData.name, playerData.class, () => finishGame(true)); return () => u(); } }, [classroomId, playerData.name, playerData.class, finishGame]);
     useEffect(() => { const h = () => document.hidden && classroomId && incrementCheatCount(classroomId, playerData.name, playerData.class); document.addEventListener('visibilitychange', h); return () => document.removeEventListener('visibilitychange', h); }, [classroomId, playerData.name, playerData.class]);
@@ -221,9 +234,15 @@ const SpellingGameScreen: React.FC<SpellingGameScreenProps> = ({ playerData, voc
                 </div>
 
                 {/* Timer Indicator */}
-                <div className="bg-white px-4 py-1.5 rounded-2xl border border-red-100 flex items-center shadow-sm">
-                    <span className="text-red-700 text-lg font-black font-['Nunito']">{formatTime(timeLeft)}</span>
-                </div>
+                {durationSeconds > 0 ? (
+                    <div className="bg-white px-4 py-1.5 rounded-2xl border border-red-100 flex items-center shadow-sm">
+                        <span className="text-red-700 text-lg font-black font-['Nunito']">{formatTime(timeLeft)}</span>
+                    </div>
+                ) : (
+                    <div className="bg-white px-4 py-1.5 rounded-2xl border border-green-100 flex items-center shadow-sm">
+                        <span className="text-green-700 text-lg font-black font-['Nunito']">∞</span>
+                    </div>
+                )}
             </div>
 
             <div className="flex flex-col items-center justify-start mt-4 flex-grow w-full max-w-sm">

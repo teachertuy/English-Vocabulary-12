@@ -385,7 +385,7 @@ export const listenToDashboardConfig = (classroomId: string, callback: (config: 
 
 export const saveExerciseSelectionConfig = async (classroomId: string, config: ExerciseSelectionConfig): Promise<void> => {
     const db = checkFirebase();
-    await set(ref(db, `classroomId}/exerciseSelectionConfig`), config);
+    await set(ref(db, `classrooms/${classroomId}/exerciseSelectionConfig`), config);
 };
 
 export const listenToExerciseSelectionConfig = (classroomId: string, callback: (config: ExerciseSelectionConfig | null) => void): Unsubscribe => {

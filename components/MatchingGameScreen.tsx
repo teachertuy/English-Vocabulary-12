@@ -67,7 +67,7 @@ const MatchingGameScreen: React.FC<MatchingGameScreenProps> = ({ playerData, voc
     const [currentVietnamese, setCurrentVietnamese] = useState<VocabularyWord | null>(null);
     const [selectedEnglish, setSelectedEnglish] = useState<VocabularyWord | null>(null);
     const [score, setScore] = useState(0);
-    const [timeLeft, setTimeLeft] = useState(durationSeconds || 1200);
+    const [timeLeft, setTimeLeft] = useState(durationSeconds > 0 ? durationSeconds : 0);
     const [gameDetails, setGameDetails] = useState<QuizAnswerDetail[]>([]);
     const [isGameOver, setIsGameOver] = useState(false);
     const [feedback, setFeedback] = useState<string | null>(null);
@@ -143,9 +143,22 @@ const MatchingGameScreen: React.FC<MatchingGameScreenProps> = ({ playerData, voc
     
     useEffect(() => {
         if (classroomId) trackStudentPresence(classroomId, playerData.name, playerData.class);
-        const timer = setInterval(() => { setTimeLeft(prev => { if (prev <= 1) { clearInterval(timer); finishGame(); return 0; } return prev - 1; }); }, 1000);
-        return () => clearInterval(timer);
-    }, [finishGame, classroomId, playerData.name, playerData.class]);
+        
+        if (durationSeconds > 0) {
+            const timer = setInterval(() => { 
+                setTimeLeft(prev => { 
+                    if (prev <= 1) { 
+                        clearInterval(timer); 
+                        finishGame(); 
+                        return 0; 
+                    } 
+                    return prev - 1; 
+                }); 
+            }, 1000);
+            return () => clearInterval(timer);
+        }
+    }, [finishGame, classroomId, playerData.name, playerData.class, durationSeconds]);
+
     useEffect(() => { if (classroomId) { const u = getGameStatus(classroomId, i => !i && finishGame(true)); return () => u(); } }, [classroomId, finishGame]);
     useEffect(() => { if (classroomId) { const u = listenForKickedStatus(classroomId, playerData.name, playerData.class, () => finishGame(true)); return () => u(); } }, [classroomId, playerData.name, playerData.class, finishGame]);
     useEffect(() => { const h = () => document.hidden && classroomId && incrementCheatCount(classroomId, playerData.name, playerData.class); document.addEventListener('visibilitychange', h); return () => document.removeEventListener('visibilitychange', h); }, [classroomId, playerData.name, playerData.class]);
@@ -189,7 +202,11 @@ const MatchingGameScreen: React.FC<MatchingGameScreenProps> = ({ playerData, voc
                         </div>
                     </div>
 
-                    <div className="bg-white px-4 py-1.5 rounded-2xl border border-red-100 flex items-center shadow-sm font-['Nunito'] font-black text-red-700 text-lg">{formatTime(timeLeft)}</div>
+                    {durationSeconds > 0 ? (
+                        <div className="bg-white px-4 py-1.5 rounded-2xl border border-red-100 flex items-center shadow-sm font-['Nunito'] font-black text-red-700 text-lg">{formatTime(timeLeft)}</div>
+                    ) : (
+                        <div className="bg-white px-4 py-1.5 rounded-2xl border border-green-100 flex items-center shadow-sm font-['Nunito'] font-black text-green-700 text-lg">∞</div>
+                    )}
                 </div>
             </div>
             <div className="w-full max-w-2xl my-1"><div className="border-t border-black"></div><div className="border-t border-gray-400 mt-0.5"></div></div>

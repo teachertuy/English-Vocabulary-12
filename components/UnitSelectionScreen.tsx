@@ -25,6 +25,7 @@ const DEFAULT_UNIT_COLORS = [
     '#D81B60', '#7B1FA2', '#1976D2', '#37474F', '#00897B'
 ];
 
+// Fix: Add missing quizTimerEnabled, spellingTimerEnabled, and matchingTimerEnabled properties
 const DEFAULT_EXERCISE_CONFIG: ExerciseSelectionConfig = {
     mainTitle: 'TỪ VỰNG TIẾNG ANH 12 & TỪ VỰNG THEO CHỦ ĐỀ',
     mainTitleFontSize: 1.875,
@@ -76,8 +77,11 @@ const DEFAULT_EXERCISE_CONFIG: ExerciseSelectionConfig = {
     activityQuizLabel: 'Làm bài trắc nghiệm',
     activityQuizDesc: 'Kiểm tra kiến thức của bạn',
     quizDuration: 30,
+    quizTimerEnabled: true,
     spellingDuration: 30,
+    spellingTimerEnabled: true,
     matchingDuration: 20,
+    matchingTimerEnabled: true,
 };
 
 // Fix: Complete DEFAULT_WELCOME_CONFIG to match WelcomeScreenConfig interface

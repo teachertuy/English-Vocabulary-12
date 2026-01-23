@@ -173,6 +173,9 @@ export interface ExerciseSelectionConfig {
 
     // Activity Durations (in minutes)
     quizDuration: number;
+    quizTimerEnabled: boolean;
     spellingDuration: number;
+    spellingTimerEnabled: boolean;
     matchingDuration: number;
+    matchingTimerEnabled: boolean;
 }

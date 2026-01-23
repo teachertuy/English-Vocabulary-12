@@ -90,6 +90,7 @@ const DEFAULT_UNIT_COLORS = [
     '#D81B60', '#7B1FA2', '#1976D2', '#37474F', '#00897B'
 ];
 
+// Fix: Add missing quizTimerEnabled, spellingTimerEnabled, and matchingTimerEnabled properties
 const DEFAULT_EXERCISE_CONFIG: ExerciseSelectionConfig = {
     mainTitle: 'TỪ VỰNG TIẾNG ANH 12 & TỪ VỰNG THEO CHỦ ĐỀ',
     mainTitleFontSize: 1.875,
@@ -141,8 +142,11 @@ const DEFAULT_EXERCISE_CONFIG: ExerciseSelectionConfig = {
     activityQuizLabel: 'Làm bài trắc nghiệm',
     activityQuizDesc: 'Kiểm tra kiến thức của bạn',
     quizDuration: 30,
+    quizTimerEnabled: true,
     spellingDuration: 30,
+    spellingTimerEnabled: true,
     matchingDuration: 20,
+    matchingTimerEnabled: true,
 };
 
 interface StudentGroupedResult {
@@ -628,7 +632,7 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                 <div className="mb-6 flex gap-4 flex-wrap">
                     <button onClick={() => { setViewingUnit(null); setViewingTopic(null); setActiveTab('dashboard'); }} className={`px-6 py-3 font-bold rounded-lg transition-all bg-green-600 text-white ${activeTab === 'dashboard' ? 'shadow-xl ring-4 ring-green-200 scale-105 z-10' : 'opacity-85 hover:opacity-100 hover:shadow-md'}`}>HOME</button>
                     <button onClick={() => { setViewingUnit(null); setViewingTopic(null); setActiveTab('units_12'); }} className={`px-6 py-3 font-bold rounded-lg transition-all bg-red-600 text-white ${activeTab === 'units_12' ? 'shadow-xl ring-4 ring-red-200 scale-105 z-10' : 'opacity-85 hover:opacity-100 hover:shadow-md'}`}>{dashboardConfig.unitsTabLabel}</button>
-                    <button onClick={() => { setViewingUnit(null); setViewingTopic(null); setActiveTab('topics'); }} className={`px-6 py-3 font-bold rounded-lg transition-all bg-blue-600 text-white ${activeTab === 'topics' ? 'shadow-xl ring-4 ring-blue-200 scale-105 z-10' : 'opacity-85 hover:opacity-100 hover:shadow-md'}`}>{dashboardConfig.topicsTabLabel}</button>
+                    <button onClick={() => { setViewingUnit(null); setViewingTopic(null); setActiveTab('topics'); }} className={`px-6 py-3 font-bold rounded-lg transition-all bg-blue-600 text-white ${activeTab === 'topics' ? 'shadow-xl ring-4 blue-200 scale-105 z-10' : 'opacity-85 hover:opacity-100 hover:shadow-md'}`}>{dashboardConfig.topicsTabLabel}</button>
                 </div>
 
                 {viewingUnit ? renderManageContent('unit') : viewingTopic ? renderManageContent('topic') : activeTab === 'units_12' ? (
