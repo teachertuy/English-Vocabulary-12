@@ -22,6 +22,7 @@ import EditVocabularyModal from './EditVocabularyModal';
 import EditWelcomeScreenModal from './EditWelcomeScreenModal';
 import EditDashboardConfigModal from './EditDashboardConfigModal';
 import EditExerciseSelectionModal from './EditExerciseSelectionModal';
+import BackgroundSync from './BackgroundSync';
 
 type Tab = 'dashboard' | 'units_12' | 'topics';
 
@@ -686,6 +687,7 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
             <EditWelcomeScreenModal show={isEditWelcomeModalOpen} onClose={() => setIsEditWelcomeModalOpen(false)} onSave={async (c) => { await saveWelcomeConfig(classroomId, c); setNotification({ message: 'Đã lưu thiết kế!', type: 'success' }); }} currentConfig={welcomeConfig} />
             <EditDashboardConfigModal show={isEditDashboardModalOpen} onClose={() => setIsEditDashboardModalOpen(false)} onSave={async (c) => { await saveDashboardConfig(classroomId, c); setNotification({ message: 'Đã lưu thiết kế!', type: 'success' }); }} currentConfig={dashboardConfig} />
             <EditExerciseSelectionModal show={isEditExerciseModalOpen} onClose={() => setIsEditExerciseModalOpen(false)} onSave={async (c) => { await saveExerciseSelectionConfig(classroomId, c); setNotification({ message: 'Đã lưu thiết kế!', type: 'success' }); }} currentConfig={exerciseSelectionConfig} />
+            <BackgroundSync classroomId={classroomId} isEnabled={true} />
             {quizForEditing && <EditQuizModal questions={quizForEditing} onClose={() => setQuizForEditing(null)} onSave={async (q) => { 
                 if (viewingUnit) {
                     await saveUnitQuizQuestionsByGrade(classroomId, viewingUnit.grade, `unit_${viewingUnit.unit}`, q);
