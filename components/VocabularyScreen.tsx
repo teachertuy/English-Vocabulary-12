@@ -80,7 +80,11 @@ const VocabularyScreen: React.FC<VocabularyScreenProps> = ({ unitNumber, vocabul
             const unitId = grade === 'topics' ? `topic_${unitNumber}` : `unit_${unitNumber}`;
             for (const item of localVocabulary) {
                 if (!isComponentMounted.current) break;
-                if ((!item.image || item.image.includes('illustration_white_background')) && !fetchingImages.has(item.word)) {
+                const isUnreliableImage = !item.image || 
+                                         item.image.includes('pollinations.ai') || 
+                                         item.image.includes('illustration_white_background');
+                
+                if (isUnreliableImage && !fetchingImages.has(item.word)) {
                     try {
                         setFetchingImages(prev => new Set(prev).add(item.word));
                         const highQualityUrl = await generateImagePrompt(item.word, item.translation);
@@ -172,7 +176,11 @@ const VocabularyScreen: React.FC<VocabularyScreenProps> = ({ unitNumber, vocabul
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 overflow-y-auto flex-grow px-2 pb-8 max-w-7xl mx-auto w-full">
                 {localVocabulary.map((item, index) => (
                     <div key={index} className={`${CARD_COLORS[index % CARD_COLORS.length]} rounded-[2rem] p-6 flex flex-col items-center shadow-sm hover:shadow-md transition-shadow duration-300`}>
-                        <ImageWithLoader src={item.image || `https://image.pollinations.ai/prompt/${item.word.replace(/\s+/g, '_')}_illustration_white_background`} alt={item.word} isProcessing={fetchingImages.has(item.word)} />
+                        <ImageWithLoader 
+                            src={item.image || `https://loremflickr.com/800/600/${encodeURIComponent(item.word.toLowerCase())},illustration/all?lock=${item.word.length + (item.word.charCodeAt(0) || 0)}`} 
+                            alt={item.word} 
+                            isProcessing={fetchingImages.has(item.word)} 
+                        />
                         <div className="text-center w-full mb-6">
                             <h2 className="text-2xl font-extrabold text-[#006064] mb-1">{item.word} <span className="text-lg text-[#E91E63]">({item.type})</span></h2>
                             <p className="text-[#00A0A0] font-bold text-lg font-serif mb-2">{item.phonetic}</p>

@@ -65,7 +65,7 @@ function shuffleArray<T>(array: T[]): T[] {
 }
 
 export async function generateQuizFromCustomPrompt(prompt: string): Promise<QuizQuestion[]> {
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
     const fullPrompt = `You are an expert English teacher. Output strictly JSON. User request: ${prompt}`;
     try {
         const response = await ai.models.generateContent({
@@ -84,7 +84,7 @@ export async function generateQuizFromCustomPrompt(prompt: string): Promise<Quiz
 }
 
 export async function generateQuizFromText(context: string): Promise<QuizQuestion[]> {
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
     const prompt = `Convert this text to quiz questions JSON: ${context}`;
     try {
         const response = await ai.models.generateContent({
@@ -103,7 +103,7 @@ export async function generateQuizFromText(context: string): Promise<QuizQuestio
 }
 
 export async function generateVocabularyList(prompt: string): Promise<VocabularyWord[]> {
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
     const fullPrompt = `Create a vocabulary list JSON. Instruction: ${prompt}`;
     try {
         const response = await ai.models.generateContent({
@@ -119,34 +119,52 @@ export async function generateVocabularyList(prompt: string): Promise<Vocabulary
 }
 
 /**
- * Tạo mô tả hình ảnh chất lượng cao để Pollinations AI vẽ chuẩn hơn
+ * Tạo hình ảnh minh họa 2D chất lượng cao sử dụng Gemini 2.5 Flash Image.
+ * Đây là cách tốt nhất để có ảnh chính xác cho từng từ vựng.
  */
 export async function generateImagePrompt(word: string, translation: string): Promise<string> {
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-    const prompt = `You are a professional visual prompt engineer for educational materials. 
-    Create a highly detailed, clear, and educational visual description for the English word: "${word}" (meaning in Vietnamese: "${translation}").
-    The description should focus on illustrating the Vietnamese meaning exactly.
-    The image must be photorealistic, centered, on a clean white background, with no text.
-    Return ONLY the final Pollinations AI URL in this format: 
-    https://image.pollinations.ai/prompt/{detailed_visual_description}?width=800&height=600&nologo=true
-    In {detailed_visual_description}, replace spaces with underscores.`;
-
+    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+    
     try {
+        // Sử dụng gemini-2.5-flash-image để tạo ảnh trực tiếp (chất lượng cao và chính xác)
         const response = await ai.models.generateContent({
-            model: 'gemini-3-flash-preview',
-            contents: prompt,
-            config: { temperature: 0.4 },
+            model: 'gemini-2.5-flash-image',
+            contents: {
+                parts: [
+                    {
+                        text: `A simple, clear 2D flat vector illustration for children's education showing: "${word}" (meaning: ${translation}). Style: clean lines, vibrant colors, white background, centered, no text, professional clip-art style.`,
+                    },
+                ],
+            },
+            config: {
+                imageConfig: {
+                    aspectRatio: "1:1",
+                }
+            }
         });
-        const text = response.text.trim();
-        return text.startsWith('http') ? text : `https://image.pollinations.ai/prompt/${word.replace(/\s+/g, '_')}_illustrating_${translation.replace(/\s+/g, '_')}?width=800&height=600&nologo=true`;
+
+        const candidates = response.candidates || [];
+        for (const candidate of candidates) {
+            for (const part of candidate.content?.parts || []) {
+                if (part.inlineData) {
+                    return `data:image/png;base64,${part.inlineData.data}`;
+                }
+            }
+        }
+        
+        throw new Error("No inlineData found in Gemini response");
     } catch (error) {
-        console.error("Image prompt gen error:", error);
-        return `https://image.pollinations.ai/prompt/${word.replace(/\s+/g, '_')}_educational_illustration?width=800&height=600&nologo=true`;
+        console.error("Gemini Image Gen failed, using unique fallback:", error);
+        // Fallback sang nguồn ảnh ngoài nhưng thêm tham số ngẫu nhiên để tránh trùng lặp
+        // Sử dụng từ khóa tiếng Anh trực tiếp để tìm kiếm chính xác hơn
+        const randomSeed = Math.floor(Math.random() * 1000000);
+        const searchKeyword = encodeURIComponent(word.toLowerCase());
+        return `https://loremflickr.com/800/600/${searchKeyword},illustration/all?lock=${randomSeed}`;
     }
 }
 
 export async function generateSpeech(text: string): Promise<string> {
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
     const textToSpeak = PRONUNCIATION_OVERRIDES[text.toLowerCase()] || text;
     const descriptivePrompt = `Please pronounce the following English word clearly and naturally: "${textToSpeak}"`;
     try {

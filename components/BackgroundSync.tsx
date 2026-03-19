@@ -76,9 +76,14 @@ const BackgroundSync: React.FC<BackgroundSyncProps> = ({ classroomId, isEnabled 
 
                 let updated = false;
                 
-                // Check missing image
-                if (!item.image || item.image.includes('illustration_white_background')) {
-                    setCurrentTask(`Generating image for: ${item.word} (${unitId})`);
+                // Check missing or unreliable image (including generic fallbacks)
+                const isUnreliableImage = !item.image || 
+                                         item.image.includes('pollinations.ai') || 
+                                         item.image.includes('illustration_white_background') ||
+                                         (item.image.includes('loremflickr.com') && !item.image.includes('lock='));
+                
+                if (isUnreliableImage) {
+                    setCurrentTask(`Updating image for: ${item.word} (${unitId})`);
                     try {
                         const imageUrl = await generateImagePrompt(item.word, item.translation);
                         await updateVocabularyImage(classroomId, grade, unitId, item.word, imageUrl);
