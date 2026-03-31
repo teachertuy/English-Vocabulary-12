@@ -130,7 +130,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
          className="absolute top-6 left-6 z-50 flex flex-col items-center group cursor-pointer focus:outline-none focus:ring-4 focus:ring-yellow-400 focus:ring-opacity-50 rounded-full transition-transform transform hover:scale-105"
          title="Teacher Login"
        >
-         <img src="https://i.postimg.cc/132B8h0t/11zon-cropped-1.png" alt="Logo" className="w-16 h-16 rounded-full border-4 border-yellow-300 shadow-lg group-hover:border-yellow-400" />
+         <img src="https://github.com/teachertuy/anhlogoto.canhan/blob/main/11zon_cropped.png?raw=true" alt="Logo" referrerPolicy="no-referrer" className="w-16 h-16 rounded-full border-4 border-yellow-300 shadow-lg group-hover:border-yellow-400" />
          <p
            className="text-white font-bold text-[10px] pointer-events-none select-none -mt-1.5 group-hover:text-yellow-300"
            style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}

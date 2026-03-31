@@ -160,6 +160,7 @@ const EditVocabularyModal: React.FC<EditVocabularyModalProps> = ({ vocabulary, o
                                                  <img 
                                                     src={item.image} 
                                                     alt="Preview" 
+                                                    referrerPolicy="no-referrer"
                                                     className="w-full h-full object-cover"
                                                     onError={(e) => (e.currentTarget.src = 'https://via.placeholder.com/40?text=Err')}
                                                 />
