@@ -4,6 +4,7 @@ import { initializeApp, FirebaseApp, getApps, getApp } from "https://www.gstatic
 // @ts-ignore
 import { getDatabase, ref, set, get, onValue, remove, Unsubscribe, Database, onDisconnect, runTransaction, update, push, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 import { GameResult, PlayerData, QuizQuestion, StudentProgress, UnitsState, VocabularyWord, WelcomeScreenConfig, DashboardConfig, ExerciseSelectionConfig } from "../types";
+import { resolveVocabImages, setVocabImageToCache } from "./imageCacheService";
 
 const firebaseConfig = {
     apiKey: "AIzaSyDL_Jg9VrJuV3sVyy_Gb5a4iLzy_QaTBGo",
@@ -174,17 +175,18 @@ export const listenToUnitQuizQuestionsByGrade = (classroomId: string, grade: num
 export const getUnitVocabularyByGrade = async (classroomId: string, grade: number, unitId: string) => {
     const db = checkFirebase();
     const s = await get(ref(db, `classrooms/${classroomId}/units_${grade}/${unitId}/vocabulary`));
-    return s.val();
+    return resolveVocabImages(s.val());
 };
 
 export const saveUnitVocabularyByGrade = async (classroomId: string, grade: number, unitId: string, vocab: VocabularyWord[]) => {
     const db = checkFirebase();
-    await set(ref(db, `classrooms/${classroomId}/units_${grade}/${unitId}/vocabulary`), vocab);
+    const resolvedVocab = resolveVocabImages(vocab);
+    await set(ref(db, `classrooms/${classroomId}/units_${grade}/${unitId}/vocabulary`), resolvedVocab);
 };
 
 export const listenToUnitVocabularyByGrade = (classroomId: string, grade: number, unitId: string, callback: (v: any) => void) => {
     const db = checkFirebase();
-    return onValue(ref(db, `classrooms/${classroomId}/units_${grade}/${unitId}/vocabulary`), (s) => callback(s.val()));
+    return onValue(ref(db, `classrooms/${classroomId}/units_${grade}/${unitId}/vocabulary`), (s) => callback(resolveVocabImages(s.val())));
 };
 
 export const listenToUnitResultsByGrade = (classroomId: string, grade: number, unitId: string, callback: (r: any) => void) => {
@@ -288,17 +290,18 @@ export const listenToTopicQuizQuestions = (classroomId: string, topicId: string,
 export const getTopicVocabulary = async (classroomId: string, topicId: string) => {
     const db = checkFirebase();
     const s = await get(ref(db, `classrooms/${classroomId}/topics/${topicId}/vocabulary`));
-    return s.val();
+    return resolveVocabImages(s.val());
 };
 
 export const saveTopicVocabulary = async (classroomId: string, topicId: string, vocab: VocabularyWord[]) => {
     const db = checkFirebase();
-    await set(ref(db, `classrooms/${classroomId}/topics/${topicId}/vocabulary`), vocab);
+    const resolvedVocab = resolveVocabImages(vocab);
+    await set(ref(db, `classrooms/${classroomId}/topics/${topicId}/vocabulary`), resolvedVocab);
 };
 
 export const listenToTopicVocabulary = (classroomId: string, topicId: string, callback: (v: any) => void) => {
     const db = checkFirebase();
-    return onValue(ref(db, `classrooms/${classroomId}/topics/${topicId}/vocabulary`), (s) => callback(s.val()));
+    return onValue(ref(db, `classrooms/${classroomId}/topics/${topicId}/vocabulary`), (s) => callback(resolveVocabImages(s.val())));
 };
 
 export const listenToTopicResults = (classroomId: string, topicId: string, callback: (r: any) => void) => {
@@ -339,18 +342,19 @@ export const updateVocabularyAudio = async (classroomId: string, grade: any, uni
     const snapshot = await get(ref(db, `classrooms/${classroomId}/${basePath}`));
     const vocabList = snapshot.val() as VocabularyWord[];
     if (vocabList) {
-        const index = vocabList.findIndex(v => v.word === word);
+        const index = vocabList.findIndex(v => v.word.toLowerCase() === word.toLowerCase());
         if (index !== -1) await set(ref(db, `classrooms/${classroomId}/${basePath}/${index}/audio`), base64Audio);
     }
 };
 
 export const updateVocabularyImage = async (classroomId: string, grade: any, unitId: string, word: string, imageUrl: string) => {
+    setVocabImageToCache(word, imageUrl);
     const db = checkFirebase();
     const basePath = grade === 'topics' ? `topics/${unitId}/vocabulary` : `units_${grade}/${unitId}/vocabulary`;
     const snapshot = await get(ref(db, `classrooms/${classroomId}/${basePath}`));
     const vocabList = snapshot.val() as VocabularyWord[];
     if (vocabList) {
-        const index = vocabList.findIndex(v => v.word === word);
+        const index = vocabList.findIndex(v => v.word.toLowerCase() === word.toLowerCase());
         if (index !== -1) await set(ref(db, `classrooms/${classroomId}/${basePath}/${index}/image`), imageUrl);
     }
 };

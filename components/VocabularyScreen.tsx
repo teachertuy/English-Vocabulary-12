@@ -3,6 +3,7 @@ import React, { useState, useRef, useCallback, useEffect, useMemo } from 'react'
 import { VocabularyWord, PlayerData, GameResult } from '../types';
 import { generateSpeech, generateImagePrompt } from '../services/geminiService';
 import { updateVocabularyAudio, updateVocabularyImage, updateUnitActivityResult, removeStudentPresence, trackStudentPresence, updateUnitActivityProgress } from '../services/firebaseService';
+import { isUnreliableImage, getVocabImageFromCache, setVocabImageToCache, resolveVocabImages } from '../services/imageCacheService';
 
 function decode(base64: string): Uint8Array {
   const binaryString = atob(base64);
@@ -47,7 +48,7 @@ interface VocabularyScreenProps {
 }
 
 const VocabularyScreen: React.FC<VocabularyScreenProps> = ({ unitNumber, vocabulary, onBack, classroomId, grade, playerData, activityId, onFinish }) => {
-    const [localVocabulary, setLocalVocabulary] = useState<VocabularyWord[]>(vocabulary);
+    const [localVocabulary, setLocalVocabulary] = useState<VocabularyWord[]>(() => resolveVocabImages(vocabulary));
     const [playingWord, setPlayingWord] = useState<string | null>(null);
     const [fetchingWords, setFetchingWords] = useState<Set<string>>(new Set());
     const [fetchingImages, setFetchingImages] = useState<Set<string>>(new Set());
@@ -57,6 +58,12 @@ const VocabularyScreen: React.FC<VocabularyScreenProps> = ({ unitNumber, vocabul
     const startTime = useMemo(() => Date.now(), []);
     const audioContextRef = useRef<AudioContext | null>(null);
     const isComponentMounted = useRef(true);
+
+    useEffect(() => {
+        if (vocabulary && vocabulary.length > 0) {
+            setLocalVocabulary(resolveVocabImages(vocabulary));
+        }
+    }, [vocabulary]);
 
     useEffect(() => {
         isComponentMounted.current = true;
@@ -80,15 +87,23 @@ const VocabularyScreen: React.FC<VocabularyScreenProps> = ({ unitNumber, vocabul
             const unitId = grade === 'topics' ? `topic_${unitNumber}` : `unit_${unitNumber}`;
             for (const item of localVocabulary) {
                 if (!isComponentMounted.current) break;
-                const isUnreliableImage = !item.image || 
-                                         item.image.includes('pollinations.ai') || 
-                                         item.image.includes('illustration_white_background');
                 
-                if (isUnreliableImage && !fetchingImages.has(item.word)) {
+                let currentImg = item.image;
+                if (isUnreliableImage(currentImg)) {
+                    const cached = getVocabImageFromCache(item.word);
+                    if (cached) {
+                        currentImg = cached;
+                        setLocalVocabulary(prev => prev.map(w => w.word === item.word ? { ...w, image: cached } : w));
+                        updateVocabularyImage(classroomId, grade, unitId, item.word, cached).catch(console.error);
+                    }
+                }
+
+                if (isUnreliableImage(currentImg) && !fetchingImages.has(item.word)) {
                     try {
                         setFetchingImages(prev => new Set(prev).add(item.word));
                         const highQualityUrl = await generateImagePrompt(item.word, item.translation);
                         if (isComponentMounted.current) {
+                            setVocabImageToCache(item.word, highQualityUrl);
                             updateVocabularyImage(classroomId, grade, unitId, item.word, highQualityUrl).catch(console.error);
                             setLocalVocabulary(prev => prev.map(w => w.word === item.word ? { ...w, image: highQualityUrl } : w));
                         }

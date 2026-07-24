@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { listenToUnitsStatusByGrade, listenToTopicsStatus, getUnitVocabularyByGrade, getTopicVocabulary, updateVocabularyImage, updateVocabularyAudio } from '../services/firebaseService';
 import { generateImagePrompt, generateSpeech } from '../services/geminiService';
 import { VocabularyWord, UnitsState } from '../types';
+import { isUnreliableImage, getVocabImageFromCache, setVocabImageToCache } from '../services/imageCacheService';
 
 interface BackgroundSyncProps {
     classroomId: string;
@@ -75,17 +76,24 @@ const BackgroundSync: React.FC<BackgroundSyncProps> = ({ classroomId, isEnabled 
                 if (stopRef.current) break;
 
                 let updated = false;
+                let currentImg = item.image;
                 
-                // Check missing or unreliable image (including generic fallbacks)
-                const isUnreliableImage = !item.image || 
-                                         item.image.includes('pollinations.ai') || 
-                                         item.image.includes('illustration_white_background') ||
-                                         (item.image.includes('loremflickr.com') && !item.image.includes('lock='));
+                // If current image is unreliable, check cache first
+                if (isUnreliableImage(currentImg)) {
+                    const cached = getVocabImageFromCache(item.word);
+                    if (cached) {
+                        currentImg = cached;
+                        await updateVocabularyImage(classroomId, grade, unitId, item.word, cached);
+                        updated = true;
+                    }
+                }
                 
-                if (isUnreliableImage) {
+                // If still unreliable, generate new image via Gemini AI
+                if (isUnreliableImage(currentImg)) {
                     setCurrentTask(`Updating image for: ${item.word} (${unitId})`);
                     try {
                         const imageUrl = await generateImagePrompt(item.word, item.translation);
+                        setVocabImageToCache(item.word, imageUrl);
                         await updateVocabularyImage(classroomId, grade, unitId, item.word, imageUrl);
                         updated = true;
                         // Small delay after successful API call

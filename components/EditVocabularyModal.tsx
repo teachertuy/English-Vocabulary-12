@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { VocabularyWord } from '../types';
 import { generateImagePrompt } from '../services/geminiService';
+import { setVocabImageToCache } from '../services/imageCacheService';
 
 interface EditVocabularyModalProps {
     vocabulary: VocabularyWord[];
@@ -69,6 +70,7 @@ const EditVocabularyModal: React.FC<EditVocabularyModalProps> = ({ vocabulary, o
         setRegeneratingIndices(prev => new Set(prev).add(index));
         try {
             const newImageUrl = await generateImagePrompt(item.word, item.translation || '');
+            setVocabImageToCache(item.word, newImageUrl);
             handleChange(index, 'image', newImageUrl);
         } catch (error) {
             console.error("Failed to regenerate image:", error);
