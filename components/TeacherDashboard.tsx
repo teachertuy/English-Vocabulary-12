@@ -8,6 +8,7 @@ import {
     listenToQuizQuestions, listenToUnitsStatusByGrade, setUnitStatusByGrade,
     saveUnitQuizQuestionsByGrade, listenToUnitQuizQuestionsByGrade, listenToUnitResultsByGrade, clearUnitResultsByGrade,
     deleteUnitStudentAllResultsByGrade, saveUnitVocabularyByGrade, listenToUnitVocabularyByGrade, deleteCurrentQuiz,
+    clearAllUnitsResultsByGrade,
     listenToTopicsStatus, setTopicStatus, listenToTopicQuizQuestions, listenToTopicResults,
     listenToTopicVocabulary, saveTopicVocabulary, saveTopicQuizQuestions, clearTopicResults,
     deleteTopicStudentAllResults, saveWelcomeConfig, listenToWelcomeConfig, saveDashboardConfig, listenToDashboardConfig,
@@ -253,6 +254,8 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
     const [deletingTopicStudent, setDeletingTopicStudent] = useState<StudentGroupedResult | null>(null);
     const [topicActivityPrompts, setTopicActivityPrompts] = useState(DEFAULT_ACTIVITY_PROMPTS);
     const [isGameEnabled, setIsGameEnabled] = useState(true);
+    const [showDeleteAllUnitsModal, setShowDeleteAllUnitsModal] = useState(false);
+    const [isDeletingAllUnits, setIsDeletingAllUnits] = useState(false);
 
     useEffect(() => { if (notification) { const timer = setTimeout(() => setNotification(null), 4000); return () => clearTimeout(timer); } }, [notification]);
 
@@ -681,6 +684,19 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                              <div className="bg-white p-5 rounded-lg shadow-md text-center border-l-4 border-orange-500"><p className="text-sm font-bold text-gray-600 mb-1">Gian lận (tab)</p><p className="text-4xl font-black text-orange-600">{Object.keys(cheatCounts).length}</p></div>
                              <div className="bg-white p-5 rounded-lg shadow-md text-center border-l-4 border-indigo-500"><p className="text-sm font-bold text-gray-600 mb-1">Lượt hoạt động</p><p className="text-4xl font-black text-indigo-600">{Object.keys(studentProgress).length}</p></div>
                         </div>
+
+                        {/* Compact Special Delete All Units Button */}
+                        <div className="flex justify-end pt-2 border-t border-gray-100">
+                            <button
+                                onClick={() => setShowDeleteAllUnitsModal(true)}
+                                className="px-5 py-3 bg-red-600 hover:bg-red-700 text-white font-black rounded-xl shadow-md hover:shadow-red-200 active:scale-95 transition-all flex items-center gap-2 text-sm border border-red-500"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                                <span>XÓA SẠCH LỊCH SỬ 10 UNITS</span>
+                            </button>
+                        </div>
                     </div>
                 )}
             </div>
@@ -701,6 +717,39 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
             {selectedResult && <ResultDetailModal result={selectedResult} onClose={() => setSelectedResult(null)} />}
             <ConfirmationModal show={!!deletingUnitStudent} title="Xác nhận" message={`Xóa TOÀN BỘ kết quả của ${deletingUnitStudent?.playerName}?`} onConfirm={async () => { await deleteUnitStudentAllResultsByGrade(classroomId, viewingUnit!.grade, `unit_${viewingUnit!.unit}`, deletingUnitStudent!.playerName, deletingUnitStudent!.playerClass); setDeletingUnitStudent(null); setNotification({ message: 'Đã xóa!', type: 'success' }); }} onCancel={() => setDeletingUnitStudent(null)} />
             <ConfirmationModal show={!!deletingTopicStudent} title="Xác nhận" message={`Xóa TOÀN BỘ kết quả của ${deletingTopicStudent?.playerName}?`} onConfirm={async () => { await deleteTopicStudentAllResults(classroomId, `topic_${viewingTopic}`, deletingTopicStudent!.playerName, deletingTopicStudent!.playerClass); setDeletingTopicStudent(null); setNotification({ message: 'Đã xóa!', type: 'success' }); }} onCancel={() => setDeletingTopicStudent(null)} />
+            <ConfirmationModal 
+                show={showDeleteAllUnitsModal} 
+                title="⚠️ XÁC NHẬN XÓA TOÀN BỘ 10 UNITS" 
+                message={
+                    <div className="text-left space-y-3">
+                        <p className="font-bold text-red-600 text-base">
+                            Bạn có chắc chắn muốn xóa TOÀN BỘ lịch sử học và làm bài của tất cả học sinh từ Unit 1 đến Unit 10?
+                        </p>
+                        <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-xs text-red-800 space-y-1">
+                            <p>• Tất cả kết quả bài làm trắc nghiệm, chính tả, ghép cặp trong 10 Units sẽ bị xóa vĩnh viễn.</p>
+                            <p>• Tính năng này phục vụ dọn dẹp dữ liệu cuối năm học nhanh chóng.</p>
+                            <p>• <strong>Dữ liệu đã xóa không thể khôi phục lại!</strong></p>
+                        </div>
+                    </div>
+                } 
+                confirmText="Xóa Tất Cả 10 Units" 
+                cancelText="Hủy Bỏ" 
+                isConfirming={isDeletingAllUnits} 
+                onConfirm={async () => { 
+                    setIsDeletingAllUnits(true); 
+                    try { 
+                        await clearAllUnitsResultsByGrade(classroomId, 12); 
+                        setNotification({ message: 'Đã xóa toàn bộ lịch sử học & làm bài từ Unit 1 đến Unit 10 thành công!', type: 'success' }); 
+                        handleRefresh(); 
+                    } catch (e) { 
+                        setNotification({ message: 'Lỗi khi xóa dữ liệu!', type: 'error' }); 
+                    } finally { 
+                        setIsDeletingAllUnits(false); 
+                        setShowDeleteAllUnitsModal(false); 
+                    } 
+                }} 
+                onCancel={() => setShowDeleteAllUnitsModal(false)} 
+            />
         </div>
     );
 };

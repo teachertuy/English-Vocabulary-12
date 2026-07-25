@@ -199,6 +199,18 @@ export const clearUnitResultsByGrade = async (classroomId: string, grade: number
     await set(ref(db, `classrooms/${classroomId}/units_${grade}/${unitId}/results`), null);
 };
 
+export const clearAllUnitsResultsByGrade = async (classroomId: string, grade: number = 12) => {
+    const db = checkFirebase();
+    const updates: Record<string, null> = {};
+    for (let i = 1; i <= 10; i++) {
+        updates[`units_${grade}/unit_${i}/results`] = null;
+    }
+    updates[`results`] = null;
+    updates[`progress`] = null;
+    updates[`cheatCounts`] = null;
+    await update(ref(db, `classrooms/${classroomId}`), updates);
+};
+
 export const deleteUnitStudentResultByGrade = async (classroomId: string, grade: number, unitId: string, name: string, className: string, activityId: string) => {
     const db = checkFirebase();
     const playerKey = getPlayerKey(name, className);
