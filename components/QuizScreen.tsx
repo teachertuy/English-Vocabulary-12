@@ -179,19 +179,16 @@ const QuizScreen: React.FC<QuizScreenProps> = ({ playerData, questions, unitNumb
              {feedback && <div className={`fixed top-5 right-5 shadow-lg rounded-lg p-4 text-center z-50 ${feedback.isCorrect ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}><p className="font-bold">{feedback.message}</p></div>}
             
             <div className="w-full max-w-4xl mx-auto p-3 bg-amber-50 rounded-xl mb-4 border border-amber-200 shadow-sm pt-2 relative">
-                {/* Row 1: <<Quay lại on top-left edge */}
-                <div className="flex justify-start items-center w-full mb-1">
+                {/* Row 1: <<Quay lại on top-left edge & Timer on top-right edge */}
+                <div className="flex justify-between items-center w-full mb-1">
                     <button 
                         onClick={handleExitPrematurely} 
                         className="flex items-center text-red-600 hover:text-red-700 font-bold text-base transition-colors focus:outline-none rounded active:scale-95"
                     >
                         <span>&lt;&lt;Quay lại</span>
                     </button>
-                </div>
 
-                {/* Centered Column: Timer (Top) -> Score -> Progress */}
-                <div className="flex flex-col items-center justify-center gap-0 w-full mx-auto">
-                    {/* Timer Indicator - Only show if durationSeconds > 0 */}
+                    {/* Timer Indicator */}
                     {durationSeconds > 0 ? (
                         <div className="bg-purple-800 text-white font-bold py-0.5 px-3 rounded-lg shadow-sm">
                             <span className="text-sm font-black font-['Nunito']">{formatTime(timeLeft)}</span>
@@ -202,7 +199,10 @@ const QuizScreen: React.FC<QuizScreenProps> = ({ playerData, questions, unitNumb
                             <span className="text-sm font-black font-['Nunito']">∞</span>
                         </div>
                     )}
+                </div>
 
+                {/* Centered Column: Score -> Progress */}
+                <div className="flex flex-col items-center justify-center gap-0 w-full mx-auto">
                     {/* Score Indicator */}
                     <div className="bg-red-500 text-white font-bold py-0.5 px-3 rounded-full shadow-sm flex items-center justify-center">
                         <span className="text-xs mr-1 opacity-90">Điểm:</span>
