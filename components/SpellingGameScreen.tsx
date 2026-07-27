@@ -211,9 +211,9 @@ const SpellingGameScreen: React.FC<SpellingGameScreenProps> = ({ playerData, voc
     
     return (
         <div className="flex flex-col items-center justify-start p-4 bg-white min-h-[600px] relative w-full">
-            <div className="w-full max-w-4xl mx-auto mb-4 pt-1">
+            <div className="w-full max-w-4xl mx-auto mb-4 pt-1 relative">
                 {/* Row 1: <<Quay lại on top-left edge */}
-                <div className="flex justify-start items-center w-full mb-2">
+                <div className="flex justify-start items-center w-full mb-1">
                     <button 
                         onClick={handleExitPrematurely} 
                         className="flex items-center text-red-600 hover:text-red-700 font-bold text-base transition-colors focus:outline-none rounded active:scale-95"
@@ -222,23 +222,8 @@ const SpellingGameScreen: React.FC<SpellingGameScreenProps> = ({ playerData, voc
                     </button>
                 </div>
 
-                {/* Row 2: Central stacked indicators & Timer */}
-                <div className="flex justify-between items-center w-full">
-                    {/* Central stacked indicators */}
-                    <div className="flex flex-col items-center gap-1.5">
-                        {/* Correct/Incorrect Redesigned Indicator (Top) */}
-                        <div className="bg-white px-5 py-1 rounded-full border-4 border-double border-red-500 flex items-center gap-3 shadow-md">
-                            <span className="text-xl font-black text-green-600 font-['Nunito']">{correctAnswers}</span>
-                            <span className="text-lg font-bold text-gray-200">|</span>
-                            <span className="text-xl font-black text-red-600 font-['Nunito']">{incorrectAnswers}</span>
-                        </div>
-
-                        {/* Progress Indicator (Bottom) */}
-                        <div className="bg-white px-4 py-0.5 rounded-2xl border border-gray-100 flex items-center shadow-sm min-w-[80px] justify-center">
-                            <span className="text-blue-600 text-sm font-black font-['Nunito']">{currentIndex + 1} / {shuffledVocabulary.length}</span>
-                        </div>
-                    </div>
-
+                {/* Centered Column: Timer (Top) -> Correct/Incorrect Count -> Progress */}
+                <div className="flex flex-col items-center justify-center gap-1.5 w-full mx-auto">
                     {/* Timer Indicator */}
                     {durationSeconds > 0 ? (
                         <div className="bg-white px-4 py-1.5 rounded-2xl border border-red-100 flex items-center shadow-sm">
@@ -249,6 +234,18 @@ const SpellingGameScreen: React.FC<SpellingGameScreenProps> = ({ playerData, voc
                             <span className="text-green-700 text-lg font-black font-['Nunito']">∞</span>
                         </div>
                     )}
+
+                    {/* Correct/Incorrect Redesigned Indicator */}
+                    <div className="bg-white px-5 py-1 rounded-full border-4 border-double border-red-500 flex items-center gap-3 shadow-md">
+                        <span className="text-xl font-black text-green-600 font-['Nunito']">{correctAnswers}</span>
+                        <span className="text-lg font-bold text-gray-200">|</span>
+                        <span className="text-xl font-black text-red-600 font-['Nunito']">{incorrectAnswers}</span>
+                    </div>
+
+                    {/* Progress Indicator */}
+                    <div className="bg-white px-4 py-0.5 rounded-2xl border border-gray-100 flex items-center shadow-sm min-w-[80px] justify-center">
+                        <span className="text-blue-600 text-sm font-black font-['Nunito']">{currentIndex + 1} / {shuffledVocabulary.length}</span>
+                    </div>
                 </div>
             </div>
 

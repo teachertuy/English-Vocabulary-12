@@ -181,9 +181,9 @@ const MatchingGameScreen: React.FC<MatchingGameScreenProps> = ({ playerData, voc
     return (
         <div className="flex flex-col items-center justify-center p-2 sm:p-4 bg-white min-h-[500px] relative w-full">
             {feedback && <div className="fixed top-5 right-5 shadow-lg rounded-lg p-3 text-sm text-center z-50 bg-red-100 text-red-800"><p className="font-bold">{feedback}</p></div>}
-            <div className="w-full max-w-4xl mx-auto mb-2 pt-1">
+            <div className="w-full max-w-4xl mx-auto mb-2 pt-1 relative">
                 {/* Row 1: <<Quay lại on top-left edge */}
-                <div className="flex justify-start items-center w-full mb-2">
+                <div className="flex justify-start items-center w-full mb-1">
                     <button 
                         onClick={handleExitPrematurely} 
                         className="flex items-center text-red-600 hover:text-red-700 font-bold text-base transition-colors focus:outline-none rounded active:scale-95"
@@ -192,27 +192,30 @@ const MatchingGameScreen: React.FC<MatchingGameScreenProps> = ({ playerData, voc
                     </button>
                 </div>
                 
-                {/* Row 2: Indicators and Timer */}
-                <div className="flex justify-between items-center w-full">
-                    <div className="flex flex-col items-center gap-1.5">
-                        {/* Correct/Incorrect Redesigned Indicator (Top) */}
-                        <div className="bg-white px-5 py-1 rounded-full border-4 border-double border-red-500 flex items-center gap-3 shadow-md">
-                            <span className="text-xl font-black text-green-600 font-['Nunito']">{score}</span>
-                            <span className="text-lg font-bold text-gray-200">|</span>
-                            <span className="text-xl font-black text-red-600 font-['Nunito']">{incorrectMatches}</span>
+                {/* Centered Column: Timer (Top) -> Correct/Incorrect Count -> Progress */}
+                <div className="flex flex-col items-center justify-center gap-1.5 w-full mx-auto">
+                    {/* Timer Indicator (Top) */}
+                    {durationSeconds > 0 ? (
+                        <div className="bg-white px-4 py-1.5 rounded-2xl border border-red-100 flex items-center shadow-sm font-['Nunito'] font-black text-red-700 text-lg">
+                            {formatTime(timeLeft)}
                         </div>
+                    ) : (
+                        <div className="bg-white px-4 py-1.5 rounded-2xl border border-green-100 flex items-center shadow-sm font-['Nunito'] font-black text-green-700 text-lg">
+                            ∞
+                        </div>
+                    )}
 
-                        {/* Progress Indicator (Bottom) */}
-                        <div className="bg-white px-4 py-0.5 rounded-2xl border border-gray-100 flex items-center shadow-sm min-w-[80px] justify-center">
-                            <span className="text-blue-600 text-sm font-black font-['Nunito']">{remainingWords.length} left</span>
-                        </div>
+                    {/* Correct/Incorrect Redesigned Indicator */}
+                    <div className="bg-white px-5 py-1 rounded-full border-4 border-double border-red-500 flex items-center gap-3 shadow-md">
+                        <span className="text-xl font-black text-green-600 font-['Nunito']">{score}</span>
+                        <span className="text-lg font-bold text-gray-200">|</span>
+                        <span className="text-xl font-black text-red-600 font-['Nunito']">{incorrectMatches}</span>
                     </div>
 
-                    {durationSeconds > 0 ? (
-                        <div className="bg-white px-4 py-1.5 rounded-2xl border border-red-100 flex items-center shadow-sm font-['Nunito'] font-black text-red-700 text-lg">{formatTime(timeLeft)}</div>
-                    ) : (
-                        <div className="bg-white px-4 py-1.5 rounded-2xl border border-green-100 flex items-center shadow-sm font-['Nunito'] font-black text-green-700 text-lg">∞</div>
-                    )}
+                    {/* Progress Indicator (Bottom) */}
+                    <div className="bg-white px-4 py-0.5 rounded-2xl border border-gray-100 flex items-center shadow-sm min-w-[80px] justify-center">
+                        <span className="text-blue-600 text-sm font-black font-['Nunito']">{remainingWords.length} left</span>
+                    </div>
                 </div>
             </div>
             <div className="w-full max-w-2xl my-1"><div className="border-t border-black"></div><div className="border-t border-gray-400 mt-0.5"></div></div>
