@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { PlayerData, VocabularyWord, GameResult, QuizAnswerDetail } from '../types';
 import { updateUnitActivityResult, trackStudentPresence, incrementCheatCount, listenForKickedStatus, getGameStatus, removeStudentPresence, updateStudentProgress, updateUnitActivityProgress } from '../services/firebaseService';
+import StudentAttemptSummaryBanner from './StudentAttemptSummaryBanner';
 
 declare const Tone: any;
 
@@ -216,6 +217,17 @@ const MatchingGameScreen: React.FC<MatchingGameScreenProps> = ({ playerData, voc
                     </div>
                 </div>
             </div>
+
+            {classroomId && (
+                <StudentAttemptSummaryBanner
+                    classroomId={classroomId}
+                    grade={grade}
+                    unitNumber={unitNumber}
+                    playerData={playerData}
+                    currentActivityType="matching"
+                />
+            )}
+
             <div className="w-full max-w-2xl my-1"><div className="border-t border-black"></div><div className="border-t border-gray-400 mt-0.5"></div></div>
             <WordButtons words={topWords} />
             <div className="flex flex-col items-center justify-center flex-grow w-full my-1">

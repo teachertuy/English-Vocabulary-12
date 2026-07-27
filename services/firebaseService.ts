@@ -234,41 +234,87 @@ export const listenToUnitsStatusByGrade = (classroomId: string, grade: number, c
 };
 
 export const startUnitActivity = (classroomId: string, grade: any, unitId: string, player: PlayerData, gameType: string): string => {
-    const db = checkFirebase();
-    const playerKey = getPlayerKey(player.name, player.class);
-    const basePath = grade === 'topics' ? `topics/${unitId}` : `units_${grade}/${unitId}`;
-    const activityRef = push(ref(db, `classrooms/${classroomId}/${basePath}/results/${playerKey}`));
-    const activityId = activityRef.key!;
-    
-    const initialResult = { 
-        playerName: player.name, 
-        playerClass: player.class, 
-        score: '0', 
-        correct: 0, 
-        incorrect: 0, 
-        answered: 0, 
-        totalQuestions: 0, 
-        timeTakenSeconds: 0, 
-        details: [], 
-        gameType, 
-        status: 'in-progress', 
-        attempts: 1, 
-        timestamp: serverTimestamp() 
-    };
+    try {
+        const db = checkFirebase();
+        const playerKey = getPlayerKey(player.name, player.class);
+        const basePath = grade === 'topics' ? `topics/${unitId}` : `units_${grade}/${unitId}`;
+        const activityRef = push(ref(db, `classrooms/${classroomId}/${basePath}/results/${playerKey}`));
+        const activityId = activityRef.key || `act_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+        
+        const initialResult = { 
+            playerName: player.name, 
+            playerClass: player.class, 
+            score: '0', 
+            correct: 0, 
+            incorrect: 0, 
+            answered: 0, 
+            totalQuestions: 0, 
+            timeTakenSeconds: 0, 
+            details: [], 
+            gameType, 
+            status: 'in-progress', 
+            attempts: 1, 
+            timestamp: serverTimestamp() 
+        };
 
-    set(ref(db, `classrooms/${classroomId}/${basePath}/results/${playerKey}/${activityId}`), initialResult)
-        .then(() => {
-            return runTransaction(ref(db, `classrooms/${classroomId}/${basePath}/results/${playerKey}`), (curr: any) => {
-                if (curr && curr[activityId]) {
-                    const attempts = Object.values(curr).filter((r: any) => r.gameType === gameType && r.status === 'completed').length;
-                    curr[activityId].attempts = attempts + 1;
-                }
-                return curr;
-            });
-        })
-        .catch(err => console.error("Failed to start activity in Firebase:", err));
+        set(ref(db, `classrooms/${classroomId}/${basePath}/results/${playerKey}/${activityId}`), initialResult)
+            .then(() => {
+                return runTransaction(ref(db, `classrooms/${classroomId}/${basePath}/results/${playerKey}`), (curr: any) => {
+                    if (curr && curr[activityId]) {
+                        const attempts = Object.values(curr).filter((r: any) => r.gameType === gameType && r.status === 'completed').length;
+                        curr[activityId].attempts = attempts + 1;
+                    }
+                    return curr;
+                });
+            })
+            .catch(() => {});
 
-    return activityId;
+        return activityId;
+    } catch (e) {
+        return `act_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+    }
+};
+
+export interface ActivityAttemptCounts {
+    vocabulary: number;
+    matching: number;
+    spelling: number;
+    quiz: number;
+}
+
+export const listenToStudentActivityAttempts = (
+    classroomId: string,
+    grade: any,
+    unitId: string,
+    playerName: string,
+    playerClass: string,
+    callback: (counts: ActivityAttemptCounts) => void
+) => {
+    try {
+        const db = checkFirebase();
+        const playerKey = getPlayerKey(playerName, playerClass);
+        const basePath = grade === 'topics' ? `topics/${unitId}` : `units_${grade}/${unitId}`;
+        const resultsRef = ref(db, `classrooms/${classroomId}/${basePath}/results/${playerKey}`);
+        
+        return onValue(resultsRef, (snapshot) => {
+            const val = snapshot.val();
+            const counts: ActivityAttemptCounts = { vocabulary: 0, matching: 0, spelling: 0, quiz: 0 };
+            if (val && typeof val === 'object') {
+                Object.values(val).forEach((item: any) => {
+                    if (item && item.gameType && counts[item.gameType as keyof ActivityAttemptCounts] !== undefined) {
+                        counts[item.gameType as keyof ActivityAttemptCounts] += 1;
+                    }
+                });
+            }
+            callback(counts);
+        }, (error) => {
+            console.error("Failed to listen to student activity attempts:", error);
+            callback({ vocabulary: 0, matching: 0, spelling: 0, quiz: 0 });
+        });
+    } catch (e) {
+        callback({ vocabulary: 0, matching: 0, spelling: 0, quiz: 0 });
+        return () => {};
+    }
 };
 
 export const updateUnitActivityProgress = async (classroomId: string, grade: any, unitId: string, player: PlayerData, activityId: string, result: any) => {

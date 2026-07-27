@@ -1,7 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
-import { QuizQuestion, VocabularyWord, ExerciseSelectionConfig } from '../types';
+import { QuizQuestion, VocabularyWord, ExerciseSelectionConfig, PlayerData } from '../types';
 import { getUnitQuizQuestionsByGrade, getUnitVocabularyByGrade, getTopicQuizQuestions, getTopicVocabulary, listenToExerciseSelectionConfig } from '../services/firebaseService';
+import StudentAttemptSummaryBanner from './StudentAttemptSummaryBanner';
 
 interface ActivitySelectionModalProps {
     show: boolean;
@@ -9,6 +10,7 @@ interface ActivitySelectionModalProps {
     grade: number | 'topics';
     onClose: () => void;
     classroomId: string;
+    playerData?: PlayerData;
     onStartQuiz: (questions: QuizQuestion[]) => void;
     onLearnVocabulary: (vocab: VocabularyWord[]) => void;
     onStartSpellingGame: (vocab: VocabularyWord[]) => void;
@@ -80,7 +82,7 @@ const DEFAULT_CONFIG: ExerciseSelectionConfig = {
     matchingTimerEnabled: true,
 };
 
-const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, unitNumber, grade, onClose, classroomId, onStartQuiz, onLearnVocabulary, onStartSpellingGame, onStartMatchingGame }) => {
+const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, unitNumber, grade, onClose, classroomId, playerData, onStartQuiz, onLearnVocabulary, onStartSpellingGame, onStartMatchingGame }) => {
     const [quiz, setQuiz] = useState<QuizQuestion[] | null>(null);
     const [vocabulary, setVocabulary] = useState<VocabularyWord[] | null>(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -136,11 +138,20 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
             onClick={onClose}
         >
             <div 
-                className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md transform transition-all text-center"
+                className="bg-white rounded-2xl shadow-xl p-5 sm:p-6 w-full max-w-xl transform transition-all text-center max-h-[90vh] overflow-y-auto"
                 onClick={e => e.stopPropagation()}
             >
-                <h2 className="text-3xl font-extrabold text-gray-800 mb-2">{titleLabel}</h2>
-                <p className="text-gray-600 mb-6 italic">{config.subtitle}</p>
+                <h2 className="text-3xl font-extrabold text-gray-800 mb-1">{titleLabel}</h2>
+                <p className="text-gray-600 mb-4 italic text-sm sm:text-base">{config.subtitle}</p>
+                
+                {playerData && (
+                    <StudentAttemptSummaryBanner
+                        classroomId={classroomId}
+                        grade={grade}
+                        unitNumber={unitNumber}
+                        playerData={playerData}
+                    />
+                )}
                 
                 <div className="space-y-4">
                     {isLoading ? (

@@ -4,6 +4,7 @@ import { VocabularyWord, PlayerData, GameResult } from '../types';
 import { generateSpeech, generateImagePrompt } from '../services/geminiService';
 import { updateVocabularyAudio, updateVocabularyImage, updateUnitActivityResult, removeStudentPresence, trackStudentPresence, updateUnitActivityProgress } from '../services/firebaseService';
 import { isUnreliableImage, getVocabImageFromCache, setVocabImageToCache, resolveVocabImages } from '../services/imageCacheService';
+import StudentAttemptSummaryBanner from './StudentAttemptSummaryBanner';
 
 function decode(base64: string): Uint8Array {
   const binaryString = atob(base64);
@@ -173,7 +174,22 @@ const VocabularyScreen: React.FC<VocabularyScreenProps> = ({ unitNumber, vocabul
                 source.connect(audioContext.destination);
                 source.onended = () => setPlayingWord(null);
                 source.start();
-            } catch (error) { setPlayingWord(null); }
+            } catch (error) { 
+                setPlayingWord(null); 
+                if ('speechSynthesis' in window) {
+                    window.speechSynthesis.cancel();
+                    const utterance = new SpeechSynthesisUtterance(wordItem.word);
+                    utterance.lang = 'en-US';
+                    window.speechSynthesis.speak(utterance);
+                }
+            }
+        } else {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(wordItem.word);
+                utterance.lang = 'en-US';
+                window.speechSynthesis.speak(utterance);
+            }
         }
     }, [playingWord]);
     
@@ -187,6 +203,14 @@ const VocabularyScreen: React.FC<VocabularyScreenProps> = ({ unitNumber, vocabul
                     <span>&lt;&lt;Quay lại</span>
                 </button>
             </div>
+            
+            <StudentAttemptSummaryBanner
+                classroomId={classroomId}
+                grade={grade}
+                unitNumber={unitNumber}
+                playerData={playerData}
+                currentActivityType="vocabulary"
+            />
             {(fetchingImages.size > 0 || fetchingWords.size > 0) && <div className="mb-4 px-4 py-2 bg-blue-50 text-blue-700 text-sm font-bold rounded-lg border border-blue-200 flex items-center gap-2 animate-pulse self-center"><div className="w-2 h-2 bg-blue-600 rounded-full animate-ping"></div><span>AI đang đồng bộ Ảnh & Âm thanh...</span></div>}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 overflow-y-auto flex-grow px-2 pb-8 max-w-7xl mx-auto w-full">
                 {localVocabulary.map((item, index) => (

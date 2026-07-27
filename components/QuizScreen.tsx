@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { PlayerData, QuizQuestion, GameResult, QuizAnswerDetail } from '../types';
 import { updateUnitActivityResult, trackStudentPresence, incrementCheatCount, listenForKickedStatus, getGameStatus, removeStudentPresence, updateStudentProgress, updateUnitActivityProgress } from '../services/firebaseService';
+import StudentAttemptSummaryBanner from './StudentAttemptSummaryBanner';
 
 declare const Tone: any;
 
@@ -215,6 +216,16 @@ const QuizScreen: React.FC<QuizScreenProps> = ({ playerData, questions, unitNumb
                     </div>
                 </div>
             </div>
+
+            {classroomId && (
+                <StudentAttemptSummaryBanner
+                    classroomId={classroomId}
+                    grade={grade}
+                    unitNumber={unitNumber}
+                    playerData={playerData}
+                    currentActivityType="quiz"
+                />
+            )}
 
             <div className="flex flex-col items-center w-full flex-grow">
                 <div className="w-full max-w-3xl bg-white rounded-2xl border-4 border-green-500 px-2 py-4 shadow-lg flex flex-col flex-grow">

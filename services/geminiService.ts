@@ -164,10 +164,11 @@ export async function generateImagePrompt(word: string, translation: string): Pr
 }
 
 export async function generateSpeech(text: string): Promise<string> {
-    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-    const textToSpeak = PRONUNCIATION_OVERRIDES[text.toLowerCase()] || text;
-    const descriptivePrompt = `Please pronounce the following English word clearly and naturally: "${textToSpeak}"`;
+    if (!text || !text.trim()) return '';
     try {
+        const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+        const textToSpeak = PRONUNCIATION_OVERRIDES[(text || '').toLowerCase()] || text;
+        const descriptivePrompt = `Please pronounce the following English word clearly and naturally: "${textToSpeak}"`;
         const response = await ai.models.generateContent({
             model: "gemini-2.5-flash-preview-tts",
             contents: [{ parts: [{ text: descriptivePrompt }] }],
@@ -178,7 +179,7 @@ export async function generateSpeech(text: string): Promise<string> {
         });
         return response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data || '';
     } catch (error) {
-        console.error("TTS error:", error);
-        throw error;
+        // Return empty string on rate limit or TTS failure to allow Web Speech API fallback seamlessly
+        return '';
     }
 }

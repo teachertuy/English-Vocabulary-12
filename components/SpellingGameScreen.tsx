@@ -3,6 +3,7 @@ import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { PlayerData, VocabularyWord, GameResult, QuizAnswerDetail } from '../types';
 import { updateUnitActivityResult, trackStudentPresence, incrementCheatCount, listenForKickedStatus, getGameStatus, removeStudentPresence, updateVocabularyAudio, updateStudentProgress, updateUnitActivityProgress } from '../services/firebaseService';
 import { generateSpeech } from '../services/geminiService';
+import StudentAttemptSummaryBanner from './StudentAttemptSummaryBanner';
 
 declare const Tone: any;
 
@@ -156,30 +157,53 @@ const SpellingGameScreen: React.FC<SpellingGameScreenProps> = ({ playerData, voc
 
     const handlePlayAudio = async (e?: React.MouseEvent) => {
         if (e) e.preventDefault();
-        if (isPlayingAudio || isLoadingAudio || isRateLimited) return;
+        if (isPlayingAudio || isLoadingAudio) return;
         try {
             setIsLoadingAudio(true);
-            if (!audioContextRef.current) audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
-            const audioContext = audioContextRef.current;
-            if (audioContext.state === 'suspended') audioContext.resume();
             let base64Audio = currentWord.audio;
             if (!base64Audio) {
-                 base64Audio = await generateSpeech(currentWord.word);
-                 const unitIdentifier = grade === 'topics' ? `topic_${unitNumber}` : `unit_${unitNumber}`;
-                 updateVocabularyAudio(classroomId!, grade, unitIdentifier, currentWord.word, base64Audio).catch(console.error);
-                 currentWord.audio = base64Audio; 
+                try {
+                    base64Audio = await generateSpeech(currentWord.word);
+                    if (base64Audio) {
+                        const unitIdentifier = grade === 'topics' ? `topic_${unitNumber}` : `unit_${unitNumber}`;
+                        updateVocabularyAudio(classroomId!, grade, unitIdentifier, currentWord.word, base64Audio).catch(() => {});
+                        currentWord.audio = base64Audio;
+                    }
+                } catch (e) {
+                    base64Audio = '';
+                }
             }
-            const audioBuffer = await decodeAudioData(decode(base64Audio), audioContext, 24000, 1);
-            const source = audioContext.createBufferSource();
-            source.buffer = audioBuffer;
-            source.connect(audioContext.destination);
-            source.onended = () => setIsPlayingAudio(false);
-            source.start();
-            setIsPlayingAudio(true);
+            if (base64Audio) {
+                if (!audioContextRef.current) audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
+                const audioContext = audioContextRef.current;
+                if (audioContext.state === 'suspended') await audioContext.resume();
+                const audioBuffer = await decodeAudioData(decode(base64Audio), audioContext, 24000, 1);
+                const source = audioContext.createBufferSource();
+                source.buffer = audioBuffer;
+                source.connect(audioContext.destination);
+                source.onended = () => setIsPlayingAudio(false);
+                source.start();
+                setIsPlayingAudio(true);
+            } else {
+                if ('speechSynthesis' in window) {
+                    window.speechSynthesis.cancel();
+                    const utterance = new SpeechSynthesisUtterance(currentWord.word);
+                    utterance.lang = 'en-US';
+                    utterance.onend = () => setIsPlayingAudio(false);
+                    setIsPlayingAudio(true);
+                    window.speechSynthesis.speak(utterance);
+                }
+            }
             setIsLoadingAudio(false);
         } catch (error: any) {
-            setIsLoadingAudio(false); setIsPlayingAudio(false);
-            if (error?.error?.code === 429) setIsRateLimited(true);
+            setIsLoadingAudio(false); 
+            setIsPlayingAudio(false);
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(currentWord.word);
+                utterance.lang = 'en-US';
+                window.speechSynthesis.speak(utterance);
+            }
         }
     };
 
@@ -246,6 +270,16 @@ const SpellingGameScreen: React.FC<SpellingGameScreenProps> = ({ playerData, voc
                     </div>
                 </div>
             </div>
+
+            {classroomId && (
+                <StudentAttemptSummaryBanner
+                    classroomId={classroomId}
+                    grade={grade}
+                    unitNumber={unitNumber}
+                    playerData={playerData}
+                    currentActivityType="spelling"
+                />
+            )}
 
             <div className="flex flex-col items-center justify-start mt-4 flex-grow w-full max-w-sm">
                 <button onClick={handlePlayAudio} type="button" disabled={isRateLimited || isLoadingAudio || isPlayingAudio} className={`mb-6 w-24 h-24 rounded-full flex items-center justify-center shadow-xl transition-all ${isPlayingAudio ? 'bg-blue-50 scale-105 ring-4 ring-blue-100' : 'bg-white border-2 border-gray-200 hover:scale-105'}`}>

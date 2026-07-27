@@ -219,6 +219,7 @@ const UnitSelectionScreen: React.FC<UnitSelectionScreenProps> = ({ playerData, c
                     onClose={onCloseActivityModal}
                     classroomId={classroomId}
                     grade={grade}
+                    playerData={playerData}
                     onStartQuiz={(q) => onStartQuiz(q, selectedUnit)}
                     onLearnVocabulary={(v) => onLearnVocabulary(v, selectedUnit)}
                     onStartSpellingGame={(v) => onStartSpellingGame(v, selectedUnit)}

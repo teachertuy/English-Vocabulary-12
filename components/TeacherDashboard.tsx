@@ -288,7 +288,7 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                 const resultsArray = resultsObj ? Object.entries(resultsObj).map(([activityId, result]) => ({ ...result as GameResult, activityId })) : [];
                 if (resultsArray.length === 0) return null;
                 resultsArray.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-                return { playerKey, playerName: resultsArray[0].playerName, playerClass: resultsArray[0].playerClass, results: resultsArray };
+                return { playerKey, playerName: resultsArray[0]?.playerName || '', playerClass: resultsArray[0]?.playerClass || '', results: resultsArray };
             }).filter((item): item is StudentUnitSummary => item !== null);
             setProcessedUnitResults(processed);
         });
@@ -306,7 +306,7 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                 const resultsArray = resultsObj ? Object.entries(resultsObj).map(([activityId, result]) => ({ ...result as GameResult, activityId })) : [];
                 if (resultsArray.length === 0) return null;
                 resultsArray.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-                return { playerKey, playerName: resultsArray[0].playerName, playerClass: resultsArray[0].playerClass, results: resultsArray };
+                return { playerKey, playerName: resultsArray[0]?.playerName || '', playerClass: resultsArray[0]?.playerClass || '', results: resultsArray };
             }).filter((item): item is StudentUnitSummary => item !== null);
             setProcessedTopicResults(processed);
         });
@@ -316,15 +316,16 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
 
     const uniqueClasses = useMemo(() => {
         const allResults = [...results, ...processedUnitResults.flatMap(s => s.results), ...processedTopicResults.flatMap(s => s.results)];
-        const classSet = new Set(allResults.map(r => (r.playerClass || '').trim().toUpperCase()));
+        const classSet = new Set(allResults.map(r => (r?.playerClass || '').trim().toUpperCase()));
         return ['all', ...Array.from(classSet).sort()];
     }, [results, processedUnitResults, processedTopicResults]);
 
     const getGroupedData = (rawStudents: StudentUnitSummary[], currentClass: string) => {
-        const filtered = rawStudents.filter(s => currentClass === 'all' || s.playerClass.toUpperCase() === currentClass.toUpperCase());
+        const filtered = rawStudents.filter(s => currentClass === 'all' || (s.playerClass || '').toUpperCase() === (currentClass || '').toUpperCase());
         const mergedMap: Record<string, StudentGroupedResult> = {};
         
         const countUpper = (str: string) => {
+            if (!str) return 0;
             let count = 0;
             for (let i = 0; i < str.length; i++) {
                 const char = str[i];
@@ -334,16 +335,18 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
         };
 
         filtered.forEach(s => {
-            const identityKey = `${s.playerClass.toUpperCase()}_${s.playerName.toUpperCase()}`;
+            const pClass = (s.playerClass || '').toUpperCase();
+            const pName = (s.playerName || '').toUpperCase();
+            const identityKey = `${pClass}_${pName}`;
             if (!mergedMap[identityKey]) {
-                mergedMap[identityKey] = { playerKey: identityKey, playerName: s.playerName, playerClass: s.playerClass, attempts: [], latestTimestamp: 0 };
+                mergedMap[identityKey] = { playerKey: identityKey, playerName: s.playerName || '', playerClass: s.playerClass || '', attempts: [], latestTimestamp: 0 };
             }
             mergedMap[identityKey].attempts.push(...s.results);
             const groupLatest = s.results.length > 0 ? Math.max(...s.results.map(r => r.timestamp || 0)) : 0;
             const currentNameCapCount = countUpper(mergedMap[identityKey].playerName);
-            const incomingNameCapCount = countUpper(s.playerName);
-            if (incomingNameCapCount > currentNameCapCount) mergedMap[identityKey].playerName = s.playerName;
-            else if (incomingNameCapCount === currentNameCapCount && groupLatest > mergedMap[identityKey].latestTimestamp) mergedMap[identityKey].playerName = s.playerName;
+            const incomingNameCapCount = countUpper(s.playerName || '');
+            if (incomingNameCapCount > currentNameCapCount) mergedMap[identityKey].playerName = s.playerName || '';
+            else if (incomingNameCapCount === currentNameCapCount && groupLatest > mergedMap[identityKey].latestTimestamp) mergedMap[identityKey].playerName = s.playerName || '';
             if (groupLatest > mergedMap[identityKey].latestTimestamp) mergedMap[identityKey].latestTimestamp = groupLatest;
         });
         const groups = Object.values(mergedMap);
