@@ -190,28 +190,28 @@ const QuizScreen: React.FC<QuizScreenProps> = ({ playerData, questions, unitNumb
                 </div>
 
                 {/* Centered Column: Timer (Top) -> Score -> Progress */}
-                <div className="flex flex-col items-center justify-center gap-1.5 w-full mx-auto">
+                <div className="flex flex-col items-center justify-center gap-0 w-full mx-auto">
                     {/* Timer Indicator - Only show if durationSeconds > 0 */}
                     {durationSeconds > 0 ? (
-                        <div className="bg-purple-800 text-white font-bold py-1 px-4 rounded-lg shadow-md">
-                            <span className="text-lg font-black font-['Nunito']">{formatTime(timeLeft)}</span>
+                        <div className="bg-purple-800 text-white font-bold py-0.5 px-3 rounded-lg shadow-sm">
+                            <span className="text-sm font-black font-['Nunito']">{formatTime(timeLeft)}</span>
                         </div>
                     ) : (
-                        <div className="bg-green-600 text-white font-bold py-1 px-4 rounded-lg shadow-md flex items-center gap-1">
-                            <span className="text-[12px] opacity-80">TIME:</span>
-                            <span className="text-lg font-black font-['Nunito']">∞</span>
+                        <div className="bg-green-600 text-white font-bold py-0.5 px-3 rounded-lg shadow-sm flex items-center gap-1">
+                            <span className="text-[11px] opacity-80">TIME:</span>
+                            <span className="text-sm font-black font-['Nunito']">∞</span>
                         </div>
                     )}
 
                     {/* Score Indicator */}
-                    <div className="bg-red-500 text-white font-bold py-1 px-4 rounded-full shadow-md flex items-center justify-center">
-                        <span className="text-sm mr-1 opacity-90">Điểm:</span>
-                        <span className="text-xl font-black font-['Nunito']">{score.toFixed(1)}</span>
+                    <div className="bg-red-500 text-white font-bold py-0.5 px-3 rounded-full shadow-sm flex items-center justify-center">
+                        <span className="text-xs mr-1 opacity-90">Điểm:</span>
+                        <span className="text-sm font-black font-['Nunito']">{score.toFixed(1)}</span>
                     </div>
 
                     {/* Progress Indicator */}
-                    <div className="bg-white px-4 py-0.5 rounded-2xl border border-gray-200 flex items-center shadow-sm min-w-[80px] justify-center">
-                        <span className="text-red-600 text-sm font-black font-['Nunito']">{currentQuestionIndex + 1} / {questions.length}</span>
+                    <div className="bg-white px-3 py-0.5 rounded-2xl border border-gray-200 flex items-center shadow-sm min-w-[70px] justify-center">
+                        <span className="text-red-600 text-xs font-black font-['Nunito']">{currentQuestionIndex + 1} / {questions.length}</span>
                     </div>
                 </div>
             </div>

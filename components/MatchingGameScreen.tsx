@@ -193,28 +193,28 @@ const MatchingGameScreen: React.FC<MatchingGameScreenProps> = ({ playerData, voc
                 </div>
                 
                 {/* Centered Column: Timer (Top) -> Correct/Incorrect Count -> Progress */}
-                <div className="flex flex-col items-center justify-center gap-1.5 w-full mx-auto">
+                <div className="flex flex-col items-center justify-center gap-0 w-full mx-auto">
                     {/* Timer Indicator (Top) */}
                     {durationSeconds > 0 ? (
-                        <div className="bg-white px-4 py-1.5 rounded-2xl border border-red-100 flex items-center shadow-sm font-['Nunito'] font-black text-red-700 text-lg">
+                        <div className="bg-white px-3 py-0.5 rounded-2xl border border-red-100 flex items-center shadow-sm font-['Nunito'] font-black text-red-700 text-sm">
                             {formatTime(timeLeft)}
                         </div>
                     ) : (
-                        <div className="bg-white px-4 py-1.5 rounded-2xl border border-green-100 flex items-center shadow-sm font-['Nunito'] font-black text-green-700 text-lg">
+                        <div className="bg-white px-3 py-0.5 rounded-2xl border border-green-100 flex items-center shadow-sm font-['Nunito'] font-black text-green-700 text-sm">
                             ∞
                         </div>
                     )}
 
-                    {/* Correct/Incorrect Redesigned Indicator */}
-                    <div className="bg-white px-5 py-1 rounded-full border-4 border-double border-red-500 flex items-center gap-3 shadow-md">
-                        <span className="text-xl font-black text-green-600 font-['Nunito']">{score}</span>
-                        <span className="text-lg font-bold text-gray-200">|</span>
-                        <span className="text-xl font-black text-red-600 font-['Nunito']">{incorrectMatches}</span>
+                    {/* Correct/Incorrect Redesigned Indicator (Small Frame & Numbers) */}
+                    <div className="bg-white px-3 py-0.5 rounded-full border-2 border-red-500 flex items-center gap-1.5 shadow-sm">
+                        <span className="text-sm font-black text-green-600 font-['Nunito']">{score}</span>
+                        <span className="text-xs font-bold text-gray-300">|</span>
+                        <span className="text-sm font-black text-red-600 font-['Nunito']">{incorrectMatches}</span>
                     </div>
 
                     {/* Progress Indicator (Bottom) */}
-                    <div className="bg-white px-4 py-0.5 rounded-2xl border border-gray-100 flex items-center shadow-sm min-w-[80px] justify-center">
-                        <span className="text-blue-600 text-sm font-black font-['Nunito']">{remainingWords.length} left</span>
+                    <div className="bg-white px-3 py-0.5 rounded-2xl border border-gray-100 flex items-center shadow-sm min-w-[70px] justify-center">
+                        <span className="text-blue-600 text-xs font-black font-['Nunito']">{remainingWords.length} left</span>
                     </div>
                 </div>
             </div>
