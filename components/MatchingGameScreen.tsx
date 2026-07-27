@@ -214,7 +214,7 @@ const MatchingGameScreen: React.FC<MatchingGameScreenProps> = ({ playerData, voc
 
                     {/* Progress Indicator (Bottom) */}
                     <div className="bg-white px-3 py-0.5 rounded-2xl border border-gray-100 flex items-center shadow-sm min-w-[70px] justify-center">
-                        <span className="text-blue-600 text-xs font-black font-['Nunito']">{remainingWords.length} left</span>
+                        <span className="text-blue-600 text-[9px] font-black font-['Nunito']">Còn {remainingWords.length} từ</span>
                     </div>
                 </div>
             </div>
