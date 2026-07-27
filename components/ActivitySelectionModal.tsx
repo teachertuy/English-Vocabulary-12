@@ -100,17 +100,7 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
                 ? getTopicVocabulary(classroomId, id)
                 : getUnitVocabularyByGrade(classroomId, grade as number, id);
 
-            const configPromise = new Promise<void>((resolve) => {
-                let unsub: (() => void) | undefined;
-                unsub = listenToExerciseSelectionConfig(classroomId, (newConfig) => {
-                    if (newConfig) setConfig({ ...DEFAULT_CONFIG, ...newConfig });
-                    // Safely resolve and unsubscribe
-                    if (unsub) unsub();
-                    resolve();
-                });
-            });
-
-            Promise.all([quizPromise, vocabPromise, configPromise]).then(([quizData, vocabData]) => {
+            Promise.all([quizPromise, vocabPromise]).then(([quizData, vocabData]) => {
                 setQuiz(quizData);
                 setVocabulary(vocabData);
                 setIsLoading(false);
@@ -120,6 +110,15 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
             });
         }
     }, [show, unitNumber, classroomId, grade]);
+
+    useEffect(() => {
+        if (show && classroomId) {
+            const unsub = listenToExerciseSelectionConfig(classroomId, (newConfig) => {
+                if (newConfig) setConfig({ ...DEFAULT_CONFIG, ...newConfig });
+            });
+            return () => unsub();
+        }
+    }, [show, classroomId]);
 
     if (!show) {
         return null;

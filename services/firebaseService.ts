@@ -233,7 +233,7 @@ export const listenToUnitsStatusByGrade = (classroomId: string, grade: number, c
     return onValue(ref(db, `classrooms/${classroomId}/units_${grade}`), (s) => callback(s.val()));
 };
 
-export const startUnitActivity = async (classroomId: string, grade: any, unitId: string, player: PlayerData, gameType: string) => {
+export const startUnitActivity = (classroomId: string, grade: any, unitId: string, player: PlayerData, gameType: string): string => {
     const db = checkFirebase();
     const playerKey = getPlayerKey(player.name, player.class);
     const basePath = grade === 'topics' ? `topics/${unitId}` : `units_${grade}/${unitId}`;
@@ -256,15 +256,17 @@ export const startUnitActivity = async (classroomId: string, grade: any, unitId:
         timestamp: serverTimestamp() 
     };
 
-    await set(ref(db, `classrooms/${classroomId}/${basePath}/results/${playerKey}/${activityId}`), initialResult);
-    
-    await runTransaction(ref(db, `classrooms/${classroomId}/${basePath}/results/${playerKey}`), (curr: any) => {
-        if (curr && curr[activityId]) {
-            const attempts = Object.values(curr).filter((r: any) => r.gameType === gameType && r.status === 'completed').length;
-            curr[activityId].attempts = attempts + 1;
-        }
-        return curr;
-    });
+    set(ref(db, `classrooms/${classroomId}/${basePath}/results/${playerKey}/${activityId}`), initialResult)
+        .then(() => {
+            return runTransaction(ref(db, `classrooms/${classroomId}/${basePath}/results/${playerKey}`), (curr: any) => {
+                if (curr && curr[activityId]) {
+                    const attempts = Object.values(curr).filter((r: any) => r.gameType === gameType && r.status === 'completed').length;
+                    curr[activityId].attempts = attempts + 1;
+                }
+                return curr;
+            });
+        })
+        .catch(err => console.error("Failed to start activity in Firebase:", err));
 
     return activityId;
 };

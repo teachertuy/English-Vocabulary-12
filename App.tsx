@@ -115,14 +115,14 @@ const App: React.FC = () => {
     }
   }, []);
   
-  const handleStartUnitQuiz = useCallback(async (unitQuestions: QuizQuestion[], unitNumber: number) => {
+  const handleStartUnitQuiz = useCallback((unitQuestions: QuizQuestion[], unitNumber: number) => {
     if (!unitQuestions || unitQuestions.length === 0) {
         alert("Lỗi: Không thể bắt đầu bài kiểm tra vì UNIT này chưa có câu hỏi. Vui lòng báo cho giáo viên.");
         return;
     }
     if (playerData && selectedGrade) {
         const unitIdentifier = selectedGrade === 'topics' ? `topic_${unitNumber}` : `unit_${unitNumber}`;
-        const activityId = await startUnitActivity(FIXED_CLASSROOM_ID, selectedGrade, unitIdentifier, playerData, 'quiz');
+        const activityId = startUnitActivity(FIXED_CLASSROOM_ID, selectedGrade, unitIdentifier, playerData, 'quiz');
         setCurrentActivityId(activityId);
     }
     setQuestions(unitQuestions);
@@ -130,14 +130,14 @@ const App: React.FC = () => {
     setCurrentScreen(Screen.Quiz);
   }, [playerData, selectedGrade]);
   
-  const handleStartSpellingGame = useCallback(async (vocabData: VocabularyWord[], unitNumber: number) => {
+  const handleStartSpellingGame = useCallback((vocabData: VocabularyWord[], unitNumber: number) => {
     if (!vocabData || vocabData.length === 0) {
         alert("Lỗi: Không thể bắt đầu trò chơi vì UNIT này chưa có từ vựng. Vui lòng báo cho giáo viên.");
         return;
     }
     if (playerData && selectedGrade) {
         const unitIdentifier = selectedGrade === 'topics' ? `topic_${unitNumber}` : `unit_${unitNumber}`;
-        const activityId = await startUnitActivity(FIXED_CLASSROOM_ID, selectedGrade, unitIdentifier, playerData, 'spelling');
+        const activityId = startUnitActivity(FIXED_CLASSROOM_ID, selectedGrade, unitIdentifier, playerData, 'spelling');
         setCurrentActivityId(activityId);
     }
     setVocabulary(vocabData);
@@ -145,14 +145,14 @@ const App: React.FC = () => {
     setCurrentScreen(Screen.SpellingGame);
   }, [playerData, selectedGrade]);
 
-  const handleStartMatchingGame = useCallback(async (vocabData: VocabularyWord[], unitNumber: number) => {
+  const handleStartMatchingGame = useCallback((vocabData: VocabularyWord[], unitNumber: number) => {
     if (!vocabData || vocabData.length === 0) {
         alert("Lỗi: Không thể bắt đầu trò chơi vì UNIT này chưa có từ vựng. Vui lòng báo cho giáo viên.");
         return;
     }
      if (playerData && selectedGrade) {
         const unitIdentifier = selectedGrade === 'topics' ? `topic_${unitNumber}` : `unit_${unitNumber}`;
-        const activityId = await startUnitActivity(FIXED_CLASSROOM_ID, selectedGrade, unitIdentifier, playerData, 'matching');
+        const activityId = startUnitActivity(FIXED_CLASSROOM_ID, selectedGrade, unitIdentifier, playerData, 'matching');
         setCurrentActivityId(activityId);
     }
     setVocabulary(vocabData);
@@ -160,10 +160,10 @@ const App: React.FC = () => {
     setCurrentScreen(Screen.MatchingGame);
   }, [playerData, selectedGrade]);
 
-  const handleLearnVocabulary = useCallback(async (vocabData: VocabularyWord[], unitNumber: number) => {
+  const handleLearnVocabulary = useCallback((vocabData: VocabularyWord[], unitNumber: number) => {
     if (playerData && selectedGrade) {
         const unitIdentifier = selectedGrade === 'topics' ? `topic_${unitNumber}` : `unit_${unitNumber}`;
-        const activityId = await startUnitActivity(FIXED_CLASSROOM_ID, selectedGrade, unitIdentifier, playerData, 'vocabulary');
+        const activityId = startUnitActivity(FIXED_CLASSROOM_ID, selectedGrade, unitIdentifier, playerData, 'vocabulary');
         setCurrentActivityId(activityId);
     }
     setVocabulary(vocabData);

@@ -105,7 +105,7 @@ const SpellingGameScreen: React.FC<SpellingGameScreenProps> = ({ playerData, voc
         updateUnitActivityProgress(classroomId, grade, unitIdentifier, playerData, activityId, progressData).catch(console.error);
     }, [gameDetails, classroomId, playerData, shuffledVocabulary.length, grade, unitNumber, activityId]);
 
-    const handleExitPrematurely = async () => {
+    const handleExitPrematurely = () => {
         if (isGameOver) return;
         const endTime = Date.now();
         const timeTakenSeconds = Math.round((endTime - startTime) / 1000);
@@ -121,8 +121,8 @@ const SpellingGameScreen: React.FC<SpellingGameScreenProps> = ({ playerData, voc
         };
         if (classroomId && activityId) {
             const unitIdentifier = grade === 'topics' ? `topic_${unitNumber}` : `unit_${unitNumber}`;
-            await updateUnitActivityResult(classroomId, grade, unitIdentifier, playerData, activityId, resultData);
-            await removeStudentPresence(classroomId, playerData.name, playerData.class);
+            updateUnitActivityResult(classroomId, grade, unitIdentifier, playerData, activityId, resultData).catch(console.error);
+            removeStudentPresence(classroomId, playerData.name, playerData.class).catch(console.error);
         }
         onBack();
     };

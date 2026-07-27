@@ -81,7 +81,7 @@ const QuizScreen: React.FC<QuizScreenProps> = ({ playerData, questions, unitNumb
         updateUnitActivityProgress(classroomId, grade, unitIdentifier, playerData, activityId, progressData).catch(console.error);
     }, [quizDetails, classroomId, playerData, questions.length, score, grade, unitNumber, activityId]);
 
-    const handleExitPrematurely = async () => {
+    const handleExitPrematurely = () => {
         if (isQuizOver) return;
         const endTime = Date.now();
         const timeTakenSeconds = Math.round((endTime - startTime) / 1000);
@@ -97,8 +97,8 @@ const QuizScreen: React.FC<QuizScreenProps> = ({ playerData, questions, unitNumb
         };
         if (classroomId && activityId) {
             const unitIdentifier = grade === 'topics' ? `topic_${unitNumber}` : `unit_${unitNumber}`;
-            await updateUnitActivityResult(classroomId, grade, unitIdentifier, playerData, activityId, resultData);
-            await removeStudentPresence(classroomId, playerData.name, playerData.class);
+            updateUnitActivityResult(classroomId, grade, unitIdentifier, playerData, activityId, resultData).catch(console.error);
+            removeStudentPresence(classroomId, playerData.name, playerData.class).catch(console.error);
         }
         onBack();
     };

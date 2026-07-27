@@ -127,7 +127,7 @@ const VocabularyScreen: React.FC<VocabularyScreenProps> = ({ unitNumber, vocabul
         startWorker();
     }, [unitNumber, classroomId, grade]);
 
-    const handleBackWithSave = async () => {
+    const handleBackWithSave = () => {
         if (isFinishing) return;
         setIsFinishing(true);
         const endTime = Date.now();
@@ -150,11 +150,11 @@ const VocabularyScreen: React.FC<VocabularyScreenProps> = ({ unitNumber, vocabul
                 explanation: `Bạn đã học từ: ${v.word}` 
             })) 
         };
-        try {
+        if (classroomId && activityId) {
             const unitIdentifier = grade === 'topics' ? `topic_${unitNumber}` : `unit_${unitNumber}`;
-            await updateUnitActivityResult(classroomId, grade, unitIdentifier, playerData, activityId, resultData);
-            await removeStudentPresence(classroomId, playerData.name, playerData.class);
-        } catch (e) { console.error(e); }
+            updateUnitActivityResult(classroomId, grade, unitIdentifier, playerData, activityId, resultData).catch(console.error);
+            removeStudentPresence(classroomId, playerData.name, playerData.class).catch(console.error);
+        }
         onBack();
     };
 
