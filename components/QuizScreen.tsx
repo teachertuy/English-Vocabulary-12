@@ -178,17 +178,17 @@ const QuizScreen: React.FC<QuizScreenProps> = ({ playerData, questions, unitNumb
         <div className="flex flex-col items-center px-4 py-4 relative min-h-[600px] bg-orange-50 w-full">
              {feedback && <div className={`fixed top-5 right-5 shadow-lg rounded-lg p-4 text-center z-50 ${feedback.isCorrect ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}><p className="font-bold">{feedback.message}</p></div>}
             
-            <div className="w-full max-w-4xl mx-auto p-3 bg-amber-50 rounded-xl mb-4 border border-amber-200 shadow-sm pt-2 relative">
-                {/* Row 1: <<Quay lại on top-left edge & Timer on top-right edge */}
-                <div className="flex justify-between items-center w-full mb-1">
-                    <button 
-                        onClick={handleExitPrematurely} 
-                        className="flex items-center text-red-600 hover:text-red-700 font-bold text-base transition-colors focus:outline-none rounded active:scale-95"
-                    >
-                        <span>&lt;&lt;Quay lại</span>
-                    </button>
+            <div className="w-full max-w-4xl mx-auto p-3 bg-amber-50 rounded-xl mb-4 border border-amber-200 shadow-sm relative min-h-[50px]">
+                {/* <<Quay lại on absolute top-left edge & Timer on absolute top-right edge */}
+                <button 
+                    onClick={handleExitPrematurely} 
+                    className="absolute top-1.5 left-2 flex items-center text-red-600 hover:text-red-700 font-bold text-base transition-colors focus:outline-none rounded active:scale-95 z-10"
+                >
+                    <span>&lt;&lt;Quay lại</span>
+                </button>
 
-                    {/* Timer Indicator */}
+                {/* Timer Indicator */}
+                <div className="absolute top-1.5 right-2 z-10">
                     {durationSeconds > 0 ? (
                         <div className="bg-purple-800 text-white font-bold py-0.5 px-3 rounded-lg shadow-sm">
                             <span className="text-sm font-black font-['Nunito']">{formatTime(timeLeft)}</span>

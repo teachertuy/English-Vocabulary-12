@@ -181,16 +181,14 @@ const MatchingGameScreen: React.FC<MatchingGameScreenProps> = ({ playerData, voc
     return (
         <div className="flex flex-col items-center justify-center p-2 sm:p-4 bg-white min-h-[500px] relative w-full">
             {feedback && <div className="fixed top-5 right-5 shadow-lg rounded-lg p-3 text-sm text-center z-50 bg-red-100 text-red-800"><p className="font-bold">{feedback}</p></div>}
-            <div className="w-full max-w-4xl mx-auto mb-2 pt-1 relative">
-                {/* Row 1: <<Quay lại on top-left edge */}
-                <div className="flex justify-start items-center w-full mb-1">
-                    <button 
-                        onClick={handleExitPrematurely} 
-                        className="flex items-center text-red-600 hover:text-red-700 font-bold text-base transition-colors focus:outline-none rounded active:scale-95"
-                    >
-                        <span>&lt;&lt;Quay lại</span>
-                    </button>
-                </div>
+            <div className="w-full max-w-4xl mx-auto mb-2 pt-0 relative min-h-[60px]">
+                {/* <<Quay lại on absolute top-left edge */}
+                <button 
+                    onClick={handleExitPrematurely} 
+                    className="absolute top-0 left-0 flex items-center text-red-600 hover:text-red-700 font-bold text-base transition-colors focus:outline-none rounded active:scale-95 z-10"
+                >
+                    <span>&lt;&lt;Quay lại</span>
+                </button>
                 
                 {/* Centered Column: Timer (Top) -> Correct/Incorrect Count -> Progress */}
                 <div className="flex flex-col items-center justify-center gap-0 w-full mx-auto">

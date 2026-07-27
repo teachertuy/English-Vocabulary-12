@@ -178,8 +178,8 @@ const VocabularyScreen: React.FC<VocabularyScreenProps> = ({ unitNumber, vocabul
     }, [playingWord]);
     
     return (
-        <div className="flex flex-col p-3 sm:p-5 bg-[#FFF8F0] min-h-[600px]">
-            <div className="flex items-center justify-start mb-3">
+        <div className="flex flex-col p-2 sm:p-4 bg-[#FFF8F0] min-h-[600px] relative">
+            <div className="flex items-center justify-start mb-2 pt-0 pl-0">
                  <button 
                     onClick={handleBackWithSave} 
                     className="flex items-center text-red-600 hover:text-red-700 font-bold text-base transition-colors focus:outline-none rounded active:scale-95"
