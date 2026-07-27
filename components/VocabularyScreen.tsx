@@ -178,14 +178,14 @@ const VocabularyScreen: React.FC<VocabularyScreenProps> = ({ unitNumber, vocabul
     }, [playingWord]);
     
     return (
-        <div className="flex flex-col p-4 sm:p-6 bg-[#FFF8F0] min-h-[600px]">
-            <div className="flex items-center justify-between mb-4">
-                 <button onClick={handleBackWithSave} className="group flex items-center text-gray-600 font-bold text-lg hover:text-gray-900 transition-colors focus:outline-none rounded">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-1 transition-transform group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
-                    <span>Back</span>
+        <div className="flex flex-col p-3 sm:p-5 bg-[#FFF8F0] min-h-[600px]">
+            <div className="flex items-center justify-start mb-3">
+                 <button 
+                    onClick={handleBackWithSave} 
+                    className="flex items-center text-red-600 hover:text-red-700 font-bold text-lg sm:text-xl transition-colors focus:outline-none rounded active:scale-95"
+                 >
+                    <span>&lt;&lt;Quay lại</span>
                 </button>
-                 <h1 className="text-2xl font-extrabold text-center text-gray-800 uppercase tracking-wide">{grade === 'topics' ? `Topic ${unitNumber} Vocabulary` : `Unit ${unitNumber} Vocabulary`}</h1>
-                 <div className="w-20"></div> {/* Spacer for alignment */}
             </div>
             {(fetchingImages.size > 0 || fetchingWords.size > 0) && <div className="mb-4 px-4 py-2 bg-blue-50 text-blue-700 text-sm font-bold rounded-lg border border-blue-200 flex items-center gap-2 animate-pulse self-center"><div className="w-2 h-2 bg-blue-600 rounded-full animate-ping"></div><span>AI đang đồng bộ Ảnh & Âm thanh...</span></div>}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 overflow-y-auto flex-grow px-2 pb-8 max-w-7xl mx-auto w-full">
