@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { PlayerData, VocabularyWord, GameResult, QuizAnswerDetail } from '../types';
 import { updateUnitActivityResult, trackStudentPresence, incrementCheatCount, listenForKickedStatus, getGameStatus, removeStudentPresence, updateVocabularyAudio, updateStudentProgress, updateUnitActivityProgress } from '../services/firebaseService';
 import { generateSpeech } from '../services/geminiService';
-import StudentAttemptSummaryBanner from './StudentAttemptSummaryBanner';
+
 
 declare const Tone: any;
 
@@ -271,15 +271,7 @@ const SpellingGameScreen: React.FC<SpellingGameScreenProps> = ({ playerData, voc
                 </div>
             </div>
 
-            {classroomId && (
-                <StudentAttemptSummaryBanner
-                    classroomId={classroomId}
-                    grade={grade}
-                    unitNumber={unitNumber}
-                    playerData={playerData}
-                    currentActivityType="spelling"
-                />
-            )}
+
 
             <div className="flex flex-col items-center justify-start mt-4 flex-grow w-full max-w-sm">
                 <button onClick={handlePlayAudio} type="button" disabled={isRateLimited || isLoadingAudio || isPlayingAudio} className={`mb-6 w-24 h-24 rounded-full flex items-center justify-center shadow-xl transition-all ${isPlayingAudio ? 'bg-blue-50 scale-105 ring-4 ring-blue-100' : 'bg-white border-2 border-gray-200 hover:scale-105'}`}>

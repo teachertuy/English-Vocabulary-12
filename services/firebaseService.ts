@@ -275,11 +275,22 @@ export const startUnitActivity = (classroomId: string, grade: any, unitId: strin
     }
 };
 
+export interface AttemptDetail {
+    timeTakenSeconds: number;
+    timestamp?: any;
+}
+
+export interface ActivityStats {
+    count: number;
+    totalTimeSeconds: number;
+    attemptsList: AttemptDetail[];
+}
+
 export interface ActivityAttemptCounts {
-    vocabulary: number;
-    matching: number;
-    spelling: number;
-    quiz: number;
+    vocabulary: ActivityStats;
+    matching: ActivityStats;
+    spelling: ActivityStats;
+    quiz: ActivityStats;
 }
 
 export const listenToStudentActivityAttempts = (
@@ -298,21 +309,72 @@ export const listenToStudentActivityAttempts = (
         
         return onValue(resultsRef, (snapshot) => {
             const val = snapshot.val();
-            const counts: ActivityAttemptCounts = { vocabulary: 0, matching: 0, spelling: 0, quiz: 0 };
+            const defaultStats = (): ActivityStats => ({ count: 0, totalTimeSeconds: 0, attemptsList: [] });
+            const counts: ActivityAttemptCounts = {
+                vocabulary: defaultStats(),
+                matching: defaultStats(),
+                spelling: defaultStats(),
+                quiz: defaultStats()
+            };
             if (val && typeof val === 'object') {
+                const grouped: Record<string, any[]> = {
+                    vocabulary: [],
+                    matching: [],
+                    spelling: [],
+                    quiz: []
+                };
                 Object.values(val).forEach((item: any) => {
-                    if (item && item.gameType && counts[item.gameType as keyof ActivityAttemptCounts] !== undefined) {
-                        counts[item.gameType as keyof ActivityAttemptCounts] += 1;
+                    if (item && item.gameType && grouped[item.gameType]) {
+                        grouped[item.gameType].push(item);
                     }
+                });
+
+                (Object.keys(grouped) as Array<keyof ActivityAttemptCounts>).forEach((gt) => {
+                    const items = grouped[gt];
+                    items.sort((a, b) => {
+                        const getTs = (x: any) => {
+                            if (typeof x.timestamp === 'number') return x.timestamp;
+                            if (x.timestamp && typeof x.timestamp === 'object' && typeof x.timestamp.seconds === 'number') {
+                                return x.timestamp.seconds * 1000;
+                            }
+                            return 0;
+                        };
+                        return getTs(a) - getTs(b);
+                    });
+
+                    const attemptsList: AttemptDetail[] = items.map((item) => ({
+                        timeTakenSeconds: Math.max(0, parseInt(item.timeTakenSeconds, 10) || 0),
+                        timestamp: item.timestamp
+                    }));
+
+                    const totalTimeSeconds = attemptsList.reduce((acc, curr) => acc + curr.timeTakenSeconds, 0);
+
+                    counts[gt] = {
+                        count: items.length,
+                        totalTimeSeconds,
+                        attemptsList
+                    };
                 });
             }
             callback(counts);
         }, (error) => {
             console.error("Failed to listen to student activity attempts:", error);
-            callback({ vocabulary: 0, matching: 0, spelling: 0, quiz: 0 });
+            const defaultStats = (): ActivityStats => ({ count: 0, totalTimeSeconds: 0, attemptsList: [] });
+            callback({
+                vocabulary: defaultStats(),
+                matching: defaultStats(),
+                spelling: defaultStats(),
+                quiz: defaultStats()
+            });
         });
     } catch (e) {
-        callback({ vocabulary: 0, matching: 0, spelling: 0, quiz: 0 });
+        const defaultStats = (): ActivityStats => ({ count: 0, totalTimeSeconds: 0, attemptsList: [] });
+        callback({
+            vocabulary: defaultStats(),
+            matching: defaultStats(),
+            spelling: defaultStats(),
+            quiz: defaultStats()
+        });
         return () => {};
     }
 };
