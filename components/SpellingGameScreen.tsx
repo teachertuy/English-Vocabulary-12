@@ -211,38 +211,45 @@ const SpellingGameScreen: React.FC<SpellingGameScreenProps> = ({ playerData, voc
     
     return (
         <div className="flex flex-col items-center justify-start p-4 bg-white min-h-[600px] relative w-full">
-            <div className="w-full max-w-4xl mx-auto flex justify-between items-center mb-6 pt-2">
-                {/* Back button */}
-                <button onClick={handleExitPrematurely} className="group flex items-center text-blue-600 font-extrabold text-lg hover:text-blue-800 transition-colors focus:outline-none rounded">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-1 transition-transform group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="4"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
-                    <span className="border-b-2 border-current pb-0.5">Back</span>
-                </button>
-
-                {/* Central stacked indicators */}
-                <div className="flex flex-col items-center gap-1.5">
-                    {/* Correct/Incorrect Redesigned Indicator (Top) */}
-                    <div className="bg-white px-5 py-1 rounded-full border-4 border-double border-red-500 flex items-center gap-3 shadow-md">
-                        <span className="text-xl font-black text-green-600 font-['Nunito']">{correctAnswers}</span>
-                        <span className="text-lg font-bold text-gray-200">|</span>
-                        <span className="text-xl font-black text-red-600 font-['Nunito']">{incorrectAnswers}</span>
-                    </div>
-
-                    {/* Progress Indicator (Bottom) */}
-                    <div className="bg-white px-4 py-0.5 rounded-2xl border border-gray-100 flex items-center shadow-sm min-w-[80px] justify-center">
-                        <span className="text-blue-600 text-sm font-black font-['Nunito']">{currentIndex + 1} / {shuffledVocabulary.length}</span>
-                    </div>
+            <div className="w-full max-w-4xl mx-auto mb-4 pt-1">
+                {/* Row 1: <<Quay lại on top-left edge */}
+                <div className="flex justify-start items-center w-full mb-2">
+                    <button 
+                        onClick={handleExitPrematurely} 
+                        className="flex items-center text-red-600 hover:text-red-700 font-bold text-base transition-colors focus:outline-none rounded active:scale-95"
+                    >
+                        <span>&lt;&lt;Quay lại</span>
+                    </button>
                 </div>
 
-                {/* Timer Indicator */}
-                {durationSeconds > 0 ? (
-                    <div className="bg-white px-4 py-1.5 rounded-2xl border border-red-100 flex items-center shadow-sm">
-                        <span className="text-red-700 text-lg font-black font-['Nunito']">{formatTime(timeLeft)}</span>
+                {/* Row 2: Central stacked indicators & Timer */}
+                <div className="flex justify-between items-center w-full">
+                    {/* Central stacked indicators */}
+                    <div className="flex flex-col items-center gap-1.5">
+                        {/* Correct/Incorrect Redesigned Indicator (Top) */}
+                        <div className="bg-white px-5 py-1 rounded-full border-4 border-double border-red-500 flex items-center gap-3 shadow-md">
+                            <span className="text-xl font-black text-green-600 font-['Nunito']">{correctAnswers}</span>
+                            <span className="text-lg font-bold text-gray-200">|</span>
+                            <span className="text-xl font-black text-red-600 font-['Nunito']">{incorrectAnswers}</span>
+                        </div>
+
+                        {/* Progress Indicator (Bottom) */}
+                        <div className="bg-white px-4 py-0.5 rounded-2xl border border-gray-100 flex items-center shadow-sm min-w-[80px] justify-center">
+                            <span className="text-blue-600 text-sm font-black font-['Nunito']">{currentIndex + 1} / {shuffledVocabulary.length}</span>
+                        </div>
                     </div>
-                ) : (
-                    <div className="bg-white px-4 py-1.5 rounded-2xl border border-green-100 flex items-center shadow-sm">
-                        <span className="text-green-700 text-lg font-black font-['Nunito']">∞</span>
-                    </div>
-                )}
+
+                    {/* Timer Indicator */}
+                    {durationSeconds > 0 ? (
+                        <div className="bg-white px-4 py-1.5 rounded-2xl border border-red-100 flex items-center shadow-sm">
+                            <span className="text-red-700 text-lg font-black font-['Nunito']">{formatTime(timeLeft)}</span>
+                        </div>
+                    ) : (
+                        <div className="bg-white px-4 py-1.5 rounded-2xl border border-green-100 flex items-center shadow-sm">
+                            <span className="text-green-700 text-lg font-black font-['Nunito']">∞</span>
+                        </div>
+                    )}
+                </div>
             </div>
 
             <div className="flex flex-col items-center justify-start mt-4 flex-grow w-full max-w-sm">

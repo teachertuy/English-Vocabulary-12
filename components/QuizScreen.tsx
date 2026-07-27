@@ -178,38 +178,45 @@ const QuizScreen: React.FC<QuizScreenProps> = ({ playerData, questions, unitNumb
         <div className="flex flex-col items-center px-4 py-4 relative min-h-[600px] bg-orange-50 w-full">
              {feedback && <div className={`fixed top-5 right-5 shadow-lg rounded-lg p-4 text-center z-50 ${feedback.isCorrect ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}><p className="font-bold">{feedback.message}</p></div>}
             
-            <div className="w-full max-w-4xl mx-auto p-2 flex justify-between items-center bg-amber-50 rounded-xl mb-4 border border-amber-200 shadow-sm pt-2">
-                {/* Back button */}
-                <button onClick={handleExitPrematurely} className="group flex items-center text-blue-600 font-extrabold text-lg hover:text-blue-800 transition-colors focus:outline-none rounded">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-1 transition-transform group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="4"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
-                    <span className="border-b-2 border-current pb-0.5">Back</span>
-                </button>
-
-                {/* Central stacked indicators */}
-                <div className="flex flex-col items-center gap-1.5">
-                    {/* Score Indicator (Top) */}
-                    <div className="bg-red-500 text-white font-bold py-1 px-4 rounded-full shadow-md flex items-center justify-center">
-                        <span className="text-sm mr-1 opacity-90">Điểm:</span>
-                        <span className="text-xl font-black font-['Nunito']">{score.toFixed(1)}</span>
-                    </div>
-
-                    {/* Progress Indicator (Bottom) */}
-                    <div className="bg-white px-4 py-0.5 rounded-2xl border border-gray-200 flex items-center shadow-sm min-w-[80px] justify-center">
-                        <span className="text-red-600 text-sm font-black font-['Nunito']">{currentQuestionIndex + 1} / {questions.length}</span>
-                    </div>
+            <div className="w-full max-w-4xl mx-auto p-3 bg-amber-50 rounded-xl mb-4 border border-amber-200 shadow-sm pt-2">
+                {/* Row 1: <<Quay lại on top-left edge */}
+                <div className="flex justify-start items-center w-full mb-2">
+                    <button 
+                        onClick={handleExitPrematurely} 
+                        className="flex items-center text-red-600 hover:text-red-700 font-bold text-base transition-colors focus:outline-none rounded active:scale-95"
+                    >
+                        <span>&lt;&lt;Quay lại</span>
+                    </button>
                 </div>
 
-                {/* Timer Indicator - Only show if durationSeconds > 0 */}
-                {durationSeconds > 0 ? (
-                    <div className="bg-purple-800 text-white font-bold py-1.5 px-4 rounded-lg shadow-md">
-                        <span className="text-lg font-black font-['Nunito']">{formatTime(timeLeft)}</span>
+                {/* Row 2: Central stacked indicators & Timer */}
+                <div className="flex justify-between items-center w-full">
+                    {/* Central stacked indicators */}
+                    <div className="flex flex-col items-center gap-1.5">
+                        {/* Score Indicator (Top) */}
+                        <div className="bg-red-500 text-white font-bold py-1 px-4 rounded-full shadow-md flex items-center justify-center">
+                            <span className="text-sm mr-1 opacity-90">Điểm:</span>
+                            <span className="text-xl font-black font-['Nunito']">{score.toFixed(1)}</span>
+                        </div>
+
+                        {/* Progress Indicator (Bottom) */}
+                        <div className="bg-white px-4 py-0.5 rounded-2xl border border-gray-200 flex items-center shadow-sm min-w-[80px] justify-center">
+                            <span className="text-red-600 text-sm font-black font-['Nunito']">{currentQuestionIndex + 1} / {questions.length}</span>
+                        </div>
                     </div>
-                ) : (
-                    <div className="bg-green-600 text-white font-bold py-1.5 px-4 rounded-lg shadow-md flex items-center gap-1">
-                        <span className="text-[12px] opacity-80">TIME:</span>
-                        <span className="text-lg font-black font-['Nunito']">∞</span>
-                    </div>
-                )}
+
+                    {/* Timer Indicator - Only show if durationSeconds > 0 */}
+                    {durationSeconds > 0 ? (
+                        <div className="bg-purple-800 text-white font-bold py-1.5 px-4 rounded-lg shadow-md">
+                            <span className="text-lg font-black font-['Nunito']">{formatTime(timeLeft)}</span>
+                        </div>
+                    ) : (
+                        <div className="bg-green-600 text-white font-bold py-1.5 px-4 rounded-lg shadow-md flex items-center gap-1">
+                            <span className="text-[12px] opacity-80">TIME:</span>
+                            <span className="text-lg font-black font-['Nunito']">∞</span>
+                        </div>
+                    )}
+                </div>
             </div>
 
             <div className="flex flex-col items-center w-full flex-grow">

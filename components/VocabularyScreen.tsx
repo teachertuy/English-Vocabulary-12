@@ -182,7 +182,7 @@ const VocabularyScreen: React.FC<VocabularyScreenProps> = ({ unitNumber, vocabul
             <div className="flex items-center justify-start mb-3">
                  <button 
                     onClick={handleBackWithSave} 
-                    className="flex items-center text-red-600 hover:text-red-700 font-bold text-lg sm:text-xl transition-colors focus:outline-none rounded active:scale-95"
+                    className="flex items-center text-red-600 hover:text-red-700 font-bold text-base transition-colors focus:outline-none rounded active:scale-95"
                  >
                     <span>&lt;&lt;Quay lại</span>
                 </button>

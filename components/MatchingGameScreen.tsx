@@ -181,13 +181,19 @@ const MatchingGameScreen: React.FC<MatchingGameScreenProps> = ({ playerData, voc
     return (
         <div className="flex flex-col items-center justify-center p-2 sm:p-4 bg-white min-h-[500px] relative w-full">
             {feedback && <div className="fixed top-5 right-5 shadow-lg rounded-lg p-3 text-sm text-center z-50 bg-red-100 text-red-800"><p className="font-bold">{feedback}</p></div>}
-            <div className="w-full max-w-4xl mx-auto mb-2 pt-2">
-                <div className="flex justify-between items-center">
-                    <button onClick={handleExitPrematurely} className="group flex items-center text-blue-600 font-extrabold text-lg hover:text-blue-800 transition-colors focus:outline-none rounded">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-1 transition-transform group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="4"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
-                        <span className="border-b-2 border-current pb-0.5">Back</span>
+            <div className="w-full max-w-4xl mx-auto mb-2 pt-1">
+                {/* Row 1: <<Quay lại on top-left edge */}
+                <div className="flex justify-start items-center w-full mb-2">
+                    <button 
+                        onClick={handleExitPrematurely} 
+                        className="flex items-center text-red-600 hover:text-red-700 font-bold text-base transition-colors focus:outline-none rounded active:scale-95"
+                    >
+                        <span>&lt;&lt;Quay lại</span>
                     </button>
-                    
+                </div>
+                
+                {/* Row 2: Indicators and Timer */}
+                <div className="flex justify-between items-center w-full">
                     <div className="flex flex-col items-center gap-1.5">
                         {/* Correct/Incorrect Redesigned Indicator (Top) */}
                         <div className="bg-white px-5 py-1 rounded-full border-4 border-double border-red-500 flex items-center gap-3 shadow-md">
