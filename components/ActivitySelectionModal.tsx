@@ -167,6 +167,43 @@ interface ActivityCardProps {
     config?: ExerciseSelectionConfig;
 }
 
+const PointingFingerIcon: React.FC = () => (
+    <div className="relative flex items-center justify-center w-9 h-9">
+        <style>{`
+            @keyframes fingerPointRightAnim {
+                0%, 100% {
+                    transform: translateX(-4px) scale(0.95);
+                }
+                50% {
+                    transform: translateX(6px) scale(1.15);
+                }
+            }
+            @keyframes fingerPulseGlow {
+                0%, 100% {
+                    opacity: 0.3;
+                    transform: scale(0.85);
+                }
+                50% {
+                    opacity: 0.8;
+                    transform: scale(1.25);
+                }
+            }
+            .animate-pointing-finger-hand {
+                animation: fingerPointRightAnim 0.65s infinite ease-in-out;
+            }
+            .animate-pointing-glow {
+                animation: fingerPulseGlow 1.3s infinite ease-in-out;
+            }
+        `}</style>
+        {/* Soft glowing aura behind finger */}
+        <div className="absolute w-7 h-7 bg-yellow-300/80 rounded-full blur-xs animate-pointing-glow"></div>
+        {/* Pointing Finger 👉 */}
+        <div className="relative animate-pointing-finger-hand text-3xl select-none leading-none flex items-center justify-center filter drop-shadow-md">
+            👉
+        </div>
+    </div>
+);
+
 const ActivityCard: React.FC<ActivityCardProps> = ({
     title,
     description,
@@ -423,11 +460,7 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
                                 <ActivityCard
                                     title={config.activityLearnLabel}
                                     description={config.activityLearnDesc}
-                                    icon={
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" viewBox="0 0 20 20" fill="currentColor">
-                                            <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L9 9.61v5.063l-2.31-1.39a1 1 0 00-1.38 1.38l3 2a1 1 0 001.38 0l3-2a1 1 0 00-1.38-1.38L11 14.673V9.61l6.606-2.69a1 1 0 000-1.84l-7-3zM9 4.19l6 2.4-6 2.41L3 6.59l6-2.4z" />
-                                        </svg>
-                                    }
+                                    icon={<PointingFingerIcon />}
                                     cardBgColor={config.actLearnBgColor}
                                     cardBgClass="bg-gradient-to-r from-blue-500 to-blue-600"
                                     titleColor={config.actLearnTitleColor}
@@ -444,11 +477,7 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
                                 <ActivityCard
                                     title={config.activityMatchLabel}
                                     description={config.activityMatchDesc}
-                                    icon={
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" viewBox="0 0 20 20" fill="currentColor">
-                                            <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                                        </svg>
-                                    }
+                                    icon={<PointingFingerIcon />}
                                     cardBgColor={config.actMatchBgColor}
                                     cardBgClass="bg-gradient-to-r from-teal-500 to-teal-600"
                                     titleColor={config.actMatchTitleColor}
@@ -464,12 +493,7 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
                                 <ActivityCard
                                     title={config.activitySpellLabel}
                                     description={config.activitySpellDesc}
-                                    icon={
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" viewBox="0 0 20 20" fill="currentColor">
-                                            <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />
-                                            <path fillRule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clipRule="evenodd" />
-                                        </svg>
-                                    }
+                                    icon={<PointingFingerIcon />}
                                     cardBgColor={config.actSpellBgColor}
                                     cardBgClass="bg-gradient-to-r from-sky-500 to-sky-600"
                                     titleColor={config.actSpellTitleColor}
@@ -485,11 +509,7 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
                                 <ActivityCard
                                     title={config.activityQuizLabel}
                                     description={config.activityQuizDesc}
-                                    icon={
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" viewBox="0 0 20 20" fill="currentColor">
-                                            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
-                                        </svg>
-                                    }
+                                    icon={<PointingFingerIcon />}
                                     cardBgColor={config.actQuizBgColor}
                                     cardBgClass="bg-gradient-to-r from-blue-900 via-indigo-950 to-slate-900"
                                     titleColor={config.actQuizTitleColor}

@@ -444,7 +444,7 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                                                     <td rowSpan={group.attempts.length} className="p-3 border border-gray-300 text-[#8E44AD] text-center align-middle bg-white">{group.playerClass}</td>
                                                 </>
                                             )}
-                                            <td className="p-3 border border-gray-300 text-red-600 text-lg font-black text-center whitespace-nowrap">{res.score}</td>
+                                            <td className={`p-3 border border-gray-300 text-red-600 text-center whitespace-nowrap font-black ${String(res.score).includes('ĐÃ HỌC') || res.gameType === 'vocabulary' ? 'text-sm' : 'text-lg'}`}>{res.score}</td>
                                             <td className="p-3 border border-gray-300 text-center">
                                                 <span className={`px-4 py-1.5 rounded-full text-[12px] font-bold border ${getGameTypeStyle(res.gameType)}`}>
                                                     {getGameTypeLabel(res.gameType)}
