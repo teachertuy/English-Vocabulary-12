@@ -689,39 +689,75 @@ const EditExerciseSelectionModal: React.FC<EditExerciseSelectionModalProps> = ({
 
                             {/* 3. Open Count Box Styling */}
                             <div className="p-5 border rounded-2xl bg-white shadow-sm space-y-4">
-                                <h4 className="font-bold text-gray-800 text-base border-b pb-2 flex items-center gap-2"><span>3️⃣</span> Khung Huy hiệu "Số lần mở học"</h4>
+                                <h4 className="font-bold text-gray-800 text-base border-b pb-2 flex items-center gap-2"><span>3️⃣</span> Khung "SỐ LẦN MỞ HỌC" (Nhãn & Kích thước Khung)</h4>
                                 
-                                <div className="bg-amber-50/60 p-3.5 rounded-xl border border-amber-200">
-                                    <label className="block text-xs font-bold text-gray-800 mb-1">Tên nhãn (Tùy chỉnh ghi chữ hoa / chữ thường theo ý thích)</label>
-                                    <input 
-                                        type="text" 
-                                        value={config.actOpenCountLabelText !== undefined ? config.actOpenCountLabelText : 'Số lần học'} 
-                                        onChange={e => handleChange('actOpenCountLabelText', e.target.value)} 
-                                        className="w-full p-2 border rounded-lg text-xs font-semibold bg-white focus:ring-2 focus:ring-amber-500" 
-                                        placeholder="Số lần học"
-                                    />
+                                <div className="bg-red-50/70 p-4 rounded-xl border border-red-150 space-y-3">
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-5 items-start">
+                                        <div>
+                                            <label className="block text-xs font-bold text-gray-800 mb-1.5">Thay Tên gọi cụm Nhãn</label>
+                                            <input 
+                                                type="text" 
+                                                value={config.actOpenCountLabelText !== undefined ? config.actOpenCountLabelText : 'Số lần học'} 
+                                                onChange={e => handleChange('actOpenCountLabelText', e.target.value)} 
+                                                className="w-full p-2 border rounded-lg text-xs font-bold text-gray-900 bg-white focus:ring-2 focus:ring-red-500 shadow-2xs" 
+                                                placeholder="Số lần học"
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-xs font-bold text-gray-800 mb-1.5">
+                                                Độ rộng Khung tối thiểu: <span className="text-red-600 font-extrabold">{config.actOpenCountMinWidth !== undefined ? config.actOpenCountMinWidth : 60}px</span>
+                                            </label>
+                                            <input 
+                                                type="range" 
+                                                min="30" 
+                                                max="160" 
+                                                step="5" 
+                                                value={config.actOpenCountMinWidth !== undefined ? config.actOpenCountMinWidth : 60} 
+                                                onChange={e => handleChange('actOpenCountMinWidth', parseInt(e.target.value))} 
+                                                className="w-full h-2 bg-red-200 rounded-lg appearance-none cursor-pointer accent-red-600" 
+                                            />
+                                            <p className="text-[11px] text-gray-500 font-medium mt-1">(Kéo về 30px - 40px để thu nhỏ tối đa)</p>
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-xs font-bold text-gray-800 mb-1.5">
+                                                Khoảng đệm trong Khung: <span className="text-red-600 font-extrabold">{config.actOpenCountPadding !== undefined ? config.actOpenCountPadding : 0.2}rem</span>
+                                            </label>
+                                            <input 
+                                                type="range" 
+                                                min="0.1" 
+                                                max="1" 
+                                                step="0.05" 
+                                                value={config.actOpenCountPadding !== undefined ? config.actOpenCountPadding : 0.2} 
+                                                onChange={e => handleChange('actOpenCountPadding', parseFloat(e.target.value))} 
+                                                className="w-full h-2 bg-red-200 rounded-lg appearance-none cursor-pointer accent-red-600" 
+                                            />
+                                            <p className="text-[11px] text-gray-500 font-medium mt-1">(Giảm về 0.1rem để ôm sát nội dung)</p>
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-1">
                                     <div>
                                         <label className="block text-xs font-bold text-gray-700 mb-1">Màu nền Khung</label>
-                                        <input type="color" value={config.actOpenCountBgColor && config.actOpenCountBgColor.startsWith('#') ? config.actOpenCountBgColor : '#0f172a'} onChange={e => handleChange('actOpenCountBgColor', e.target.value)} className="w-full h-10 p-0 border-0 cursor-pointer rounded" />
+                                        <input type="color" value={config.actOpenCountBgColor && config.actOpenCountBgColor.startsWith('#') ? config.actOpenCountBgColor : '#ffffff'} onChange={e => handleChange('actOpenCountBgColor', e.target.value)} className="w-full h-10 p-0 border-0 cursor-pointer rounded" />
                                     </div>
                                     <div>
-                                        <label className="block text-xs font-bold text-gray-700 mb-1">Màu chữ Nhãn ("SỐ LẦN MỞ HỌC")</label>
-                                        <input type="color" value={config.actOpenCountLabelColor || '#ffffff'} onChange={e => handleChange('actOpenCountLabelColor', e.target.value)} className="w-full h-10 p-0 border-0 cursor-pointer rounded" />
+                                        <label className="block text-xs font-bold text-gray-700 mb-1">Màu chữ Nhãn</label>
+                                        <input type="color" value={config.actOpenCountLabelColor || '#dc2626'} onChange={e => handleChange('actOpenCountLabelColor', e.target.value)} className="w-full h-10 p-0 border-0 cursor-pointer rounded" />
                                     </div>
                                     <div>
-                                        <label className="block text-xs font-bold text-gray-700 mb-1">Cỡ chữ Nhãn: <span className="text-blue-600 font-bold">{config.actOpenCountLabelFontSize || 0.65}rem</span></label>
-                                        <input type="range" min="0.4" max="1.5" step="0.05" value={config.actOpenCountLabelFontSize || 0.65} onChange={e => handleChange('actOpenCountLabelFontSize', parseFloat(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
+                                        <label className="block text-xs font-bold text-gray-700 mb-1">Cỡ chữ Nhãn: <span className="text-blue-600 font-bold">{config.actOpenCountLabelFontSize || 0.7}rem</span></label>
+                                        <input type="range" min="0.4" max="1.5" step="0.05" value={config.actOpenCountLabelFontSize || 0.7} onChange={e => handleChange('actOpenCountLabelFontSize', parseFloat(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
                                     </div>
                                     <div>
                                         <label className="block text-xs font-bold text-gray-700 mb-1">Màu chữ Số lần (VD: "0", "1")</label>
-                                        <input type="color" value={config.actOpenCountValueColor || '#fef08a'} onChange={e => handleChange('actOpenCountValueColor', e.target.value)} className="w-full h-10 p-0 border-0 cursor-pointer rounded" />
+                                        <input type="color" value={config.actOpenCountValueColor || '#dc2626'} onChange={e => handleChange('actOpenCountValueColor', e.target.value)} className="w-full h-10 p-0 border-0 cursor-pointer rounded" />
                                     </div>
                                     <div>
-                                        <label className="block text-xs font-bold text-gray-700 mb-1">Cỡ chữ Số lần: <span className="text-blue-600 font-bold">{config.actOpenCountValueFontSize || 0.875}rem</span></label>
-                                        <input type="range" min="0.6" max="2" step="0.05" value={config.actOpenCountValueFontSize || 0.875} onChange={e => handleChange('actOpenCountValueFontSize', parseFloat(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
+                                        <label className="block text-xs font-bold text-gray-700 mb-1">Cỡ chữ Số lần: <span className="text-blue-600 font-bold">{config.actOpenCountValueFontSize || 1.125}rem</span></label>
+                                        <input type="range" min="0.6" max="2" step="0.05" value={config.actOpenCountValueFontSize || 1.125} onChange={e => handleChange('actOpenCountValueFontSize', parseFloat(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
                                     </div>
                                 </div>
                             </div>

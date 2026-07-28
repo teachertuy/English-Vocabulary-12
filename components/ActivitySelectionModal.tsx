@@ -223,6 +223,8 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
     const attemptsList = stats?.attemptsList || [];
 
     const openCountLabelText = config?.actOpenCountLabelText !== undefined ? config.actOpenCountLabelText : 'Số lần học';
+    const openCountMinWidth = config?.actOpenCountMinWidth !== undefined ? config.actOpenCountMinWidth : 60;
+    const openCountPadding = config?.actOpenCountPadding !== undefined ? config.actOpenCountPadding : 0.2;
     const openCountBg = config?.actOpenCountBgColor || '#ffffff';
     const openCountLabelColor = config?.actOpenCountLabelColor || '#dc2626';
     const openCountLabelSize = config?.actOpenCountLabelFontSize || 0.7;
@@ -267,8 +269,12 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
 
                 {playerData && (
                     <div 
-                        style={{ backgroundColor: openCountBg }}
-                        className="flex flex-col items-center justify-center shrink-0 px-3 py-1.5 rounded-full border border-white/20 min-w-[95px] text-center shadow-xs"
+                        style={{ 
+                            backgroundColor: openCountBg,
+                            minWidth: `${openCountMinWidth}px`,
+                            padding: `${openCountPadding}rem ${openCountPadding * 1.5}rem`
+                        }}
+                        className="flex flex-col items-center justify-center shrink-0 rounded-full border border-white/20 text-center shadow-xs"
                     >
                         <span 
                             style={{ color: openCountLabelColor, fontSize: `${openCountLabelSize}rem` }}

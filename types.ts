@@ -222,6 +222,8 @@ export interface ExerciseSelectionConfig {
 
     // Open Count Box Styling
     actOpenCountLabelText?: string;
+    actOpenCountMinWidth?: number;
+    actOpenCountPadding?: number;
     actOpenCountBgColor?: string;
     actOpenCountLabelColor?: string;
     actOpenCountLabelFontSize?: number;

@@ -103,6 +103,8 @@ const DEFAULT_CONFIG: ExerciseSelectionConfig = {
     actQuizTitleFontSize: 1.125,
 
     actOpenCountLabelText: 'Số lần học',
+    actOpenCountMinWidth: 60,
+    actOpenCountPadding: 0.2,
     actOpenCountBgColor: '#ffffff',
     actOpenCountLabelColor: '#dc2626',
     actOpenCountLabelFontSize: 0.7,
