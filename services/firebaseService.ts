@@ -278,6 +278,7 @@ export const startUnitActivity = (classroomId: string, grade: any, unitId: strin
 export interface AttemptDetail {
     timeTakenSeconds: number;
     timestamp?: any;
+    correct?: number;
 }
 
 export interface ActivityStats {
@@ -344,7 +345,8 @@ export const listenToStudentActivityAttempts = (
 
                     const attemptsList: AttemptDetail[] = items.map((item) => ({
                         timeTakenSeconds: Math.max(0, parseInt(item.timeTakenSeconds, 10) || 0),
-                        timestamp: item.timestamp
+                        timestamp: item.timestamp,
+                        correct: typeof item.correct === 'number' ? item.correct : (item.correct !== undefined ? (parseInt(item.correct, 10) || 0) : 0)
                     }));
 
                     const totalTimeSeconds = attemptsList.reduce((acc, curr) => acc + curr.timeTakenSeconds, 0);

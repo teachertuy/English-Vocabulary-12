@@ -164,6 +164,7 @@ interface ActivityCardProps {
     stats?: ActivityStats;
     playerData?: PlayerData;
     hideTimeDetails?: boolean;
+    showCorrectCount?: boolean;
     config?: ExerciseSelectionConfig;
 }
 
@@ -216,6 +217,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
     stats,
     playerData,
     hideTimeDetails = false,
+    showCorrectCount = false,
     config
 }) => {
     const count = stats?.count || 0;
@@ -317,10 +319,17 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
                                 <div 
                                     key={idx} 
                                     style={{ backgroundColor: attemptBg, color: attemptTextColor, fontSize: `${attemptTextSize}rem` }}
-                                    className="flex items-center justify-between px-3 py-1 rounded-lg border border-white/15 font-medium"
+                                    className="flex items-center justify-between px-3 py-1 rounded-lg border border-white/15 font-medium gap-2"
                                 >
-                                    <span className="font-bold opacity-90">Lần {idx + 1}:</span>
-                                    <span className="font-mono font-extrabold">
+                                    <div className="flex items-center gap-2 overflow-hidden">
+                                        <span className="font-bold opacity-90 shrink-0">Lần {idx + 1}:</span>
+                                        {showCorrectCount && (
+                                            <span className="font-extrabold text-red-600 bg-red-50/90 border border-red-200/80 px-2 py-0.5 rounded-md text-[0.85em] leading-none shrink-0 shadow-2xs">
+                                                Đúng: {att.correct !== undefined ? att.correct : 0}
+                                            </span>
+                                        )}
+                                    </div>
+                                    <span className="font-mono font-extrabold shrink-0">
                                         {formatDuration(att.timeTakenSeconds)}{formatDateMonth(att.timestamp)}
                                     </span>
                                 </div>
@@ -490,6 +499,7 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
                                     onClick={() => onLearnVocabulary(vocabulary)}
                                     stats={attempts.vocabulary}
                                     playerData={playerData}
+                                    showCorrectCount={false}
                                     config={config}
                                 />
                             )}
@@ -506,6 +516,7 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
                                     onClick={() => onStartMatchingGame(vocabulary)}
                                     stats={attempts.matching}
                                     playerData={playerData}
+                                    showCorrectCount={true}
                                     config={config}
                                 />
                             )}
@@ -522,6 +533,7 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
                                     onClick={() => onStartSpellingGame(vocabulary)}
                                     stats={attempts.spelling}
                                     playerData={playerData}
+                                    showCorrectCount={true}
                                     config={config}
                                 />
                             )}
@@ -538,6 +550,7 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
                                     onClick={() => onStartQuiz(quiz)}
                                     stats={attempts.quiz}
                                     playerData={playerData}
+                                    showCorrectCount={true}
                                     config={config}
                                 />
                             )}
