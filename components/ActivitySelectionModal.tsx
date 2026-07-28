@@ -429,7 +429,7 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
         >
             <div 
                 style={{ backgroundColor: config.actModalBgColor || '#ffffff' }}
-                className="rounded-2xl shadow-xl p-2.5 sm:p-3.5 w-full max-w-2xl transform transition-all text-center max-h-[96vh] overflow-y-auto"
+                className="rounded-2xl shadow-xl pt-5 sm:pt-6 pb-4 px-2 sm:px-3.5 w-full max-w-2xl transform transition-all text-center max-h-[96vh] overflow-y-auto"
                 onClick={e => e.stopPropagation()}
             >
                 <div 
@@ -437,7 +437,7 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
                         color: config.actHeaderColor || config.actModalTitleColor || '#ffffff', 
                         fontFamily: config.actHeaderFontFamily || 'sans-serif' 
                     }}
-                    className="mb-3 text-center"
+                    className="mt-1 mb-3.5 text-center"
                 >
                     <div 
                         style={{ fontSize: `${config.actHeaderFontSize || config.actModalTitleFontSize || 1.5}rem` }}
