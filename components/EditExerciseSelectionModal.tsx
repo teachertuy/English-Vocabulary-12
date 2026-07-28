@@ -689,7 +689,19 @@ const EditExerciseSelectionModal: React.FC<EditExerciseSelectionModalProps> = ({
 
                             {/* 3. Open Count Box Styling */}
                             <div className="p-5 border rounded-2xl bg-white shadow-sm space-y-4">
-                                <h4 className="font-bold text-gray-800 text-base border-b pb-2 flex items-center gap-2"><span>3️⃣</span> Khung "SỐ LẦN MỞ HỌC"</h4>
+                                <h4 className="font-bold text-gray-800 text-base border-b pb-2 flex items-center gap-2"><span>3️⃣</span> Khung Huy hiệu "Số lần mở học"</h4>
+                                
+                                <div className="bg-amber-50/60 p-3.5 rounded-xl border border-amber-200">
+                                    <label className="block text-xs font-bold text-gray-800 mb-1">Tên nhãn (Tùy chỉnh ghi chữ hoa / chữ thường theo ý thích)</label>
+                                    <input 
+                                        type="text" 
+                                        value={config.actOpenCountLabelText !== undefined ? config.actOpenCountLabelText : 'Số lần học'} 
+                                        onChange={e => handleChange('actOpenCountLabelText', e.target.value)} 
+                                        className="w-full p-2 border rounded-lg text-xs font-semibold bg-white focus:ring-2 focus:ring-amber-500" 
+                                        placeholder="Số lần học"
+                                    />
+                                </div>
+
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                     <div>
                                         <label className="block text-xs font-bold text-gray-700 mb-1">Màu nền Khung</label>

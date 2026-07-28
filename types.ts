@@ -221,6 +221,7 @@ export interface ExerciseSelectionConfig {
     actQuizTitleFontSize?: number;
 
     // Open Count Box Styling
+    actOpenCountLabelText?: string;
     actOpenCountBgColor?: string;
     actOpenCountLabelColor?: string;
     actOpenCountLabelFontSize?: number;

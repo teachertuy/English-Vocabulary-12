@@ -112,11 +112,12 @@ const DEFAULT_EXERCISE_CONFIG: ExerciseSelectionConfig = {
     actQuizTitleColor: '#ffffff',
     actQuizTitleFontSize: 1.125,
 
-    actOpenCountBgColor: 'rgba(0,0,0,0.2)',
-    actOpenCountLabelColor: '#ffffff',
-    actOpenCountLabelFontSize: 0.65,
-    actOpenCountValueColor: '#fef08a',
-    actOpenCountValueFontSize: 0.875,
+    actOpenCountLabelText: 'Số lần học',
+    actOpenCountBgColor: '#ffffff',
+    actOpenCountLabelColor: '#dc2626',
+    actOpenCountLabelFontSize: 0.7,
+    actOpenCountValueColor: '#dc2626',
+    actOpenCountValueFontSize: 1.125,
 
     actTimeHeaderColor: '#ffffff',
     actTimeHeaderFontSize: 0.7,

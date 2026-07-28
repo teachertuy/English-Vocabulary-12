@@ -222,35 +222,36 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
     const totalTime = stats?.totalTimeSeconds || 0;
     const attemptsList = stats?.attemptsList || [];
 
-    const openCountBg = config?.actOpenCountBgColor || 'rgba(0,0,0,0.2)';
-    const openCountLabelColor = config?.actOpenCountLabelColor || '#ffffff';
-    const openCountLabelSize = config?.actOpenCountLabelFontSize || 0.65;
-    const openCountValColor = config?.actOpenCountValueColor || '#fef08a';
-    const openCountValSize = config?.actOpenCountValueFontSize || 0.875;
+    const openCountLabelText = config?.actOpenCountLabelText !== undefined ? config.actOpenCountLabelText : 'Số lần học';
+    const openCountBg = config?.actOpenCountBgColor || '#ffffff';
+    const openCountLabelColor = config?.actOpenCountLabelColor || '#dc2626';
+    const openCountLabelSize = config?.actOpenCountLabelFontSize || 0.7;
+    const openCountValColor = config?.actOpenCountValueColor || '#dc2626';
+    const openCountValSize = config?.actOpenCountValueFontSize || 1.125;
 
     const timeHeaderColor = config?.actTimeHeaderColor || '#ffffff';
     const timeHeaderSize = config?.actTimeHeaderFontSize || 0.7;
 
-    const attemptBg = config?.actAttemptBoxBgColor || 'rgba(0,0,0,0.2)';
-    const attemptTextColor = config?.actAttemptTextColor || '#ffffff';
-    const attemptTextSize = config?.actAttemptFontSize || 0.75;
+    const attemptBg = config?.actAttemptBoxBgColor || '#ffffff';
+    const attemptTextColor = config?.actAttemptTextColor || '#1e293b';
+    const attemptTextSize = config?.actAttemptFontSize || 0.8;
 
     const totalTimeBg = config?.actTotalTimeBoxBgColor || 'rgba(0,0,0,0.25)';
     const totalTimeLabelColor = config?.actTotalTimeLabelColor || '#ffffff';
-    const totalTimeLabelSize = config?.actTotalTimeLabelFontSize || 0.75;
+    const totalTimeLabelSize = config?.actTotalTimeLabelFontSize || 0.8;
     const totalTimeValColor = config?.actTotalTimeValueColor || '#fef08a';
-    const totalTimeValSize = config?.actTotalTimeValueFontSize || 0.875;
+    const totalTimeValSize = config?.actTotalTimeValueFontSize || 0.9;
 
     return (
         <div 
             onClick={onClick}
             style={cardBgColor ? { backgroundColor: cardBgColor } : undefined}
-            className={`w-full text-left p-4 sm:p-5 rounded-2xl text-white shadow-md transition-all transform hover:scale-[1.01] hover:shadow-lg cursor-pointer ${!cardBgColor && cardBgClass ? cardBgClass : ''}`}
+            className={`w-full text-left p-3.5 sm:p-4 rounded-2xl text-white shadow-md transition-all transform hover:scale-[1.005] hover:shadow-lg cursor-pointer ${!cardBgColor && cardBgClass ? cardBgClass : ''}`}
         >
             {/* Top row: Icon, Title & Description, and Open count badge */}
-            <div className="flex items-start justify-between gap-3">
-                <div className="flex items-center gap-3.5">
-                    <div className="p-2.5 bg-white/20 backdrop-blur-md rounded-xl shrink-0">
+            <div className="flex items-start justify-between gap-2.5">
+                <div className="flex items-center gap-3">
+                    <div className="p-2 bg-white/20 backdrop-blur-md rounded-xl shrink-0">
                         {icon}
                     </div>
                     <div>
@@ -267,17 +268,17 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
                 {playerData && (
                     <div 
                         style={{ backgroundColor: openCountBg }}
-                        className="flex flex-col items-end shrink-0 px-3 py-1.5 rounded-xl border border-white/20"
+                        className="flex flex-col items-center justify-center shrink-0 px-3 py-1.5 rounded-full border border-white/20 min-w-[95px] text-center shadow-xs"
                     >
                         <span 
                             style={{ color: openCountLabelColor, fontSize: `${openCountLabelSize}rem` }}
-                            className="font-extrabold uppercase tracking-wider block"
+                            className="font-extrabold tracking-tight block leading-tight whitespace-nowrap"
                         >
-                            Số lần mở học
+                            {openCountLabelText}
                         </span>
                         <span 
                             style={{ color: openCountValColor, fontSize: `${openCountValSize}rem` }}
-                            className="mt-0.5 font-black font-mono block"
+                            className="mt-0.5 font-black font-mono block leading-none"
                         >
                             {count}
                         </span>
@@ -417,12 +418,12 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
 
     return (
         <div 
-            className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-[150] p-4 transition-opacity duration-300"
+            className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-[150] p-1.5 sm:p-3 transition-opacity duration-300"
             onClick={onClose}
         >
             <div 
                 style={{ backgroundColor: config.actModalBgColor || '#ffffff' }}
-                className="rounded-2xl shadow-xl p-5 sm:p-6 w-full max-w-xl transform transition-all text-center max-h-[90vh] overflow-y-auto"
+                className="rounded-2xl shadow-xl p-2.5 sm:p-3.5 w-full max-w-2xl transform transition-all text-center max-h-[96vh] overflow-y-auto"
                 onClick={e => e.stopPropagation()}
             >
                 <div 
