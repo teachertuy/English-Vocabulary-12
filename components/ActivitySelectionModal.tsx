@@ -425,13 +425,28 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
                 className="rounded-2xl shadow-xl p-5 sm:p-6 w-full max-w-xl transform transition-all text-center max-h-[90vh] overflow-y-auto"
                 onClick={e => e.stopPropagation()}
             >
-                <h2 
-                    style={{ color: config.actModalTitleColor || '#1e293b', fontSize: `${config.actModalTitleFontSize || 1.875}rem` }}
-                    className="font-extrabold mb-1"
+                <div 
+                    style={{ 
+                        color: config.actHeaderColor || config.actModalTitleColor || '#ffffff', 
+                        fontFamily: config.actHeaderFontFamily || 'sans-serif' 
+                    }}
+                    className="mb-3 text-center"
                 >
-                    {titleLabel}
-                </h2>
-                <p className="text-gray-600 mb-4 italic text-sm sm:text-base">{config.subtitle}</p>
+                    <div 
+                        style={{ fontSize: `${config.actHeaderFontSize || config.actModalTitleFontSize || 1.5}rem` }}
+                        className="font-extrabold leading-tight tracking-wide"
+                    >
+                        {config.actHeaderLine1 !== undefined ? config.actHeaderLine1 : 'GV: Trương Thanh Tùy'}
+                    </div>
+                    {(config.actHeaderLine2 !== undefined ? config.actHeaderLine2 : 'Tổ trưởng tổ Tiếng Anh_ Trường THPT Nguyễn Trường Tộ') && (
+                        <div 
+                            style={{ fontSize: `${(config.actHeaderFontSize || config.actModalTitleFontSize || 1.5) * 0.65}rem` }}
+                            className="font-medium opacity-90 leading-tight mt-1"
+                        >
+                            {config.actHeaderLine2 !== undefined ? config.actHeaderLine2 : 'Tổ trưởng tổ Tiếng Anh_ Trường THPT Nguyễn Trường Tộ'}
+                        </div>
+                    )}
+                </div>
                 
                 {playerData && (
                     <div 
@@ -468,7 +483,6 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
                                     onClick={() => onLearnVocabulary(vocabulary)}
                                     stats={attempts.vocabulary}
                                     playerData={playerData}
-                                    hideTimeDetails={true}
                                     config={config}
                                 />
                             )}

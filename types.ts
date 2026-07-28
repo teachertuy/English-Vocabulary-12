@@ -190,6 +190,12 @@ export interface ExerciseSelectionConfig {
     matchingTimerEnabled: boolean;
 
     // Activity Modal Display Styling (Detailed)
+    actHeaderLine1?: string;
+    actHeaderLine2?: string;
+    actHeaderColor?: string;
+    actHeaderFontSize?: number;
+    actHeaderFontFamily?: string;
+
     actModalBgColor?: string;
     actModalTitleColor?: string;
     actModalTitleFontSize?: number;

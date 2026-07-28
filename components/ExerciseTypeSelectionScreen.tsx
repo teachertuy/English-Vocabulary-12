@@ -73,6 +73,12 @@ const DEFAULT_CONFIG: ExerciseSelectionConfig = {
     matchingDuration: 20,
     matchingTimerEnabled: true,
 
+    actHeaderLine1: 'GV: Trương Thanh Tùy',
+    actHeaderLine2: 'Tổ trưởng tổ Tiếng Anh_ Trường THPT Nguyễn Trường Tộ',
+    actHeaderColor: '#ffffff',
+    actHeaderFontSize: 1.5,
+    actHeaderFontFamily: 'sans-serif',
+
     actModalBgColor: '#ffffff',
     actModalTitleColor: '#1e293b',
     actModalTitleFontSize: 1.875,
