@@ -324,8 +324,8 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
                                     <div className="flex items-center gap-2 overflow-hidden">
                                         <span className="font-bold opacity-90 shrink-0">Lần {idx + 1}:</span>
                                         {showCorrectCount && (
-                                            <span className="font-extrabold text-red-600 bg-red-50/90 border border-red-200/80 px-2 py-0.5 rounded-md text-[0.85em] leading-none shrink-0 shadow-2xs">
-                                                Đúng: {att.correct !== undefined ? att.correct : 0}
+                                            <span className="font-extrabold text-emerald-600 bg-emerald-50/90 border border-emerald-200/80 px-2 py-0.5 rounded-md text-[0.85em] leading-none shrink-0 shadow-2xs">
+                                                (Đúng: {att.correct !== undefined ? att.correct : 0})
                                             </span>
                                         )}
                                     </div>
