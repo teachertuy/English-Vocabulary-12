@@ -82,6 +82,46 @@ const DEFAULT_EXERCISE_CONFIG: ExerciseSelectionConfig = {
     spellingTimerEnabled: true,
     matchingDuration: 20,
     matchingTimerEnabled: true,
+
+    actModalBgColor: '#ffffff',
+    actModalTitleColor: '#1e293b',
+    actModalTitleFontSize: 1.875,
+    actStudentBadgeBgColor: '#fef3c7',
+    actStudentBadgeTextColor: '#78350f',
+    actStudentBadgeFontSize: 0.75,
+
+    actLearnBgColor: '#2563eb',
+    actLearnTitleColor: '#ffffff',
+    actLearnTitleFontSize: 1.125,
+
+    actMatchBgColor: '#0d9488',
+    actMatchTitleColor: '#ffffff',
+    actMatchTitleFontSize: 1.125,
+
+    actSpellBgColor: '#0284c7',
+    actSpellTitleColor: '#ffffff',
+    actSpellTitleFontSize: 1.125,
+
+    actQuizBgColor: '#0f172a',
+    actQuizTitleColor: '#ffffff',
+    actQuizTitleFontSize: 1.125,
+
+    actOpenCountBgColor: 'rgba(0,0,0,0.2)',
+    actOpenCountLabelColor: '#ffffff',
+    actOpenCountLabelFontSize: 0.65,
+    actOpenCountValueColor: '#fef08a',
+    actOpenCountValueFontSize: 0.875,
+
+    actTimeHeaderColor: '#ffffff',
+    actTimeHeaderFontSize: 0.7,
+    actAttemptBoxBgColor: 'rgba(0,0,0,0.2)',
+    actAttemptTextColor: '#ffffff',
+    actAttemptFontSize: 0.75,
+    actTotalTimeBoxBgColor: 'rgba(0,0,0,0.25)',
+    actTotalTimeLabelColor: '#ffffff',
+    actTotalTimeLabelFontSize: 0.75,
+    actTotalTimeValueColor: '#fef08a',
+    actTotalTimeValueFontSize: 0.875,
 };
 
 // Fix: Complete DEFAULT_WELCOME_CONFIG to match WelcomeScreenConfig interface

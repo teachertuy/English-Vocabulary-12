@@ -188,4 +188,48 @@ export interface ExerciseSelectionConfig {
     spellingTimerEnabled: boolean;
     matchingDuration: number;
     matchingTimerEnabled: boolean;
+
+    // Activity Modal Display Styling (Detailed)
+    actModalBgColor?: string;
+    actModalTitleColor?: string;
+    actModalTitleFontSize?: number;
+    actStudentBadgeBgColor?: string;
+    actStudentBadgeTextColor?: string;
+    actStudentBadgeFontSize?: number;
+
+    // Individual Card Backgrounds & Titles
+    actLearnBgColor?: string;
+    actLearnTitleColor?: string;
+    actLearnTitleFontSize?: number;
+
+    actMatchBgColor?: string;
+    actMatchTitleColor?: string;
+    actMatchTitleFontSize?: number;
+
+    actSpellBgColor?: string;
+    actSpellTitleColor?: string;
+    actSpellTitleFontSize?: number;
+
+    actQuizBgColor?: string;
+    actQuizTitleColor?: string;
+    actQuizTitleFontSize?: number;
+
+    // Open Count Box Styling
+    actOpenCountBgColor?: string;
+    actOpenCountLabelColor?: string;
+    actOpenCountLabelFontSize?: number;
+    actOpenCountValueColor?: string;
+    actOpenCountValueFontSize?: number;
+
+    // Time Tracking Section Styling
+    actTimeHeaderColor?: string;
+    actTimeHeaderFontSize?: number;
+    actAttemptBoxBgColor?: string;
+    actAttemptTextColor?: string;
+    actAttemptFontSize?: number;
+    actTotalTimeBoxBgColor?: string;
+    actTotalTimeLabelColor?: string;
+    actTotalTimeLabelFontSize?: number;
+    actTotalTimeValueColor?: string;
+    actTotalTimeValueFontSize?: number;
 }

@@ -72,12 +72,52 @@ const DEFAULT_CONFIG: ExerciseSelectionConfig = {
     spellingTimerEnabled: true,
     matchingDuration: 20,
     matchingTimerEnabled: true,
+
+    actModalBgColor: '#ffffff',
+    actModalTitleColor: '#1e293b',
+    actModalTitleFontSize: 1.875,
+    actStudentBadgeBgColor: '#fef3c7',
+    actStudentBadgeTextColor: '#78350f',
+    actStudentBadgeFontSize: 0.75,
+
+    actLearnBgColor: '#2563eb',
+    actLearnTitleColor: '#ffffff',
+    actLearnTitleFontSize: 1.125,
+
+    actMatchBgColor: '#0d9488',
+    actMatchTitleColor: '#ffffff',
+    actMatchTitleFontSize: 1.125,
+
+    actSpellBgColor: '#0284c7',
+    actSpellTitleColor: '#ffffff',
+    actSpellTitleFontSize: 1.125,
+
+    actQuizBgColor: '#0f172a',
+    actQuizTitleColor: '#ffffff',
+    actQuizTitleFontSize: 1.125,
+
+    actOpenCountBgColor: '#0f172a',
+    actOpenCountLabelColor: '#ffffff',
+    actOpenCountLabelFontSize: 0.65,
+    actOpenCountValueColor: '#fef08a',
+    actOpenCountValueFontSize: 0.875,
+
+    actTimeHeaderColor: '#ffffff',
+    actTimeHeaderFontSize: 0.7,
+    actAttemptBoxBgColor: '#0f172a',
+    actAttemptTextColor: '#ffffff',
+    actAttemptFontSize: 0.75,
+    actTotalTimeBoxBgColor: '#1e293b',
+    actTotalTimeLabelColor: '#ffffff',
+    actTotalTimeLabelFontSize: 0.75,
+    actTotalTimeValueColor: '#fef08a',
+    actTotalTimeValueFontSize: 0.875,
 };
 
 const EditExerciseSelectionModal: React.FC<EditExerciseSelectionModalProps> = ({ show, onClose, onSave, currentConfig }) => {
     const [config, setConfig] = useState<ExerciseSelectionConfig>(currentConfig || DEFAULT_CONFIG);
     const [isSaving, setIsSaving] = useState(false);
-    const [activeTab, setActiveTab] = useState<'titles' | 'cards' | 'units' | 'activities'>('titles');
+    const [activeTab, setActiveTab] = useState<'titles' | 'cards' | 'units' | 'activities' | 'actDesign'>('titles');
 
     useEffect(() => {
         if (show && currentConfig) {
@@ -144,7 +184,8 @@ const EditExerciseSelectionModal: React.FC<EditExerciseSelectionModalProps> = ({
                         { id: 'titles', label: 'Tiêu đề & Nút', icon: '📝' },
                         { id: 'cards', label: 'Thẻ chính', icon: '🎨' },
                         { id: 'units', label: 'Ô Số Unit/Topic', icon: '🔲' },
-                        { id: 'activities', label: 'Các phần thi', icon: '🏆' }
+                        { id: 'activities', label: 'Các phần thi', icon: '🏆' },
+                        { id: 'actDesign', label: 'Giao diện Bài tập', icon: '📱' }
                     ].map(tab => (
                         <button
                             key={tab.id}
@@ -457,6 +498,205 @@ const EditExerciseSelectionModal: React.FC<EditExerciseSelectionModalProps> = ({
                                         <label className="block text-xs font-bold text-green-600 uppercase">Phần 4: Trắc nghiệm</label>
                                         <input type="text" value={config.activityQuizLabel} onChange={e => handleChange('activityQuizLabel', e.target.value)} className="w-full p-2 border rounded font-bold" />
                                         <textarea value={config.activityQuizDesc} onChange={e => handleChange('activityQuizDesc', e.target.value)} className="w-full p-2 border rounded text-xs text-gray-600" rows={2} />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {activeTab === 'actDesign' && (
+                        <div className="space-y-8 tab-content-enter">
+                            <div className="p-4 bg-indigo-50 border border-indigo-200 rounded-xl">
+                                <h3 className="font-extrabold text-indigo-900 text-lg mb-1">📱 Cài đặt Màn hình Bài tập & Thi của Học sinh</h3>
+                                <p className="text-sm text-indigo-700 italic">Tùy chỉnh chi tiết màu nền, màu chữ và kích thước chữ cho tất cả các thành phần trong màn hình học sinh.</p>
+                            </div>
+
+                            {/* 1. Modal Container & Header */}
+                            <div className="p-5 border rounded-2xl bg-white shadow-sm space-y-4">
+                                <h4 className="font-bold text-gray-800 text-base border-b pb-2 flex items-center gap-2"><span>1️⃣</span> Khung Màn hình & Huy hiệu Học sinh</h4>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                    <div>
+                                        <label className="block text-xs font-bold text-gray-700 mb-1">Màu nền Khung Bài tập Modal</label>
+                                        <input type="color" value={config.actModalBgColor || '#ffffff'} onChange={e => handleChange('actModalBgColor', e.target.value)} className="w-full h-10 p-0 border-0 cursor-pointer rounded" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-bold text-gray-700 mb-1">Màu chữ Tiêu đề (VD: "UNIT 1")</label>
+                                        <input type="color" value={config.actModalTitleColor || '#1e293b'} onChange={e => handleChange('actModalTitleColor', e.target.value)} className="w-full h-10 p-0 border-0 cursor-pointer rounded" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-bold text-gray-700 mb-1">Cỡ chữ Tiêu đề: <span className="text-blue-600 font-bold">{config.actModalTitleFontSize || 1.875}rem</span></label>
+                                        <input type="range" min="1" max="4" step="0.125" value={config.actModalTitleFontSize || 1.875} onChange={e => handleChange('actModalTitleFontSize', parseFloat(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-xs font-bold text-gray-700 mb-1">Màu nền Huy hiệu HS ("Tuy - Lớp 12A")</label>
+                                        <input type="color" value={config.actStudentBadgeBgColor || '#fef3c7'} onChange={e => handleChange('actStudentBadgeBgColor', e.target.value)} className="w-full h-10 p-0 border-0 cursor-pointer rounded" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-bold text-gray-700 mb-1">Màu chữ Huy hiệu HS</label>
+                                        <input type="color" value={config.actStudentBadgeTextColor || '#78350f'} onChange={e => handleChange('actStudentBadgeTextColor', e.target.value)} className="w-full h-10 p-0 border-0 cursor-pointer rounded" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-bold text-gray-700 mb-1">Cỡ chữ Huy hiệu HS: <span className="text-blue-600 font-bold">{config.actStudentBadgeFontSize || 0.75}rem</span></label>
+                                        <input type="range" min="0.5" max="2" step="0.05" value={config.actStudentBadgeFontSize || 0.75} onChange={e => handleChange('actStudentBadgeFontSize', parseFloat(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* 2. Individual Cards Design */}
+                            <div className="p-5 border rounded-2xl bg-white shadow-sm space-y-6">
+                                <h4 className="font-bold text-gray-800 text-base border-b pb-2 flex items-center gap-2"><span>2️⃣</span> Màu nền & Cỡ chữ Tiêu đề các Thẻ Bài tập</h4>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    {/* Learn Card */}
+                                    <div className="p-4 rounded-xl border bg-blue-50/60 space-y-3">
+                                        <span className="font-bold text-blue-900 text-sm block">Thẻ 1: Học Từ Vựng</span>
+                                        <div className="grid grid-cols-3 gap-3">
+                                            <div>
+                                                <label className="block text-[11px] font-bold text-gray-600 mb-1">Màu nền Thẻ</label>
+                                                <input type="color" value={config.actLearnBgColor || '#2563eb'} onChange={e => handleChange('actLearnBgColor', e.target.value)} className="w-full h-9 p-0 border-0 cursor-pointer rounded" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-[11px] font-bold text-gray-600 mb-1">Màu chữ Tiêu đề</label>
+                                                <input type="color" value={config.actLearnTitleColor || '#ffffff'} onChange={e => handleChange('actLearnTitleColor', e.target.value)} className="w-full h-9 p-0 border-0 cursor-pointer rounded" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-[11px] font-bold text-gray-600 mb-1">Cỡ chữ: {config.actLearnTitleFontSize || 1.125}rem</label>
+                                                <input type="range" min="0.8" max="2.5" step="0.05" value={config.actLearnTitleFontSize || 1.125} onChange={e => handleChange('actLearnTitleFontSize', parseFloat(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Match Card */}
+                                    <div className="p-4 rounded-xl border bg-teal-50/60 space-y-3">
+                                        <span className="font-bold text-teal-900 text-sm block">Thẻ 2: Trò Chơi Ghép Cặp</span>
+                                        <div className="grid grid-cols-3 gap-3">
+                                            <div>
+                                                <label className="block text-[11px] font-bold text-gray-600 mb-1">Màu nền Thẻ</label>
+                                                <input type="color" value={config.actMatchBgColor || '#0d9488'} onChange={e => handleChange('actMatchBgColor', e.target.value)} className="w-full h-9 p-0 border-0 cursor-pointer rounded" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-[11px] font-bold text-gray-600 mb-1">Màu chữ Tiêu đề</label>
+                                                <input type="color" value={config.actMatchTitleColor || '#ffffff'} onChange={e => handleChange('actMatchTitleColor', e.target.value)} className="w-full h-9 p-0 border-0 cursor-pointer rounded" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-[11px] font-bold text-gray-600 mb-1">Cỡ chữ: {config.actMatchTitleFontSize || 1.125}rem</label>
+                                                <input type="range" min="0.8" max="2.5" step="0.05" value={config.actMatchTitleFontSize || 1.125} onChange={e => handleChange('actMatchTitleFontSize', parseFloat(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-teal-600" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Spell Card */}
+                                    <div className="p-4 rounded-xl border bg-sky-50/60 space-y-3">
+                                        <span className="font-bold text-sky-900 text-sm block">Thẻ 3: Trò Chơi Viết Chính Tả</span>
+                                        <div className="grid grid-cols-3 gap-3">
+                                            <div>
+                                                <label className="block text-[11px] font-bold text-gray-600 mb-1">Màu nền Thẻ</label>
+                                                <input type="color" value={config.actSpellBgColor || '#0284c7'} onChange={e => handleChange('actSpellBgColor', e.target.value)} className="w-full h-9 p-0 border-0 cursor-pointer rounded" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-[11px] font-bold text-gray-600 mb-1">Màu chữ Tiêu đề</label>
+                                                <input type="color" value={config.actSpellTitleColor || '#ffffff'} onChange={e => handleChange('actSpellTitleColor', e.target.value)} className="w-full h-9 p-0 border-0 cursor-pointer rounded" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-[11px] font-bold text-gray-600 mb-1">Cỡ chữ: {config.actSpellTitleFontSize || 1.125}rem</label>
+                                                <input type="range" min="0.8" max="2.5" step="0.05" value={config.actSpellTitleFontSize || 1.125} onChange={e => handleChange('actSpellTitleFontSize', parseFloat(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-sky-600" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Quiz Card */}
+                                    <div className="p-4 rounded-xl border bg-slate-100 space-y-3">
+                                        <span className="font-bold text-slate-900 text-sm block">Thẻ 4: Kiểm Tra Từ Mới Học</span>
+                                        <div className="grid grid-cols-3 gap-3">
+                                            <div>
+                                                <label className="block text-[11px] font-bold text-gray-600 mb-1">Màu nền Thẻ</label>
+                                                <input type="color" value={config.actQuizBgColor || '#0f172a'} onChange={e => handleChange('actQuizBgColor', e.target.value)} className="w-full h-9 p-0 border-0 cursor-pointer rounded" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-[11px] font-bold text-gray-600 mb-1">Màu chữ Tiêu đề</label>
+                                                <input type="color" value={config.actQuizTitleColor || '#ffffff'} onChange={e => handleChange('actQuizTitleColor', e.target.value)} className="w-full h-9 p-0 border-0 cursor-pointer rounded" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-[11px] font-bold text-gray-600 mb-1">Cỡ chữ: {config.actQuizTitleFontSize || 1.125}rem</label>
+                                                <input type="range" min="0.8" max="2.5" step="0.05" value={config.actQuizTitleFontSize || 1.125} onChange={e => handleChange('actQuizTitleFontSize', parseFloat(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-slate-800" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* 3. Open Count Box Styling */}
+                            <div className="p-5 border rounded-2xl bg-white shadow-sm space-y-4">
+                                <h4 className="font-bold text-gray-800 text-base border-b pb-2 flex items-center gap-2"><span>3️⃣</span> Khung "SỐ LẦN MỞ HỌC"</h4>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                    <div>
+                                        <label className="block text-xs font-bold text-gray-700 mb-1">Màu nền Khung</label>
+                                        <input type="color" value={config.actOpenCountBgColor && config.actOpenCountBgColor.startsWith('#') ? config.actOpenCountBgColor : '#0f172a'} onChange={e => handleChange('actOpenCountBgColor', e.target.value)} className="w-full h-10 p-0 border-0 cursor-pointer rounded" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-bold text-gray-700 mb-1">Màu chữ Nhãn ("SỐ LẦN MỞ HỌC")</label>
+                                        <input type="color" value={config.actOpenCountLabelColor || '#ffffff'} onChange={e => handleChange('actOpenCountLabelColor', e.target.value)} className="w-full h-10 p-0 border-0 cursor-pointer rounded" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-bold text-gray-700 mb-1">Cỡ chữ Nhãn: <span className="text-blue-600 font-bold">{config.actOpenCountLabelFontSize || 0.65}rem</span></label>
+                                        <input type="range" min="0.4" max="1.5" step="0.05" value={config.actOpenCountLabelFontSize || 0.65} onChange={e => handleChange('actOpenCountLabelFontSize', parseFloat(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-bold text-gray-700 mb-1">Màu chữ Số lần (VD: "0", "1")</label>
+                                        <input type="color" value={config.actOpenCountValueColor || '#fef08a'} onChange={e => handleChange('actOpenCountValueColor', e.target.value)} className="w-full h-10 p-0 border-0 cursor-pointer rounded" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-bold text-gray-700 mb-1">Cỡ chữ Số lần: <span className="text-blue-600 font-bold">{config.actOpenCountValueFontSize || 0.875}rem</span></label>
+                                        <input type="range" min="0.6" max="2" step="0.05" value={config.actOpenCountValueFontSize || 0.875} onChange={e => handleChange('actOpenCountValueFontSize', parseFloat(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* 4. Time Tracking Section */}
+                            <div className="p-5 border rounded-2xl bg-white shadow-sm space-y-4">
+                                <h4 className="font-bold text-gray-800 text-base border-b pb-2 flex items-center gap-2"><span>4️⃣</span> Phần "THỜI GIAN LÀM BÀI" & Lượt học</h4>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                    <div>
+                                        <label className="block text-xs font-bold text-gray-700 mb-1">Màu chữ Tiêu đề ("THỜI GIAN LÀM BÀI:")</label>
+                                        <input type="color" value={config.actTimeHeaderColor || '#ffffff'} onChange={e => handleChange('actTimeHeaderColor', e.target.value)} className="w-full h-10 p-0 border-0 cursor-pointer rounded" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-bold text-gray-700 mb-1">Cỡ chữ Tiêu đề: <span className="text-blue-600 font-bold">{config.actTimeHeaderFontSize || 0.7}rem</span></label>
+                                        <input type="range" min="0.5" max="1.5" step="0.05" value={config.actTimeHeaderFontSize || 0.7} onChange={e => handleChange('actTimeHeaderFontSize', parseFloat(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-xs font-bold text-gray-700 mb-1">Màu nền Ô Lượt học ("Lần 1...")</label>
+                                        <input type="color" value={config.actAttemptBoxBgColor && config.actAttemptBoxBgColor.startsWith('#') ? config.actAttemptBoxBgColor : '#0f172a'} onChange={e => handleChange('actAttemptBoxBgColor', e.target.value)} className="w-full h-10 p-0 border-0 cursor-pointer rounded" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-bold text-gray-700 mb-1">Màu chữ Ô Lượt học</label>
+                                        <input type="color" value={config.actAttemptTextColor || '#ffffff'} onChange={e => handleChange('actAttemptTextColor', e.target.value)} className="w-full h-10 p-0 border-0 cursor-pointer rounded" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-bold text-gray-700 mb-1">Cỡ chữ Ô Lượt học: <span className="text-blue-600 font-bold">{config.actAttemptFontSize || 0.75}rem</span></label>
+                                        <input type="range" min="0.5" max="1.5" step="0.05" value={config.actAttemptFontSize || 0.75} onChange={e => handleChange('actAttemptFontSize', parseFloat(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-xs font-bold text-gray-700 mb-1">Màu nền Khung Tổng thời gian</label>
+                                        <input type="color" value={config.actTotalTimeBoxBgColor && config.actTotalTimeBoxBgColor.startsWith('#') ? config.actTotalTimeBoxBgColor : '#1e293b'} onChange={e => handleChange('actTotalTimeBoxBgColor', e.target.value)} className="w-full h-10 p-0 border-0 cursor-pointer rounded" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-bold text-gray-700 mb-1">Màu chữ Nhãn ("Tổng thời gian đã học:")</label>
+                                        <input type="color" value={config.actTotalTimeLabelColor || '#ffffff'} onChange={e => handleChange('actTotalTimeLabelColor', e.target.value)} className="w-full h-10 p-0 border-0 cursor-pointer rounded" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-bold text-gray-700 mb-1">Cỡ chữ Nhãn: <span className="text-blue-600 font-bold">{config.actTotalTimeLabelFontSize || 0.75}rem</span></label>
+                                        <input type="range" min="0.5" max="1.5" step="0.05" value={config.actTotalTimeLabelFontSize || 0.75} onChange={e => handleChange('actTotalTimeLabelFontSize', parseFloat(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-bold text-gray-700 mb-1">Màu chữ Giá trị (VD: "33 giây")</label>
+                                        <input type="color" value={config.actTotalTimeValueColor || '#fef08a'} onChange={e => handleChange('actTotalTimeValueColor', e.target.value)} className="w-full h-10 p-0 border-0 cursor-pointer rounded" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-bold text-gray-700 mb-1">Cỡ chữ Giá trị: <span className="text-blue-600 font-bold">{config.actTotalTimeValueFontSize || 0.875}rem</span></label>
+                                        <input type="range" min="0.6" max="2" step="0.05" value={config.actTotalTimeValueFontSize || 0.875} onChange={e => handleChange('actTotalTimeValueFontSize', parseFloat(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
                                     </div>
                                 </div>
                             </div>
