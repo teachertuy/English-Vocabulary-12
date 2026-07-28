@@ -1,6 +1,6 @@
 
 import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
-import { GameResult, StudentProgress, QuizQuestion, UnitsState, VocabularyWord, WelcomeScreenConfig, DashboardConfig, ExerciseSelectionConfig } from '../types';
+import { GameResult, StudentProgress, QuizQuestion, UnitsState, VocabularyWord, WelcomeScreenConfig, DashboardConfig, ExerciseSelectionConfig, LoginRosterConfig } from '../types';
 import { 
     listenToResults, clearResults, setGameStatus, getGameStatus, 
     listenToOnlineStudents, listenToCheatCounts, kickPlayer, deleteStudentResult, 
@@ -12,7 +12,7 @@ import {
     listenToTopicsStatus, setTopicStatus, listenToTopicQuizQuestions, listenToTopicResults,
     listenToTopicVocabulary, saveTopicVocabulary, saveTopicQuizQuestions, clearTopicResults,
     deleteTopicStudentAllResults, saveWelcomeConfig, listenToWelcomeConfig, saveDashboardConfig, listenToDashboardConfig,
-    saveExerciseSelectionConfig, listenToExerciseSelectionConfig
+    saveExerciseSelectionConfig, listenToExerciseSelectionConfig, saveLoginRosterConfig, listenToLoginRosterConfig
 } from '../services/firebaseService';
 import { QUIZ_VERSION, generateQuizFromCustomPrompt, generateQuizFromText, generateVocabularyList } from '../services/geminiService';
 import TextToQuizModal from './TextToQuizModal';
@@ -23,6 +23,7 @@ import EditVocabularyModal from './EditVocabularyModal';
 import EditWelcomeScreenModal from './EditWelcomeScreenModal';
 import EditDashboardConfigModal from './EditDashboardConfigModal';
 import EditExerciseSelectionModal from './EditExerciseSelectionModal';
+import EditLoginRosterModal from './EditLoginRosterModal';
 import BackgroundSync from './BackgroundSync';
 
 type Tab = 'dashboard' | 'units_12' | 'topics';
@@ -224,9 +225,11 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
     const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
     const [activeTab, setActiveTab] = useState<Tab>('dashboard');
     const [welcomeConfig, setWelcomeConfig] = useState<WelcomeScreenConfig | null>(null);
+    const [loginRosterConfig, setLoginRosterConfig] = useState<LoginRosterConfig | null>(null);
     const [dashboardConfig, setDashboardConfig] = useState<DashboardConfig>(DEFAULT_DASHBOARD_CONFIG);
     const [exerciseSelectionConfig, setExerciseSelectionConfig] = useState<ExerciseSelectionConfig>(DEFAULT_EXERCISE_CONFIG);
     const [isEditWelcomeModalOpen, setIsEditWelcomeModalOpen] = useState(false);
+    const [isEditLoginRosterModalOpen, setIsEditLoginRosterModalOpen] = useState(false);
     const [isEditDashboardModalOpen, setIsEditDashboardModalOpen] = useState(false);
     const [isEditExerciseModalOpen, setIsEditExerciseModalOpen] = useState(false);
     const [selectedResult, setSelectedResult] = useState<GameResult | null>(null);
@@ -260,7 +263,7 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
     useEffect(() => { if (notification) { const timer = setTimeout(() => setNotification(null), 4000); return () => clearTimeout(timer); } }, [notification]);
 
     useEffect(() => {
-        let unsubscribeResults: () => void, unsubscribeStatus: () => void, unsubscribeOnline: () => void, unsubscribeCheats: () => void, unsubscribeProgress: () => void, unsubscribeUnits12: () => void, unsubscribeTopics: () => void, unsubscribeWelcome: () => void, unsubscribeDashboard: () => void, unsubscribeExercise: () => void;
+        let unsubscribeResults: () => void, unsubscribeStatus: () => void, unsubscribeOnline: () => void, unsubscribeCheats: () => void, unsubscribeProgress: () => void, unsubscribeUnits12: () => void, unsubscribeTopics: () => void, unsubscribeWelcome: () => void, unsubscribeDashboard: () => void, unsubscribeExercise: () => void, unsubscribeRoster: () => void;
         (async () => {
             try { await checkAndSyncQuizVersion(classroomId, QUIZ_VERSION); } catch (e) {}
             unsubscribeResults = listenToResults(classroomId, (data) => setResults(data ? Object.values(data) : []));
@@ -271,10 +274,11 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
             unsubscribeUnits12 = listenToUnitsStatusByGrade(classroomId, 12, (status) => setUnitsStatus12(status || {}));
             unsubscribeTopics = listenToTopicsStatus(classroomId, (status) => setTopicsStatus(status || {}));
             unsubscribeWelcome = listenToWelcomeConfig(classroomId, setWelcomeConfig);
+            unsubscribeRoster = listenToLoginRosterConfig(classroomId, setLoginRosterConfig);
             unsubscribeDashboard = listenToDashboardConfig(classroomId, (config) => config && setDashboardConfig(config));
             unsubscribeExercise = listenToExerciseSelectionConfig(classroomId, (config) => config && setExerciseSelectionConfig(config));
         })();
-        return () => { unsubscribeResults?.(); unsubscribeStatus?.(); unsubscribeOnline?.(); unsubscribeCheats?.(); unsubscribeProgress?.(); unsubscribeUnits12?.(); unsubscribeTopics?.(); unsubscribeWelcome?.(); unsubscribeDashboard?.(); unsubscribeExercise?.(); };
+        return () => { unsubscribeResults?.(); unsubscribeStatus?.(); unsubscribeOnline?.(); unsubscribeCheats?.(); unsubscribeProgress?.(); unsubscribeUnits12?.(); unsubscribeTopics?.(); unsubscribeWelcome?.(); unsubscribeRoster?.(); unsubscribeDashboard?.(); unsubscribeExercise?.(); };
     }, [classroomId, refreshKey]);
 
     useEffect(() => {
@@ -676,10 +680,11 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                     </div>
                 ) : (
                     <div className="bg-white p-6 rounded-xl shadow-lg space-y-8 tab-content-enter">
-                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                             <div className="p-4 bg-teal-50 border rounded-xl text-center shadow-sm"><h4 className="font-bold mb-2 text-teal-800 flex items-center justify-center gap-2"><span>🏷️</span> Đăng nhập</h4><button onClick={() => setIsEditWelcomeModalOpen(true)} className="px-4 py-2 bg-teal-600 text-white font-bold rounded-lg text-sm hover:bg-teal-700 transition shadow-md">⚙️ Thiết kế</button></div>
-                             <div className="p-4 bg-red-50 border rounded-xl text-center shadow-sm"><h4 className="font-bold mb-2 text-red-800 flex items-center justify-center gap-2"><span>🎨</span> Chọn bài tập</h4><button onClick={() => setIsEditExerciseModalOpen(true)} className="px-4 py-2 bg-red-600 text-white font-bold rounded-lg text-sm hover:bg-red-700 transition shadow-md">🎨 Thiết kế HS</button></div>
-                             <div className="p-4 bg-blue-50 border rounded-xl text-center shadow-sm"><h4 className="font-bold mb-2 text-blue-800 flex items-center justify-center gap-2"><span>🛠️</span> Admin</h4><button onClick={() => setIsEditDashboardModalOpen(true)} className="px-4 py-2 bg-blue-600 text-white font-bold rounded-lg text-sm hover:bg-blue-700 transition shadow-md">🛠️ Thiết kế GV</button></div>
+                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                             <div className="p-4 bg-teal-50 border border-teal-100 rounded-xl text-center shadow-sm hover:shadow transition-all"><h4 className="font-bold mb-2 text-teal-800 flex items-center justify-center gap-2"><span>🏷️</span> Đăng nhập</h4><button onClick={() => setIsEditWelcomeModalOpen(true)} className="px-4 py-2 bg-teal-600 text-white font-bold rounded-lg text-sm hover:bg-teal-700 transition shadow-md">⚙️ Thiết kế</button></div>
+                             <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-center shadow-sm hover:shadow transition-all flex items-center justify-center"><button onClick={() => setIsEditLoginRosterModalOpen(true)} className="px-4 py-2 bg-emerald-600 text-white font-bold rounded-lg text-sm hover:bg-emerald-700 transition shadow-md">🔐 Thiết kế đăng nhập</button></div>
+                             <div className="p-4 bg-red-50 border border-red-100 rounded-xl text-center shadow-sm hover:shadow transition-all"><h4 className="font-bold mb-2 text-red-800 flex items-center justify-center gap-2"><span>🎨</span> Chọn bài tập</h4><button onClick={() => setIsEditExerciseModalOpen(true)} className="px-4 py-2 bg-red-600 text-white font-bold rounded-lg text-sm hover:bg-red-700 transition shadow-md">🎨 Thiết kế HS</button></div>
+                             <div className="p-4 bg-blue-50 border border-blue-100 rounded-xl text-center shadow-sm hover:shadow transition-all"><h4 className="font-bold mb-2 text-blue-800 flex items-center justify-center gap-2"><span>🛠️</span> Admin</h4><button onClick={() => setIsEditDashboardModalOpen(true)} className="px-4 py-2 bg-blue-600 text-white font-bold rounded-lg text-sm hover:bg-blue-700 transition shadow-md">🛠️ Thiết kế GV</button></div>
                          </div>
                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                             <div className="bg-white p-5 rounded-lg shadow-md text-center border-l-4 border-blue-500"><p className="text-sm font-bold text-gray-600 mb-1">Đã nộp bài</p><p className="text-4xl font-black text-blue-600">{results.length}</p></div>
@@ -704,6 +709,7 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                 )}
             </div>
             <EditWelcomeScreenModal show={isEditWelcomeModalOpen} onClose={() => setIsEditWelcomeModalOpen(false)} onSave={async (c) => { await saveWelcomeConfig(classroomId, c); setNotification({ message: 'Đã lưu thiết kế!', type: 'success' }); }} currentConfig={welcomeConfig} />
+            <EditLoginRosterModal show={isEditLoginRosterModalOpen} onClose={() => setIsEditLoginRosterModalOpen(false)} onSave={async (c) => { await saveLoginRosterConfig(classroomId, c); setNotification({ message: 'Đã lưu thiết kế đăng nhập!', type: 'success' }); }} currentConfig={loginRosterConfig} />
             <EditDashboardConfigModal show={isEditDashboardModalOpen} onClose={() => setIsEditDashboardModalOpen(false)} onSave={async (c) => { await saveDashboardConfig(classroomId, c); setNotification({ message: 'Đã lưu thiết kế!', type: 'success' }); }} currentConfig={dashboardConfig} />
             <EditExerciseSelectionModal show={isEditExerciseModalOpen} onClose={() => setIsEditExerciseModalOpen(false)} onSave={async (c) => { await saveExerciseSelectionConfig(classroomId, c); setNotification({ message: 'Đã lưu thiết kế!', type: 'success' }); }} currentConfig={exerciseSelectionConfig} />
             <BackgroundSync classroomId={classroomId} isEnabled={true} />

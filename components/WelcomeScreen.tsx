@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { PlayerData, WelcomeScreenConfig } from '../types';
-import { getGameStatus, listenToWelcomeConfig } from '../services/firebaseService';
+import { PlayerData, WelcomeScreenConfig, LoginRosterConfig } from '../types';
+import { getGameStatus, listenToWelcomeConfig, listenToLoginRosterConfig } from '../services/firebaseService';
 
 interface WelcomeScreenProps {
   onLogin: (player: PlayerData) => void;
@@ -44,6 +44,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
   const [shakeClass, setShakeClass] = useState(false);
   const [isGameEnabled, setIsGameEnabled] = useState(true);
   const [config, setConfig] = useState<WelcomeScreenConfig>(DEFAULT_CONFIG);
+  const [rosterConfig, setRosterConfig] = useState<LoginRosterConfig | null>(null);
 
   useEffect(() => {
     setIsCheckingStatus(true);
@@ -63,9 +64,14 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
         }
     });
 
+    const unsubscribeRoster = listenToLoginRosterConfig(classroomId, (newRoster) => {
+        setRosterConfig(newRoster);
+    });
+
     return () => {
         unsubscribeStatus();
         unsubscribeConfig();
+        unsubscribeRoster();
     };
   }, [classroomId]);
 
@@ -89,6 +95,61 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
         setTimeout(() => setShakeClass(false), 500);
       }
       return;
+    }
+
+    // Check if student typed "Lớp" before class code
+    if (/^lớp\b/i.test(trimmedClass) || /^lớp/i.test(trimmedClass)) {
+      setError('Vui lòng chỉ nhập tên lớp (ví dụ: 12A), không thêm chữ "Lớp" phía trước.');
+      setShakeClass(true);
+      setTimeout(() => setShakeClass(false), 500);
+      return;
+    }
+
+    // Check roster configuration if enabled (BẬT chế độ kiểm duyệt)
+    if (rosterConfig && rosterConfig.enabled === true) {
+      const activeCols = (rosterConfig.columns || []).filter(c => c.classId && c.classId.trim() !== '');
+
+      if (activeCols.length === 0) {
+        setError('GV đang BẬT chế độ kiểm duyệt nhưng chưa thiết lập danh sách Lớp & Học sinh.');
+        setShakeClass(true);
+        setTimeout(() => setShakeClass(false), 500);
+        return;
+      }
+
+      const normInputClass = trimmedClass.trim().toUpperCase().replace(/\s+/g, '');
+      const matchedCol = activeCols.find(c => c.classId.trim().toUpperCase().replace(/\s+/g, '') === normInputClass);
+
+      if (!matchedCol) {
+        const availableClasses = activeCols.map(c => c.classId.trim().toUpperCase()).join(', ');
+        setError(`Lớp "${trimmedClass.toUpperCase()}" không có trong danh sách cho phép. Danh sách lớp hiện có: ${availableClasses}`);
+        setShakeClass(true);
+        setTimeout(() => setShakeClass(false), 500);
+        return;
+      }
+
+      const normalizeText = (text: string) => text.normalize('NFC').trim().toLowerCase().replace(/\s+/g, ' ');
+
+      const namesInRoster = matchedCol.studentList
+        .split(/[\n,;]/)
+        .map(n => normalizeText(n))
+        .filter(n => n.length > 0);
+
+      if (namesInRoster.length === 0) {
+        setError(`Lớp ${matchedCol.classId.trim().toUpperCase()} chưa được GV nhập danh sách học sinh.`);
+        setShakeName(true);
+        setTimeout(() => setShakeName(false), 500);
+        return;
+      }
+
+      const normInputName = normalizeText(trimmedName);
+      const isMatched = namesInRoster.some(rn => rn === normInputName);
+
+      if (!isMatched) {
+        setError(`Họ tên "${trimmedName}" không đúng trong danh sách lớp ${matchedCol.classId.trim().toUpperCase()} do GV quy định.`);
+        setShakeName(true);
+        setTimeout(() => setShakeName(false), 500);
+        return;
+      }
     }
     
     setIsSubmitting(true);

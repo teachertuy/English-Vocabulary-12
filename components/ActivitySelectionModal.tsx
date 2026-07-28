@@ -1,8 +1,15 @@
-
 import React, { useState, useEffect } from 'react';
 import { QuizQuestion, VocabularyWord, ExerciseSelectionConfig, PlayerData } from '../types';
-import { getUnitQuizQuestionsByGrade, getUnitVocabularyByGrade, getTopicQuizQuestions, getTopicVocabulary, listenToExerciseSelectionConfig } from '../services/firebaseService';
-import StudentAttemptSummaryBanner from './StudentAttemptSummaryBanner';
+import { 
+    getUnitQuizQuestionsByGrade, 
+    getUnitVocabularyByGrade, 
+    getTopicQuizQuestions, 
+    getTopicVocabulary, 
+    listenToExerciseSelectionConfig,
+    listenToStudentActivityAttempts,
+    ActivityAttemptCounts,
+    ActivityStats
+} from '../services/firebaseService';
 
 interface ActivitySelectionModalProps {
     show: boolean;
@@ -22,7 +29,6 @@ const DEFAULT_UNIT_COLORS = [
     '#D81B60', '#7B1FA2', '#1976D2', '#37474F', '#00897B'
 ];
 
-// Fixed missing properties in DEFAULT_CONFIG: quizTimerEnabled, spellingTimerEnabled, matchingTimerEnabled
 const DEFAULT_CONFIG: ExerciseSelectionConfig = {
     mainTitle: 'TỪ VỰNG TIẾNG ANH 12 & TỪ VỰNG THEO CHỦ ĐỀ',
     mainTitleFontSize: 1.875,
@@ -67,13 +73,12 @@ const DEFAULT_CONFIG: ExerciseSelectionConfig = {
 
     activityLearnLabel: 'Học từ vựng',
     activityLearnDesc: 'Xem lại danh sách từ của bài',
-    activityMatchLabel: 'Trò chơi Ghép cặp',
+    activityMatchLabel: 'Ghép cặp',
     activityMatchDesc: 'Nối từ tiếng Anh với nghĩa Việt',
-    activitySpellLabel: 'Trò chơi Viết Chính tả',
+    activitySpellLabel: 'Viết Chính tả',
     activitySpellDesc: 'Viết từ tiếng Anh tương ứng',
-    activityQuizLabel: 'Làm bài trắc nghiệm',
+    activityQuizLabel: 'Trắc nghiệm',
     activityQuizDesc: 'Kiểm tra kiến thức của bạn',
-    // Added missing properties
     quizDuration: 30,
     quizTimerEnabled: true,
     spellingDuration: 30,
@@ -82,11 +87,137 @@ const DEFAULT_CONFIG: ExerciseSelectionConfig = {
     matchingTimerEnabled: true,
 };
 
+const formatDuration = (totalSecs: number) => {
+    if (!totalSecs || totalSecs <= 0) return '0 giây';
+    const mins = Math.floor(totalSecs / 60);
+    const secs = totalSecs % 60;
+    if (mins === 0) return `${secs} giây`;
+    if (secs === 0) return `${mins} phút`;
+    return `${mins} phút ${secs} giây`;
+};
+
+const formatDateMonth = (timestamp: any) => {
+    if (!timestamp) return '';
+    let d: Date | null = null;
+    if (typeof timestamp === 'number') {
+        d = new Date(timestamp);
+    } else if (typeof timestamp === 'object' && timestamp.seconds) {
+        d = new Date(timestamp.seconds * 1000);
+    }
+    if (d && !isNaN(d.getTime())) {
+        return ` (${d.getDate()}/${d.getMonth() + 1})`;
+    }
+    return '';
+};
+
+const defaultStats = (): ActivityStats => ({ count: 0, totalTimeSeconds: 0, attemptsList: [] });
+
+interface ActivityCardProps {
+    title: string;
+    description: string;
+    icon: React.ReactNode;
+    cardBgClass: string;
+    onClick: () => void;
+    stats?: ActivityStats;
+    playerData?: PlayerData;
+    hideTimeDetails?: boolean;
+}
+
+const ActivityCard: React.FC<ActivityCardProps> = ({
+    title,
+    description,
+    icon,
+    cardBgClass,
+    onClick,
+    stats,
+    playerData,
+    hideTimeDetails = false
+}) => {
+    const count = stats?.count || 0;
+    const totalTime = stats?.totalTimeSeconds || 0;
+    const attemptsList = stats?.attemptsList || [];
+
+    return (
+        <div 
+            onClick={onClick}
+            className={`w-full text-left p-4 sm:p-5 rounded-2xl text-white shadow-md transition-all transform hover:scale-[1.01] hover:shadow-lg cursor-pointer ${cardBgClass}`}
+        >
+            {/* Top row: Icon, Title & Description, and Open count badge */}
+            <div className="flex items-start justify-between gap-3">
+                <div className="flex items-center gap-3.5">
+                    <div className="p-2.5 bg-white/20 backdrop-blur-md rounded-xl shrink-0">
+                        {icon}
+                    </div>
+                    <div>
+                        <span className="text-lg sm:text-xl font-extrabold leading-tight block">{title}</span>
+                        <span className="text-xs sm:text-sm font-normal opacity-90 block mt-0.5">{description}</span>
+                    </div>
+                </div>
+
+                {playerData && (
+                    <div className="flex flex-col items-end shrink-0 bg-black/15 px-3 py-1.5 rounded-xl border border-white/20">
+                        <span className="text-[10px] font-extrabold uppercase tracking-wider text-white/90">
+                            Số lần mở học
+                        </span>
+                        <span className="mt-0.5 text-sm font-black font-mono text-yellow-200">
+                            {count}
+                        </span>
+                    </div>
+                )}
+            </div>
+
+            {/* Embedded tracking stats inside the activity card (hidden if hideTimeDetails is true) */}
+            {playerData && !hideTimeDetails && (
+                <div className="mt-3.5 pt-3 border-t border-white/25">
+                    <div className="flex items-center justify-between mb-1.5">
+                        <span className="text-[11px] font-black uppercase tracking-wider text-white/95 flex items-center gap-1">
+                            ⏱️ THỜI GIAN LÀM BÀI:
+                        </span>
+                    </div>
+
+                    {attemptsList.length === 0 ? (
+                        <div className="text-xs italic opacity-80 px-1 py-1">
+                            Chưa có lượt học
+                        </div>
+                    ) : (
+                        <div className="flex flex-col gap-1 w-full text-xs">
+                            {attemptsList.map((att, idx) => (
+                                <div 
+                                    key={idx} 
+                                    className="flex items-center justify-between px-3 py-1 rounded-lg bg-black/20 border border-white/15 text-white font-medium"
+                                >
+                                    <span className="font-bold opacity-90">Lần {idx + 1}:</span>
+                                    <span className="font-mono font-extrabold">
+                                        {formatDuration(att.timeTakenSeconds)}{formatDateMonth(att.timestamp)}
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
+                    <div className="mt-2.5 pt-2 border-t border-white/20 flex items-center justify-between px-3 py-1.5 rounded-xl bg-black/25 text-xs font-bold">
+                        <span className="opacity-90">Tổng thời gian đã học:</span>
+                        <span className="font-black font-mono text-sm text-yellow-200">
+                            {formatDuration(totalTime)}
+                        </span>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+};
+
 const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, unitNumber, grade, onClose, classroomId, playerData, onStartQuiz, onLearnVocabulary, onStartSpellingGame, onStartMatchingGame }) => {
     const [quiz, setQuiz] = useState<QuizQuestion[] | null>(null);
     const [vocabulary, setVocabulary] = useState<VocabularyWord[] | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [config, setConfig] = useState<ExerciseSelectionConfig>(DEFAULT_CONFIG);
+    const [attempts, setAttempts] = useState<ActivityAttemptCounts>({
+        vocabulary: defaultStats(),
+        matching: defaultStats(),
+        spelling: defaultStats(),
+        quiz: defaultStats()
+    });
 
     useEffect(() => {
         if (show) {
@@ -122,6 +253,22 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
         }
     }, [show, classroomId]);
 
+    useEffect(() => {
+        if (!show || !classroomId || !playerData || !unitNumber) return;
+        const unitId = grade === 'topics' ? `topic_${unitNumber}` : `unit_${unitNumber}`;
+        const unsub = listenToStudentActivityAttempts(
+            classroomId,
+            grade,
+            unitId,
+            playerData.name,
+            playerData.class,
+            (counts) => setAttempts(counts)
+        );
+        return () => {
+            if (unsub) unsub();
+        };
+    }, [show, classroomId, grade, unitNumber, playerData?.name, playerData?.class]);
+
     if (!show) {
         return null;
     }
@@ -145,12 +292,9 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
                 <p className="text-gray-600 mb-4 italic text-sm sm:text-base">{config.subtitle}</p>
                 
                 {playerData && (
-                    <StudentAttemptSummaryBanner
-                        classroomId={classroomId}
-                        grade={grade}
-                        unitNumber={unitNumber}
-                        playerData={playerData}
-                    />
+                    <div className="mb-4 inline-flex items-center gap-1.5 text-xs font-bold text-amber-900 bg-amber-100 px-3.5 py-1 rounded-full border border-amber-300">
+                        👤 {playerData.name} - Lớp {playerData.class}
+                    </div>
                 )}
                 
                 <div className="space-y-4">
@@ -164,61 +308,69 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
                     ) : hasActivities ? (
                         <>
                             {hasVocab && (
-                                <button
+                                <ActivityCard
+                                    title={config.activityLearnLabel}
+                                    description={config.activityLearnDesc}
+                                    icon={
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" viewBox="0 0 20 20" fill="currentColor">
+                                            <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L9 9.61v5.063l-2.31-1.39a1 1 0 00-1.38 1.38l3 2a1 1 0 001.38 0l3-2a1 1 0 00-1.38-1.38L11 14.673V9.61l6.606-2.69a1 1 0 000-1.84l-7-3zM9 4.19l6 2.4-6 2.41L3 6.59l6-2.4z" />
+                                        </svg>
+                                    }
+                                    cardBgClass="bg-gradient-to-r from-blue-500 to-blue-600"
                                     onClick={() => onLearnVocabulary(vocabulary)}
-                                    className="w-full text-left flex items-center gap-4 p-4 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-600 transition-transform transform hover:scale-105 shadow-lg"
-                                >
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 shrink-0" viewBox="0 0 20 20" fill="currentColor">
-                                      <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L9 9.61v5.063l-2.31-1.39a1 1 0 00-1.38 1.38l3 2a1 1 0 001.38 0l3-2a1 1 0 00-1.38-1.38L11 14.673V9.61l6.606-2.69a1 1 0 000-1.84l-7-3zM9 4.19l6 2.4-6 2.41L3 6.59l6-2.4z" />
-                                    </svg>
-                                    <div>
-                                        <span className="text-lg leading-tight block">{config.activityLearnLabel}</span>
-                                        <span className="block text-[11px] font-normal opacity-90">{config.activityLearnDesc}</span>
-                                    </div>
-                                </button>
+                                    stats={attempts.vocabulary}
+                                    playerData={playerData}
+                                    hideTimeDetails={true}
+                                />
                             )}
+
                             {hasVocab && (
-                                <button
+                                <ActivityCard
+                                    title={config.activityMatchLabel}
+                                    description={config.activityMatchDesc}
+                                    icon={
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" viewBox="0 0 20 20" fill="currentColor">
+                                            <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                                        </svg>
+                                    }
+                                    cardBgClass="bg-gradient-to-r from-teal-500 to-teal-600"
                                     onClick={() => onStartMatchingGame(vocabulary)}
-                                    className="w-full text-left flex items-center gap-4 p-4 bg-purple-500 text-white font-bold rounded-lg hover:bg-purple-600 transition-transform transform hover:scale-105 shadow-lg"
-                                >
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 shrink-0" viewBox="0 0 20 20" fill="currentColor">
-                                        <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                                    </svg>
-                                    <div>
-                                        <span className="text-lg leading-tight block">{config.activityMatchLabel}</span>
-                                        <span className="block text-[11px] font-normal opacity-90">{config.activityMatchDesc}</span>
-                                    </div>
-                                </button>
+                                    stats={attempts.matching}
+                                    playerData={playerData}
+                                />
                             )}
+
                             {hasVocab && (
-                                <button
+                                <ActivityCard
+                                    title={config.activitySpellLabel}
+                                    description={config.activitySpellDesc}
+                                    icon={
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" viewBox="0 0 20 20" fill="currentColor">
+                                            <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />
+                                            <path fillRule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clipRule="evenodd" />
+                                        </svg>
+                                    }
+                                    cardBgClass="bg-gradient-to-r from-sky-500 to-sky-600"
                                     onClick={() => onStartSpellingGame(vocabulary)}
-                                    className="w-full text-left flex items-center gap-4 p-4 bg-orange-500 text-white font-bold rounded-lg hover:bg-orange-600 transition-transform transform hover:scale-105 shadow-lg"
-                                >
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 shrink-0" viewBox="0 0 20 20" fill="currentColor">
-                                        <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />
-                                        <path fillRule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clipRule="evenodd" />
-                                    </svg>
-                                    <div>
-                                        <span className="text-lg leading-tight block">{config.activitySpellLabel}</span>
-                                        <span className="block text-[11px] font-normal opacity-90">{config.activitySpellDesc}</span>
-                                    </div>
-                                </button>
+                                    stats={attempts.spelling}
+                                    playerData={playerData}
+                                />
                             )}
-                             {hasQuiz && (
-                                <button
+
+                            {hasQuiz && (
+                                <ActivityCard
+                                    title={config.activityQuizLabel}
+                                    description={config.activityQuizDesc}
+                                    icon={
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+                                        </svg>
+                                    }
+                                    cardBgClass="bg-gradient-to-r from-blue-900 via-indigo-950 to-slate-900"
                                     onClick={() => onStartQuiz(quiz)}
-                                    className="w-full text-left flex items-center gap-4 p-4 bg-green-500 text-white font-bold rounded-lg hover:bg-green-600 transition-transform transform hover:scale-105 shadow-lg"
-                                >
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 shrink-0" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
-                                    </svg>
-                                    <div>
-                                        <span className="text-lg leading-tight block">{config.activityQuizLabel}</span>
-                                        <span className="block text-[11px] font-normal opacity-90">{config.activityQuizDesc}</span>
-                                    </div>
-                                </button>
+                                    stats={attempts.quiz}
+                                    playerData={playerData}
+                                />
                             )}
                         </>
                     ) : (
@@ -232,7 +384,7 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
                     onClick={onClose}
                     className="w-full mt-6 text-center text-sm text-gray-500 hover:text-gray-800 p-2"
                 >
-                    Đóng
+                    Thoát
                 </button>
             </div>
         </div>

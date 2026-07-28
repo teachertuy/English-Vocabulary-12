@@ -3,7 +3,7 @@
 import { initializeApp, FirebaseApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 // @ts-ignore
 import { getDatabase, ref, set, get, onValue, remove, Unsubscribe, Database, onDisconnect, runTransaction, update, push, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-import { GameResult, PlayerData, QuizQuestion, StudentProgress, UnitsState, VocabularyWord, WelcomeScreenConfig, DashboardConfig, ExerciseSelectionConfig } from "../types";
+import { GameResult, PlayerData, QuizQuestion, StudentProgress, UnitsState, VocabularyWord, WelcomeScreenConfig, DashboardConfig, ExerciseSelectionConfig, LoginRosterConfig } from "../types";
 import { resolveVocabImages, setVocabImageToCache } from "./imageCacheService";
 
 const firebaseConfig = {
@@ -519,4 +519,14 @@ export const saveExerciseSelectionConfig = async (classroomId: string, config: E
 export const listenToExerciseSelectionConfig = (classroomId: string, callback: (config: ExerciseSelectionConfig | null) => void): Unsubscribe => {
     const db = checkFirebase();
     return onValue(ref(db, `classrooms/${classroomId}/exerciseSelectionConfig`), (snapshot) => callback(snapshot.val()));
+};
+
+export const saveLoginRosterConfig = async (classroomId: string, config: LoginRosterConfig): Promise<void> => {
+    const db = checkFirebase();
+    await set(ref(db, `classrooms/${classroomId}/loginRosterConfig`), config);
+};
+
+export const listenToLoginRosterConfig = (classroomId: string, callback: (config: LoginRosterConfig | null) => void): Unsubscribe => {
+    const db = checkFirebase();
+    return onValue(ref(db, `classrooms/${classroomId}/loginRosterConfig`), (snapshot) => callback(snapshot.val()));
 };

@@ -96,6 +96,16 @@ export interface WelcomeScreenConfig {
     startButtonRingWidth: number;
 }
 
+export interface ClassRosterColumn {
+    classId: string;
+    studentList: string;
+}
+
+export interface LoginRosterConfig {
+    enabled: boolean;
+    columns: ClassRosterColumn[];
+}
+
 export interface DashboardConfig {
     unitsTabLabel: string;
     topicsTabLabel: string;
