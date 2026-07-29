@@ -226,11 +226,37 @@ export const deleteUnitStudentAllResultsByGrade = async (classroomId: string, gr
 export const setUnitStatusByGrade = async (classroomId: string, grade: number, unitId: string, isEnabled: boolean) => {
     const db = checkFirebase();
     await set(ref(db, `classrooms/${classroomId}/units_${grade}/${unitId}/enabled`), isEnabled);
+    await set(ref(db, `classrooms/${classroomId}/units_status_${grade}/${unitId}/enabled`), isEnabled);
 };
 
 export const listenToUnitsStatusByGrade = (classroomId: string, grade: number, callback: (s: any) => void) => {
     const db = checkFirebase();
-    return onValue(ref(db, `classrooms/${classroomId}/units_${grade}`), (s) => callback(s.val()));
+    const statusRef = ref(db, `classrooms/${classroomId}/units_status_${grade}`);
+    
+    return onValue(statusRef, (s) => {
+        const val = s.val();
+        if (val && Object.keys(val).length > 0) {
+            callback(val);
+        } else {
+            // Fallback for legacy database paths: fetch full units node once to extract status & backfill
+            const fullRef = ref(db, `classrooms/${classroomId}/units_${grade}`);
+            onValue(fullRef, (fullSnapshot) => {
+                const fullVal = fullSnapshot.val();
+                if (fullVal) {
+                    const statusMap: Record<string, { enabled: boolean }> = {};
+                    Object.keys(fullVal).forEach((key) => {
+                        if (fullVal[key] && typeof fullVal[key] === 'object') {
+                            statusMap[key] = { enabled: !!fullVal[key].enabled };
+                        }
+                    });
+                    callback(statusMap);
+                    set(ref(db, `classrooms/${classroomId}/units_status_${grade}`), statusMap).catch(() => {});
+                } else {
+                    callback({});
+                }
+            }, { onlyOnce: true });
+        }
+    });
 };
 
 export const startUnitActivity = (classroomId: string, grade: any, unitId: string, player: PlayerData, gameType: string): string => {
@@ -453,11 +479,37 @@ export const deleteTopicStudentAllResults = async (classroomId: string, topicId:
 export const setTopicStatus = async (classroomId: string, topicId: string, isEnabled: boolean) => {
     const db = checkFirebase();
     await set(ref(db, `classrooms/${classroomId}/topics/${topicId}/enabled`), isEnabled);
+    await set(ref(db, `classrooms/${classroomId}/topics_status/${topicId}/enabled`), isEnabled);
 };
 
 export const listenToTopicsStatus = (classroomId: string, callback: (s: any) => void) => {
     const db = checkFirebase();
-    return onValue(ref(db, `classrooms/${classroomId}/topics`), (s) => callback(s.val()));
+    const statusRef = ref(db, `classrooms/${classroomId}/topics_status`);
+    
+    return onValue(statusRef, (s) => {
+        const val = s.val();
+        if (val && Object.keys(val).length > 0) {
+            callback(val);
+        } else {
+            // Fallback for legacy database paths: fetch full topics node once to extract status & backfill
+            const fullRef = ref(db, `classrooms/${classroomId}/topics`);
+            onValue(fullRef, (fullSnapshot) => {
+                const fullVal = fullSnapshot.val();
+                if (fullVal) {
+                    const statusMap: Record<string, { enabled: boolean }> = {};
+                    Object.keys(fullVal).forEach((key) => {
+                        if (fullVal[key] && typeof fullVal[key] === 'object') {
+                            statusMap[key] = { enabled: !!fullVal[key].enabled };
+                        }
+                    });
+                    callback(statusMap);
+                    set(ref(db, `classrooms/${classroomId}/topics_status`), statusMap).catch(() => {});
+                } else {
+                    callback({});
+                }
+            }, { onlyOnce: true });
+        }
+    });
 };
 
 export const updateVocabularyAudio = async (classroomId: string, grade: any, unitId: string, word: string, base64Audio: string) => {

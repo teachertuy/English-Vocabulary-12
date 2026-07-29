@@ -150,6 +150,48 @@ const formatDateMonth = (timestamp: any) => {
     return '';
 };
 
+const getAttemptRemarkData = (att: AttemptDetail, config?: ExerciseSelectionConfig) => {
+    const correct = att.correct !== undefined ? att.correct : 0;
+    const time = att.timeTakenSeconds || 0;
+    const total = att.totalQuestions || 0;
+
+    let ratio = 0;
+    if (total > 0) {
+        ratio = correct / total;
+    } else if (att.score !== undefined && att.score !== null) {
+        const parsed = parseFloat(String(att.score));
+        if (!isNaN(parsed)) ratio = parsed > 10 ? parsed / 100 : parsed / 10;
+    } else {
+        if (correct >= 15) ratio = 0.9;
+        else if (correct >= 10) ratio = 0.75;
+        else if (correct >= 5) ratio = 0.5;
+        else ratio = 0.2;
+    }
+
+    if (ratio >= 0.85) {
+        return {
+            text: config?.actCommentHighText || 'Xuất sắc! Rất chăm chỉ và làm bài tốt',
+            color: config?.actCommentHighColor || config?.actCommentTextColor || '#fde047'
+        };
+    }
+    if (ratio >= 0.5) {
+        return {
+            text: config?.actCommentGoodText || 'Khá tốt! Luyện tập thêm chút nữa nhé',
+            color: config?.actCommentGoodColor || config?.actCommentTextColor || '#fde047'
+        };
+    }
+    if (time < 30 || (time < 60 && ratio < 0.3)) {
+        return {
+            text: config?.actCommentRushText || config?.actCommentLowText || 'Chưa siêng năng! Cần làm bài kỹ hơn',
+            color: config?.actCommentLowColor || config?.actCommentTextColor || '#fde047'
+        };
+    }
+    return {
+        text: config?.actCommentLowText || 'Chưa siêng năng! Cần làm bài kỹ hơn',
+        color: config?.actCommentLowColor || config?.actCommentTextColor || '#fde047'
+    };
+};
+
 const defaultStats = (): ActivityStats => ({ count: 0, totalTimeSeconds: 0, attemptsList: [] });
 
 interface ActivityCardProps {
@@ -246,6 +288,9 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
     const totalTimeValColor = config?.actTotalTimeValueColor || '#fef08a';
     const totalTimeValSize = config?.actTotalTimeValueFontSize || 0.9;
 
+    const commentTextColor = config?.actCommentTextColor || '#fde047';
+    const commentFontSize = config?.actCommentFontSize || 0.7;
+
     return (
         <div 
             onClick={onClick}
@@ -314,24 +359,39 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
                             Chưa có lượt học
                         </div>
                     ) : (
-                        <div className="flex flex-col gap-1 w-full">
+                        <div className="flex flex-col gap-1.5 w-full">
                             {attemptsList.map((att, idx) => (
                                 <div 
                                     key={idx} 
                                     style={{ backgroundColor: attemptBg, color: attemptTextColor, fontSize: `${attemptTextSize}rem` }}
-                                    className="flex items-center justify-between px-3 py-1 rounded-lg border border-white/15 font-medium gap-2"
+                                    className="flex flex-col px-3 py-1.5 rounded-lg border border-white/15 font-medium gap-1"
                                 >
-                                    <div className="flex items-center gap-2 overflow-hidden">
-                                        <span className="font-bold opacity-90 shrink-0">Lần {idx + 1}:</span>
-                                        {showCorrectCount && (
-                                            <span className="font-extrabold text-emerald-600 bg-emerald-50/90 border border-emerald-200/80 px-2 py-0.5 rounded-md text-[0.85em] leading-none shrink-0 shadow-2xs">
-                                                (Đúng: {att.correct !== undefined ? att.correct : 0})
-                                            </span>
-                                        )}
+                                    <div className="flex items-center justify-between w-full gap-2">
+                                        <div className="flex items-center gap-2 overflow-hidden">
+                                            <span className="font-bold opacity-90 shrink-0">Lần {idx + 1}:</span>
+                                            {showCorrectCount && (
+                                                <span className="font-extrabold text-emerald-600 bg-emerald-50/90 border border-emerald-200/80 px-2 py-0.5 rounded-md text-[0.85em] leading-none shrink-0 shadow-2xs">
+                                                    (Đúng: {att.correct !== undefined ? att.correct : 0})
+                                                </span>
+                                            )}
+                                        </div>
+                                        <span className="font-mono font-extrabold shrink-0">
+                                            {formatDuration(att.timeTakenSeconds)}{formatDateMonth(att.timestamp)}
+                                        </span>
                                     </div>
-                                    <span className="font-mono font-extrabold shrink-0">
-                                        {formatDuration(att.timeTakenSeconds)}{formatDateMonth(att.timestamp)}
-                                    </span>
+
+                                    {showCorrectCount && (config?.actCommentEnabled !== false) && (() => {
+                                        const remark = getAttemptRemarkData(att, config);
+                                        return (
+                                            <div 
+                                                style={{ color: remark.color, fontSize: `${commentFontSize}rem` }}
+                                                className="flex items-start gap-1 font-semibold leading-snug pt-1 border-t border-white/10 text-left"
+                                            >
+                                                <span className="shrink-0 text-[1.05em]">💬</span>
+                                                <span>{remark.text}</span>
+                                            </div>
+                                        );
+                                    })()}
                                 </div>
                             ))}
                         </div>

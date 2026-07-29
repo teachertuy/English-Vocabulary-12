@@ -121,6 +121,17 @@ const DEFAULT_CONFIG: ExerciseSelectionConfig = {
     actTotalTimeLabelFontSize: 0.75,
     actTotalTimeValueColor: '#fef08a',
     actTotalTimeValueFontSize: 0.875,
+
+    actCommentEnabled: true,
+    actCommentTextColor: '#fde047',
+    actCommentFontSize: 0.6,
+    actCommentHighText: 'Xuất sắc! Rất chăm chỉ và làm bài tốt',
+    actCommentHighColor: '#15803d',
+    actCommentGoodText: 'Khá tốt! Luyện tập thêm chút nữa nhé',
+    actCommentGoodColor: '#1d4ed8',
+    actCommentRushText: 'Làm bài quá vội! Cần siêng năng hơn',
+    actCommentLowText: 'Chưa siêng năng! Cần làm bài kỹ hơn',
+    actCommentLowColor: '#dc2626',
 };
 
 const Card: React.FC<{ title: string, icon: string, color: string, fontSize: number, height: number, borderRadius: number, onClick: () => void }> = ({ title, icon, color, fontSize, height, borderRadius, onClick }) => (

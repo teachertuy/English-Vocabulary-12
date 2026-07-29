@@ -131,6 +131,17 @@ const DEFAULT_EXERCISE_CONFIG: ExerciseSelectionConfig = {
     actTotalTimeLabelFontSize: 0.75,
     actTotalTimeValueColor: '#fef08a',
     actTotalTimeValueFontSize: 0.875,
+
+    actCommentEnabled: true,
+    actCommentTextColor: '#fde047',
+    actCommentFontSize: 0.6,
+    actCommentHighText: 'Xuất sắc! Rất chăm chỉ và làm bài tốt',
+    actCommentHighColor: '#15803d',
+    actCommentGoodText: 'Khá tốt! Luyện tập thêm chút nữa nhé',
+    actCommentGoodColor: '#1d4ed8',
+    actCommentRushText: 'Làm bài quá vội! Cần siêng năng hơn',
+    actCommentLowText: 'Chưa siêng năng! Cần làm bài kỹ hơn',
+    actCommentLowColor: '#dc2626',
 };
 
 // Fix: Complete DEFAULT_WELCOME_CONFIG to match WelcomeScreenConfig interface
@@ -159,21 +170,39 @@ const DEFAULT_WELCOME_CONFIG: WelcomeScreenConfig = {
     startButtonRingWidth: 2
 };
 
+const getCachedUnitsStatus = (classroomId: string, grade: number | 'topics'): UnitsState => {
+    try {
+        const cached = localStorage.getItem(`units_status_cache_${classroomId}_${grade}`);
+        if (cached) return JSON.parse(cached);
+    } catch (e) {}
+    return {};
+};
+
 const UnitSelectionScreen: React.FC<UnitSelectionScreenProps> = ({ playerData, classroomId, grade, onStartQuiz, onLearnVocabulary, onStartSpellingGame, onStartMatchingGame, onBack, selectedUnit, onUnitSelect, onCloseActivityModal }) => {
-    const [unitsStatus, setUnitsStatus] = useState<UnitsState>({});
+    const [unitsStatus, setUnitsStatus] = useState<UnitsState>(() => getCachedUnitsStatus(classroomId, grade));
     const [welcomeConfig, setWelcomeConfig] = useState<WelcomeScreenConfig>(DEFAULT_WELCOME_CONFIG);
     const [exerciseConfig, setExerciseConfig] = useState<ExerciseSelectionConfig>(DEFAULT_EXERCISE_CONFIG);
 
     useEffect(() => {
+        // Synchronously load cache when grade changes
+        const cached = getCachedUnitsStatus(classroomId, grade);
+        if (Object.keys(cached).length > 0) {
+            setUnitsStatus(cached);
+        }
+
+        const handleStatusUpdate = (status: UnitsState) => {
+            const newStatus = status || {};
+            setUnitsStatus(newStatus);
+            try {
+                localStorage.setItem(`units_status_cache_${classroomId}_${grade}`, JSON.stringify(newStatus));
+            } catch (e) {}
+        };
+
         let unsubscribe: () => void;
         if (grade === 'topics') {
-            unsubscribe = listenToTopicsStatus(classroomId, (status) => {
-                setUnitsStatus(status || {});
-            });
+            unsubscribe = listenToTopicsStatus(classroomId, handleStatusUpdate);
         } else {
-            unsubscribe = listenToUnitsStatusByGrade(classroomId, grade, (status) => {
-                setUnitsStatus(status || {});
-            });
+            unsubscribe = listenToUnitsStatusByGrade(classroomId, grade, handleStatusUpdate);
         }
         
         const unsubWelcome = listenToWelcomeConfig(classroomId, (newConfig) => {

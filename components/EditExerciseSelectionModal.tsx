@@ -810,6 +810,115 @@ const EditExerciseSelectionModal: React.FC<EditExerciseSelectionModalProps> = ({
                                     </div>
                                 </div>
                             </div>
+
+                            {/* 5. Remarks & Reminders Section */}
+                            <div className="p-5 border rounded-2xl bg-white shadow-sm space-y-4">
+                                <div className="flex items-center justify-between border-b pb-3">
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-xl">💬</span>
+                                        <h4 className="font-bold text-gray-800 text-sm sm:text-base">
+                                            Nhận xét & Nhắc nhở ở Ô Lượt học <span className="text-gray-500 font-normal text-xs sm:text-sm">(Cho 3 thẻ: Ghép cặp, Viết chính tả, Kiểm tra lại)</span>
+                                        </h4>
+                                    </div>
+                                    <button 
+                                        type="button" 
+                                        onClick={() => handleChange('actCommentEnabled', !(config.actCommentEnabled !== false))} 
+                                        className={`w-12 h-6 flex items-center rounded-full p-1 transition-colors duration-200 cursor-pointer ${config.actCommentEnabled !== false ? 'bg-emerald-500 justify-end' : 'bg-gray-300 justify-start'}`}
+                                    >
+                                        <div className="w-4 h-4 rounded-full bg-white shadow-md"></div>
+                                    </button>
+                                </div>
+
+                                {config.actCommentEnabled !== false && (
+                                    <div className="p-4 sm:p-5 border border-amber-200 bg-amber-50/40 rounded-2xl space-y-4">
+                                        <div>
+                                            <label className="block text-xs sm:text-sm font-bold text-gray-800 mb-1.5">
+                                                Cỡ chữ Lời nhận xét: <span className="text-blue-600 font-bold">{config.actCommentFontSize || 0.6}rem</span>
+                                            </label>
+                                            <input 
+                                                type="range" 
+                                                min="0.4" 
+                                                max="1.5" 
+                                                step="0.05" 
+                                                value={config.actCommentFontSize || 0.6} 
+                                                onChange={e => handleChange('actCommentFontSize', parseFloat(e.target.value))} 
+                                                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600" 
+                                            />
+                                        </div>
+
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 sm:gap-4">
+                                            {/* Card 1: Lời khen */}
+                                            <div className="p-3 border border-emerald-300 bg-emerald-50/70 rounded-xl space-y-2 shadow-2xs">
+                                                <div className="flex items-center justify-between">
+                                                    <span className="font-bold text-emerald-800 text-xs sm:text-sm flex items-center gap-1">
+                                                        <span>🌟</span> Lời Khen (Đúng ≥ 85%)
+                                                    </span>
+                                                    <input 
+                                                        type="color" 
+                                                        value={config.actCommentHighColor || '#15803d'} 
+                                                        onChange={e => handleChange('actCommentHighColor', e.target.value)} 
+                                                        className="w-6 h-6 p-0 border border-emerald-400 cursor-pointer rounded overflow-hidden shadow-2xs" 
+                                                        title="Chọn màu chữ lời khen"
+                                                    />
+                                                </div>
+                                                <input 
+                                                    type="text" 
+                                                    value={config.actCommentHighText !== undefined ? config.actCommentHighText : 'Xuất sắc! Rất chăm chỉ và làm bài tốt'} 
+                                                    onChange={e => handleChange('actCommentHighText', e.target.value)} 
+                                                    placeholder="Lời khen..." 
+                                                    className="w-full px-2.5 py-1.5 text-xs sm:text-sm border border-emerald-200 rounded-lg bg-white focus:ring-2 focus:ring-emerald-500 font-medium text-gray-800 shadow-2xs" 
+                                                />
+                                            </div>
+
+                                            {/* Card 2: Khuyến khích */}
+                                            <div className="p-3 border border-blue-300 bg-blue-50/70 rounded-xl space-y-2 shadow-2xs">
+                                                <div className="flex items-center justify-between">
+                                                    <span className="font-bold text-blue-800 text-xs sm:text-sm flex items-center gap-1">
+                                                        <span>👍</span> Khuyến khích (Đúng 50% - 84%)
+                                                    </span>
+                                                    <input 
+                                                        type="color" 
+                                                        value={config.actCommentGoodColor || '#1d4ed8'} 
+                                                        onChange={e => handleChange('actCommentGoodColor', e.target.value)} 
+                                                        className="w-6 h-6 p-0 border border-blue-400 cursor-pointer rounded overflow-hidden shadow-2xs" 
+                                                        title="Chọn màu chữ lời khuyến khích"
+                                                    />
+                                                </div>
+                                                <input 
+                                                    type="text" 
+                                                    value={config.actCommentGoodText !== undefined ? config.actCommentGoodText : 'Khá tốt! Luyện tập thêm chút nữa nhé'} 
+                                                    onChange={e => handleChange('actCommentGoodText', e.target.value)} 
+                                                    placeholder="Lời khuyến khích..." 
+                                                    className="w-full px-2.5 py-1.5 text-xs sm:text-sm border border-blue-200 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 font-medium text-gray-800 shadow-2xs" 
+                                                />
+                                            </div>
+
+                                            {/* Card 3: Nhắc nhở */}
+                                            <div className="p-3 border border-red-300 bg-red-50/70 rounded-xl space-y-2 shadow-2xs">
+                                                <div className="flex items-center justify-between">
+                                                    <span className="font-bold text-red-800 text-xs sm:text-sm flex items-center gap-1">
+                                                        <span>⚠️</span> Nhắc nhở (Đúng &lt; 50% hoặc quá nhanh)
+                                                    </span>
+                                                    <input 
+                                                        type="color" 
+                                                        value={config.actCommentLowColor || '#dc2626'} 
+                                                        onChange={e => handleChange('actCommentLowColor', e.target.value)} 
+                                                        className="w-6 h-6 p-0 border border-red-400 cursor-pointer rounded overflow-hidden shadow-2xs" 
+                                                        title="Chọn màu chữ lời nhắc nhở"
+                                                    />
+                                                </div>
+                                                <input 
+                                                    type="text" 
+                                                    value={config.actCommentLowText !== undefined ? config.actCommentLowText : 'Chưa siêng năng! Cần làm bài kỹ hơn'} 
+                                                    onChange={e => handleChange('actCommentLowText', e.target.value)} 
+                                                    placeholder="Lời nhắc nhở..." 
+                                                    className="w-full px-2.5 py-1.5 text-xs sm:text-sm border border-red-200 rounded-lg bg-white focus:ring-2 focus:ring-red-500 font-medium text-gray-800 shadow-2xs" 
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     )}
                 </div>

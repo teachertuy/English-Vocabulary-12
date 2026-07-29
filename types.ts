@@ -241,4 +241,16 @@ export interface ExerciseSelectionConfig {
     actTotalTimeLabelFontSize?: number;
     actTotalTimeValueColor?: string;
     actTotalTimeValueFontSize?: number;
+
+    // Student Attempt Remarks & Reminders Styling & Templates
+    actCommentEnabled?: boolean;
+    actCommentTextColor?: string;
+    actCommentFontSize?: number;
+    actCommentHighText?: string;
+    actCommentHighColor?: string;
+    actCommentGoodText?: string;
+    actCommentGoodColor?: string;
+    actCommentRushText?: string;
+    actCommentLowText?: string;
+    actCommentLowColor?: string;
 }
