@@ -125,6 +125,20 @@ const DEFAULT_CONFIG: ExerciseSelectionConfig = {
     actTotalTimeLabelFontSize: 0.75,
     actTotalTimeValueColor: '#fef08a',
     actTotalTimeValueFontSize: 0.875,
+
+    actSummaryEnabled: true,
+    actSummaryBgColor: '#0f172a',
+    actSummaryBorderColor: '#3b82f6',
+    actSummaryBorderWidth: 2,
+    actSummaryWidth: 100,
+    actSummaryBorderRadius: 16,
+    actSummaryTitleText: 'Tổng thời gian học & làm bài cả 4 phần',
+    actSummaryTitleColor: '#f59e0b',
+    actSummaryTitleFontSize: 0.9,
+    actSummaryItemTextColor: '#ffffff',
+    actSummaryItemFontSize: 0.8,
+    actSummaryCommentTextColor: '#4ade80',
+    actSummaryCommentFontSize: 0.8,
 };
 
 const formatDuration = (totalSecs: number) => {
@@ -491,6 +505,60 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
     const itemPrefix = grade === 'topics' ? config.topicLabelText : config.unitLabelText;
     const titleLabel = `${itemPrefix} ${unitNumber}`;
 
+    const calcSummaryStats = () => {
+        const vTime = attempts.vocabulary.totalTimeSeconds || 0;
+        
+        const mTime = attempts.matching.totalTimeSeconds || 0;
+        let mCorrect = 0, mIncorrect = 0;
+        (attempts.matching.attemptsList || []).forEach(a => {
+            mCorrect += a.correct || 0;
+            mIncorrect += a.incorrect || 0;
+        });
+
+        const sTime = attempts.spelling.totalTimeSeconds || 0;
+        let sCorrect = 0, sIncorrect = 0;
+        (attempts.spelling.attemptsList || []).forEach(a => {
+            sCorrect += a.correct || 0;
+            sIncorrect += a.incorrect || 0;
+        });
+
+        const qTime = attempts.quiz.totalTimeSeconds || 0;
+        let qCorrect = 0, qIncorrect = 0;
+        (attempts.quiz.attemptsList || []).forEach(a => {
+            qCorrect += a.correct || 0;
+            qIncorrect += a.incorrect || 0;
+        });
+
+        const totalTime = vTime + mTime + sTime + qTime;
+        const totalCorrect = mCorrect + sCorrect + qCorrect;
+        const totalIncorrect = mIncorrect + sIncorrect + qIncorrect;
+        const totalAnswered = totalCorrect + totalIncorrect;
+
+        let comment = '';
+        const totalAttemptsCount = (attempts.vocabulary.count || 0) + (attempts.matching.count || 0) + (attempts.spelling.count || 0) + (attempts.quiz.count || 0);
+        if (totalAttemptsCount === 0) {
+            comment = 'Chưa có lượt học nào. Em hãy bắt đầu học và luyện tập nhé!';
+        } else {
+            const ratio = totalAnswered > 0 ? totalCorrect / totalAnswered : 0;
+            if (ratio >= 0.85) {
+                comment = config.actCommentHighText || 'Xuất sắc! Rất chăm chỉ và làm bài tốt';
+            } else if (ratio >= 0.5) {
+                comment = config.actCommentGoodText || 'Khá tốt! Luyện tập thêm chút nữa nhé';
+            } else {
+                comment = config.actCommentLowText || 'Chưa siêng năng! Cần làm bài kỹ hơn';
+            }
+        }
+
+        return {
+            vTime,
+            mTime, mCorrect, mIncorrect,
+            sTime, sCorrect, sIncorrect,
+            qTime, qCorrect, qIncorrect,
+            totalTime,
+            comment
+        };
+    };
+
     return (
         <div 
             className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-[150] p-1.5 sm:p-3 transition-opacity duration-300"
@@ -498,31 +566,78 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
         >
             <div 
                 style={{ backgroundColor: config.actModalBgColor || '#ffffff' }}
-                className="rounded-2xl shadow-xl pt-5 sm:pt-6 pb-4 px-2 sm:px-3.5 w-full max-w-2xl transform transition-all text-center max-h-[96vh] overflow-y-auto"
+                className="rounded-2xl shadow-xl pt-4 sm:pt-5 pb-4 px-2 sm:px-3.5 w-full max-w-2xl transform transition-all text-center max-h-[96vh] overflow-y-auto"
                 onClick={e => e.stopPropagation()}
             >
-                <div 
-                    style={{ 
-                        color: config.actHeaderColor || config.actModalTitleColor || '#ffffff', 
-                        fontFamily: config.actHeaderFontFamily || 'sans-serif' 
-                    }}
-                    className="mt-1 mb-3.5 text-center"
-                >
-                    <div 
-                        style={{ fontSize: `${config.actHeaderFontSize || config.actModalTitleFontSize || 1.5}rem` }}
-                        className="font-extrabold leading-tight tracking-wide"
-                    >
-                        {config.actHeaderLine1 !== undefined ? config.actHeaderLine1 : 'GV: Trương Thanh Tùy'}
-                    </div>
-                    {(config.actHeaderLine2 !== undefined ? config.actHeaderLine2 : 'Tổ trưởng tổ Tiếng Anh_ Trường THPT Nguyễn Trường Tộ') && (
-                        <div 
-                            style={{ fontSize: `${(config.actHeaderFontSize || config.actModalTitleFontSize || 1.5) * 0.65}rem` }}
-                            className="font-medium opacity-90 leading-tight mt-1"
-                        >
-                            {config.actHeaderLine2 !== undefined ? config.actHeaderLine2 : 'Tổ trưởng tổ Tiếng Anh_ Trường THPT Nguyễn Trường Tộ'}
+                {/* 4-Part Summary Notice Box (Replaces Teacher Header) */}
+                {config.actSummaryEnabled !== false && (() => {
+                    const stats = calcSummaryStats();
+                    const bg = config.actSummaryBgColor || '#0f172a';
+                    const borderCol = config.actSummaryBorderColor || '#3b82f6';
+                    const borderWidth = config.actSummaryBorderWidth !== undefined ? config.actSummaryBorderWidth : 2;
+                    const widthPct = config.actSummaryWidth || 100;
+                    const borderRadius = config.actSummaryBorderRadius !== undefined ? config.actSummaryBorderRadius : 16;
+                    
+                    const titleText = config.actSummaryTitleText || 'Tổng thời gian học & làm bài cả 4 phần';
+                    const titleColor = config.actSummaryTitleColor || '#f59e0b';
+                    const titleFontSize = config.actSummaryTitleFontSize || 0.9;
+
+                    const itemColor = config.actSummaryItemTextColor || '#ffffff';
+                    const itemFontSize = config.actSummaryItemFontSize || 0.8;
+
+                    const commentColor = config.actSummaryCommentTextColor || '#4ade80';
+                    const commentFontSize = config.actSummaryCommentFontSize || 0.8;
+
+                    return (
+                        <div className="mx-auto mb-3.5 flex justify-center w-full">
+                            <div 
+                                style={{ 
+                                    backgroundColor: bg,
+                                    borderColor: borderCol,
+                                    borderWidth: `${borderWidth}px`,
+                                    borderRadius: `${borderRadius}px`,
+                                    width: `${widthPct}%`
+                                }}
+                                className="p-3 sm:p-4 text-left shadow-lg space-y-1.5 border"
+                            >
+                                <div 
+                                    style={{ color: titleColor, fontSize: `${titleFontSize}rem` }}
+                                    className="font-extrabold flex items-center gap-1.5 border-b pb-1.5 border-white/10"
+                                >
+                                    <span>⏱️</span>
+                                    <span>{titleText}: {formatDuration(stats.totalTime)}</span>
+                                </div>
+
+                                <div className="space-y-1 font-medium pt-1" style={{ color: itemColor, fontSize: `${itemFontSize}rem` }}>
+                                    <div className="flex items-start gap-1">
+                                        <span className="font-bold shrink-0">1.</span>
+                                        <span>Học từ mới: <strong style={{ color: titleColor }}>{formatDuration(stats.vTime)}</strong></span>
+                                    </div>
+                                    <div className="flex items-start gap-1">
+                                        <span className="font-bold shrink-0">2.</span>
+                                        <span>Ghép cặp: đúng: <strong className="text-emerald-400">{stats.mCorrect}</strong> / sai: <strong className="text-red-400">{stats.mIncorrect}</strong> (<span className="opacity-90">{formatDuration(stats.mTime)}</span>)</span>
+                                    </div>
+                                    <div className="flex items-start gap-1">
+                                        <span className="font-bold shrink-0">3.</span>
+                                        <span>Viết chính tả: đúng: <strong className="text-emerald-400">{stats.sCorrect}</strong> / sai: <strong className="text-red-400">{stats.sIncorrect}</strong> (<span className="opacity-90">{formatDuration(stats.sTime)}</span>)</span>
+                                    </div>
+                                    <div className="flex items-start gap-1">
+                                        <span className="font-bold shrink-0">4.</span>
+                                        <span>Kiểm tra lại: đúng: <strong className="text-emerald-400">{stats.qCorrect}</strong> / sai: <strong className="text-red-400">{stats.qIncorrect}</strong> (<span className="opacity-90">{formatDuration(stats.qTime)}</span>)</span>
+                                    </div>
+                                </div>
+
+                                <div 
+                                    style={{ color: commentColor, fontSize: `${commentFontSize}rem` }}
+                                    className="font-semibold pt-1.5 border-t border-white/10 flex items-start gap-1.5"
+                                >
+                                    <span className="shrink-0 text-base">💬</span>
+                                    <span><strong>Nhận xét chung:</strong> {stats.comment}</span>
+                                </div>
+                            </div>
                         </div>
-                    )}
-                </div>
+                    );
+                })()}
                 
                 {playerData && (
                     <div 

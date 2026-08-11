@@ -112,6 +112,20 @@ const DEFAULT_CONFIG: ExerciseSelectionConfig = {
     actTotalTimeLabelFontSize: 0.75,
     actTotalTimeValueColor: '#fef08a',
     actTotalTimeValueFontSize: 0.875,
+
+    actSummaryEnabled: true,
+    actSummaryBgColor: '#0f172a',
+    actSummaryBorderColor: '#3b82f6',
+    actSummaryBorderWidth: 2,
+    actSummaryWidth: 100,
+    actSummaryBorderRadius: 16,
+    actSummaryTitleText: 'Tổng thời gian học & làm bài cả 4 phần',
+    actSummaryTitleColor: '#f59e0b',
+    actSummaryTitleFontSize: 0.9,
+    actSummaryItemTextColor: '#ffffff',
+    actSummaryItemFontSize: 0.8,
+    actSummaryCommentTextColor: '#4ade80',
+    actSummaryCommentFontSize: 0.8,
 };
 
 const EditExerciseSelectionModal: React.FC<EditExerciseSelectionModalProps> = ({ show, onClose, onSave, currentConfig }) => {
@@ -511,83 +525,99 @@ const EditExerciseSelectionModal: React.FC<EditExerciseSelectionModalProps> = ({
                                 <p className="text-sm text-indigo-700 italic">Tùy chỉnh chi tiết màu nền, màu chữ và kích thước chữ cho tất cả các thành phần trong màn hình học sinh.</p>
                             </div>
 
-                            {/* 1. Modal Container & Header */}
+                            {/* 1. Summary Box & Modal Container */}
                             <div className="p-5 border rounded-2xl bg-white shadow-sm space-y-4">
-                                <h4 className="font-bold text-gray-800 text-base border-b pb-2 flex items-center gap-2"><span>1️⃣</span> Thông tin Giáo viên / Tiêu đề Màn hình Học sinh</h4>
-                                
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-indigo-50/50 p-4 rounded-xl border border-indigo-100">
-                                    <div>
-                                        <label className="block text-xs font-bold text-gray-800 mb-1">Dòng 1 (VD: "GV: Trương Thanh Tùy")</label>
-                                        <input 
-                                            type="text" 
-                                            value={config.actHeaderLine1 !== undefined ? config.actHeaderLine1 : 'GV: Trương Thanh Tùy'} 
-                                            onChange={e => handleChange('actHeaderLine1', e.target.value)} 
-                                            className="w-full p-2 border rounded-lg text-xs font-medium bg-white focus:ring-2 focus:ring-indigo-500" 
-                                            placeholder="GV: Trương Thanh Tùy"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-xs font-bold text-gray-800 mb-1">Dòng 2 (VD: "Tổ trưởng tổ Tiếng Anh_ Trường THPT Nguyễn Trường Tộ")</label>
-                                        <input 
-                                            type="text" 
-                                            value={config.actHeaderLine2 !== undefined ? config.actHeaderLine2 : 'Tổ trưởng tổ Tiếng Anh_ Trường THPT Nguyễn Trường Tộ'} 
-                                            onChange={e => handleChange('actHeaderLine2', e.target.value)} 
-                                            className="w-full p-2 border rounded-lg text-xs font-medium bg-white focus:ring-2 focus:ring-indigo-500" 
-                                            placeholder="Tổ trưởng tổ Tiếng Anh_..."
-                                        />
-                                    </div>
+                                <div className="flex items-center justify-between border-b pb-2">
+                                    <h4 className="font-bold text-gray-800 text-base flex items-center gap-2">
+                                        <span>1️⃣</span> Bảng Thông Báo Kết Quả Học Tập (4 Phần) & Khung Modal
+                                    </h4>
+                                    <button 
+                                        type="button" 
+                                        onClick={() => handleChange('actSummaryEnabled', !(config.actSummaryEnabled !== false))} 
+                                        className={`w-12 h-6 flex items-center rounded-full p-1 transition-colors duration-200 cursor-pointer ${config.actSummaryEnabled !== false ? 'bg-indigo-600 justify-end' : 'bg-gray-300 justify-start'}`}
+                                        title="Bật/Tắt Khung Thông Báo Kết Quả Học Tập"
+                                    >
+                                        <div className="w-4 h-4 rounded-full bg-white shadow-md"></div>
+                                    </button>
                                 </div>
+
+                                {config.actSummaryEnabled !== false && (
+                                    <div className="bg-indigo-50/50 p-4 rounded-xl border border-indigo-200 space-y-4">
+                                        <div className="font-bold text-indigo-900 text-sm border-b border-indigo-200 pb-2 flex items-center gap-2">
+                                            <span>📋</span> Cấu hình Khung Bảng Thông Báo
+                                        </div>
+
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                            <div>
+                                                <label className="block text-xs font-bold text-gray-800 mb-1">Màu nền khung</label>
+                                                <input type="color" value={config.actSummaryBgColor && config.actSummaryBgColor.startsWith('#') ? config.actSummaryBgColor : '#0f172a'} onChange={e => handleChange('actSummaryBgColor', e.target.value)} className="w-full h-10 p-0 border-0 cursor-pointer rounded" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs font-bold text-gray-800 mb-1">Màu viền khung</label>
+                                                <input type="color" value={config.actSummaryBorderColor && config.actSummaryBorderColor.startsWith('#') ? config.actSummaryBorderColor : '#3b82f6'} onChange={e => handleChange('actSummaryBorderColor', e.target.value)} className="w-full h-10 p-0 border-0 cursor-pointer rounded" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs font-bold text-gray-800 mb-1">Độ dày viền khung: <span className="text-blue-600 font-bold">{config.actSummaryBorderWidth !== undefined ? config.actSummaryBorderWidth : 2}px</span></label>
+                                                <input type="range" min="0" max="10" step="1" value={config.actSummaryBorderWidth !== undefined ? config.actSummaryBorderWidth : 2} onChange={e => handleChange('actSummaryBorderWidth', parseInt(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs font-bold text-gray-800 mb-1">Độ rộng khung: <span className="text-blue-600 font-bold">{config.actSummaryWidth || 100}%</span></label>
+                                                <input type="range" min="50" max="100" step="5" value={config.actSummaryWidth || 100} onChange={e => handleChange('actSummaryWidth', parseInt(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs font-bold text-gray-800 mb-1">Độ bo tròn khung: <span className="text-blue-600 font-bold">{config.actSummaryBorderRadius !== undefined ? config.actSummaryBorderRadius : 16}px</span></label>
+                                                <input type="range" min="0" max="30" step="2" value={config.actSummaryBorderRadius !== undefined ? config.actSummaryBorderRadius : 16} onChange={e => handleChange('actSummaryBorderRadius', parseInt(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
+                                            </div>
+                                        </div>
+
+                                        <div className="font-bold text-indigo-900 text-sm border-b border-indigo-200 pb-2 pt-2 flex items-center gap-2">
+                                            <span>✏️</span> Tùy chỉnh Cụm "Tổng thời gian học 4 phần" & Các Ý Nhỏ (1,2,3,4)
+                                        </div>
+
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div className="col-span-1 md:col-span-2">
+                                                <label className="block text-xs font-bold text-gray-800 mb-1">Tiêu đề cụm Tổng thời gian</label>
+                                                <input 
+                                                    type="text" 
+                                                    value={config.actSummaryTitleText !== undefined ? config.actSummaryTitleText : 'Tổng thời gian học & làm bài cả 4 phần'} 
+                                                    onChange={e => handleChange('actSummaryTitleText', e.target.value)} 
+                                                    className="w-full p-2 border rounded-lg text-xs font-semibold bg-white focus:ring-2 focus:ring-indigo-500" 
+                                                    placeholder="Tổng thời gian học & làm bài cả 4 phần"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs font-bold text-gray-800 mb-1">Màu chữ Tiêu đề Tổng thời gian</label>
+                                                <input type="color" value={config.actSummaryTitleColor || '#f59e0b'} onChange={e => handleChange('actSummaryTitleColor', e.target.value)} className="w-full h-10 p-0 border-0 cursor-pointer rounded" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs font-bold text-gray-800 mb-1">Cỡ chữ Tiêu đề: <span className="text-blue-600 font-bold">{config.actSummaryTitleFontSize || 0.9}rem</span></label>
+                                                <input type="range" min="0.6" max="1.8" step="0.05" value={config.actSummaryTitleFontSize || 0.9} onChange={e => handleChange('actSummaryTitleFontSize', parseFloat(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
+                                            </div>
+
+                                            <div>
+                                                <label className="block text-xs font-bold text-gray-800 mb-1">Màu chữ Các ý nhỏ 1, 2, 3, 4</label>
+                                                <input type="color" value={config.actSummaryItemTextColor || '#ffffff'} onChange={e => handleChange('actSummaryItemTextColor', e.target.value)} className="w-full h-10 p-0 border-0 cursor-pointer rounded" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs font-bold text-gray-800 mb-1">Cỡ chữ Các ý nhỏ 1, 2, 3, 4: <span className="text-blue-600 font-bold">{config.actSummaryItemFontSize || 0.8}rem</span></label>
+                                                <input type="range" min="0.5" max="1.5" step="0.05" value={config.actSummaryItemFontSize || 0.8} onChange={e => handleChange('actSummaryItemFontSize', parseFloat(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
+                                            </div>
+
+                                            <div>
+                                                <label className="block text-xs font-bold text-gray-800 mb-1">Màu chữ Nhận xét chung</label>
+                                                <input type="color" value={config.actSummaryCommentTextColor || '#4ade80'} onChange={e => handleChange('actSummaryCommentTextColor', e.target.value)} className="w-full h-10 p-0 border-0 cursor-pointer rounded" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs font-bold text-gray-800 mb-1">Cỡ chữ Nhận xét chung: <span className="text-blue-600 font-bold">{config.actSummaryCommentFontSize || 0.8}rem</span></label>
+                                                <input type="range" min="0.5" max="1.5" step="0.05" value={config.actSummaryCommentFontSize || 0.8} onChange={e => handleChange('actSummaryCommentFontSize', parseFloat(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
 
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
                                     <div>
-                                        <label className="block text-xs font-bold text-gray-700 mb-1">Màu sắc chữ Tiêu đề / GV</label>
-                                        <input 
-                                            type="color" 
-                                            value={config.actHeaderColor || config.actModalTitleColor || '#ffffff'} 
-                                            onChange={e => {
-                                                handleChange('actHeaderColor', e.target.value);
-                                                handleChange('actModalTitleColor', e.target.value);
-                                            }} 
-                                            className="w-full h-10 p-0 border-0 cursor-pointer rounded" 
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-xs font-bold text-gray-700 mb-1">Cỡ chữ Tiêu đề / GV: <span className="text-blue-600 font-bold">{config.actHeaderFontSize || config.actModalTitleFontSize || 1.5}rem</span></label>
-                                        <input 
-                                            type="range" 
-                                            min="0.8" 
-                                            max="3" 
-                                            step="0.05" 
-                                            value={config.actHeaderFontSize || config.actModalTitleFontSize || 1.5} 
-                                            onChange={e => {
-                                                const val = parseFloat(e.target.value);
-                                                handleChange('actHeaderFontSize', val);
-                                                handleChange('actModalTitleFontSize', val);
-                                            }} 
-                                            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600" 
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-xs font-bold text-gray-700 mb-1">Font chữ (Phông chữ)</label>
-                                        <select 
-                                            value={config.actHeaderFontFamily || 'sans-serif'} 
-                                            onChange={e => handleChange('actHeaderFontFamily', e.target.value)} 
-                                            className="w-full p-2 border rounded-lg text-xs font-semibold bg-white cursor-pointer"
-                                        >
-                                            <option value="sans-serif">Mặc định (Sans-Serif / Phổ thông)</option>
-                                            <option value="'Nunito', sans-serif">Nunito (Bo tròn / Thân thiện)</option>
-                                            <option value="'Montserrat', sans-serif">Montserrat (Hiện đại / Đậm)</option>
-                                            <option value="'Playfair Display', serif">Playfair Display (Nghệ thuật / Chân cổ điển)</option>
-                                            <option value="serif">Serif (Có chân tiêu chuẩn)</option>
-                                            <option value="'Courier New', monospace">Courier New (Đơn khoảng)</option>
-                                            <option value="'Dancing Script', cursive">Dancing Script (Chữ viết tay)</option>
-                                            <option value="'Arial', sans-serif">Arial</option>
-                                            <option value="'Times New Roman', serif">Times New Roman</option>
-                                        </select>
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-xs font-bold text-gray-700 mb-1">Màu nền Khung Bài tập Modal</label>
+                                        <label className="block text-xs font-bold text-gray-700 mb-1">Màu nền Cửa sổ Modal học sinh</label>
                                         <input type="color" value={config.actModalBgColor || '#ffffff'} onChange={e => handleChange('actModalBgColor', e.target.value)} className="w-full h-10 p-0 border-0 cursor-pointer rounded" />
                                     </div>
                                     <div>
@@ -597,10 +627,6 @@ const EditExerciseSelectionModal: React.FC<EditExerciseSelectionModalProps> = ({
                                     <div>
                                         <label className="block text-xs font-bold text-gray-700 mb-1">Màu chữ Huy hiệu HS</label>
                                         <input type="color" value={config.actStudentBadgeTextColor || '#78350f'} onChange={e => handleChange('actStudentBadgeTextColor', e.target.value)} className="w-full h-10 p-0 border-0 cursor-pointer rounded" />
-                                    </div>
-                                    <div>
-                                        <label className="block text-xs font-bold text-gray-700 mb-1">Cỡ chữ Huy hiệu HS: <span className="text-blue-600 font-bold">{config.actStudentBadgeFontSize || 0.75}rem</span></label>
-                                        <input type="range" min="0.5" max="2" step="0.05" value={config.actStudentBadgeFontSize || 0.75} onChange={e => handleChange('actStudentBadgeFontSize', parseFloat(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
                                     </div>
                                 </div>
                             </div>

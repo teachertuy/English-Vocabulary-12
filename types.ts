@@ -242,6 +242,24 @@ export interface ExerciseSelectionConfig {
     actTotalTimeValueColor?: string;
     actTotalTimeValueFontSize?: number;
 
+    // Student Summary Notice Box Settings (replaces old teacher header)
+    actSummaryEnabled?: boolean;
+    actSummaryBgColor?: string;
+    actSummaryBorderColor?: string;
+    actSummaryBorderWidth?: number;
+    actSummaryWidth?: number;
+    actSummaryBorderRadius?: number;
+
+    actSummaryTitleText?: string;
+    actSummaryTitleColor?: string;
+    actSummaryTitleFontSize?: number;
+
+    actSummaryItemTextColor?: string;
+    actSummaryItemFontSize?: number;
+
+    actSummaryCommentTextColor?: string;
+    actSummaryCommentFontSize?: number;
+
     // Student Attempt Remarks & Reminders Styling & Templates
     actCommentEnabled?: boolean;
     actCommentTextColor?: string;
