@@ -564,38 +564,38 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
         let comment = '';
 
         if (totalAttemptsCount === 0 || (totalTime === 0 && totalAnswered === 0)) {
-            comment = 'Chưa có lượt học nào. Em hãy bắt đầu học và luyện tập nhé!';
+            comment = 'Chưa có lượt học nào. Em hãy bắt đầu luyện tập nhé!';
         } else if (totalTime < 90 && totalAnswered <= 5) {
             if (partsDone <= 2) {
-                comment = `Mới khởi động! Em mới học ${partsDone}/4 phần trong thời gian ngắn (${formatDuration(totalTime)}, ${totalCorrect}/${totalAnswered} câu đúng). Hãy dành thêm thời gian hoàn thành cả 4 phần nhé!`;
+                comment = `Mới học ${partsDone}/4 phần (${formatDuration(totalTime)}, đúng ${totalCorrect}/${totalAnswered}). Em hãy học thêm các phần còn lại nhé!`;
             } else {
-                comment = `Em tham gia bài học rất nhanh (${formatDuration(totalTime)}, ${totalCorrect}/${totalAnswered} câu đúng). Hãy học kĩ và làm bài đều đặn hơn nhé!`;
+                comment = `Thời gian học còn ít (${formatDuration(totalTime)}, đúng ${totalCorrect}/${totalAnswered}). Em hãy dành thêm thời gian học kĩ hơn!`;
             }
         } else if (partsDone <= 2) {
             if (ratio >= 0.8) {
-                comment = `Khởi đầu tốt ở ${partsDone}/4 phần đã học (${totalCorrect}/${totalAnswered} câu đúng)! Tuy nhiên em cần học thêm ${4 - partsDone} phần còn lại để rèn luyện toàn diện.`;
+                comment = `Kết quả tốt ở ${partsDone}/4 phần (đúng ${totalCorrect}/${totalAnswered}). Em nên học nốt ${4 - partsDone} phần còn lại nhé!`;
             } else if (ratio >= 0.5) {
-                comment = `Em mới học ${partsDone}/4 phần với ${totalCorrect}/${totalAnswered} câu đúng (${formatDuration(totalTime)}). Hãy tiếp tục cố gắng hoàn thành các phần còn lại!`;
+                comment = `Đã học ${partsDone}/4 phần (${formatDuration(totalTime)}, đúng ${totalCorrect}/${totalAnswered}). Cố gắng hoàn thành các phần còn lại!`;
             } else {
-                comment = `Mới học ${partsDone}/4 phần và làm sai nhiều (${totalCorrect}/${totalAnswered} câu đúng). Hãy xem lại từ vựng và làm lại bài kĩ hơn nhé!`;
+                comment = `Mới học ${partsDone}/4 phần, đúng ${totalCorrect}/${totalAnswered}. Em hãy xem lại từ vựng và làm kĩ hơn!`;
             }
         } else if (partsDone === 3) {
             if (ratio >= 0.85 && totalTime >= 150) {
-                comment = `Rất tốt! Em đã học 3/4 phần với kết quả cao (${totalCorrect}/${totalAnswered} câu đúng - ${Math.round(ratio * 100)}%). Hãy hoàn thành nốt phần còn lại để đạt 100% nhé!`;
+                comment = `Tốt lắm! Đã học 3/4 phần (${Math.round(ratio * 100)}% đúng, ${totalCorrect}/${totalAnswered}). Hoàn thành nốt 1 phần còn lại nhé!`;
             } else if (ratio >= 0.6) {
-                comment = `Tích cực! Em đã học 3/4 phần (${totalCorrect}/${totalAnswered} câu đúng, ${formatDuration(totalTime)}). Cố gắng học thêm phần còn lại và nâng cao điểm số nhé!`;
+                comment = `Tích cực! Đã học 3/4 phần (${formatDuration(totalTime)}, đúng ${totalCorrect}/${totalAnswered}). Học nốt phần cuối nhé!`;
             } else {
-                comment = `Em đã tham gia 3/4 phần nhưng tỉ lệ đúng còn thấp (${totalCorrect}/${totalAnswered} câu đúng). Hãy đọc lại từ vựng kĩ hơn nhé!`;
+                comment = `Đã học 3/4 phần nhưng tỉ lệ đúng chưa cao (${totalCorrect}/${totalAnswered}). Em hãy ôn lại từ vựng kĩ hơn!`;
             }
         } else {
             if (ratio >= 0.85 && totalTime >= 180) {
-                comment = config.actCommentHighText || `Xuất sắc! Em đã hoàn thành cả 4 phần học rất chăm chỉ (${formatDuration(totalTime)}, ${totalAttemptsCount} lượt học) và đạt tỉ lệ đúng ${Math.round(ratio * 100)}% (${totalCorrect}/${totalAnswered} câu đúng)!`;
+                comment = config.actCommentHighText || `Xuất sắc! Hoàn thành đủ 4 phần (${formatDuration(totalTime)}, đúng ${totalCorrect}/${totalAnswered} - ${Math.round(ratio * 100)}%). Rất chăm chỉ!`;
             } else if (ratio >= 0.85) {
-                comment = `Rất giỏi! Em hoàn thành đủ 4 phần và đạt tỉ lệ đúng ${Math.round(ratio * 100)}% (${totalCorrect}/${totalAnswered} câu đúng). Hãy dành thêm thời gian ôn luyện để nhớ lâu hơn!`;
+                comment = `Rất giỏi! Hoàn thành đủ 4 phần (đúng ${totalCorrect}/${totalAnswered} - ${Math.round(ratio * 100)}%). Hãy duy trì luyện tập nhé!`;
             } else if (ratio >= 0.6) {
-                comment = config.actCommentGoodText || `Khá tốt! Em đã tham gia đủ cả 4 phần (${totalCorrect}/${totalAnswered} câu đúng, ${formatDuration(totalTime)}). Luyện tập thêm để đạt kết quả cao hơn nữa nhé!`;
+                comment = config.actCommentGoodText || `Khá tốt! Đã học đủ 4 phần (${formatDuration(totalTime)}, đúng ${totalCorrect}/${totalAnswered}). Ôn thêm để nâng điểm nhé!`;
             } else {
-                comment = config.actCommentLowText || `Cần cố gắng nhiều hơn! Em đã làm đủ 4 phần nhưng tỉ lệ đúng còn thấp (${totalCorrect}/${totalAnswered} câu đúng). Hãy học kĩ từ vựng và thử lại!`;
+                comment = config.actCommentLowText || `Cần cố gắng! Đã làm đủ 4 phần nhưng tỉ lệ đúng còn thấp (${totalCorrect}/${totalAnswered}). Hãy ôn kĩ từ vựng!`;
             }
         }
 
@@ -642,7 +642,7 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
                     const itemColor = config.actSummaryItemTextColor || '#ffffff';
                     const itemFontSize = config.actSummaryItemFontSize || 0.8;
 
-                    const commentColor = config.actSummaryCommentTextColor || '#4ade80';
+                    const commentColor = config.actSummaryCommentTextColor || '#15803d';
                     const commentFontSize = config.actSummaryCommentFontSize || 0.8;
 
                     return (
@@ -693,11 +693,14 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
                                 </div>
 
                                 <div 
-                                    style={{ color: commentColor, fontSize: `${commentFontSize}rem` }}
-                                    className="font-semibold pt-1.5 border-t border-white/10 flex items-start gap-1.5"
+                                    style={{ fontSize: `${commentFontSize}rem` }}
+                                    className="pt-1.5 border-t border-white/10 flex items-start gap-1.5 text-left"
                                 >
                                     <span className="shrink-0 text-base">💬</span>
-                                    <span><strong>Nhận xét chung:</strong> {stats.comment}</span>
+                                    <div className="leading-snug">
+                                        <span className="font-extrabold text-red-500 mr-1.5 inline-block" style={{ color: '#ef4444' }}>Nhận xét chung:</span>
+                                        <span className="font-bold inline" style={{ color: commentColor }}>{stats.comment}</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
