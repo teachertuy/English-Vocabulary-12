@@ -111,6 +111,7 @@ const DEFAULT_CONFIG: ExerciseSelectionConfig = {
     actOpenCountValueColor: '#dc2626',
     actOpenCountValueFontSize: 1.125,
 
+    actTimeHeaderText: 'THỜI GIAN LÀM BÀI:',
     actTimeHeaderColor: '#ffffff',
     actTimeHeaderFontSize: 0.7,
     actAttemptBoxBgColor: 'rgba(0,0,0,0.2)',

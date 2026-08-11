@@ -102,6 +102,7 @@ const DEFAULT_CONFIG: ExerciseSelectionConfig = {
     actOpenCountValueColor: '#fef08a',
     actOpenCountValueFontSize: 0.875,
 
+    actTimeHeaderText: 'THỜI GIAN LÀM BÀI:',
     actTimeHeaderColor: '#ffffff',
     actTimeHeaderFontSize: 0.7,
     actAttemptBoxBgColor: '#0f172a',
@@ -830,7 +831,17 @@ const EditExerciseSelectionModal: React.FC<EditExerciseSelectionModalProps> = ({
                                 <h4 className="font-bold text-gray-800 text-base border-b pb-2 flex items-center gap-2"><span>4️⃣</span> Phần "THỜI GIAN LÀM BÀI" & Lượt học</h4>
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                     <div>
-                                        <label className="block text-xs font-bold text-gray-700 mb-1">Màu chữ Tiêu đề ("THỜI GIAN LÀM BÀI:")</label>
+                                        <label className="block text-xs font-bold text-gray-700 mb-1">Tên gọi Tiêu đề ("THỜI GIAN LÀM BÀI:")</label>
+                                        <input 
+                                            type="text" 
+                                            value={config.actTimeHeaderText !== undefined ? config.actTimeHeaderText : 'THỜI GIAN LÀM BÀI:'} 
+                                            onChange={e => handleChange('actTimeHeaderText', e.target.value)} 
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-800 font-medium focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" 
+                                            placeholder="THỜI GIAN LÀM BÀI:"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-bold text-gray-700 mb-1">Màu chữ Tiêu đề</label>
                                         <input type="color" value={config.actTimeHeaderColor || '#ffffff'} onChange={e => handleChange('actTimeHeaderColor', e.target.value)} className="w-full h-10 p-0 border-0 cursor-pointer rounded" />
                                     </div>
                                     <div>
@@ -849,27 +860,6 @@ const EditExerciseSelectionModal: React.FC<EditExerciseSelectionModalProps> = ({
                                     <div>
                                         <label className="block text-xs font-bold text-gray-700 mb-1">Cỡ chữ Ô Lượt học: <span className="text-blue-600 font-bold">{config.actAttemptFontSize || 0.75}rem</span></label>
                                         <input type="range" min="0.5" max="1.5" step="0.05" value={config.actAttemptFontSize || 0.75} onChange={e => handleChange('actAttemptFontSize', parseFloat(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-xs font-bold text-gray-700 mb-1">Màu nền Khung Tổng thời gian</label>
-                                        <input type="color" value={config.actTotalTimeBoxBgColor && config.actTotalTimeBoxBgColor.startsWith('#') ? config.actTotalTimeBoxBgColor : '#1e293b'} onChange={e => handleChange('actTotalTimeBoxBgColor', e.target.value)} className="w-full h-10 p-0 border-0 cursor-pointer rounded" />
-                                    </div>
-                                    <div>
-                                        <label className="block text-xs font-bold text-gray-700 mb-1">Màu chữ Nhãn ("Tổng thời gian đã học:")</label>
-                                        <input type="color" value={config.actTotalTimeLabelColor || '#ffffff'} onChange={e => handleChange('actTotalTimeLabelColor', e.target.value)} className="w-full h-10 p-0 border-0 cursor-pointer rounded" />
-                                    </div>
-                                    <div>
-                                        <label className="block text-xs font-bold text-gray-700 mb-1">Cỡ chữ Nhãn: <span className="text-blue-600 font-bold">{config.actTotalTimeLabelFontSize || 0.75}rem</span></label>
-                                        <input type="range" min="0.5" max="1.5" step="0.05" value={config.actTotalTimeLabelFontSize || 0.75} onChange={e => handleChange('actTotalTimeLabelFontSize', parseFloat(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
-                                    </div>
-                                    <div>
-                                        <label className="block text-xs font-bold text-gray-700 mb-1">Màu chữ Giá trị (VD: "33 giây")</label>
-                                        <input type="color" value={config.actTotalTimeValueColor || '#fef08a'} onChange={e => handleChange('actTotalTimeValueColor', e.target.value)} className="w-full h-10 p-0 border-0 cursor-pointer rounded" />
-                                    </div>
-                                    <div>
-                                        <label className="block text-xs font-bold text-gray-700 mb-1">Cỡ chữ Giá trị: <span className="text-blue-600 font-bold">{config.actTotalTimeValueFontSize || 0.875}rem</span></label>
-                                        <input type="range" min="0.6" max="2" step="0.05" value={config.actTotalTimeValueFontSize || 0.875} onChange={e => handleChange('actTotalTimeValueFontSize', parseFloat(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
                                     </div>
                                 </div>
                             </div>

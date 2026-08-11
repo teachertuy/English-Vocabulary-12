@@ -115,6 +115,7 @@ const DEFAULT_CONFIG: ExerciseSelectionConfig = {
     actOpenCountValueColor: '#fef08a',
     actOpenCountValueFontSize: 0.875,
 
+    actTimeHeaderText: 'THỜI GIAN LÀM BÀI:',
     actTimeHeaderColor: '#ffffff',
     actTimeHeaderFontSize: 0.7,
     actAttemptBoxBgColor: 'rgba(0,0,0,0.2)',
@@ -234,6 +235,7 @@ interface ActivityCardProps {
     playerData?: PlayerData;
     hideTimeDetails?: boolean;
     showCorrectCount?: boolean;
+    isHorizontalAttempts?: boolean;
     config?: ExerciseSelectionConfig;
 }
 
@@ -287,6 +289,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
     playerData,
     hideTimeDetails = false,
     showCorrectCount = false,
+    isHorizontalAttempts = false,
     config
 }) => {
     const count = stats?.count || 0;
@@ -302,18 +305,13 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
     const openCountValColor = config?.actOpenCountValueColor || '#dc2626';
     const openCountValSize = config?.actOpenCountValueFontSize || 1.125;
 
+    const timeHeaderText = config?.actTimeHeaderText !== undefined ? config.actTimeHeaderText : 'THỜI GIAN LÀM BÀI:';
     const timeHeaderColor = config?.actTimeHeaderColor || '#ffffff';
     const timeHeaderSize = config?.actTimeHeaderFontSize || 0.7;
 
     const attemptBg = config?.actAttemptBoxBgColor || '#ffffff';
     const attemptTextColor = config?.actAttemptTextColor || '#1e293b';
     const attemptTextSize = config?.actAttemptFontSize || 0.8;
-
-    const totalTimeBg = config?.actTotalTimeBoxBgColor || 'rgba(0,0,0,0.25)';
-    const totalTimeLabelColor = config?.actTotalTimeLabelColor || '#ffffff';
-    const totalTimeLabelSize = config?.actTotalTimeLabelFontSize || 0.8;
-    const totalTimeValColor = config?.actTotalTimeValueColor || '#fef08a';
-    const totalTimeValSize = config?.actTotalTimeValueFontSize || 0.9;
 
     const commentTextColor = config?.actCommentTextColor || '#fde047';
     const commentFontSize = config?.actCommentFontSize || 0.7;
@@ -374,7 +372,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
                             style={{ color: timeHeaderColor, fontSize: `${timeHeaderSize}rem` }}
                             className="font-black uppercase tracking-wider flex items-center gap-1 block"
                         >
-                            ⏱️ THỜI GIAN LÀM BÀI:
+                            ⏱️ {timeHeaderText}
                         </span>
                     </div>
 
@@ -384,6 +382,23 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
                             className="italic px-3 py-1 rounded-lg"
                         >
                             Chưa có lượt học
+                        </div>
+                    ) : isHorizontalAttempts || !showCorrectCount ? (
+                        <div className="flex flex-wrap items-center gap-2 sm:gap-2.5 w-full">
+                            {attemptsList.map((att, idx) => (
+                                <div 
+                                    key={idx} 
+                                    style={{ backgroundColor: attemptBg, color: attemptTextColor, fontSize: `${attemptTextSize}rem` }}
+                                    className="flex flex-col items-center justify-center px-3 py-1.5 rounded-lg border border-white/15 font-medium shadow-2xs text-center min-w-[95px]"
+                                >
+                                    <span className="font-bold shrink-0" style={{ color: openCountLabelColor || '#dc2626' }}>
+                                        Lần {idx + 1}
+                                    </span>
+                                    <span className="font-mono font-extrabold text-[0.85em] shrink-0 opacity-90 mt-0.5">
+                                        {formatDuration(att.timeTakenSeconds)}{formatDateMonth(att.timestamp)}
+                                    </span>
+                                </div>
+                            ))}
                         </div>
                     ) : (
                         <div className="flex flex-col gap-1.5 w-full">
@@ -423,23 +438,6 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
                             ))}
                         </div>
                     )}
-
-                    <div 
-                        style={{ backgroundColor: totalTimeBg }}
-                        className="mt-2.5 pt-2 border-t border-white/20 flex items-center justify-between px-3 py-1.5 rounded-xl font-bold"
-                    >
-                        <span 
-                            style={{ color: totalTimeLabelColor, fontSize: `${totalTimeLabelSize}rem` }}
-                        >
-                            Tổng thời gian đã học:
-                        </span>
-                        <span 
-                            style={{ color: totalTimeValColor, fontSize: `${totalTimeValSize}rem` }}
-                            className="font-black font-mono"
-                        >
-                            {formatDuration(totalTime)}
-                        </span>
-                    </div>
                 </div>
             )}
         </div>
@@ -561,41 +559,56 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
         const partsDone = (vDone ? 1 : 0) + (mDone ? 1 : 0) + (sDone ? 1 : 0) + (qDone ? 1 : 0);
         const ratio = totalAnswered > 0 ? (totalCorrect / totalAnswered) : 0;
 
+        const vocabCount = (vocabulary && vocabulary.length > 0) ? vocabulary.length : 10;
+        const quizCount = (quiz && quiz.length > 0) ? quiz.length : 10;
+        // Minimum questions needed across all activities to consider practice substantial
+        const minExpectedQuestions = Math.min(12, Math.max(8, Math.floor((vocabCount + quizCount) * 0.4)));
+
         let comment = '';
 
         if (totalAttemptsCount === 0 || (totalTime === 0 && totalAnswered === 0)) {
             comment = 'Chưa có lượt học nào. Em hãy bắt đầu luyện tập nhé!';
-        } else if (totalTime < 90 && totalAnswered <= 5) {
-            if (partsDone <= 2) {
-                comment = `Mới học ${partsDone}/4 phần (${formatDuration(totalTime)}, đúng ${totalCorrect}/${totalAnswered}). Em hãy học thêm các phần còn lại nhé!`;
+        } else if (totalAnswered === 0) {
+            comment = `Mới chỉ xem từ vựng (${formatDuration(vTime)}). Em hãy làm thêm bài tập Ghép cặp, Viết chính tả và Trắc nghiệm nhé!`;
+        } else if (totalAnswered < minExpectedQuestions || totalAnswered < 10) {
+            // Student answered very few questions relative to available unit content (học qua loa, sơ sài)
+            if (ratio >= 0.8) {
+                comment = `Mới làm được ít câu (${totalCorrect}/${totalAnswered} đúng, ${formatDuration(totalTime)}). Dù làm đúng tốt nhưng em học còn sơ sài, hãy làm đầy đủ các câu hỏi hơn nhé!`;
             } else {
-                comment = `Thời gian học còn ít (${formatDuration(totalTime)}, đúng ${totalCorrect}/${totalAnswered}). Em hãy dành thêm thời gian học kĩ hơn!`;
+                comment = `Mới làm được ít câu (${totalCorrect}/${totalAnswered} đúng, ${formatDuration(totalTime)}). Em cần xem lại bài và dành thêm thời gian luyện tập!`;
+            }
+        } else if (totalTime < 120) {
+            // Rushed time even if answered >= 10 questions
+            if (ratio >= 0.8) {
+                comment = `Thời gian làm bài còn vội (${formatDuration(totalTime)}, đúng ${totalCorrect}/${totalAnswered}). Em hãy đọc kỹ và làm bài chu đáo hơn nhé!`;
+            } else {
+                comment = `Làm bài vội vàng (${formatDuration(totalTime)}, đúng ${totalCorrect}/${totalAnswered}). Em hãy dành thêm thời gian ôn luyện kỹ hơn!`;
             }
         } else if (partsDone <= 2) {
             if (ratio >= 0.8) {
-                comment = `Kết quả tốt ở ${partsDone}/4 phần (đúng ${totalCorrect}/${totalAnswered}). Em nên học nốt ${4 - partsDone} phần còn lại nhé!`;
+                comment = `Mới làm ${partsDone}/4 phần với kết quả tốt (${totalCorrect}/${totalAnswered} đúng, ${formatDuration(totalTime)}). Em nên làm nốt ${4 - partsDone} phần còn lại nhé!`;
             } else if (ratio >= 0.5) {
-                comment = `Đã học ${partsDone}/4 phần (${formatDuration(totalTime)}, đúng ${totalCorrect}/${totalAnswered}). Cố gắng hoàn thành các phần còn lại!`;
+                comment = `Mới làm ${partsDone}/4 phần (${formatDuration(totalTime)}, đúng ${totalCorrect}/${totalAnswered}). Em hãy tiếp tục cố gắng ở các phần còn lại!`;
             } else {
-                comment = `Mới học ${partsDone}/4 phần, đúng ${totalCorrect}/${totalAnswered}. Em hãy xem lại từ vựng và làm kĩ hơn!`;
+                comment = `Mới làm ${partsDone}/4 phần và làm sai nhiều (${totalCorrect}/${totalAnswered} đúng). Em hãy xem lại từ vựng và làm lại bài!`;
             }
         } else if (partsDone === 3) {
-            if (ratio >= 0.85 && totalTime >= 150) {
-                comment = `Tốt lắm! Đã học 3/4 phần (${Math.round(ratio * 100)}% đúng, ${totalCorrect}/${totalAnswered}). Hoàn thành nốt 1 phần còn lại nhé!`;
-            } else if (ratio >= 0.6) {
-                comment = `Tích cực! Đã học 3/4 phần (${formatDuration(totalTime)}, đúng ${totalCorrect}/${totalAnswered}). Học nốt phần cuối nhé!`;
+            if (ratio >= 0.85 && totalTime >= 180 && totalAnswered >= 12) {
+                comment = `Tốt lắm! Đã học 3/4 phần rất kỹ (${formatDuration(totalTime)}, đúng ${totalCorrect}/${totalAnswered} - ${Math.round(ratio * 100)}%). Hoàn thành nốt 1 phần còn lại nhé!`;
+            } else if (ratio >= 0.65) {
+                comment = `Tích cực! Đã làm 3/4 phần (${formatDuration(totalTime)}, đúng ${totalCorrect}/${totalAnswered}). Hãy cố gắng hoàn thành nốt phần cuối nhé!`;
             } else {
-                comment = `Đã học 3/4 phần nhưng tỉ lệ đúng chưa cao (${totalCorrect}/${totalAnswered}). Em hãy ôn lại từ vựng kĩ hơn!`;
+                comment = `Đã học 3/4 phần nhưng kết quả chưa cao (${totalCorrect}/${totalAnswered} đúng, ${formatDuration(totalTime)}). Em hãy ôn lại từ vựng kỹ hơn!`;
             }
         } else {
-            if (ratio >= 0.85 && totalTime >= 180) {
-                comment = config.actCommentHighText || `Xuất sắc! Hoàn thành đủ 4 phần (${formatDuration(totalTime)}, đúng ${totalCorrect}/${totalAnswered} - ${Math.round(ratio * 100)}%). Rất chăm chỉ!`;
-            } else if (ratio >= 0.85) {
-                comment = `Rất giỏi! Hoàn thành đủ 4 phần (đúng ${totalCorrect}/${totalAnswered} - ${Math.round(ratio * 100)}%). Hãy duy trì luyện tập nhé!`;
+            if (ratio >= 0.85 && totalTime >= 240 && totalAnswered >= 15) {
+                comment = config.actCommentHighText || `Xuất sắc! Hoàn thành đủ 4 phần rất chăm chỉ (${formatDuration(totalTime)}, đúng ${totalCorrect}/${totalAnswered} - ${Math.round(ratio * 100)}%). Tinh thần học tập rất tuyệt vời!`;
+            } else if (ratio >= 0.8 && totalTime >= 150 && totalAnswered >= 10) {
+                comment = `Rất giỏi! Hoàn thành đủ 4 phần (${formatDuration(totalTime)}, đúng ${totalCorrect}/${totalAnswered} - ${Math.round(ratio * 100)}%). Hãy duy trì phong độ nhé!`;
             } else if (ratio >= 0.6) {
-                comment = config.actCommentGoodText || `Khá tốt! Đã học đủ 4 phần (${formatDuration(totalTime)}, đúng ${totalCorrect}/${totalAnswered}). Ôn thêm để nâng điểm nhé!`;
+                comment = config.actCommentGoodText || `Khá tốt! Đã làm đủ 4 phần (${formatDuration(totalTime)}, đúng ${totalCorrect}/${totalAnswered}). Luyện tập thêm để đạt điểm cao hơn nhé!`;
             } else {
-                comment = config.actCommentLowText || `Cần cố gắng! Đã làm đủ 4 phần nhưng tỉ lệ đúng còn thấp (${totalCorrect}/${totalAnswered}). Hãy ôn kĩ từ vựng!`;
+                comment = config.actCommentLowText || `Cần cố gắng! Đã làm đủ 4 phần nhưng kết quả chưa cao (${totalCorrect}/${totalAnswered} đúng). Hãy học kỹ từ vựng và thử lại!`;
             }
         }
 
@@ -743,6 +756,7 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
                                     stats={attempts.vocabulary}
                                     playerData={playerData}
                                     showCorrectCount={false}
+                                    isHorizontalAttempts={true}
                                     config={config}
                                 />
                             )}

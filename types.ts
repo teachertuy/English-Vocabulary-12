@@ -231,6 +231,7 @@ export interface ExerciseSelectionConfig {
     actOpenCountValueFontSize?: number;
 
     // Time Tracking Section Styling
+    actTimeHeaderText?: string;
     actTimeHeaderColor?: string;
     actTimeHeaderFontSize?: number;
     actAttemptBoxBgColor?: string;
