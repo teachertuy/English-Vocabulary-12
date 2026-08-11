@@ -602,10 +602,18 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
                             >
                                 <div 
                                     style={{ color: titleColor, fontSize: `${titleFontSize}rem` }}
-                                    className="font-extrabold flex items-center gap-1.5 border-b pb-1.5 border-white/10"
+                                    className="font-extrabold border-b pb-2 border-white/10 text-center space-y-1"
                                 >
-                                    <span>⏱️</span>
-                                    <span>{titleText}: {formatDuration(stats.totalTime)}</span>
+                                    <div className="flex items-center justify-center gap-1.5">
+                                        <span>⏱️</span>
+                                        <span>{titleText}</span>
+                                    </div>
+                                    <div className="text-center font-bold text-sm sm:text-base tracking-wide">
+                                        <span style={{ color: itemColor }}>Tổng thời gian tham gia: </span>
+                                        <span className="text-red-500 font-extrabold text-base sm:text-lg px-1 inline-block" style={{ color: '#ef4444' }}>
+                                            {formatDuration(stats.totalTime)}
+                                        </span>
+                                    </div>
                                 </div>
 
                                 <div className="space-y-1 font-medium pt-1" style={{ color: itemColor, fontSize: `${itemFontSize}rem` }}>
