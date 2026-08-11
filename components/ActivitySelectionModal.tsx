@@ -698,7 +698,7 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
                                 >
                                     <span className="shrink-0 text-base">💬</span>
                                     <div className="leading-snug">
-                                        <span className="font-extrabold text-red-500 mr-1.5 inline-block" style={{ color: '#ef4444' }}>Nhận xét chung:</span>
+                                        <span className="font-extrabold text-red-500 underline mr-1.5 inline-block" style={{ color: '#ef4444' }}>Nhận xét chung:</span>
                                         <span className="font-bold inline" style={{ color: commentColor }}>{stats.comment}</span>
                                     </div>
                                 </div>
