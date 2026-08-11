@@ -190,6 +190,12 @@ const getAttemptRemarkData = (att: AttemptDetail, config?: ExerciseSelectionConf
     }
 
     if (ratio >= 0.85) {
+        if (total > 0 && total <= 5) {
+            return {
+                text: 'Làm đúng tốt! Tiếp tục phát huy',
+                color: config?.actCommentHighColor || config?.actCommentTextColor || '#fde047'
+            };
+        }
         return {
             text: config?.actCommentHighText || 'Xuất sắc! Rất chăm chỉ và làm bài tốt',
             color: config?.actCommentHighColor || config?.actCommentTextColor || '#fde047'
@@ -203,7 +209,7 @@ const getAttemptRemarkData = (att: AttemptDetail, config?: ExerciseSelectionConf
     }
     if (time < 30 || (time < 60 && ratio < 0.3)) {
         return {
-            text: config?.actCommentRushText || config?.actCommentLowText || 'Chưa siêng năng! Cần làm bài kỹ hơn',
+            text: config?.actCommentRushText || config?.actCommentLowText || 'Làm bài quá vội! Cần siêng năng hơn',
             color: config?.actCommentLowColor || config?.actCommentTextColor || '#fde047'
         };
     }
@@ -514,8 +520,10 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
 
     const calcSummaryStats = () => {
         const vTime = attempts.vocabulary.totalTimeSeconds || 0;
+        const vCount = attempts.vocabulary.count || 0;
         
         const mTime = attempts.matching.totalTimeSeconds || 0;
+        const mCount = attempts.matching.count || 0;
         let mCorrect = 0, mIncorrect = 0;
         (attempts.matching.attemptsList || []).forEach(a => {
             mCorrect += a.correct || 0;
@@ -523,6 +531,7 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
         });
 
         const sTime = attempts.spelling.totalTimeSeconds || 0;
+        const sCount = attempts.spelling.count || 0;
         let sCorrect = 0, sIncorrect = 0;
         (attempts.spelling.attemptsList || []).forEach(a => {
             sCorrect += a.correct || 0;
@@ -530,6 +539,7 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
         });
 
         const qTime = attempts.quiz.totalTimeSeconds || 0;
+        const qCount = attempts.quiz.count || 0;
         let qCorrect = 0, qIncorrect = 0;
         (attempts.quiz.attemptsList || []).forEach(a => {
             qCorrect += a.correct || 0;
@@ -540,19 +550,52 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
         const totalCorrect = mCorrect + sCorrect + qCorrect;
         const totalIncorrect = mIncorrect + sIncorrect + qIncorrect;
         const totalAnswered = totalCorrect + totalIncorrect;
+        const totalAttemptsCount = vCount + mCount + sCount + qCount;
+
+        // Number of sections participated out of 4 (Học từ mới, Ghép cặp, Viết chính tả, Kiểm tra lại)
+        const vDone = vTime > 0 || vCount > 0;
+        const mDone = mTime > 0 || mCount > 0 || (mCorrect + mIncorrect > 0);
+        const sDone = sTime > 0 || sCount > 0 || (sCorrect + sIncorrect > 0);
+        const qDone = qTime > 0 || qCount > 0 || (qCorrect + qIncorrect > 0);
+
+        const partsDone = (vDone ? 1 : 0) + (mDone ? 1 : 0) + (sDone ? 1 : 0) + (qDone ? 1 : 0);
+        const ratio = totalAnswered > 0 ? (totalCorrect / totalAnswered) : 0;
 
         let comment = '';
-        const totalAttemptsCount = (attempts.vocabulary.count || 0) + (attempts.matching.count || 0) + (attempts.spelling.count || 0) + (attempts.quiz.count || 0);
-        if (totalAttemptsCount === 0) {
+
+        if (totalAttemptsCount === 0 || (totalTime === 0 && totalAnswered === 0)) {
             comment = 'Chưa có lượt học nào. Em hãy bắt đầu học và luyện tập nhé!';
-        } else {
-            const ratio = totalAnswered > 0 ? totalCorrect / totalAnswered : 0;
-            if (ratio >= 0.85) {
-                comment = config.actCommentHighText || 'Xuất sắc! Rất chăm chỉ và làm bài tốt';
-            } else if (ratio >= 0.5) {
-                comment = config.actCommentGoodText || 'Khá tốt! Luyện tập thêm chút nữa nhé';
+        } else if (totalTime < 90 && totalAnswered <= 5) {
+            if (partsDone <= 2) {
+                comment = `Mới khởi động! Em mới học ${partsDone}/4 phần trong thời gian ngắn (${formatDuration(totalTime)}, ${totalCorrect}/${totalAnswered} câu đúng). Hãy dành thêm thời gian hoàn thành cả 4 phần nhé!`;
             } else {
-                comment = config.actCommentLowText || 'Chưa siêng năng! Cần làm bài kỹ hơn';
+                comment = `Em tham gia bài học rất nhanh (${formatDuration(totalTime)}, ${totalCorrect}/${totalAnswered} câu đúng). Hãy học kĩ và làm bài đều đặn hơn nhé!`;
+            }
+        } else if (partsDone <= 2) {
+            if (ratio >= 0.8) {
+                comment = `Khởi đầu tốt ở ${partsDone}/4 phần đã học (${totalCorrect}/${totalAnswered} câu đúng)! Tuy nhiên em cần học thêm ${4 - partsDone} phần còn lại để rèn luyện toàn diện.`;
+            } else if (ratio >= 0.5) {
+                comment = `Em mới học ${partsDone}/4 phần với ${totalCorrect}/${totalAnswered} câu đúng (${formatDuration(totalTime)}). Hãy tiếp tục cố gắng hoàn thành các phần còn lại!`;
+            } else {
+                comment = `Mới học ${partsDone}/4 phần và làm sai nhiều (${totalCorrect}/${totalAnswered} câu đúng). Hãy xem lại từ vựng và làm lại bài kĩ hơn nhé!`;
+            }
+        } else if (partsDone === 3) {
+            if (ratio >= 0.85 && totalTime >= 150) {
+                comment = `Rất tốt! Em đã học 3/4 phần với kết quả cao (${totalCorrect}/${totalAnswered} câu đúng - ${Math.round(ratio * 100)}%). Hãy hoàn thành nốt phần còn lại để đạt 100% nhé!`;
+            } else if (ratio >= 0.6) {
+                comment = `Tích cực! Em đã học 3/4 phần (${totalCorrect}/${totalAnswered} câu đúng, ${formatDuration(totalTime)}). Cố gắng học thêm phần còn lại và nâng cao điểm số nhé!`;
+            } else {
+                comment = `Em đã tham gia 3/4 phần nhưng tỉ lệ đúng còn thấp (${totalCorrect}/${totalAnswered} câu đúng). Hãy đọc lại từ vựng kĩ hơn nhé!`;
+            }
+        } else {
+            if (ratio >= 0.85 && totalTime >= 180) {
+                comment = config.actCommentHighText || `Xuất sắc! Em đã hoàn thành cả 4 phần học rất chăm chỉ (${formatDuration(totalTime)}, ${totalAttemptsCount} lượt học) và đạt tỉ lệ đúng ${Math.round(ratio * 100)}% (${totalCorrect}/${totalAnswered} câu đúng)!`;
+            } else if (ratio >= 0.85) {
+                comment = `Rất giỏi! Em hoàn thành đủ 4 phần và đạt tỉ lệ đúng ${Math.round(ratio * 100)}% (${totalCorrect}/${totalAnswered} câu đúng). Hãy dành thêm thời gian ôn luyện để nhớ lâu hơn!`;
+            } else if (ratio >= 0.6) {
+                comment = config.actCommentGoodText || `Khá tốt! Em đã tham gia đủ cả 4 phần (${totalCorrect}/${totalAnswered} câu đúng, ${formatDuration(totalTime)}). Luyện tập thêm để đạt kết quả cao hơn nữa nhé!`;
+            } else {
+                comment = config.actCommentLowText || `Cần cố gắng nhiều hơn! Em đã làm đủ 4 phần nhưng tỉ lệ đúng còn thấp (${totalCorrect}/${totalAnswered} câu đúng). Hãy học kĩ từ vựng và thử lại!`;
             }
         }
 
