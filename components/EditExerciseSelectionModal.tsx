@@ -122,6 +122,13 @@ const DEFAULT_CONFIG: ExerciseSelectionConfig = {
     actSummaryTitleText: 'Tổng thời gian học & làm bài cả 4 phần',
     actSummaryTitleColor: '#f59e0b',
     actSummaryTitleFontSize: 0.9,
+
+    actSummarySubTitleText: 'Tổng thời gian tham gia:',
+    actSummarySubTitleColor: '#ffffff',
+    actSummarySubTitleFontSize: 0.85,
+    actSummaryValueColor: '#ef4444',
+    actSummaryValueFontSize: 0.95,
+
     actSummaryItemTextColor: '#ffffff',
     actSummaryItemFontSize: 0.8,
     actSummaryCommentTextColor: '#4ade80',
@@ -592,6 +599,36 @@ const EditExerciseSelectionModal: React.FC<EditExerciseSelectionModalProps> = ({
                                             <div>
                                                 <label className="block text-xs font-bold text-gray-800 mb-1">Cỡ chữ Tiêu đề: <span className="text-blue-600 font-bold">{config.actSummaryTitleFontSize || 0.9}rem</span></label>
                                                 <input type="range" min="0.6" max="1.8" step="0.05" value={config.actSummaryTitleFontSize || 0.9} onChange={e => handleChange('actSummaryTitleFontSize', parseFloat(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
+                                            </div>
+
+                                            {/* Subtitle Label Settings */}
+                                            <div className="col-span-1 md:col-span-2 pt-2 border-t border-indigo-200/60">
+                                                <label className="block text-xs font-bold text-gray-800 mb-1">Tên nhãn cụm "Tổng thời gian tham gia:"</label>
+                                                <input 
+                                                    type="text" 
+                                                    value={config.actSummarySubTitleText !== undefined ? config.actSummarySubTitleText : 'Tổng thời gian tham gia:'} 
+                                                    onChange={e => handleChange('actSummarySubTitleText', e.target.value)} 
+                                                    className="w-full p-2 border rounded-lg text-xs font-semibold bg-white focus:ring-2 focus:ring-indigo-500" 
+                                                    placeholder="Tổng thời gian tham gia:"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs font-bold text-gray-800 mb-1">Màu chữ Nhãn "Tổng thời gian tham gia:"</label>
+                                                <input type="color" value={config.actSummarySubTitleColor || '#ffffff'} onChange={e => handleChange('actSummarySubTitleColor', e.target.value)} className="w-full h-10 p-0 border-0 cursor-pointer rounded" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs font-bold text-gray-800 mb-1">Cỡ chữ Nhãn: <span className="text-blue-600 font-bold">{config.actSummarySubTitleFontSize || 0.85}rem</span></label>
+                                                <input type="range" min="0.5" max="1.5" step="0.05" value={config.actSummarySubTitleFontSize || 0.85} onChange={e => handleChange('actSummarySubTitleFontSize', parseFloat(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
+                                            </div>
+
+                                            {/* Value Styling Settings */}
+                                            <div>
+                                                <label className="block text-xs font-bold text-gray-800 mb-1">Màu số & phút/giây</label>
+                                                <input type="color" value={config.actSummaryValueColor || '#ef4444'} onChange={e => handleChange('actSummaryValueColor', e.target.value)} className="w-full h-10 p-0 border-0 cursor-pointer rounded" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs font-bold text-gray-800 mb-1">Cỡ chữ số & phút/giây: <span className="text-blue-600 font-bold">{config.actSummaryValueFontSize || 0.95}rem</span></label>
+                                                <input type="range" min="0.5" max="1.8" step="0.05" value={config.actSummaryValueFontSize || 0.95} onChange={e => handleChange('actSummaryValueFontSize', parseFloat(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
                                             </div>
 
                                             <div>

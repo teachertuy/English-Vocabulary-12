@@ -254,6 +254,13 @@ export interface ExerciseSelectionConfig {
     actSummaryTitleColor?: string;
     actSummaryTitleFontSize?: number;
 
+    // Sub-title label ("Tổng thời gian tham gia:") & Value styling
+    actSummarySubTitleText?: string;
+    actSummarySubTitleColor?: string;
+    actSummarySubTitleFontSize?: number;
+    actSummaryValueColor?: string;
+    actSummaryValueFontSize?: number;
+
     actSummaryItemTextColor?: string;
     actSummaryItemFontSize?: number;
 

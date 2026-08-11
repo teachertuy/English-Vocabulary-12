@@ -135,6 +135,13 @@ const DEFAULT_CONFIG: ExerciseSelectionConfig = {
     actSummaryTitleText: 'Tổng thời gian học & làm bài cả 4 phần',
     actSummaryTitleColor: '#f59e0b',
     actSummaryTitleFontSize: 0.9,
+
+    actSummarySubTitleText: 'Tổng thời gian tham gia:',
+    actSummarySubTitleColor: '#ffffff',
+    actSummarySubTitleFontSize: 0.85,
+    actSummaryValueColor: '#ef4444',
+    actSummaryValueFontSize: 0.95,
+
     actSummaryItemTextColor: '#ffffff',
     actSummaryItemFontSize: 0.8,
     actSummaryCommentTextColor: '#4ade80',
@@ -582,6 +589,13 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
                     const titleColor = config.actSummaryTitleColor || '#f59e0b';
                     const titleFontSize = config.actSummaryTitleFontSize || 0.9;
 
+                    const subTitleText = config.actSummarySubTitleText !== undefined ? config.actSummarySubTitleText : 'Tổng thời gian tham gia:';
+                    const subTitleColor = config.actSummarySubTitleColor || config.actSummaryItemTextColor || '#ffffff';
+                    const subTitleFontSize = config.actSummarySubTitleFontSize || 0.85;
+
+                    const valueColor = config.actSummaryValueColor || '#ef4444';
+                    const valueFontSize = config.actSummaryValueFontSize || 0.95;
+
                     const itemColor = config.actSummaryItemTextColor || '#ffffff';
                     const itemFontSize = config.actSummaryItemFontSize || 0.8;
 
@@ -608,9 +622,9 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
                                         <span>⏱️</span>
                                         <span>{titleText}</span>
                                     </div>
-                                    <div className="text-center font-bold text-sm sm:text-base tracking-wide">
-                                        <span style={{ color: itemColor }}>Tổng thời gian tham gia: </span>
-                                        <span className="text-red-500 font-extrabold text-base sm:text-lg px-1 inline-block" style={{ color: '#ef4444' }}>
+                                    <div className="text-center font-bold tracking-wide mt-0.5">
+                                        <span style={{ color: subTitleColor, fontSize: `${subTitleFontSize}rem` }}>{subTitleText} </span>
+                                        <span className="font-extrabold px-1 inline-block" style={{ color: valueColor, fontSize: `${valueFontSize}rem` }}>
                                             {formatDuration(stats.totalTime)}
                                         </span>
                                     </div>
