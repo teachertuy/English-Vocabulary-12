@@ -26,9 +26,11 @@ const DEFAULT_CONFIG: ExerciseSelectionConfig = {
     card1Title: 'English 12',
     card1Icon: '📝',
     card1Color: '#3b82f6',
+    card1Enabled: true,
     card2Title: 'Topic-based vocabulary',
     card2Icon: '📰',
     card2Color: '#a855f7',
+    card2Enabled: true,
     cardFontSize: 1.5,
     cardHeight: 10,
     cardBorderRadius: 16,
@@ -220,6 +222,54 @@ const EditExerciseSelectionModal: React.FC<EditExerciseSelectionModalProps> = ({
                 </div>
 
                 <div className="flex-grow overflow-y-auto p-8 space-y-8 bg-white">
+                    {/* Quick Folder Open/Close Control Banner */}
+                    <div className="bg-amber-50/90 border-2 border-amber-300 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center text-xl font-bold shadow">
+                                ⚙️
+                            </div>
+                            <div>
+                                <div className="font-black text-amber-950 text-sm uppercase tracking-wide">
+                                    Cài đặt Mở / Đóng 2 Folder Từ vựng
+                                </div>
+                                <div className="text-xs text-amber-800 font-medium">
+                                    Bật / Tắt trạng thái truy cập của học sinh đối với 2 thư mục bài học
+                                </div>
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
+                            {/* Folder 1 Button */}
+                            <button
+                                type="button"
+                                onClick={() => handleChange('card1Enabled', !(config.card1Enabled !== false))}
+                                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-black border-2 transition-all shadow-sm ${
+                                    config.card1Enabled !== false
+                                    ? 'bg-emerald-600 text-white border-emerald-700 hover:bg-emerald-700'
+                                    : 'bg-red-500 text-white border-red-600 hover:bg-red-600'
+                                }`}
+                                title="Bấm để bật / tắt mở folder SGK"
+                            >
+                                <span className="text-base">{config.card1Enabled !== false ? '📂' : '📁'}</span>
+                                <span>{config.card1Enabled !== false ? 'FOLDER SGK: MỞ' : 'FOLDER SGK: ĐÓNG'}</span>
+                            </button>
+
+                            {/* Folder 2 Button */}
+                            <button
+                                type="button"
+                                onClick={() => handleChange('card2Enabled', !(config.card2Enabled !== false))}
+                                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-black border-2 transition-all shadow-sm ${
+                                    config.card2Enabled !== false
+                                    ? 'bg-purple-600 text-white border-purple-700 hover:bg-purple-700'
+                                    : 'bg-red-500 text-white border-red-600 hover:bg-red-600'
+                                }`}
+                                title="Bấm để bật / tắt mở folder CHỦ ĐỀ"
+                            >
+                                <span className="text-base">{config.card2Enabled !== false ? '📂' : '📁'}</span>
+                                <span>{config.card2Enabled !== false ? 'FOLDER CHỦ ĐỀ: MỞ' : 'FOLDER CHỦ ĐỀ: ĐÓNG'}</span>
+                            </button>
+                        </div>
+                    </div>
+
                     {activeTab === 'titles' && (
                         <div className="space-y-6 tab-content-enter">
                             <div className="p-4 bg-red-50 rounded-xl border border-red-100">
@@ -263,29 +313,82 @@ const EditExerciseSelectionModal: React.FC<EditExerciseSelectionModalProps> = ({
                     {activeTab === 'cards' && (
                         <div className="space-y-6 tab-content-enter">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="p-4 border rounded-xl bg-blue-50/50">
-                                    <h4 className="font-bold text-blue-800 mb-4 flex items-center gap-2"><span>1️⃣</span> Thẻ English 12</h4>
+                                {/* FOLDER 1: SGK 12 */}
+                                <div className={`p-5 border-2 rounded-2xl transition-all shadow-sm ${config.card1Enabled !== false ? 'bg-blue-50/70 border-blue-300' : 'bg-gray-100 border-gray-300 opacity-80'}`}>
+                                    <div className="flex items-center justify-between pb-3 mb-4 border-b border-blue-200">
+                                        <h4 className="font-extrabold text-blue-900 flex items-center gap-2 text-base">
+                                            <span className="text-xl">📁</span> Folder 1: {config.card1Title || 'Từ vựng SGK 12'}
+                                        </h4>
+                                        <button
+                                            type="button"
+                                            onClick={() => handleChange('card1Enabled', !(config.card1Enabled !== false))}
+                                            className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-black transition-all shadow-sm ${
+                                                config.card1Enabled !== false 
+                                                ? 'bg-emerald-600 text-white hover:bg-emerald-700' 
+                                                : 'bg-red-500 text-white hover:bg-red-600'
+                                            }`}
+                                        >
+                                            <span>{config.card1Enabled !== false ? '📂 MỞ (Hiển thị)' : '📁 ĐÓNG (Ẩn)'}</span>
+                                        </button>
+                                    </div>
                                     <div className="space-y-4">
+                                        <div className="flex items-center justify-between p-2.5 bg-white rounded-lg border border-blue-100 shadow-2xs">
+                                            <span className="text-xs font-bold text-gray-700">Trạng thái Folder SGK</span>
+                                            <span className={`text-xs font-extrabold px-2.5 py-1 rounded-full ${config.card1Enabled !== false ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}`}>
+                                                {config.card1Enabled !== false ? 'Đang mở' : 'Đang đóng'}
+                                            </span>
+                                        </div>
                                         <div>
-                                            <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Tên hiển thị</label>
-                                            <input type="text" value={config.card1Title} onChange={e => handleChange('card1Title', e.target.value)} className="w-full p-2 border rounded text-sm" />
+                                            <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Tên hiển thị Folder 1</label>
+                                            <input type="text" value={config.card1Title} onChange={e => handleChange('card1Title', e.target.value)} className="w-full p-2 border rounded text-sm font-semibold" />
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Icon đại diện</label>
+                                            <input type="text" value={config.card1Icon} onChange={e => handleChange('card1Icon', e.target.value)} className="w-full p-2 border rounded text-sm font-semibold" placeholder="📝" />
                                         </div>
                                         <div>
                                             <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Màu nền thẻ</label>
-                                            <input type="color" value={config.card1Color} onChange={e => handleChange('card1Color', e.target.value)} className="w-full h-10 p-0 border-0 cursor-pointer" />
+                                            <input type="color" value={config.card1Color} onChange={e => handleChange('card1Color', e.target.value)} className="w-full h-10 p-0 border-0 cursor-pointer rounded" />
                                         </div>
                                     </div>
                                 </div>
-                                <div className="p-4 border rounded-xl bg-purple-50/50">
-                                    <h4 className="font-bold text-purple-800 mb-4 flex items-center gap-2"><span>2️⃣</span> Thẻ Vocabulary by Topic</h4>
+
+                                {/* FOLDER 2: THEO CHỦ ĐỀ */}
+                                <div className={`p-5 border-2 rounded-2xl transition-all shadow-sm ${config.card2Enabled !== false ? 'bg-purple-50/70 border-purple-300' : 'bg-gray-100 border-gray-300 opacity-80'}`}>
+                                    <div className="flex items-center justify-between pb-3 mb-4 border-b border-purple-200">
+                                        <h4 className="font-extrabold text-purple-900 flex items-center gap-2 text-base">
+                                            <span className="text-xl">📂</span> Folder 2: {config.card2Title || 'Từ vựng theo chủ đề'}
+                                        </h4>
+                                        <button
+                                            type="button"
+                                            onClick={() => handleChange('card2Enabled', !(config.card2Enabled !== false))}
+                                            className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-black transition-all shadow-sm ${
+                                                config.card2Enabled !== false 
+                                                ? 'bg-purple-600 text-white hover:bg-purple-700' 
+                                                : 'bg-red-500 text-white hover:bg-red-600'
+                                            }`}
+                                        >
+                                            <span>{config.card2Enabled !== false ? '📂 MỞ (Hiển thị)' : '📁 ĐÓNG (Ẩn)'}</span>
+                                        </button>
+                                    </div>
                                     <div className="space-y-4">
+                                        <div className="flex items-center justify-between p-2.5 bg-white rounded-lg border border-purple-100 shadow-2xs">
+                                            <span className="text-xs font-bold text-gray-700">Trạng thái Folder Chủ đề</span>
+                                            <span className={`text-xs font-extrabold px-2.5 py-1 rounded-full ${config.card2Enabled !== false ? 'bg-purple-100 text-purple-800' : 'bg-red-100 text-red-800'}`}>
+                                                {config.card2Enabled !== false ? 'Đang mở' : 'Đang đóng'}
+                                            </span>
+                                        </div>
                                         <div>
-                                            <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Tên hiển thị</label>
-                                            <input type="text" value={config.card2Title} onChange={e => handleChange('card2Title', e.target.value)} className="w-full p-2 border rounded text-sm" />
+                                            <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Tên hiển thị Folder 2</label>
+                                            <input type="text" value={config.card2Title} onChange={e => handleChange('card2Title', e.target.value)} className="w-full p-2 border rounded text-sm font-semibold" />
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Icon đại diện</label>
+                                            <input type="text" value={config.card2Icon} onChange={e => handleChange('card2Icon', e.target.value)} className="w-full p-2 border rounded text-sm font-semibold" placeholder="📰" />
                                         </div>
                                         <div>
                                             <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Màu nền thẻ</label>
-                                            <input type="color" value={config.card2Color} onChange={e => handleChange('card2Color', e.target.value)} className="w-full h-10 p-0 border-0 cursor-pointer" />
+                                            <input type="color" value={config.card2Color} onChange={e => handleChange('card2Color', e.target.value)} className="w-full h-10 p-0 border-0 cursor-pointer rounded" />
                                         </div>
                                     </div>
                                 </div>

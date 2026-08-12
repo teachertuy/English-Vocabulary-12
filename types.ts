@@ -137,9 +137,11 @@ export interface ExerciseSelectionConfig {
     card1Title: string;
     card1Icon: string;
     card1Color: string;
+    card1Enabled?: boolean;
     card2Title: string;
     card2Icon: string;
     card2Color: string;
+    card2Enabled?: boolean;
     cardFontSize: number;
     cardHeight: number;
     cardBorderRadius: number;

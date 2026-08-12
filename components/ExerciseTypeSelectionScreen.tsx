@@ -26,9 +26,11 @@ const DEFAULT_CONFIG: ExerciseSelectionConfig = {
     card1Title: 'English 12',
     card1Icon: '📝',
     card1Color: '#3b82f6',
+    card1Enabled: true,
     card2Title: 'Topic-based vocabulary',
     card2Icon: '📰',
     card2Color: '#a855f7',
+    card2Enabled: true,
     cardFontSize: 1.5,
     cardHeight: 10,
     cardBorderRadius: 16,
@@ -175,6 +177,9 @@ const ExerciseTypeSelectionScreen: React.FC<Props> = ({ onSelect, onBack }) => {
         return () => unsubscribe();
     }, []);
 
+    const showCard1 = config.card1Enabled !== false;
+    const showCard2 = config.card2Enabled !== false;
+
     return (
         <div className="flex flex-col items-center p-6 text-center min-h-[600px] bg-gray-50 relative">
             <button onClick={onBack} className="absolute top-6 left-6 flex items-center bg-white px-4 py-2 rounded-lg shadow font-semibold text-gray-700 hover:bg-gray-200 transition">
@@ -205,26 +210,61 @@ const ExerciseTypeSelectionScreen: React.FC<Props> = ({ onSelect, onBack }) => {
                         <span className="w-24 h-1 rounded-full" style={{ backgroundColor: '#f97316' }}></span>
                     </div>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <Card 
-                        title={config.card1Title} 
-                        icon={config.card1Icon} 
-                        color={config.card1Color} 
-                        fontSize={config.cardFontSize}
-                        height={config.cardHeight}
-                        borderRadius={config.cardBorderRadius}
-                        onClick={() => onSelect(12)} 
-                    />
-                    <Card 
-                        title={config.card2Title} 
-                        icon={config.card2Icon} 
-                        color={config.card2Color} 
-                        fontSize={config.cardFontSize}
-                        height={config.cardHeight}
-                        borderRadius={config.cardBorderRadius}
-                        onClick={() => onSelect('topics')} 
-                    />
-                </div>
+
+                {showCard1 && showCard2 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <Card 
+                            title={config.card1Title} 
+                            icon={config.card1Icon} 
+                            color={config.card1Color} 
+                            fontSize={config.cardFontSize}
+                            height={config.cardHeight}
+                            borderRadius={config.cardBorderRadius}
+                            onClick={() => onSelect(12)} 
+                        />
+                        <Card 
+                            title={config.card2Title} 
+                            icon={config.card2Icon} 
+                            color={config.card2Color} 
+                            fontSize={config.cardFontSize}
+                            height={config.cardHeight}
+                            borderRadius={config.cardBorderRadius}
+                            onClick={() => onSelect('topics')} 
+                        />
+                    </div>
+                ) : showCard1 ? (
+                    <div className="max-w-md mx-auto">
+                        <Card 
+                            title={config.card1Title} 
+                            icon={config.card1Icon} 
+                            color={config.card1Color} 
+                            fontSize={config.cardFontSize}
+                            height={config.cardHeight}
+                            borderRadius={config.cardBorderRadius}
+                            onClick={() => onSelect(12)} 
+                        />
+                    </div>
+                ) : showCard2 ? (
+                    <div className="max-w-md mx-auto">
+                        <Card 
+                            title={config.card2Title} 
+                            icon={config.card2Icon} 
+                            color={config.card2Color} 
+                            fontSize={config.cardFontSize}
+                            height={config.cardHeight}
+                            borderRadius={config.cardBorderRadius}
+                            onClick={() => onSelect('topics')} 
+                        />
+                    </div>
+                ) : (
+                    <div className="bg-amber-50 border-2 border-amber-300 rounded-2xl p-8 max-w-lg mx-auto text-amber-900 text-center font-bold shadow-md">
+                        <div className="text-4xl mb-3">📁🔒</div>
+                        <div className="text-lg font-extrabold mb-2">Hiện chưa có thư mục bài học nào được mở</div>
+                        <p className="text-sm font-medium text-amber-800">
+                            Giáo viên đã tạm thời đóng các thư mục từ vựng. Vui lòng liên hệ giáo viên hoặc quay lại sau!
+                        </p>
+                    </div>
+                )}
             </div>
         </div>
     );
