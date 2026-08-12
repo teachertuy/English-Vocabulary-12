@@ -561,54 +561,52 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
 
         const vocabCount = (vocabulary && vocabulary.length > 0) ? vocabulary.length : 10;
         const quizCount = (quiz && quiz.length > 0) ? quiz.length : 10;
-        // Minimum questions needed across all activities to consider practice substantial
-        const minExpectedQuestions = Math.min(12, Math.max(8, Math.floor((vocabCount + quizCount) * 0.4)));
+        // Total available exercise questions in unit: Matching (vocabCount) + Spelling (vocabCount) + Quiz (quizCount)
+        const totalUnitQuestions = vocabCount * 2 + quizCount;
+        const completionRate = totalUnitQuestions > 0 ? (totalAnswered / totalUnitQuestions) : 0;
+        const timePerQuestion = totalAnswered > 0 ? (totalTime / totalAnswered) : 0;
 
         let comment = '';
 
         if (totalAttemptsCount === 0 || (totalTime === 0 && totalAnswered === 0)) {
-            comment = 'Chưa có lượt học nào. Em hãy bắt đầu luyện tập nhé!';
+            comment = 'Chưa có lượt học nào. Em hãy bắt đầu luyện tập ngay nhé!';
         } else if (totalAnswered === 0) {
-            comment = `Mới chỉ xem từ vựng (${formatDuration(vTime)}). Em hãy làm thêm bài tập Ghép cặp, Viết chính tả và Trắc nghiệm nhé!`;
-        } else if (totalAnswered < minExpectedQuestions || totalAnswered < 10) {
-            // Student answered very few questions relative to available unit content (học qua loa, sơ sài)
-            if (ratio >= 0.8) {
-                comment = `Mới làm được ít câu (${totalCorrect}/${totalAnswered} đúng, ${formatDuration(totalTime)}). Dù làm đúng tốt nhưng em học còn sơ sài, hãy làm đầy đủ các câu hỏi hơn nhé!`;
+            if (vTime < 30) {
+                comment = `Mới lướt qua từ vựng (${formatDuration(vTime)}). Em hãy đọc kỹ lại từ vựng và bắt đầu làm các bài tập nhé!`;
             } else {
-                comment = `Mới làm được ít câu (${totalCorrect}/${totalAnswered} đúng, ${formatDuration(totalTime)}). Em cần xem lại bài và dành thêm thời gian luyện tập!`;
+                comment = `Đã dành ${formatDuration(vTime)} xem từ vựng. Em hãy tiếp tục làm bài tập Ghép cặp, Viết chính tả và Trắc nghiệm nhé!`;
             }
-        } else if (totalTime < 120) {
-            // Rushed time even if answered >= 10 questions
+        } else if (completionRate < 0.4 || totalAnswered < 10) {
+            // Very low completion rate or very few questions answered (< 40% of unit exercises)
             if (ratio >= 0.8) {
-                comment = `Thời gian làm bài còn vội (${formatDuration(totalTime)}, đúng ${totalCorrect}/${totalAnswered}). Em hãy đọc kỹ và làm bài chu đáo hơn nhé!`;
-            } else {
-                comment = `Làm bài vội vàng (${formatDuration(totalTime)}, đúng ${totalCorrect}/${totalAnswered}). Em hãy dành thêm thời gian ôn luyện kỹ hơn!`;
-            }
-        } else if (partsDone <= 2) {
-            if (ratio >= 0.8) {
-                comment = `Mới làm ${partsDone}/4 phần với kết quả tốt (${totalCorrect}/${totalAnswered} đúng, ${formatDuration(totalTime)}). Em nên làm nốt ${4 - partsDone} phần còn lại nhé!`;
+                comment = `Mới làm được ít câu (${totalCorrect}/${totalAnswered} đúng - ${formatDuration(totalTime)}). Kết quả đúng tốt nhưng còn sơ sài, em cần làm đầy đủ các bài tập hơn nhé!`;
             } else if (ratio >= 0.5) {
-                comment = `Mới làm ${partsDone}/4 phần (${formatDuration(totalTime)}, đúng ${totalCorrect}/${totalAnswered}). Em hãy tiếp tục cố gắng ở các phần còn lại!`;
+                comment = `Mới làm được ít câu (${totalCorrect}/${totalAnswered} đúng - ${formatDuration(totalTime)}). Em cần xem lại bài và tích cực luyện tập hơn!`;
             } else {
-                comment = `Mới làm ${partsDone}/4 phần và làm sai nhiều (${totalCorrect}/${totalAnswered} đúng). Em hãy xem lại từ vựng và làm lại bài!`;
+                comment = `Mới làm ít câu và làm sai nhiều (${totalCorrect}/${totalAnswered} đúng - ${formatDuration(totalTime)}). Em hãy xem kỹ lại từ vựng và làm lại bài nhé!`;
             }
-        } else if (partsDone === 3) {
-            if (ratio >= 0.85 && totalTime >= 180 && totalAnswered >= 12) {
-                comment = `Tốt lắm! Đã học 3/4 phần rất kỹ (${formatDuration(totalTime)}, đúng ${totalCorrect}/${totalAnswered} - ${Math.round(ratio * 100)}%). Hoàn thành nốt 1 phần còn lại nhé!`;
+        } else if (completionRate < 0.7) {
+            // Medium completion rate (40% to 69% of unit exercises - strictly NO high praise keywords until >= 70%)
+            if (ratio >= 0.85 && totalTime >= 120) {
+                comment = `Làm bài cẩn thận và đúng tốt (${totalCorrect}/${totalAnswered} câu - ${formatDuration(totalTime)}), nhưng mới đạt ${Math.round(completionRate * 100)}% lượng bài. Hãy làm tiếp để hoàn thành nhé!`;
             } else if (ratio >= 0.65) {
-                comment = `Tích cực! Đã làm 3/4 phần (${formatDuration(totalTime)}, đúng ${totalCorrect}/${totalAnswered}). Hãy cố gắng hoàn thành nốt phần cuối nhé!`;
+                comment = `Đã hoàn thành ${Math.round(completionRate * 100)}% lượng bài (${totalCorrect}/${totalAnswered} đúng - ${formatDuration(totalTime)}). Em hãy tích cực luyện tập nốt các phần còn lại nhé!`;
             } else {
-                comment = `Đã học 3/4 phần nhưng kết quả chưa cao (${totalCorrect}/${totalAnswered} đúng, ${formatDuration(totalTime)}). Em hãy ôn lại từ vựng kỹ hơn!`;
+                comment = `Đã làm được ${Math.round(completionRate * 100)}% lượng bài nhưng kết quả chưa cao (${totalCorrect}/${totalAnswered} đúng - ${formatDuration(totalTime)}). Em cần ôn kỹ từ vựng hơn!`;
             }
         } else {
-            if (ratio >= 0.85 && totalTime >= 240 && totalAnswered >= 15) {
-                comment = config.actCommentHighText || `Xuất sắc! Hoàn thành đủ 4 phần rất chăm chỉ (${formatDuration(totalTime)}, đúng ${totalCorrect}/${totalAnswered} - ${Math.round(ratio * 100)}%). Tinh thần học tập rất tuyệt vời!`;
-            } else if (ratio >= 0.8 && totalTime >= 150 && totalAnswered >= 10) {
-                comment = `Rất giỏi! Hoàn thành đủ 4 phần (${formatDuration(totalTime)}, đúng ${totalCorrect}/${totalAnswered} - ${Math.round(ratio * 100)}%). Hãy duy trì phong độ nhé!`;
-            } else if (ratio >= 0.6) {
-                comment = config.actCommentGoodText || `Khá tốt! Đã làm đủ 4 phần (${formatDuration(totalTime)}, đúng ${totalCorrect}/${totalAnswered}). Luyện tập thêm để đạt điểm cao hơn nhé!`;
+            // High completion rate (>= 70% of unit exercises completed)
+            if (timePerQuestion < 3.5) {
+                // Rushed / guessed questions
+                comment = `Đã làm ${Math.round(completionRate * 100)}% lượng bài nhưng thời gian quá vội (${formatDuration(totalTime)} cho ${totalAnswered} câu). Em hãy đọc kỹ đề và làm bài cẩn thận hơn!`;
+            } else if (ratio >= 0.85 && completionRate >= 0.80 && partsDone >= 3) {
+                comment = config.actCommentHighText || `Xuất sắc! Hoàn thành ${Math.round(completionRate * 100)}% lượng bài rất chu đáo (${totalCorrect}/${totalAnswered} đúng - ${formatDuration(totalTime)}). Tinh thần học tập rất tuyệt vời!`;
+            } else if (ratio >= 0.75) {
+                comment = config.actCommentGoodText || `Rất tốt! Hoàn thành ${Math.round(completionRate * 100)}% lượng bài tập (${totalCorrect}/${totalAnswered} đúng - ${formatDuration(totalTime)}). Hãy tiếp tục phát huy nhé!`;
+            } else if (ratio >= 0.60) {
+                comment = `Đã chăm chỉ hoàn thành ${Math.round(completionRate * 100)}% lượng bài (${formatDuration(totalTime)}) nhưng kết quả chưa cao (${totalCorrect}/${totalAnswered} đúng). Ôn thêm để nâng điểm nhé!`;
             } else {
-                comment = config.actCommentLowText || `Cần cố gắng! Đã làm đủ 4 phần nhưng kết quả chưa cao (${totalCorrect}/${totalAnswered} đúng). Hãy học kỹ từ vựng và thử lại!`;
+                comment = config.actCommentLowText || `Đã chăm chỉ làm bài (${totalAnswered} câu - ${formatDuration(totalTime)}) nhưng tỷ lệ đúng còn thấp (${totalCorrect}/${totalAnswered}). Em hãy học kỹ từ vựng và làm lại nhé!`;
             }
         }
 
