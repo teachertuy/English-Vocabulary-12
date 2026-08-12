@@ -572,41 +572,41 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
             comment = 'Chưa có lượt học nào. Em hãy bắt đầu luyện tập ngay nhé!';
         } else if (totalAnswered === 0) {
             if (vTime < 30) {
-                comment = `Mới lướt qua từ vựng (${formatDuration(vTime)}). Em hãy đọc kỹ lại từ vựng và bắt đầu làm các bài tập nhé!`;
+                comment = 'Mới lướt qua từ vựng. Em hãy đọc kỹ lại danh sách từ và bắt đầu làm các bài tập nhé!';
             } else {
-                comment = `Đã dành ${formatDuration(vTime)} xem từ vựng. Em hãy tiếp tục làm bài tập Ghép cặp, Viết chính tả và Trắc nghiệm nhé!`;
+                comment = 'Em đã dành thời gian xem từ vựng. Hãy tiếp tục thử sức với các bài tập Ghép cặp, Viết chính tả và Trắc nghiệm nhé!';
             }
         } else if (completionRate < 0.4 || totalAnswered < 10) {
             // Very low completion rate or very few questions answered (< 40% of unit exercises)
             if (ratio >= 0.8) {
-                comment = `Mới làm được ít câu (${totalCorrect}/${totalAnswered} đúng - ${formatDuration(totalTime)}). Kết quả đúng tốt nhưng còn sơ sài, em cần làm đầy đủ các bài tập hơn nhé!`;
+                comment = 'Kết quả các câu đã làm rất tốt, tuy nhiên lượng bài tập thực hiện còn ít và sơ sài. Em cần làm đầy đủ các bài tập hơn để đạt hiệu quả cao nhé!';
             } else if (ratio >= 0.5) {
-                comment = `Mới làm được ít câu (${totalCorrect}/${totalAnswered} đúng - ${formatDuration(totalTime)}). Em cần xem lại bài và tích cực luyện tập hơn!`;
+                comment = 'Mới làm được một số ít câu hỏi. Em cần dành thêm thời gian ôn lại bài và tích cực làm đầy đủ các bài tập nhé!';
             } else {
-                comment = `Mới làm ít câu và làm sai nhiều (${totalCorrect}/${totalAnswered} đúng - ${formatDuration(totalTime)}). Em hãy xem kỹ lại từ vựng và làm lại bài nhé!`;
+                comment = 'Mới làm ít câu hỏi và tỉ lệ đúng còn thấp. Em hãy xem kỹ lại danh sách từ vựng trước khi tiếp tục làm bài nhé!';
             }
         } else if (completionRate < 0.7) {
             // Medium completion rate (40% to 69% of unit exercises - strictly NO high praise keywords until >= 70%)
             if (ratio >= 0.85 && totalTime >= 120) {
-                comment = `Làm bài cẩn thận và đúng tốt (${totalCorrect}/${totalAnswered} câu - ${formatDuration(totalTime)}), nhưng mới đạt ${Math.round(completionRate * 100)}% lượng bài. Hãy làm tiếp để hoàn thành nhé!`;
+                comment = 'Làm bài cẩn thận và có tỉ lệ đúng tốt, nhưng chưa hoàn thành đủ số lượng bài tập. Em hãy tiếp tục làm nốt các phần còn lại nhé!';
             } else if (ratio >= 0.65) {
-                comment = `Đã hoàn thành ${Math.round(completionRate * 100)}% lượng bài (${totalCorrect}/${totalAnswered} đúng - ${formatDuration(totalTime)}). Em hãy tích cực luyện tập nốt các phần còn lại nhé!`;
+                comment = 'Đã hoàn thành một phần lượng bài tập. Em hãy cố gắng duy trì sự tập trung và tiếp tục làm nốt các phần còn lại nhé!';
             } else {
-                comment = `Đã làm được ${Math.round(completionRate * 100)}% lượng bài nhưng kết quả chưa cao (${totalCorrect}/${totalAnswered} đúng - ${formatDuration(totalTime)}). Em cần ôn kỹ từ vựng hơn!`;
+                comment = 'Đã có cố gắng làm bài nhưng kết quả đạt được chưa cao. Em nên dành thêm thời gian học kỹ lại từ vựng nhé!';
             }
         } else {
             // High completion rate (>= 70% of unit exercises completed)
             if (timePerQuestion < 3.5) {
                 // Rushed / guessed questions
-                comment = `Đã làm ${Math.round(completionRate * 100)}% lượng bài nhưng thời gian quá vội (${formatDuration(totalTime)} cho ${totalAnswered} câu). Em hãy đọc kỹ đề và làm bài cẩn thận hơn!`;
+                comment = 'Đã làm nhiều bài tập nhưng thời gian thao tác quá vội vàng. Em hãy đọc kỹ yêu cầu và suy nghĩ chu đáo hơn trước khi chọn nhé!';
             } else if (ratio >= 0.85 && completionRate >= 0.80 && partsDone >= 3) {
-                comment = config.actCommentHighText || `Xuất sắc! Hoàn thành ${Math.round(completionRate * 100)}% lượng bài rất chu đáo (${totalCorrect}/${totalAnswered} đúng - ${formatDuration(totalTime)}). Tinh thần học tập rất tuyệt vời!`;
+                comment = config.actCommentHighText || 'Xuất sắc! Em đã hoàn thành hầu hết các bài tập rất chu đáo với kết quả rất cao. Tinh thần học tập thật tuyệt vời!';
             } else if (ratio >= 0.75) {
-                comment = config.actCommentGoodText || `Rất tốt! Hoàn thành ${Math.round(completionRate * 100)}% lượng bài tập (${totalCorrect}/${totalAnswered} đúng - ${formatDuration(totalTime)}). Hãy tiếp tục phát huy nhé!`;
+                comment = config.actCommentGoodText || 'Rất tốt! Em đã chăm chỉ hoàn thành phần lớn các bài tập và đạt kết quả tốt. Hãy tiếp tục phát huy nhé!';
             } else if (ratio >= 0.60) {
-                comment = `Đã chăm chỉ hoàn thành ${Math.round(completionRate * 100)}% lượng bài (${formatDuration(totalTime)}) nhưng kết quả chưa cao (${totalCorrect}/${totalAnswered} đúng). Ôn thêm để nâng điểm nhé!`;
+                comment = 'Em đã rất chăm chỉ hoàn thành phần lớn các bài tập, tuy nhiên tỉ lệ đúng chưa thật cao. Hãy ôn tập lại những câu còn sai để nâng cao điểm số nhé!';
             } else {
-                comment = config.actCommentLowText || `Đã chăm chỉ làm bài (${totalAnswered} câu - ${formatDuration(totalTime)}) nhưng tỷ lệ đúng còn thấp (${totalCorrect}/${totalAnswered}). Em hãy học kỹ từ vựng và làm lại nhé!`;
+                comment = config.actCommentLowText || 'Em đã cố gắng hoàn thành bài tập nhưng kết quả chưa đạt yêu cầu. Hãy dành thời gian học kỹ lý thuyết từ vựng và luyện tập lại nhé!';
             }
         }
 
