@@ -671,8 +671,8 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
                                 className="p-3 sm:p-4 text-left shadow-lg space-y-1.5 border"
                             >
                                 <div 
-                                    style={{ color: titleColor, fontSize: `${titleFontSize}rem` }}
-                                    className="font-extrabold border-b pb-2 border-white/10 text-center space-y-1"
+                                    style={{ color: titleColor, fontSize: `${titleFontSize}rem`, borderColor: '#000000' }}
+                                    className="font-extrabold border-b border-black pb-2 text-center space-y-1"
                                 >
                                     <div className="flex items-center justify-center gap-1.5">
                                         <span>⏱️</span>
@@ -706,8 +706,8 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
                                 </div>
 
                                 <div 
-                                    style={{ fontSize: `${commentFontSize}rem` }}
-                                    className="pt-1.5 border-t border-white/10 flex items-start gap-1.5 text-left"
+                                    style={{ fontSize: `${commentFontSize}rem`, borderColor: 'rgba(0,0,0,0.2)' }}
+                                    className="pt-1.5 border-t border-black/20 flex items-start gap-1.5 text-left"
                                 >
                                     <span className="shrink-0 text-base">💬</span>
                                     <div className="leading-snug">
