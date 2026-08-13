@@ -18,6 +18,11 @@ const DEFAULT_CONFIG: WelcomeScreenConfig = {
     titleLetterSpacing1: 0.05,
     titleLetterSpacing2: -0.08,
     titleCurveArc: 35,
+    logoSize: 64,
+    logoNameGap: -6,
+    logoTitleGap: 16,
+    logoPosition: 'left',
+    teacherNameText: '{teachertuy}',
     inputNameWidth: 100,
     inputNameFontSize: 1.25,
     inputNameColor: '#ffffff',
@@ -184,6 +189,12 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
   const letterSpacing1 = config.titleLetterSpacing1 ?? 0.05;
   const letterSpacing2 = config.titleLetterSpacing2 ?? (titleLines[1]?.trim() === '12' ? -0.08 : 0.05);
 
+  const logoSize = config.logoSize ?? 64;
+  const logoNameGap = config.logoNameGap ?? -6;
+  const logoTitleGap = config.logoTitleGap ?? 16;
+  const logoPosition = config.logoPosition || 'left';
+  const teacherName = config.teacherNameText || '{teachertuy}';
+
   const y1Base = 55;
   const y1Control = Math.max(0, y1Base - arc);
   const d1 = titleLines.length > 1 ? `M 40, ${y1Base} Q 250, ${y1Control} 460, ${y1Base}` : `M 20, 75 Q 250, ${Math.max(0, 75 - arc)} 480, 75`;
@@ -196,23 +207,57 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
 
   return (
     <div className="flex flex-col items-center justify-center p-4 text-center min-h-[500px] blueprint-bg relative overflow-hidden">
-       <button 
-         onClick={onHostRequest} 
-         className="absolute top-6 left-6 z-50 flex flex-col items-center group cursor-pointer focus:outline-none focus:ring-4 focus:ring-yellow-400 focus:ring-opacity-50 rounded-full transition-transform transform hover:scale-105"
-         title="Teacher Login"
-       >
-         <img src="https://github.com/teachertuy/anhlogoto.canhan/blob/main/11zon_cropped.png?raw=true" alt="Logo" referrerPolicy="no-referrer" className="w-16 h-16 rounded-full border-4 border-yellow-300 shadow-lg group-hover:border-yellow-400" />
-         <p
-           className="text-white font-bold text-[10px] pointer-events-none select-none -mt-1.5 group-hover:text-yellow-300"
-           style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}
-           aria-hidden="true"
+       {logoPosition === 'center' ? (
+         <div className="z-20 flex flex-col items-center pt-2">
+           <button 
+             onClick={onHostRequest} 
+             className="flex flex-col items-center group cursor-pointer focus:outline-none focus:ring-4 focus:ring-yellow-400 focus:ring-opacity-50 rounded-full transition-transform transform hover:scale-105"
+             title="Teacher Login"
+           >
+             <img 
+               src="https://github.com/teachertuy/anhlogoto.canhan/blob/main/11zon_cropped.png?raw=true" 
+               alt="Logo" 
+               referrerPolicy="no-referrer" 
+               className="rounded-full border-4 border-yellow-300 shadow-lg group-hover:border-yellow-400 object-cover" 
+               style={{ width: `${logoSize}px`, height: `${logoSize}px` }}
+             />
+             <p
+               className="text-white font-bold text-xs pointer-events-none select-none group-hover:text-yellow-300"
+               style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.8)', marginTop: `${logoNameGap}px` }}
+               aria-hidden="true"
+             >
+               {teacherName}
+             </p>
+           </button>
+         </div>
+       ) : (
+         <button 
+           onClick={onHostRequest} 
+           className="absolute top-6 left-6 z-50 flex flex-col items-center group cursor-pointer focus:outline-none focus:ring-4 focus:ring-yellow-400 focus:ring-opacity-50 rounded-full transition-transform transform hover:scale-105"
+           title="Teacher Login"
          >
-           {`{teachertuy}`}
-         </p>
-       </button>
+           <img 
+             src="https://github.com/teachertuy/anhlogoto.canhan/blob/main/11zon_cropped.png?raw=true" 
+             alt="Logo" 
+             referrerPolicy="no-referrer" 
+             className="rounded-full border-4 border-yellow-300 shadow-lg group-hover:border-yellow-400 object-cover" 
+             style={{ width: `${logoSize}px`, height: `${logoSize}px` }}
+           />
+           <p
+             className="text-white font-bold text-xs pointer-events-none select-none group-hover:text-yellow-300"
+             style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.8)', marginTop: `${logoNameGap}px` }}
+             aria-hidden="true"
+           >
+             {teacherName}
+           </p>
+         </button>
+       )}
       
-      <div className="w-full max-w-[360px] mt-0 space-y-0 z-10 flex flex-col items-center">
-            <div className={`w-full transition-all duration-300 relative mt-12 flex justify-center`} style={{ height: titleLines.length > 1 ? `${Math.max(5.5, 9.5 + lineGap / 18)}rem` : '5rem' }}>
+      <div 
+        className="w-full max-w-[360px] space-y-0 z-10 flex flex-col items-center transition-all duration-300"
+        style={{ marginTop: logoPosition === 'center' ? `${logoTitleGap}px` : `${Math.max(12, 12 + logoTitleGap)}px` }}
+      >
+            <div className={`w-full transition-all duration-300 relative flex justify-center`} style={{ height: titleLines.length > 1 ? `${Math.max(5.5, 9.5 + lineGap / 18)}rem` : '5rem' }}>
                  <svg viewBox={`0 0 500 ${viewBoxHeight}`} className="w-full h-full overflow-visible">
                     <path id="curve1" d={d1} stroke="transparent" fill="transparent"/>
                     <text width="500" style={{ fill: config.titleColor, filter: 'drop-shadow(2px 2px 2px rgba(0,0,0,0.4))', fontSize: `${config.titleFontSize}rem`, letterSpacing: `${letterSpacing1}em` }} className="font-black uppercase">

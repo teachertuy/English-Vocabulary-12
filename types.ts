@@ -80,6 +80,11 @@ export interface WelcomeScreenConfig {
     titleLetterSpacing1?: number;
     titleLetterSpacing2?: number;
     titleCurveArc?: number;
+    logoSize?: number;
+    logoNameGap?: number;
+    logoTitleGap?: number;
+    logoPosition?: 'left' | 'center';
+    teacherNameText?: string;
     inputNameWidth: number;
     inputNameFontSize: number;
     inputNameColor: string;

@@ -18,6 +18,11 @@ const DEFAULT_CONFIG: WelcomeScreenConfig = {
     titleLetterSpacing1: 0.05,
     titleLetterSpacing2: -0.08,
     titleCurveArc: 35,
+    logoSize: 64,
+    logoNameGap: -6,
+    logoTitleGap: 16,
+    logoPosition: 'left',
+    teacherNameText: '{teachertuy}',
     inputNameWidth: 100,
     inputNameFontSize: 1.25,
     inputNameColor: '#ff0000',
@@ -47,6 +52,12 @@ const TitlePreview: React.FC<{ config: WelcomeScreenConfig }> = ({ config }) => 
     const letterSpacing1 = config.titleLetterSpacing1 ?? 0.05;
     const letterSpacing2 = config.titleLetterSpacing2 ?? -0.08;
 
+    const logoSize = config.logoSize ?? 64;
+    const logoNameGap = config.logoNameGap ?? -6;
+    const logoTitleGap = config.logoTitleGap ?? 16;
+    const logoPosition = config.logoPosition || 'left';
+    const teacherName = config.teacherNameText || '{teachertuy}';
+
     const y1Base = 55;
     const y1Control = Math.max(0, y1Base - arc);
     const d1 = `M 40, ${y1Base} Q 250, ${y1Control} 460, ${y1Base}`;
@@ -58,11 +69,38 @@ const TitlePreview: React.FC<{ config: WelcomeScreenConfig }> = ({ config }) => 
     const viewBoxHeight = titleLines.length > 1 ? Math.max(120, 165 + lineGap) : Math.max(70, 85 + arc);
 
     return (
-        <div className="w-full bg border-2 border-slate-700 bg-slate-900 rounded-2xl p-4 my-2 flex flex-col items-center justify-center shadow-inner overflow-hidden relative">
-            <div className="absolute top-2 left-3 bg-slate-800 text-yellow-400 text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full border border-slate-700 tracking-wider">
-                👁️ Xem trước trực tiếp
+        <div className="w-full bg-slate-900 border-2 border-slate-700 rounded-2xl p-4 my-2 flex flex-col items-center justify-center shadow-inner overflow-hidden relative min-h-[220px]">
+            <div className="absolute top-2 left-3 bg-slate-800 text-yellow-400 text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full border border-slate-700 tracking-wider z-20">
+                👁️ Xem trước trực tiếp giao diện
             </div>
-            <div className="w-full max-w-[340px] mt-4" style={{ height: titleLines.length > 1 ? `${Math.max(4.5, 7.5 + lineGap / 20)}rem` : '4.5rem' }}>
+
+            {/* Logo Preview */}
+            <div className={`w-full flex ${logoPosition === 'center' ? 'justify-center mt-6' : 'justify-start pl-2 pt-2'}`}>
+                <div className="flex flex-col items-center">
+                    <img 
+                        src="https://github.com/teachertuy/anhlogoto.canhan/blob/main/11zon_cropped.png?raw=true" 
+                        alt="Logo" 
+                        referrerPolicy="no-referrer"
+                        className="rounded-full border-2 border-yellow-300 shadow object-cover" 
+                        style={{ width: `${logoSize * 0.85}px`, height: `${logoSize * 0.85}px` }}
+                    />
+                    <span 
+                        className="text-white font-bold text-[10px] pointer-events-none select-none text-yellow-300"
+                        style={{ marginTop: `${logoNameGap}px` }}
+                    >
+                        {teacherName}
+                    </span>
+                </div>
+            </div>
+
+            {/* SVG Title Preview */}
+            <div 
+                className="w-full max-w-[340px] transition-all duration-200" 
+                style={{ 
+                    marginTop: logoPosition === 'center' ? `${logoTitleGap * 0.8}px` : `${Math.max(4, logoTitleGap * 0.5)}px`,
+                    height: titleLines.length > 1 ? `${Math.max(4.5, 7.5 + lineGap / 20)}rem` : '4.5rem' 
+                }}
+            >
                 <svg viewBox={`0 0 500 ${viewBoxHeight}`} className="w-full h-full overflow-visible">
                     <path id="preview_curve1" d={d1} stroke="transparent" fill="transparent"/>
                     <text width="500" style={{ fill: config.titleColor || '#facc15', filter: 'drop-shadow(2px 2px 2px rgba(0,0,0,0.5))', fontSize: `${config.titleFontSize}rem`, letterSpacing: `${letterSpacing1}em` }} className="font-black uppercase">
@@ -185,7 +223,7 @@ const EditWelcomeScreenModal: React.FC<EditWelcomeScreenModalProps> = ({ show, o
                                     />
                                 </div>
                                 <RangeInput 
-                                    label="📏 Khoảng cách giữa 2 hàng (Độ rộng/hẹp hàng)" 
+                                    label="📏 Khoảng cách giữa 2 hàng tiêu đề" 
                                     value={config.titleLineGap ?? 0} 
                                     unit="px" 
                                     min={-50} 
@@ -216,6 +254,85 @@ const EditWelcomeScreenModal: React.FC<EditWelcomeScreenModalProps> = ({ show, o
                                 </div>
 
                                 <ColorInput label="Màu sắc tiêu đề" value={config.titleColor} onChange={(v: string) => handleChange('titleColor', v)} />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Phần Tùy chỉnh Logo & Cụm Tiêu đề */}
+                    <div className="p-4 border rounded-xl bg-slate-50 border-blue-200 shadow-sm space-y-4">
+                        <SectionHeader icon="🖼️" title="Logo Giáo viên, Tên & Khoảng cách với Tiêu đề" colorClass="text-indigo-700" />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="block text-sm font-bold text-gray-700 mb-1">📍 Vị trí hiển thị Logo</label>
+                                    <div className="flex gap-2">
+                                        <button
+                                            type="button"
+                                            onClick={() => handleChange('logoPosition', 'left')}
+                                            className={`flex-1 py-2 px-3 rounded-lg text-xs font-bold border transition ${
+                                                (config.logoPosition || 'left') === 'left'
+                                                    ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
+                                                    : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
+                                            }`}
+                                        >
+                                            ↖️ Góc trên bên trái
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => handleChange('logoPosition', 'center')}
+                                            className={`flex-1 py-2 px-3 rounded-lg text-xs font-bold border transition ${
+                                                config.logoPosition === 'center'
+                                                    ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
+                                                    : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
+                                            }`}
+                                        >
+                                            ⬆️ Căn giữa phía trên Tiêu đề
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <RangeInput 
+                                    label="📸 Kích thước Logo ảnh" 
+                                    value={config.logoSize ?? 64} 
+                                    unit="px" 
+                                    min={30} 
+                                    max={120} 
+                                    step={2} 
+                                    onChange={(v: number) => handleChange('logoSize', v)} 
+                                />
+
+                                <div>
+                                    <label className="block text-sm font-semibold text-gray-600 mb-1">✏️ Tên hiển thị dưới Logo</label>
+                                    <input 
+                                        type="text" 
+                                        value={config.teacherNameText ?? '{teachertuy}'} 
+                                        onChange={e => handleChange('teacherNameText', e.target.value)} 
+                                        className="w-full p-2 border border-gray-300 rounded text-sm font-bold bg-white"
+                                        placeholder="{teachertuy}" 
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="space-y-4">
+                                <RangeInput 
+                                    label="↔️ Khoảng cách giữa Logo ảnh & Tên" 
+                                    value={config.logoNameGap ?? -6} 
+                                    unit="px" 
+                                    min={-20} 
+                                    max={30} 
+                                    step={1} 
+                                    onChange={(v: number) => handleChange('logoNameGap', v)} 
+                                />
+
+                                <RangeInput 
+                                    label="↕️ Khoảng cách Cụm Logo/Tên & Tiêu đề ENGLISH VOCABULARY 12" 
+                                    value={config.logoTitleGap ?? 16} 
+                                    unit="px" 
+                                    min={-20} 
+                                    max={100} 
+                                    step={2} 
+                                    onChange={(v: number) => handleChange('logoTitleGap', v)} 
+                                />
                             </div>
                         </div>
                     </div>
