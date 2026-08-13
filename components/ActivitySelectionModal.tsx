@@ -144,6 +144,17 @@ const DEFAULT_CONFIG: ExerciseSelectionConfig = {
     actSummaryValueColor: '#ef4444',
     actSummaryValueFontSize: 0.95,
 
+    actSummaryCompletionLabelText: 'Đã hoàn thành:',
+    actSummaryCompletionLabelColor: '#ffffff',
+    actSummaryCompletionLabelFontSize: 0.85,
+    actSummaryCompletionValueColor: '#ef4444',
+    actSummaryCompletionNumFontSize: 0.95,
+    actSummaryCompletionPctFontSize: 0.7,
+    actSummaryCompletionCircleSize: 38,
+    actSummaryCompletionCircleBorderColor: '#ef4444',
+    actSummaryCompletionCircleBorderWidth: 2,
+    actSummaryCompletionCircleBgColor: '#ffffff',
+
     actSummaryItemTextColor: '#ffffff',
     actSummaryItemFontSize: 0.8,
     actSummaryCommentTextColor: '#4ade80',
@@ -567,6 +578,23 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
         const completionRate = totalUnitQuestions > 0 ? (totalAnswered / totalUnitQuestions) : 0;
         const timePerQuestion = totalAnswered > 0 ? (totalTime / totalAnswered) : 0;
 
+        // Accurate completion calculation across all 4 activity cards
+        const vDoneCount = (vDone ? 1 : 0);
+        const mDoneCount = Math.min(vocabCount, mCorrect + mIncorrect);
+        const sDoneCount = Math.min(vocabCount, sCorrect + sIncorrect);
+        const qDoneCount = Math.min(quizCount, qCorrect + qIncorrect);
+
+        const totalAvailableItems = 1 + vocabCount + vocabCount + quizCount;
+        const totalCompletedItems = vDoneCount + mDoneCount + sDoneCount + qDoneCount;
+
+        let overallPercent = 0;
+        if (totalAvailableItems > 0) {
+            overallPercent = Math.min(100, Math.round((totalCompletedItems / totalAvailableItems) * 100));
+        }
+        if (vDone && mDoneCount >= vocabCount && sDoneCount >= vocabCount && qDoneCount >= quizCount) {
+            overallPercent = 100;
+        }
+
         let comment = '';
 
         if (totalAttemptsCount === 0 || (totalTime === 0 && totalAnswered === 0)) {
@@ -617,7 +645,8 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
             sTime, sCorrect, sIncorrect,
             qTime, qCorrect, qIncorrect,
             totalTime,
-            comment
+            comment,
+            overallPercent
         };
     };
 
@@ -651,6 +680,18 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
                     const valueColor = config.actSummaryValueColor || '#ef4444';
                     const valueFontSize = config.actSummaryValueFontSize || 0.95;
 
+                    const compLabelText = config.actSummaryCompletionLabelText !== undefined ? config.actSummaryCompletionLabelText : 'Đã hoàn thành:';
+                    const compLabelColor = config.actSummaryCompletionLabelColor || config.actSummaryItemTextColor || '#ffffff';
+                    const compLabelFontSize = config.actSummaryCompletionLabelFontSize || 0.85;
+
+                    const compValueColor = config.actSummaryCompletionValueColor || '#ef4444';
+                    const compNumFontSize = config.actSummaryCompletionNumFontSize || 0.95;
+                    const compPctFontSize = config.actSummaryCompletionPctFontSize || 0.7;
+                    const compCircleSize = config.actSummaryCompletionCircleSize !== undefined ? config.actSummaryCompletionCircleSize : 38;
+                    const compCircleBorderColor = config.actSummaryCompletionCircleBorderColor || '#ef4444';
+                    const compCircleBorderWidth = config.actSummaryCompletionCircleBorderWidth !== undefined ? config.actSummaryCompletionCircleBorderWidth : 2;
+                    const compCircleBgColor = config.actSummaryCompletionCircleBgColor || '#ffffff';
+
                     const itemColor = config.actSummaryItemTextColor || '#ffffff';
                     const itemFontSize = config.actSummaryItemFontSize || 0.8;
 
@@ -682,6 +723,27 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
                                         <span className="font-extrabold px-1 inline-block" style={{ color: valueColor, fontSize: `${valueFontSize}rem` }}>
                                             {formatDuration(stats.totalTime)}
                                         </span>
+                                    </div>
+                                    <div className="flex items-center justify-center gap-2 mt-1">
+                                        <span style={{ color: compLabelColor, fontSize: `${compLabelFontSize}rem` }} className="font-bold">
+                                            {compLabelText}
+                                        </span>
+                                        <div 
+                                            style={{ 
+                                                width: `${compCircleSize}px`, 
+                                                height: `${compCircleSize}px`, 
+                                                backgroundColor: compCircleBgColor, 
+                                                borderColor: compCircleBorderColor, 
+                                                borderWidth: `${compCircleBorderWidth}px`,
+                                                borderStyle: 'solid',
+                                                borderRadius: '9999px',
+                                                color: compValueColor
+                                            }}
+                                            className="flex items-center justify-center font-black shrink-0 leading-none shadow-sm"
+                                        >
+                                            <span style={{ fontSize: `${compNumFontSize}rem` }}>{stats.overallPercent}</span>
+                                            <span style={{ fontSize: `${compPctFontSize}rem` }}>%</span>
+                                        </div>
                                     </div>
                                 </div>
 

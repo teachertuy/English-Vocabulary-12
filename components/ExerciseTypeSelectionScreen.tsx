@@ -139,6 +139,18 @@ const DEFAULT_CONFIG: ExerciseSelectionConfig = {
     actSummarySubTitleFontSize: 0.85,
     actSummaryValueColor: '#ef4444',
     actSummaryValueFontSize: 0.95,
+
+    actSummaryCompletionLabelText: 'Đã hoàn thành:',
+    actSummaryCompletionLabelColor: '#ffffff',
+    actSummaryCompletionLabelFontSize: 0.85,
+    actSummaryCompletionValueColor: '#ef4444',
+    actSummaryCompletionNumFontSize: 0.95,
+    actSummaryCompletionPctFontSize: 0.7,
+    actSummaryCompletionCircleSize: 38,
+    actSummaryCompletionCircleBorderColor: '#ef4444',
+    actSummaryCompletionCircleBorderWidth: 2,
+    actSummaryCompletionCircleBgColor: '#ffffff',
+
     actSummaryItemTextColor: '#ffffff',
     actSummaryItemFontSize: 0.8,
     actSummaryCommentTextColor: '#4ade80',

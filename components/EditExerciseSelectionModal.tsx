@@ -132,6 +132,17 @@ const DEFAULT_CONFIG: ExerciseSelectionConfig = {
     actSummaryValueColor: '#ef4444',
     actSummaryValueFontSize: 0.95,
 
+    actSummaryCompletionLabelText: 'Đã hoàn thành:',
+    actSummaryCompletionLabelColor: '#ffffff',
+    actSummaryCompletionLabelFontSize: 0.85,
+    actSummaryCompletionValueColor: '#ef4444',
+    actSummaryCompletionNumFontSize: 0.95,
+    actSummaryCompletionPctFontSize: 0.7,
+    actSummaryCompletionCircleSize: 38,
+    actSummaryCompletionCircleBorderColor: '#ef4444',
+    actSummaryCompletionCircleBorderWidth: 2,
+    actSummaryCompletionCircleBgColor: '#ffffff',
+
     actSummaryItemTextColor: '#ffffff',
     actSummaryItemFontSize: 0.8,
     actSummaryCommentTextColor: '#4ade80',
@@ -733,6 +744,67 @@ const EditExerciseSelectionModal: React.FC<EditExerciseSelectionModalProps> = ({
                                             <div>
                                                 <label className="block text-xs font-bold text-gray-800 mb-1">Cỡ chữ số & phút/giây: <span className="text-blue-600 font-bold">{config.actSummaryValueFontSize || 0.95}rem</span></label>
                                                 <input type="range" min="0.5" max="1.8" step="0.05" value={config.actSummaryValueFontSize || 0.95} onChange={e => handleChange('actSummaryValueFontSize', parseFloat(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
+                                            </div>
+
+                                            {/* Completion Rate Row Settings (Row 3: 'Đã hoàn thành: ...%') */}
+                                            <div className="col-span-1 md:col-span-2 pt-3 border-t border-indigo-200/60 mt-1">
+                                                <div className="font-bold text-indigo-900 text-xs mb-3 flex items-center gap-1.5 uppercase tracking-wide">
+                                                    <span>📊</span> Tùy chỉnh Hàng 3: "Đã hoàn thành: ...%" & Vòng tròn %
+                                                </div>
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-indigo-50/50 p-3 rounded-xl border border-indigo-100">
+                                                    <div className="col-span-1 md:col-span-2">
+                                                        <label className="block text-xs font-bold text-gray-800 mb-1">Tên nhãn cụm "Đã hoàn thành:"</label>
+                                                        <input 
+                                                            type="text" 
+                                                            value={config.actSummaryCompletionLabelText !== undefined ? config.actSummaryCompletionLabelText : 'Đã hoàn thành:'} 
+                                                            onChange={e => handleChange('actSummaryCompletionLabelText', e.target.value)} 
+                                                            className="w-full p-2 border rounded-lg text-xs font-semibold bg-white focus:ring-2 focus:ring-indigo-500" 
+                                                            placeholder="Đã hoàn thành:"
+                                                        />
+                                                    </div>
+                                                    <div>
+                                                        <label className="block text-xs font-bold text-gray-800 mb-1">Màu chữ Nhãn "Đã hoàn thành:"</label>
+                                                        <input type="color" value={config.actSummaryCompletionLabelColor || '#ffffff'} onChange={e => handleChange('actSummaryCompletionLabelColor', e.target.value)} className="w-full h-10 p-0 border-0 cursor-pointer rounded" />
+                                                    </div>
+                                                    <div>
+                                                        <label className="block text-xs font-bold text-gray-800 mb-1">Cỡ chữ Nhãn: <span className="text-blue-600 font-bold">{config.actSummaryCompletionLabelFontSize || 0.85}rem</span></label>
+                                                        <input type="range" min="0.5" max="1.5" step="0.05" value={config.actSummaryCompletionLabelFontSize || 0.85} onChange={e => handleChange('actSummaryCompletionLabelFontSize', parseFloat(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
+                                                    </div>
+
+                                                    <div>
+                                                        <label className="block text-xs font-bold text-gray-800 mb-1">Màu sắc Con số & %</label>
+                                                        <input type="color" value={config.actSummaryCompletionValueColor || '#ef4444'} onChange={e => handleChange('actSummaryCompletionValueColor', e.target.value)} className="w-full h-10 p-0 border-0 cursor-pointer rounded" />
+                                                    </div>
+                                                    <div>
+                                                        <label className="block text-xs font-bold text-gray-800 mb-1">Cỡ chữ Con số: <span className="text-blue-600 font-bold">{config.actSummaryCompletionNumFontSize || 0.95}rem</span></label>
+                                                        <input type="range" min="0.5" max="2.0" step="0.05" value={config.actSummaryCompletionNumFontSize || 0.95} onChange={e => handleChange('actSummaryCompletionNumFontSize', parseFloat(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
+                                                    </div>
+
+                                                    <div>
+                                                        <label className="block text-xs font-bold text-gray-800 mb-1">Cỡ chữ ký hiệu %: <span className="text-blue-600 font-bold">{config.actSummaryCompletionPctFontSize || 0.7}rem</span></label>
+                                                        <input type="range" min="0.4" max="1.5" step="0.05" value={config.actSummaryCompletionPctFontSize || 0.7} onChange={e => handleChange('actSummaryCompletionPctFontSize', parseFloat(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
+                                                    </div>
+
+                                                    <div>
+                                                        <label className="block text-xs font-bold text-gray-800 mb-1">Kích cỡ vòng tròn (Đường kính): <span className="text-blue-600 font-bold">{config.actSummaryCompletionCircleSize !== undefined ? config.actSummaryCompletionCircleSize : 38}px</span></label>
+                                                        <input type="range" min="20" max="80" step="2" value={config.actSummaryCompletionCircleSize !== undefined ? config.actSummaryCompletionCircleSize : 38} onChange={e => handleChange('actSummaryCompletionCircleSize', parseInt(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
+                                                    </div>
+
+                                                    <div>
+                                                        <label className="block text-xs font-bold text-gray-800 mb-1">Màu viền vòng tròn</label>
+                                                        <input type="color" value={config.actSummaryCompletionCircleBorderColor || '#ef4444'} onChange={e => handleChange('actSummaryCompletionCircleBorderColor', e.target.value)} className="w-full h-10 p-0 border-0 cursor-pointer rounded" />
+                                                    </div>
+
+                                                    <div>
+                                                        <label className="block text-xs font-bold text-gray-800 mb-1">Độ dày / mỏng viền tròn: <span className="text-blue-600 font-bold">{config.actSummaryCompletionCircleBorderWidth !== undefined ? config.actSummaryCompletionCircleBorderWidth : 2}px</span></label>
+                                                        <input type="range" min="0" max="10" step="1" value={config.actSummaryCompletionCircleBorderWidth !== undefined ? config.actSummaryCompletionCircleBorderWidth : 2} onChange={e => handleChange('actSummaryCompletionCircleBorderWidth', parseInt(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
+                                                    </div>
+
+                                                    <div>
+                                                        <label className="block text-xs font-bold text-gray-800 mb-1">Màu nền vòng tròn</label>
+                                                        <input type="color" value={config.actSummaryCompletionCircleBgColor || '#ffffff'} onChange={e => handleChange('actSummaryCompletionCircleBgColor', e.target.value)} className="w-full h-10 p-0 border-0 cursor-pointer rounded" />
+                                                    </div>
+                                                </div>
                                             </div>
 
                                             <div>

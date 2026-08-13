@@ -273,6 +273,19 @@ export interface ExerciseSelectionConfig {
     actSummaryValueColor?: string;
     actSummaryValueFontSize?: number;
 
+    // Sub-title completion rate ("Đã hoàn thành: ...%") & Circle styling
+    actSummaryCompletionLabelText?: string;
+    actSummaryCompletionLabelColor?: string;
+    actSummaryCompletionLabelFontSize?: number;
+
+    actSummaryCompletionValueColor?: string;
+    actSummaryCompletionNumFontSize?: number;
+    actSummaryCompletionPctFontSize?: number;
+    actSummaryCompletionCircleSize?: number;
+    actSummaryCompletionCircleBorderColor?: string;
+    actSummaryCompletionCircleBorderWidth?: number;
+    actSummaryCompletionCircleBgColor?: string;
+
     actSummaryItemTextColor?: string;
     actSummaryItemFontSize?: number;
 
