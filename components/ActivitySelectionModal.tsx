@@ -8,7 +8,8 @@ import {
     listenToExerciseSelectionConfig,
     listenToStudentActivityAttempts,
     ActivityAttemptCounts,
-    ActivityStats
+    ActivityStats,
+    AttemptDetail
 } from '../services/firebaseService';
 
 interface ActivitySelectionModalProps {

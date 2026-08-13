@@ -305,6 +305,8 @@ export interface AttemptDetail {
     timeTakenSeconds: number;
     timestamp?: any;
     correct?: number;
+    totalQuestions?: number;
+    score?: number | string;
 }
 
 export interface ActivityStats {

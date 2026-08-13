@@ -76,6 +76,10 @@ export interface WelcomeScreenConfig {
     titleFontSize: number;
     titleFontSizeLine2: number;
     titleColor: string;
+    titleLineGap?: number;
+    titleLetterSpacing1?: number;
+    titleLetterSpacing2?: number;
+    titleCurveArc?: number;
     inputNameWidth: number;
     inputNameFontSize: number;
     inputNameColor: string;

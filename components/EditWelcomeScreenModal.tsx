@@ -14,6 +14,10 @@ const DEFAULT_CONFIG: WelcomeScreenConfig = {
     titleFontSize: 2,
     titleFontSizeLine2: 5,
     titleColor: '#facc15',
+    titleLineGap: 0,
+    titleLetterSpacing1: 0.05,
+    titleLetterSpacing2: -0.08,
+    titleCurveArc: 35,
     inputNameWidth: 100,
     inputNameFontSize: 1.25,
     inputNameColor: '#ff0000',
@@ -32,6 +36,55 @@ const DEFAULT_CONFIG: WelcomeScreenConfig = {
     startButtonTextColor: '#ff0000',
     startButtonRingColor: '#ffffff',
     startButtonRingWidth: 3
+};
+
+const TitlePreview: React.FC<{ config: WelcomeScreenConfig }> = ({ config }) => {
+    const rawText = config.titleText || 'ENGLISH VOCABULARY\n12';
+    const lines = rawText.split('\n').filter(l => l.trim() !== '');
+    const titleLines = lines.length > 1 ? lines.slice(0, 2) : [rawText];
+    const lineGap = config.titleLineGap ?? 0;
+    const arc = config.titleCurveArc ?? 35;
+    const letterSpacing1 = config.titleLetterSpacing1 ?? 0.05;
+    const letterSpacing2 = config.titleLetterSpacing2 ?? -0.08;
+
+    const y1Base = 55;
+    const y1Control = Math.max(0, y1Base - arc);
+    const d1 = `M 40, ${y1Base} Q 250, ${y1Control} 460, ${y1Base}`;
+
+    const y2Base = 135 + lineGap;
+    const y2Control = Math.max(0, y2Base - Math.round(arc * 0.7));
+    const d2 = `M 20, ${y2Base} Q 250, ${y2Control} 480, ${y2Base}`;
+
+    const viewBoxHeight = titleLines.length > 1 ? Math.max(120, 165 + lineGap) : Math.max(70, 85 + arc);
+
+    return (
+        <div className="w-full bg border-2 border-slate-700 bg-slate-900 rounded-2xl p-4 my-2 flex flex-col items-center justify-center shadow-inner overflow-hidden relative">
+            <div className="absolute top-2 left-3 bg-slate-800 text-yellow-400 text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full border border-slate-700 tracking-wider">
+                👁️ Xem trước trực tiếp
+            </div>
+            <div className="w-full max-w-[340px] mt-4" style={{ height: titleLines.length > 1 ? `${Math.max(4.5, 7.5 + lineGap / 20)}rem` : '4.5rem' }}>
+                <svg viewBox={`0 0 500 ${viewBoxHeight}`} className="w-full h-full overflow-visible">
+                    <path id="preview_curve1" d={d1} stroke="transparent" fill="transparent"/>
+                    <text width="500" style={{ fill: config.titleColor || '#facc15', filter: 'drop-shadow(2px 2px 2px rgba(0,0,0,0.5))', fontSize: `${config.titleFontSize}rem`, letterSpacing: `${letterSpacing1}em` }} className="font-black uppercase">
+                        <textPath href="#preview_curve1" startOffset="50%" textAnchor="middle">
+                            {titleLines[0]}
+                        </textPath>
+                    </text>
+                    
+                    {titleLines.length > 1 && (
+                        <>
+                            <path id="preview_curve2" d={d2} stroke="transparent" fill="transparent"/>
+                            <text width="500" style={{ fill: config.titleColor || '#facc15', filter: 'drop-shadow(2px 2px 2px rgba(0,0,0,0.5))', fontSize: `${config.titleFontSizeLine2 || (config.titleFontSize * 0.85)}rem`, letterSpacing: `${letterSpacing2}em` }} className="font-black uppercase opacity-95">
+                                <textPath href="#preview_curve2" startOffset="50%" textAnchor="middle">
+                                    {titleLines[1]}
+                                </textPath>
+                            </text>
+                        </>
+                    )}
+                </svg>
+            </div>
+        </div>
+    );
 };
 
 const EditWelcomeScreenModal: React.FC<EditWelcomeScreenModalProps> = ({ show, onClose, onSave, currentConfig }) => {
@@ -112,20 +165,56 @@ const EditWelcomeScreenModal: React.FC<EditWelcomeScreenModalProps> = ({ show, o
 
                 <div className="flex-grow overflow-y-auto p-4 space-y-6">
                     {/* Phần 1: Tiêu đề */}
-                    <div className="p-4 border rounded-xl bg-white shadow-sm">
-                        <SectionHeader icon="🏷️" title="Tiêu đề & Cỡ chữ" colorClass="text-blue-700" />
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <div>
-                                <label className="block text-sm font-semibold text-gray-600 mb-1">Nội dung (Dùng \n để ngắt dòng)</label>
-                                <textarea 
-                                    value={config.titleText} 
-                                    onChange={e => handleChange('titleText', e.target.value.toUpperCase())}
-                                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 font-bold uppercase min-h-[100px] bg-slate-50"
+                    <div className="p-4 border rounded-xl bg-white shadow-sm space-y-4">
+                        <SectionHeader icon="🏷️" title="Tiêu đề & Tùy chỉnh Khoảng cách / Độ rộng hàng" colorClass="text-blue-700" />
+                        
+                        {/* Live Preview Box */}
+                        <TitlePreview config={config} />
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="block text-sm font-bold text-gray-700 mb-1">
+                                        Nội dung Tiêu đề <span className="text-xs text-blue-600 font-normal">(Dùng \n để ngắt thành 2 dòng)</span>
+                                    </label>
+                                    <textarea 
+                                        value={config.titleText} 
+                                        onChange={e => handleChange('titleText', e.target.value.toUpperCase())}
+                                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 font-extrabold uppercase min-h-[90px] bg-slate-50 text-base"
+                                        placeholder="ENGLISH VOCABULARY&#10;12"
+                                    />
+                                </div>
+                                <RangeInput 
+                                    label="📏 Khoảng cách giữa 2 hàng (Độ rộng/hẹp hàng)" 
+                                    value={config.titleLineGap ?? 0} 
+                                    unit="px" 
+                                    min={-50} 
+                                    max={90} 
+                                    step={1} 
+                                    onChange={(v: number) => handleChange('titleLineGap', v)} 
+                                />
+                                <RangeInput 
+                                    label="↪️ Độ cong vồng hàng tiêu đề" 
+                                    value={config.titleCurveArc ?? 35} 
+                                    unit="px" 
+                                    min={0} 
+                                    max={60} 
+                                    step={1} 
+                                    onChange={(v: number) => handleChange('titleCurveArc', v)} 
                                 />
                             </div>
+
                             <div className="space-y-4">
-                                <RangeInput label="Cỡ chữ Dòng 1" value={config.titleFontSize} unit="rem" min={1} max={5} step={0.1} onChange={(v: number) => handleChange('titleFontSize', v)} />
-                                <RangeInput label="Cỡ chữ Dòng 2" value={config.titleFontSizeLine2} unit="rem" min={1} max={8} step={0.1} onChange={(v: number) => handleChange('titleFontSizeLine2', v)} />
+                                <div className="grid grid-cols-2 gap-3">
+                                    <RangeInput label="Cỡ chữ Dòng 1" value={config.titleFontSize} unit="rem" min={1} max={5} step={0.1} onChange={(v: number) => handleChange('titleFontSize', v)} />
+                                    <RangeInput label="Cỡ chữ Dòng 2" value={config.titleFontSizeLine2} unit="rem" min={1} max={8} step={0.1} onChange={(v: number) => handleChange('titleFontSizeLine2', v)} />
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-3">
+                                    <RangeInput label="Độ giãn/rộng Dòng 1" value={config.titleLetterSpacing1 ?? 0.05} unit="em" min={-0.15} max={0.6} step={0.01} onChange={(v: number) => handleChange('titleLetterSpacing1', v)} />
+                                    <RangeInput label="Độ giãn/rộng Dòng 2" value={config.titleLetterSpacing2 ?? -0.08} unit="em" min={-0.2} max={0.8} step={0.01} onChange={(v: number) => handleChange('titleLetterSpacing2', v)} />
+                                </div>
+
                                 <ColorInput label="Màu sắc tiêu đề" value={config.titleColor} onChange={(v: string) => handleChange('titleColor', v)} />
                             </div>
                         </div>

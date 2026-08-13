@@ -14,6 +14,10 @@ const DEFAULT_CONFIG: WelcomeScreenConfig = {
     titleFontSize: 1.8,
     titleFontSizeLine2: 1.6,
     titleColor: '#facc15',
+    titleLineGap: 0,
+    titleLetterSpacing1: 0.05,
+    titleLetterSpacing2: -0.08,
+    titleCurveArc: 35,
     inputNameWidth: 100,
     inputNameFontSize: 1.25,
     inputNameColor: '#ffffff',
@@ -175,15 +179,21 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
     return [text];
   }, [config.titleText, config.titleFontSize]);
 
-  const line2LetterSpacing = useMemo(() => {
-    if (titleLines.length > 1) {
-        const line2 = titleLines[1].trim();
-        if (line2 === '12') return '-0.08em';
-        if (line2.includes('12')) return '0.05em';
-    }
-    return '0.35em';
-  }, [titleLines]);
-  
+  const lineGap = config.titleLineGap ?? 0;
+  const arc = config.titleCurveArc ?? 35;
+  const letterSpacing1 = config.titleLetterSpacing1 ?? 0.05;
+  const letterSpacing2 = config.titleLetterSpacing2 ?? (titleLines[1]?.trim() === '12' ? -0.08 : 0.05);
+
+  const y1Base = 55;
+  const y1Control = Math.max(0, y1Base - arc);
+  const d1 = titleLines.length > 1 ? `M 40, ${y1Base} Q 250, ${y1Control} 460, ${y1Base}` : `M 20, 75 Q 250, ${Math.max(0, 75 - arc)} 480, 75`;
+
+  const y2Base = 135 + lineGap;
+  const y2Control = Math.max(0, y2Base - Math.round(arc * 0.7));
+  const d2 = `M 20, ${y2Base} Q 250, ${y2Control} 480, ${y2Base}`;
+
+  const viewBoxHeight = titleLines.length > 1 ? Math.max(120, 165 + lineGap) : Math.max(70, 85 + arc);
+
   return (
     <div className="flex flex-col items-center justify-center p-4 text-center min-h-[500px] blueprint-bg relative overflow-hidden">
        <button 
@@ -201,11 +211,11 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
          </p>
        </button>
       
-      <div className="w-full max-w-[350px] mt-0 space-y-0 z-10 flex flex-col items-center">
-            <div className={`w-full transition-all duration-500 ${titleLines.length > 1 ? 'h-40' : 'h-20'} relative mt-12`}>
-                 <svg viewBox={titleLines.length > 1 ? "0 0 500 170" : "0 0 500 90"} className="w-full h-full overflow-visible">
-                    <path id="curve1" d={titleLines.length > 1 ? "M 50, 60 Q 250, 15 450, 60" : "M 20, 75 Q 250, 30 480, 75"} stroke="transparent" fill="transparent"/>
-                    <text width="500" style={{ fill: config.titleColor, filter: 'drop-shadow(2px 2px 2px rgba(0,0,0,0.4))', fontSize: `${config.titleFontSize}rem` }} className="font-black tracking-wider uppercase">
+      <div className="w-full max-w-[360px] mt-0 space-y-0 z-10 flex flex-col items-center">
+            <div className={`w-full transition-all duration-300 relative mt-12 flex justify-center`} style={{ height: titleLines.length > 1 ? `${Math.max(5.5, 9.5 + lineGap / 18)}rem` : '5rem' }}>
+                 <svg viewBox={`0 0 500 ${viewBoxHeight}`} className="w-full h-full overflow-visible">
+                    <path id="curve1" d={d1} stroke="transparent" fill="transparent"/>
+                    <text width="500" style={{ fill: config.titleColor, filter: 'drop-shadow(2px 2px 2px rgba(0,0,0,0.4))', fontSize: `${config.titleFontSize}rem`, letterSpacing: `${letterSpacing1}em` }} className="font-black uppercase">
                         <textPath href="#curve1" startOffset="50%" textAnchor="middle">
                             {titleLines[0]}
                         </textPath>
@@ -213,8 +223,8 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
                     
                     {titleLines.length > 1 && (
                         <>
-                            <path id="curve2" d="M 10, 150 Q 250, 100 490, 150" stroke="transparent" fill="transparent"/>
-                            <text width="500" style={{ fill: config.titleColor, filter: 'drop-shadow(2px 2px 2px rgba(0,0,0,0.4))', fontSize: `${config.titleFontSizeLine2 || (config.titleFontSize * 0.85)}rem`, letterSpacing: line2LetterSpacing }} className="font-black uppercase opacity-95">
+                            <path id="curve2" d={d2} stroke="transparent" fill="transparent"/>
+                            <text width="500" style={{ fill: config.titleColor, filter: 'drop-shadow(2px 2px 2px rgba(0,0,0,0.4))', fontSize: `${config.titleFontSizeLine2 || (config.titleFontSize * 0.85)}rem`, letterSpacing: `${letterSpacing2}em` }} className="font-black uppercase opacity-95">
                                 <textPath href="#curve2" startOffset="50%" textAnchor="middle">
                                     {titleLines[1]}
                                 </textPath>
