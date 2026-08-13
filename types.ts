@@ -38,6 +38,7 @@ export interface GameResult {
   attempts?: number;
   status?: 'in-progress' | 'completed';
   activityId?: string;
+  audioListenedCount?: number;
 }
 
 export interface SavedQuiz {

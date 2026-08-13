@@ -532,6 +532,10 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
     const calcSummaryStats = () => {
         const vTime = attempts.vocabulary.totalTimeSeconds || 0;
         const vCount = attempts.vocabulary.count || 0;
+        let vAudioCount = 0;
+        (attempts.vocabulary.attemptsList || []).forEach(a => {
+            vAudioCount += a.audioListenedCount || 0;
+        });
         
         const mTime = attempts.matching.totalTimeSeconds || 0;
         const mCount = attempts.matching.count || 0;
@@ -634,6 +638,7 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
 
         return {
             vTime,
+            vAudioCount,
             mTime, mCorrect, mIncorrect,
             sTime, sCorrect, sIncorrect,
             qTime, qCorrect, qIncorrect,
@@ -743,7 +748,7 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
                                 <div className="space-y-1 font-medium pt-1" style={{ color: itemColor, fontSize: `${itemFontSize}rem` }}>
                                     <div className="flex items-start gap-1">
                                         <span className="font-bold shrink-0">1.</span>
-                                        <span>Học từ mới: <strong style={{ color: titleColor }}>{formatDuration(stats.vTime)}</strong></span>
+                                        <span>Học từ vựng: <strong style={{ color: titleColor }}>{formatDuration(stats.vTime)}</strong> (nghe phát âm <strong style={{ color: titleColor }}>{stats.vAudioCount}</strong> từ)</span>
                                     </div>
                                     <div className="flex items-start gap-1">
                                         <span className="font-bold shrink-0">2.</span>

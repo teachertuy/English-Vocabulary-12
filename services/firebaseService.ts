@@ -309,6 +309,7 @@ export interface AttemptDetail {
     totalQuestions?: number;
     score?: number | string;
     gameType?: string;
+    audioListenedCount?: number;
 }
 
 export interface ActivityStats {
@@ -459,6 +460,7 @@ export const listenToStudentActivityAttempts = (
                         correct: typeof item.correct === 'number' ? item.correct : (item.correct !== undefined ? (parseInt(item.correct, 10) || 0) : 0),
                         incorrect: typeof item.incorrect === 'number' ? item.incorrect : (item.incorrect !== undefined ? (parseInt(item.incorrect, 10) || 0) : 0),
                         totalQuestions: typeof item.totalQuestions === 'number' ? item.totalQuestions : (item.totalQuestions !== undefined ? (parseInt(item.totalQuestions, 10) || 0) : 0),
+                        audioListenedCount: typeof item.audioListenedCount === 'number' ? item.audioListenedCount : (item.audioListenedCount !== undefined ? (parseInt(item.audioListenedCount, 10) || 0) : 0),
                         gameType: gt
                     }));
 
