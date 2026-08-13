@@ -7,6 +7,7 @@ import {
     getTopicVocabulary, 
     listenToExerciseSelectionConfig,
     listenToStudentActivityAttempts,
+    calculateStudentCompletionPercent,
     ActivityAttemptCounts,
     ActivityStats,
     AttemptDetail
@@ -574,36 +575,18 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
         const vocabCount = (vocabulary && vocabulary.length > 0) ? vocabulary.length : 10;
         const quizCount = (quiz && quiz.length > 0) ? quiz.length : 10;
 
-        // --- Algorithmic completion calculation across 4 cards (Each card contributes max 25% to overall) ---
-        // Thẻ 1 - Từ vựng (Vocabulary): Standard time 12s per word
-        const standardVocabTimeSeconds = vocabCount * 12;
-        const rateCard1 = standardVocabTimeSeconds > 0 ? Math.min(1.0, vTime / standardVocabTimeSeconds) : 0;
-        const pctCard1 = rateCard1 * 25;
+        const allAttempts = [
+            ...(attempts.vocabulary.attemptsList || []).map(a => ({ ...a, gameType: 'vocabulary' })),
+            ...(attempts.matching.attemptsList || []).map(a => ({ ...a, gameType: 'matching' })),
+            ...(attempts.spelling.attemptsList || []).map(a => ({ ...a, gameType: 'spelling' })),
+            ...(attempts.quiz.attemptsList || []).map(a => ({ ...a, gameType: 'quiz' }))
+        ];
 
-        // Thẻ 2 - Ghép cặp (Matching): Number of correctly matched pairs out of vocabCount
-        const rateCard2 = vocabCount > 0 ? Math.min(1.0, mCorrect / vocabCount) : 0;
-        const pctCard2 = rateCard2 * 25;
-
-        // Thẻ 3 - Viết chính tả (Spelling): Number of questions typed/answered out of vocabCount
-        const sDoneCount = sCorrect + sIncorrect;
-        const rateCard3 = vocabCount > 0 ? Math.min(1.0, sDoneCount / vocabCount) : 0;
-        const pctCard3 = rateCard3 * 25;
-
-        // Thẻ 4 - Trắc nghiệm (Quiz): Number of quiz questions answered out of quizCount
-        const qDoneCount = qCorrect + qIncorrect;
-        const rateCard4 = quizCount > 0 ? Math.min(1.0, qDoneCount / quizCount) : 0;
-        const pctCard4 = rateCard4 * 25;
+        const overallPercent = calculateStudentCompletionPercent(allAttempts, vocabulary?.length, quiz?.length);
 
         const totalUnitQuestions = vocabCount * 2 + quizCount;
         const completionRate = totalUnitQuestions > 0 ? (totalAnswered / totalUnitQuestions) : 0;
         const timePerQuestion = totalAnswered > 0 ? (totalTime / totalAnswered) : 0;
-
-        const rawOverallPercent = pctCard1 + pctCard2 + pctCard3 + pctCard4;
-        let overallPercent = Math.min(100, Math.round(rawOverallPercent));
-
-        if (rateCard1 >= 1.0 && rateCard2 >= 1.0 && rateCard3 >= 1.0 && rateCard4 >= 1.0) {
-            overallPercent = 100;
-        }
 
         let comment = '';
 

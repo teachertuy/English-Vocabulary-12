@@ -305,8 +305,10 @@ export interface AttemptDetail {
     timeTakenSeconds: number;
     timestamp?: any;
     correct?: number;
+    incorrect?: number;
     totalQuestions?: number;
     score?: number | string;
+    gameType?: string;
 }
 
 export interface ActivityStats {
@@ -321,6 +323,86 @@ export interface ActivityAttemptCounts {
     spelling: ActivityStats;
     quiz: ActivityStats;
 }
+
+export const calculateStudentCompletionPercent = (
+    attemptsList: Array<{
+        gameType?: string;
+        timeTakenSeconds?: number;
+        correct?: number;
+        incorrect?: number;
+        totalQuestions?: number;
+    }>,
+    unitVocabCount?: number,
+    unitQuizCount?: number
+): number => {
+    if (!attemptsList || attemptsList.length === 0) return 0;
+
+    let vTime = 0;
+    let mMaxCorrect = 0;
+    let sMaxDone = 0;
+    let qMaxDone = 0;
+
+    let maxVocabTotalQuestions = 0;
+    let maxQuizTotalQuestions = 0;
+
+    attemptsList.forEach(a => {
+        const gType = a.gameType;
+        const time = Math.max(0, parseInt(a.timeTakenSeconds as any, 10) || 0);
+        const corr = typeof a.correct === 'number' ? a.correct : (parseInt(a.correct as any, 10) || 0);
+        const incorr = typeof a.incorrect === 'number' ? a.incorrect : (parseInt(a.incorrect as any, 10) || 0);
+        const totQ = typeof a.totalQuestions === 'number' ? a.totalQuestions : (parseInt(a.totalQuestions as any, 10) || 0);
+
+        if (gType === 'vocabulary') {
+            vTime += time;
+            if (totQ > maxVocabTotalQuestions) maxVocabTotalQuestions = totQ;
+        } else if (gType === 'matching') {
+            if (corr > mMaxCorrect) mMaxCorrect = corr;
+            if (totQ > maxVocabTotalQuestions) maxVocabTotalQuestions = totQ;
+        } else if (gType === 'spelling') {
+            const done = corr + incorr;
+            if (done > sMaxDone) sMaxDone = done;
+            if (totQ > maxVocabTotalQuestions) maxVocabTotalQuestions = totQ;
+        } else if (gType === 'quiz') {
+            const done = corr + incorr;
+            if (done > qMaxDone) qMaxDone = done;
+            if (totQ > maxQuizTotalQuestions) maxQuizTotalQuestions = totQ;
+        }
+    });
+
+    const vocabCount = (unitVocabCount && unitVocabCount > 0)
+        ? unitVocabCount
+        : (maxVocabTotalQuestions > 0 ? maxVocabTotalQuestions : 10);
+
+    const quizCount = (unitQuizCount && unitQuizCount > 0)
+        ? unitQuizCount
+        : (maxQuizTotalQuestions > 0 ? maxQuizTotalQuestions : 10);
+
+    // Thẻ 1 - Từ vựng (Vocabulary): Standard time 12s per word
+    const standardVocabTimeSeconds = vocabCount * 12;
+    const rateCard1 = standardVocabTimeSeconds > 0 ? Math.min(1.0, vTime / standardVocabTimeSeconds) : 0;
+    const pctCard1 = rateCard1 * 25;
+
+    // Thẻ 2 - Ghép cặp (Matching): Number of correctly matched pairs out of vocabCount
+    const rateCard2 = vocabCount > 0 ? Math.min(1.0, mMaxCorrect / vocabCount) : 0;
+    const pctCard2 = rateCard2 * 25;
+
+    // Thẻ 3 - Viết chính tả (Spelling): Number of questions typed/answered out of vocabCount
+    const rateCard3 = vocabCount > 0 ? Math.min(1.0, sMaxDone / vocabCount) : 0;
+    const pctCard3 = rateCard3 * 25;
+
+    // Thẻ 4 - Trắc nghiệm (Quiz): Number of quiz questions answered out of quizCount
+    const rateCard4 = quizCount > 0 ? Math.min(1.0, qMaxDone / quizCount) : 0;
+    const pctCard4 = rateCard4 * 25;
+
+    const rawOverallPercent = pctCard1 + pctCard2 + pctCard3 + pctCard4;
+    let overallPercent = Math.min(100, Math.round(rawOverallPercent));
+
+    if (rateCard1 >= 1.0 && rateCard2 >= 1.0 && rateCard3 >= 1.0 && rateCard4 >= 1.0) {
+        overallPercent = 100;
+    }
+
+    return overallPercent;
+};
 
 export const listenToStudentActivityAttempts = (
     classroomId: string,
@@ -374,7 +456,10 @@ export const listenToStudentActivityAttempts = (
                     const attemptsList: AttemptDetail[] = items.map((item) => ({
                         timeTakenSeconds: Math.max(0, parseInt(item.timeTakenSeconds, 10) || 0),
                         timestamp: item.timestamp,
-                        correct: typeof item.correct === 'number' ? item.correct : (item.correct !== undefined ? (parseInt(item.correct, 10) || 0) : 0)
+                        correct: typeof item.correct === 'number' ? item.correct : (item.correct !== undefined ? (parseInt(item.correct, 10) || 0) : 0),
+                        incorrect: typeof item.incorrect === 'number' ? item.incorrect : (item.incorrect !== undefined ? (parseInt(item.incorrect, 10) || 0) : 0),
+                        totalQuestions: typeof item.totalQuestions === 'number' ? item.totalQuestions : (item.totalQuestions !== undefined ? (parseInt(item.totalQuestions, 10) || 0) : 0),
+                        gameType: gt
                     }));
 
                     const totalTimeSeconds = attemptsList.reduce((acc, curr) => acc + curr.timeTakenSeconds, 0);

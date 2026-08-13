@@ -12,7 +12,8 @@ import {
     listenToTopicsStatus, setTopicStatus, listenToTopicQuizQuestions, listenToTopicResults,
     listenToTopicVocabulary, saveTopicVocabulary, saveTopicQuizQuestions, clearTopicResults,
     deleteTopicStudentAllResults, saveWelcomeConfig, listenToWelcomeConfig, saveDashboardConfig, listenToDashboardConfig,
-    saveExerciseSelectionConfig, listenToExerciseSelectionConfig, saveLoginRosterConfig, listenToLoginRosterConfig
+    saveExerciseSelectionConfig, listenToExerciseSelectionConfig, saveLoginRosterConfig, listenToLoginRosterConfig,
+    calculateStudentCompletionPercent
 } from '../services/firebaseService';
 import { QUIZ_VERSION, generateQuizFromCustomPrompt, generateQuizFromText, generateVocabularyList } from '../services/geminiService';
 import TextToQuizModal from './TextToQuizModal';
@@ -441,6 +442,13 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
         return groups.sort((a, b) => b.latestTimestamp - a.latestTimestamp);
     };
 
+    const getCompletionPercentForGroup = (group: StudentGroupedResult, type: 'unit' | 'topic') => {
+        const vocabList = type === 'unit' ? currentUnitVocabulary : currentTopicVocabulary;
+        const quizList = type === 'unit' ? currentUnitQuiz : currentTopicQuiz;
+
+        return calculateStudentCompletionPercent(group.attempts || [], vocabList?.length, quizList?.length);
+    };
+
     const groupedUnitResults = useMemo(() => getGroupedData(processedUnitResults, selectedUnitClass), [processedUnitResults, selectedUnitClass]);
     const groupedTopicResults = useMemo(() => getGroupedData(processedTopicResults, selectedTopicClass), [processedTopicResults, selectedTopicClass]);
 
@@ -461,7 +469,7 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                         <thead>
                             <tr className="bg-[#fff2e0]">
                                 <th className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-14 text-center">STT</th>
-                                <th className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-40 uppercase tracking-tight">HỌ VÀ TÊN</th>
+                                <th className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-48 uppercase tracking-tight">HỌ VÀ TÊN</th>
                                 <th className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-20 uppercase tracking-tight text-center">LỚP</th>
                                 <th className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-20 uppercase tracking-tight text-center">ĐIỂM ▼</th>
                                 <th className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-40 uppercase tracking-tight text-center">NỘI DUNG ↑</th>
@@ -470,13 +478,12 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                                 <th className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-16 uppercase tracking-tight text-center">SAI ↑</th>
                                 <th className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-28 uppercase tracking-tight text-center">THỜI GIAN ↑</th>
                                 <th className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-48 uppercase tracking-tight text-center">NGÀY LÀM ↑</th>
-                                <th className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-28 uppercase tracking-tight text-center">XEM CHI TIẾT</th>
                                 <th className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-28 uppercase tracking-tight text-center">HÀNH ĐỘNG</th>
                             </tr>
                         </thead>
                         <tbody className="bg-white">
                             {groupedData.length === 0 ? (
-                                <tr><td colSpan={12} className="p-12 text-center text-gray-400 font-bold border border-gray-300">Chưa có kết quả nào.</td></tr>
+                                <tr><td colSpan={11} className="p-12 text-center text-gray-400 font-bold border border-gray-300">Chưa có kết quả nào.</td></tr>
                             ) : groupedData.map((group, sttIdx) => (
                                 <React.Fragment key={group.playerKey}>
                                     {group.attempts.map((res, attemptIdx) => (
@@ -484,7 +491,26 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                                             {attemptIdx === 0 && (
                                                 <>
                                                     <td rowSpan={group.attempts.length} className="p-3 border border-gray-300 text-blue-600 font-black text-center align-middle bg-white">{sttIdx + 1}</td>
-                                                    <td rowSpan={group.attempts.length} className="p-3 border border-gray-300 text-[#E91E63] truncate align-middle bg-white">{group.playerName}</td>
+                                                    <td rowSpan={group.attempts.length} className="p-3 border border-gray-300 align-middle bg-white">
+                                                        <div className="font-bold text-[#E91E63] text-[14px] leading-tight truncate">{group.playerName}</div>
+                                                        <div className="text-[11px] font-bold text-gray-600 mt-1 flex items-center gap-1 whitespace-nowrap">
+                                                            <span>Đã hoàn thành:</span>
+                                                            <span className="text-red-600 font-extrabold text-[12px]">{getCompletionPercentForGroup(group, type)}%</span>
+                                                        </div>
+                                                        <div className="mt-1.5 flex items-center">
+                                                            <button 
+                                                                title="Xem chi tiết toàn bộ màn hình học sinh"
+                                                                onClick={(e) => { e.stopPropagation(); handleViewStudentDetail(group, type); }} 
+                                                                className="px-2 py-1 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-md text-[11px] font-bold transition-all shadow-sm border border-blue-200 flex items-center gap-1 hover:scale-105"
+                                                            >
+                                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                                </svg>
+                                                                <span>Xem chi tiết</span>
+                                                            </button>
+                                                        </div>
+                                                    </td>
                                                     <td rowSpan={group.attempts.length} className="p-3 border border-gray-300 text-[#8E44AD] text-center align-middle bg-white">{group.playerClass}</td>
                                                 </>
                                             )}
@@ -501,18 +527,6 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                                             <td className="p-3 border border-gray-300 text-slate-800 text-[13px] text-center font-['Nunito']">{formatDate(res.timestamp)}</td>
                                             {attemptIdx === 0 && (
                                                 <>
-                                                    <td rowSpan={group.attempts.length} className="p-3 border border-gray-300 text-center align-middle bg-white">
-                                                        <button 
-                                                            title="Xem chi tiết toàn bộ màn hình học sinh"
-                                                            onClick={(e) => { e.stopPropagation(); handleViewStudentDetail(group, type); }} 
-                                                            className="p-1.5 bg-blue-100 text-blue-600 rounded-full hover:bg-blue-200 transition shadow-sm hover:scale-110 inline-flex items-center justify-center"
-                                                        >
-                                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                                                <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                                <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                                            </svg>
-                                                        </button>
-                                                    </td>
                                                     <td rowSpan={group.attempts.length} className="p-3 border border-gray-300 text-center align-middle bg-white">
                                                         <button onClick={(e) => { e.stopPropagation(); onDeleteStudent(group); }} className="p-1.5 bg-red-100 text-red-600 rounded-full hover:bg-red-200 transition shadow-sm hover:scale-110">
                                                             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
