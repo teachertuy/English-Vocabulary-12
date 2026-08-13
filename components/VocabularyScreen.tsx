@@ -60,6 +60,7 @@ const VocabularyScreen: React.FC<VocabularyScreenProps> = ({ unitNumber, vocabul
     const audioContextRef = useRef<AudioContext | null>(null);
     const isComponentMounted = useRef(true);
     const audioListenedCountRef = useRef<number>(0);
+    const listenedWordsSetRef = useRef<Set<string>>(new Set());
 
     useEffect(() => {
         if (vocabulary && vocabulary.length > 0) {
@@ -80,6 +81,8 @@ const VocabularyScreen: React.FC<VocabularyScreenProps> = ({ unitNumber, vocabul
                 answered: 0,
                 totalQuestions: vocabulary.length,
                 audioListenedCount: 0,
+                uniqueWordsListenedCount: 0,
+                listenedWords: [],
             }).catch(console.error);
         }
         return () => { isComponentMounted.current = false; };
@@ -144,6 +147,8 @@ const VocabularyScreen: React.FC<VocabularyScreenProps> = ({ unitNumber, vocabul
             totalQuestions: localVocabulary.length, 
             timeTakenSeconds: timeTakenSeconds, 
             audioListenedCount: audioListenedCountRef.current,
+            uniqueWordsListenedCount: listenedWordsSetRef.current.size,
+            listenedWords: Array.from(listenedWordsSetRef.current),
             details: localVocabulary.map(v => ({ 
                 question: v.word, 
                 translation: v.translation, 
@@ -165,6 +170,7 @@ const VocabularyScreen: React.FC<VocabularyScreenProps> = ({ unitNumber, vocabul
     const handlePlaySound = useCallback(async (wordItem: VocabularyWord, e: React.MouseEvent) => {
         e.stopPropagation();
         audioListenedCountRef.current += 1;
+        listenedWordsSetRef.current.add(wordItem.word);
         if (classroomId && activityId) {
             const unitIdentifier = grade === 'topics' ? `topic_${unitNumber}` : `unit_${unitNumber}`;
             updateUnitActivityProgress(classroomId, grade, unitIdentifier, playerData, activityId, {
@@ -174,6 +180,8 @@ const VocabularyScreen: React.FC<VocabularyScreenProps> = ({ unitNumber, vocabul
                 answered: vocabulary.length,
                 totalQuestions: vocabulary.length,
                 audioListenedCount: audioListenedCountRef.current,
+                uniqueWordsListenedCount: listenedWordsSetRef.current.size,
+                listenedWords: Array.from(listenedWordsSetRef.current),
             }).catch(console.error);
         }
         if (wordItem.audio) {

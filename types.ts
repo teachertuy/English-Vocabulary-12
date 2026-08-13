@@ -39,6 +39,8 @@ export interface GameResult {
   status?: 'in-progress' | 'completed';
   activityId?: string;
   audioListenedCount?: number;
+  uniqueWordsListenedCount?: number;
+  listenedWords?: string[];
 }
 
 export interface SavedQuiz {

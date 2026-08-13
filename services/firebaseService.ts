@@ -310,6 +310,8 @@ export interface AttemptDetail {
     score?: number | string;
     gameType?: string;
     audioListenedCount?: number;
+    uniqueWordsListenedCount?: number;
+    listenedWords?: string[];
 }
 
 export interface ActivityStats {
@@ -461,6 +463,8 @@ export const listenToStudentActivityAttempts = (
                         incorrect: typeof item.incorrect === 'number' ? item.incorrect : (item.incorrect !== undefined ? (parseInt(item.incorrect, 10) || 0) : 0),
                         totalQuestions: typeof item.totalQuestions === 'number' ? item.totalQuestions : (item.totalQuestions !== undefined ? (parseInt(item.totalQuestions, 10) || 0) : 0),
                         audioListenedCount: typeof item.audioListenedCount === 'number' ? item.audioListenedCount : (item.audioListenedCount !== undefined ? (parseInt(item.audioListenedCount, 10) || 0) : 0),
+                        uniqueWordsListenedCount: typeof item.uniqueWordsListenedCount === 'number' ? item.uniqueWordsListenedCount : (item.uniqueWordsListenedCount !== undefined ? (parseInt(item.uniqueWordsListenedCount, 10) || 0) : 0),
+                        listenedWords: Array.isArray(item.listenedWords) ? item.listenedWords : [],
                         gameType: gt
                     }));
 

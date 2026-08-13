@@ -532,10 +532,35 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
     const calcSummaryStats = () => {
         const vTime = attempts.vocabulary.totalTimeSeconds || 0;
         const vCount = attempts.vocabulary.count || 0;
-        let vAudioCount = 0;
+        
+        const vocabListCount = (vocabulary && vocabulary.length > 0) ? vocabulary.length : 0;
+        let vAudioTimes = 0;
+        let maxVocabTotal = vocabListCount;
+        const uniqueWordsSet = new Set<string>();
+
         (attempts.vocabulary.attemptsList || []).forEach(a => {
-            vAudioCount += a.audioListenedCount || 0;
+            vAudioTimes += a.audioListenedCount || 0;
+            if (Array.isArray(a.listenedWords)) {
+                a.listenedWords.forEach(w => uniqueWordsSet.add(w));
+            }
+            if (a.totalQuestions && a.totalQuestions > maxVocabTotal) {
+                maxVocabTotal = a.totalQuestions;
+            }
         });
+
+        let vUniqueWords = uniqueWordsSet.size;
+        if (vUniqueWords === 0 && vAudioTimes > 0) {
+            let maxUnique = 0;
+            (attempts.vocabulary.attemptsList || []).forEach(a => {
+                if (typeof a.uniqueWordsListenedCount === 'number') {
+                    maxUnique = Math.max(maxUnique, a.uniqueWordsListenedCount);
+                }
+            });
+            vUniqueWords = maxUnique > 0 ? maxUnique : Math.min(vAudioTimes, maxVocabTotal || 10);
+        }
+
+        const vTotalWords = maxVocabTotal > 0 ? maxVocabTotal : (vocabListCount > 0 ? vocabListCount : 10);
+        const vUnheardWords = Math.max(0, vTotalWords - vUniqueWords);
         
         const mTime = attempts.matching.totalTimeSeconds || 0;
         const mCount = attempts.matching.count || 0;
@@ -638,7 +663,10 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
 
         return {
             vTime,
-            vAudioCount,
+            vUniqueWords,
+            vAudioTimes,
+            vUnheardWords,
+            vTotalWords,
             mTime, mCorrect, mIncorrect,
             sTime, sCorrect, sIncorrect,
             qTime, qCorrect, qIncorrect,
@@ -748,7 +776,7 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
                                 <div className="space-y-1 font-medium pt-1" style={{ color: itemColor, fontSize: `${itemFontSize}rem` }}>
                                     <div className="flex items-start gap-1">
                                         <span className="font-bold shrink-0">1.</span>
-                                        <span>Học từ vựng: <strong style={{ color: titleColor }}>{formatDuration(stats.vTime)}</strong> (nghe phát âm <strong style={{ color: titleColor }}>{stats.vAudioCount}</strong> từ)</span>
+                                        <span>Học từ vựng: <strong style={{ color: titleColor }}>{formatDuration(stats.vTime)}</strong> (nghe phát âm <strong style={{ color: titleColor }}>{stats.vUniqueWords}</strong> từ (<strong style={{ color: titleColor }}>{stats.vAudioTimes}</strong> lần) còn <strong style={{ color: titleColor }}>{stats.vUnheardWords}</strong> từ chưa nghe)</span>
                                     </div>
                                     <div className="flex items-start gap-1">
                                         <span className="font-bold shrink-0">2.</span>
