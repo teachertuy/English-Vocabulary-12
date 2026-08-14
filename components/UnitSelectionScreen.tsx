@@ -14,6 +14,7 @@ interface UnitSelectionScreenProps {
   onLearnVocabulary: (vocab: VocabularyWord[], unitNumber: number) => void;
   onStartSpellingGame: (vocab: VocabularyWord[], unitNumber: number) => void;
   onStartMatchingGame: (vocab: VocabularyWord[], unitNumber: number) => void;
+  onStartListenChooseGame: (vocab: VocabularyWord[], unitNumber: number) => void;
   onBack: () => void;
   selectedUnit: number | null;
   onUnitSelect: (unitNumber: number) => void;
@@ -219,7 +220,7 @@ const getCachedUnitsStatus = (classroomId: string, grade: number | 'topics'): Un
     return {};
 };
 
-const UnitSelectionScreen: React.FC<UnitSelectionScreenProps> = ({ playerData, classroomId, grade, onStartQuiz, onLearnVocabulary, onStartSpellingGame, onStartMatchingGame, onBack, selectedUnit, onUnitSelect, onCloseActivityModal }) => {
+const UnitSelectionScreen: React.FC<UnitSelectionScreenProps> = ({ playerData, classroomId, grade, onStartQuiz, onLearnVocabulary, onStartSpellingGame, onStartMatchingGame, onStartListenChooseGame, onBack, selectedUnit, onUnitSelect, onCloseActivityModal }) => {
     const [unitsStatus, setUnitsStatus] = useState<UnitsState>(() => getCachedUnitsStatus(classroomId, grade));
     const [welcomeConfig, setWelcomeConfig] = useState<WelcomeScreenConfig>(DEFAULT_WELCOME_CONFIG);
     const [exerciseConfig, setExerciseConfig] = useState<ExerciseSelectionConfig>(DEFAULT_EXERCISE_CONFIG);
@@ -343,6 +344,7 @@ const UnitSelectionScreen: React.FC<UnitSelectionScreenProps> = ({ playerData, c
                     onLearnVocabulary={(v) => onLearnVocabulary(v, selectedUnit)}
                     onStartSpellingGame={(v) => onStartSpellingGame(v, selectedUnit)}
                     onStartMatchingGame={(v) => onStartMatchingGame(v, selectedUnit)}
+                    onStartListenChooseGame={(v) => onStartListenChooseGame(v, selectedUnit)}
                 />
             )}
             {/* Moved exit button to top-left corner */}

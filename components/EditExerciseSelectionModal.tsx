@@ -63,6 +63,8 @@ const DEFAULT_CONFIG: ExerciseSelectionConfig = {
     activityLearnDesc: 'Xem lại danh sách từ của bài',
     activityMatchLabel: 'Trò chơi Ghép cặp',
     activityMatchDesc: 'Nối từ tiếng Anh với nghĩa Việt',
+    activityListenChooseLabel: 'Nghe & Chọn',
+    activityListenChooseDesc: 'Nghe phát âm và chọn từ tiếng Anh tương ứng',
     activitySpellLabel: 'Trò chơi Viết Chính tả',
     activitySpellDesc: 'Viết từ tiếng Anh tương ứng',
     activityQuizLabel: 'Làm bài trắc nghiệm',
@@ -74,6 +76,8 @@ const DEFAULT_CONFIG: ExerciseSelectionConfig = {
     spellingTimerEnabled: true,
     matchingDuration: 20,
     matchingTimerEnabled: true,
+    listenChooseDuration: 20,
+    listenChooseTimerEnabled: true,
 
     actModalBgColor: '#ffffff',
     actModalTitleColor: '#1e293b',
@@ -89,6 +93,10 @@ const DEFAULT_CONFIG: ExerciseSelectionConfig = {
     actMatchBgColor: '#0d9488',
     actMatchTitleColor: '#ffffff',
     actMatchTitleFontSize: 1.125,
+
+    actListenChooseBgColor: '#e11d48',
+    actListenChooseTitleColor: '#ffffff',
+    actListenChooseTitleFontSize: 1.125,
 
     actSpellBgColor: '#0284c7',
     actSpellTitleColor: '#ffffff',
@@ -554,7 +562,7 @@ const EditExerciseSelectionModal: React.FC<EditExerciseSelectionModalProps> = ({
                                     * Sử dụng nút gạt để bật/tắt giới hạn thời gian. Khi tắt, học sinh có thể làm bài vô hạn thời gian.
                                 </p>
                                 
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 bg-white p-6 rounded-xl border border-orange-200">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-8 bg-white p-6 rounded-xl border border-orange-200">
                                     {/* Quiz Timer */}
                                     <div className="p-4 bg-green-50 rounded-xl border border-green-200 shadow-sm transition-all">
                                         <ToggleSwitch 
@@ -611,9 +619,28 @@ const EditExerciseSelectionModal: React.FC<EditExerciseSelectionModalProps> = ({
                                             />
                                         </div>
                                     </div>
+
+                                    {/* Listen & Choose Timer */}
+                                    <div className="p-4 bg-rose-50 rounded-xl border border-rose-200 shadow-sm transition-all">
+                                        <ToggleSwitch 
+                                            enabled={config.listenChooseTimerEnabled !== false} 
+                                            onToggle={(v) => handleChange('listenChooseTimerEnabled', v)} 
+                                            label="⏱️ Đ.hồ Nghe & Chọn" 
+                                        />
+                                        <div className={`mt-2 transition-all duration-300 ${config.listenChooseTimerEnabled !== false ? 'opacity-100' : 'opacity-30'}`}>
+                                            <label className="block text-[10px] font-black text-rose-700 uppercase mb-1">Số phút làm bài</label>
+                                            <input 
+                                                type="number" min="1" max="180" 
+                                                value={config.listenChooseDuration || 20} 
+                                                onChange={e => handleChange('listenChooseDuration', parseInt(e.target.value) || 20)} 
+                                                className="w-full p-2 border border-rose-200 rounded font-black text-rose-800 focus:ring-2 focus:ring-rose-300 outline-none" 
+                                                disabled={config.listenChooseTimerEnabled === false}
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                     {/* Labels configuration */}
                                     <div className="p-4 bg-white rounded-xl border border-orange-200 shadow-sm space-y-3">
                                         <label className="block text-xs font-bold text-blue-600 uppercase">Phần 1: Học từ vựng</label>
@@ -621,17 +648,22 @@ const EditExerciseSelectionModal: React.FC<EditExerciseSelectionModalProps> = ({
                                         <textarea value={config.activityLearnDesc} onChange={e => handleChange('activityLearnDesc', e.target.value)} className="w-full p-2 border rounded text-xs text-gray-600" rows={2} placeholder="Dòng mô tả nhỏ bên dưới..." />
                                     </div>
                                     <div className="p-4 bg-white rounded-xl border border-orange-200 shadow-sm space-y-3">
-                                        <label className="block text-xs font-bold text-purple-600 uppercase">Phần 2: Ghép cặp</label>
+                                        <label className="block text-xs font-bold text-teal-600 uppercase">Phần 2: Ghép cặp</label>
                                         <input type="text" value={config.activityMatchLabel} onChange={e => handleChange('activityMatchLabel', e.target.value)} className="w-full p-2 border rounded font-bold" />
                                         <textarea value={config.activityMatchDesc} onChange={e => handleChange('activityMatchDesc', e.target.value)} className="w-full p-2 border rounded text-xs text-gray-600" rows={2} />
                                     </div>
                                     <div className="p-4 bg-white rounded-xl border border-orange-200 shadow-sm space-y-3">
-                                        <label className="block text-xs font-bold text-orange-600 uppercase">Phần 3: Chính tả</label>
+                                        <label className="block text-xs font-bold text-rose-600 uppercase">Phần 3: Nghe & Chọn</label>
+                                        <input type="text" value={config.activityListenChooseLabel || 'Nghe & Chọn'} onChange={e => handleChange('activityListenChooseLabel', e.target.value)} className="w-full p-2 border rounded font-bold" />
+                                        <textarea value={config.activityListenChooseDesc || 'Nghe phát âm và chọn từ tiếng Anh tương ứng'} onChange={e => handleChange('activityListenChooseDesc', e.target.value)} className="w-full p-2 border rounded text-xs text-gray-600" rows={2} />
+                                    </div>
+                                    <div className="p-4 bg-white rounded-xl border border-orange-200 shadow-sm space-y-3">
+                                        <label className="block text-xs font-bold text-sky-600 uppercase">Phần 4: Chính tả</label>
                                         <input type="text" value={config.activitySpellLabel} onChange={e => handleChange('activitySpellLabel', e.target.value)} className="w-full p-2 border rounded font-bold" />
                                         <textarea value={config.activitySpellDesc} onChange={e => handleChange('activitySpellDesc', e.target.value)} className="w-full p-2 border rounded text-xs text-gray-600" rows={2} />
                                     </div>
                                     <div className="p-4 bg-white rounded-xl border border-orange-200 shadow-sm space-y-3">
-                                        <label className="block text-xs font-bold text-green-600 uppercase">Phần 4: Trắc nghiệm</label>
+                                        <label className="block text-xs font-bold text-slate-800 uppercase">Phần 5: Trắc nghiệm</label>
                                         <input type="text" value={config.activityQuizLabel} onChange={e => handleChange('activityQuizLabel', e.target.value)} className="w-full p-2 border rounded font-bold" />
                                         <textarea value={config.activityQuizDesc} onChange={e => handleChange('activityQuizDesc', e.target.value)} className="w-full p-2 border rounded text-xs text-gray-600" rows={2} />
                                     </div>
@@ -886,9 +918,28 @@ const EditExerciseSelectionModal: React.FC<EditExerciseSelectionModalProps> = ({
                                         </div>
                                     </div>
 
+                                    {/* Listen & Choose Card */}
+                                    <div className="p-4 rounded-xl border bg-rose-50/60 space-y-3">
+                                        <span className="font-bold text-rose-900 text-sm block">Thẻ 3: Trò Chơi Nghe & Chọn</span>
+                                        <div className="grid grid-cols-3 gap-3">
+                                            <div>
+                                                <label className="block text-[11px] font-bold text-gray-600 mb-1">Màu nền Thẻ</label>
+                                                <input type="color" value={config.actListenChooseBgColor || '#e11d48'} onChange={e => handleChange('actListenChooseBgColor', e.target.value)} className="w-full h-9 p-0 border-0 cursor-pointer rounded" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-[11px] font-bold text-gray-600 mb-1">Màu chữ Tiêu đề</label>
+                                                <input type="color" value={config.actListenChooseTitleColor || '#ffffff'} onChange={e => handleChange('actListenChooseTitleColor', e.target.value)} className="w-full h-9 p-0 border-0 cursor-pointer rounded" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-[11px] font-bold text-gray-600 mb-1">Cỡ chữ: {config.actListenChooseTitleFontSize || 1.125}rem</label>
+                                                <input type="range" min="0.8" max="2.5" step="0.05" value={config.actListenChooseTitleFontSize || 1.125} onChange={e => handleChange('actListenChooseTitleFontSize', parseFloat(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-rose-600" />
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     {/* Spell Card */}
                                     <div className="p-4 rounded-xl border bg-sky-50/60 space-y-3">
-                                        <span className="font-bold text-sky-900 text-sm block">Thẻ 3: Trò Chơi Viết Chính Tả</span>
+                                        <span className="font-bold text-sky-900 text-sm block">Thẻ 4: Trò Chơi Viết Chính Tả</span>
                                         <div className="grid grid-cols-3 gap-3">
                                             <div>
                                                 <label className="block text-[11px] font-bold text-gray-600 mb-1">Màu nền Thẻ</label>
@@ -907,7 +958,7 @@ const EditExerciseSelectionModal: React.FC<EditExerciseSelectionModalProps> = ({
 
                                     {/* Quiz Card */}
                                     <div className="p-4 rounded-xl border bg-slate-100 space-y-3">
-                                        <span className="font-bold text-slate-900 text-sm block">Thẻ 4: Kiểm Tra Từ Mới Học</span>
+                                        <span className="font-bold text-slate-900 text-sm block">Thẻ 5: Kiểm Tra Từ Mới Học</span>
                                         <div className="grid grid-cols-3 gap-3">
                                             <div>
                                                 <label className="block text-[11px] font-bold text-gray-600 mb-1">Màu nền Thẻ</label>

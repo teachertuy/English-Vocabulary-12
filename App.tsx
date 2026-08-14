@@ -12,6 +12,7 @@ import UnitSelectionScreen from './components/UnitSelectionScreen';
 import VocabularyScreen from './components/VocabularyScreen';
 import SpellingGameScreen from './components/SpellingGameScreen';
 import MatchingGameScreen from './components/MatchingGameScreen';
+import ListenChooseGameScreen from './components/ListenChooseGameScreen';
 import ExerciseTypeSelectionScreen from './components/ExerciseTypeSelectionScreen';
 
 
@@ -22,6 +23,7 @@ enum Screen {
   Quiz,
   SpellingGame,
   MatchingGame,
+  ListenChooseGame,
   Vocabulary,
   Results,
   Dashboard,
@@ -160,6 +162,21 @@ const App: React.FC = () => {
     setCurrentScreen(Screen.MatchingGame);
   }, [playerData, selectedGrade]);
 
+  const handleStartListenChooseGame = useCallback((vocabData: VocabularyWord[], unitNumber: number) => {
+    if (!vocabData || vocabData.length === 0) {
+        alert("Lỗi: Không thể bắt đầu bài tập vì UNIT này chưa có từ vựng. Vui lòng báo cho giáo viên.");
+        return;
+    }
+     if (playerData && selectedGrade) {
+        const unitIdentifier = selectedGrade === 'topics' ? `topic_${unitNumber}` : `unit_${unitNumber}`;
+        const activityId = startUnitActivity(FIXED_CLASSROOM_ID, selectedGrade, unitIdentifier, playerData, 'listen-choose');
+        setCurrentActivityId(activityId);
+    }
+    setVocabulary(vocabData);
+    setSelectedUnit(unitNumber);
+    setCurrentScreen(Screen.ListenChooseGame);
+  }, [playerData, selectedGrade]);
+
   const handleLearnVocabulary = useCallback((vocabData: VocabularyWord[], unitNumber: number) => {
     if (playerData && selectedGrade) {
         const unitIdentifier = selectedGrade === 'topics' ? `topic_${unitNumber}` : `unit_${unitNumber}`;
@@ -277,6 +294,7 @@ const App: React.FC = () => {
             onLearnVocabulary={handleLearnVocabulary} 
             onStartSpellingGame={handleStartSpellingGame} 
             onStartMatchingGame={handleStartMatchingGame} 
+            onStartListenChooseGame={handleStartListenChooseGame} 
             onBack={handleBackToGradeSelection} 
             classroomId={FIXED_CLASSROOM_ID}
             selectedUnit={selectedUnit}
@@ -289,6 +307,8 @@ const App: React.FC = () => {
         return playerData && selectedUnit && currentActivityId && selectedGrade && <SpellingGameScreen vocabulary={vocabulary} unitNumber={selectedUnit} playerData={playerData} onFinish={handleFinishGame} onForceExit={handleForceExitToWelcome} classroomId={FIXED_CLASSROOM_ID} activityId={currentActivityId} onBack={handleReturnToActivitySelection} grade={selectedGrade} durationSeconds={exerciseConfig.spellingTimerEnabled ? (exerciseConfig.spellingDuration * 60) : 0} />;
       case Screen.MatchingGame:
         return playerData && selectedUnit && currentActivityId && selectedGrade && <MatchingGameScreen vocabulary={vocabulary} unitNumber={selectedUnit} playerData={playerData} onFinish={handleFinishGame} onForceExit={handleForceExitToWelcome} classroomId={FIXED_CLASSROOM_ID} activityId={currentActivityId} onBack={handleReturnToActivitySelection} grade={selectedGrade} durationSeconds={exerciseConfig.matchingTimerEnabled ? (exerciseConfig.matchingDuration * 60) : 0} />;
+      case Screen.ListenChooseGame:
+        return playerData && selectedUnit && currentActivityId && selectedGrade && <ListenChooseGameScreen vocabulary={vocabulary} unitNumber={selectedUnit} playerData={playerData} onFinish={handleFinishGame} onForceExit={handleForceExitToWelcome} classroomId={FIXED_CLASSROOM_ID} activityId={currentActivityId} onBack={handleReturnToActivitySelection} grade={selectedGrade} durationSeconds={exerciseConfig.listenChooseTimerEnabled !== false ? ((exerciseConfig.listenChooseDuration || 20) * 60) : 0} />;
       case Screen.Vocabulary:
         return playerData && selectedUnit && selectedGrade && currentActivityId && <VocabularyScreen unitNumber={selectedUnit} vocabulary={vocabulary} onBack={handleReturnToActivitySelection} classroomId={FIXED_CLASSROOM_ID} grade={selectedGrade} playerData={playerData} activityId={currentActivityId} onFinish={handleFinishGame} />;
       case Screen.Results:

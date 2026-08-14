@@ -34,7 +34,7 @@ export interface GameResult {
   timestamp?: number;
   details: QuizAnswerDetail[];
   cheatAttempts?: number;
-  gameType?: 'quiz' | 'spelling' | 'matching' | 'vocabulary';
+  gameType?: 'quiz' | 'spelling' | 'matching' | 'vocabulary' | 'listen-choose';
   attempts?: number;
   status?: 'in-progress' | 'completed';
   activityId?: string;
@@ -190,6 +190,8 @@ export interface ExerciseSelectionConfig {
     activityLearnDesc: string;
     activityMatchLabel: string;
     activityMatchDesc: string;
+    activityListenChooseLabel?: string;
+    activityListenChooseDesc?: string;
     activitySpellLabel: string;
     activitySpellDesc: string;
     activityQuizLabel: string;
@@ -202,6 +204,8 @@ export interface ExerciseSelectionConfig {
     spellingTimerEnabled: boolean;
     matchingDuration: number;
     matchingTimerEnabled: boolean;
+    listenChooseDuration?: number;
+    listenChooseTimerEnabled?: boolean;
 
     // Activity Modal Display Styling (Detailed)
     actHeaderLine1?: string;
@@ -225,6 +229,10 @@ export interface ExerciseSelectionConfig {
     actMatchBgColor?: string;
     actMatchTitleColor?: string;
     actMatchTitleFontSize?: number;
+
+    actListenChooseBgColor?: string;
+    actListenChooseTitleColor?: string;
+    actListenChooseTitleFontSize?: number;
 
     actSpellBgColor?: string;
     actSpellTitleColor?: string;

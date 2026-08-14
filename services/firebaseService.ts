@@ -323,6 +323,7 @@ export interface ActivityStats {
 export interface ActivityAttemptCounts {
     vocabulary: ActivityStats;
     matching: ActivityStats;
+    listenChoose: ActivityStats;
     spelling: ActivityStats;
     quiz: ActivityStats;
 }
@@ -342,6 +343,7 @@ export const calculateStudentCompletionPercent = (
 
     let vTime = 0;
     let mMaxCorrect = 0;
+    let lMaxCorrect = 0;
     let sMaxDone = 0;
     let qMaxDone = 0;
 
@@ -360,6 +362,9 @@ export const calculateStudentCompletionPercent = (
             if (totQ > maxVocabTotalQuestions) maxVocabTotalQuestions = totQ;
         } else if (gType === 'matching') {
             if (corr > mMaxCorrect) mMaxCorrect = corr;
+            if (totQ > maxVocabTotalQuestions) maxVocabTotalQuestions = totQ;
+        } else if (gType === 'listen-choose' || gType === 'listenChoose') {
+            if (corr > lMaxCorrect) lMaxCorrect = corr;
             if (totQ > maxVocabTotalQuestions) maxVocabTotalQuestions = totQ;
         } else if (gType === 'spelling') {
             const done = corr + incorr;
@@ -380,27 +385,31 @@ export const calculateStudentCompletionPercent = (
         ? unitQuizCount
         : (maxQuizTotalQuestions > 0 ? maxQuizTotalQuestions : 10);
 
-    // Thẻ 1 - Từ vựng (Vocabulary): Standard time 12s per word
+    // Thẻ 1 - Từ vựng (Vocabulary): Standard time 12s per word (20%)
     const standardVocabTimeSeconds = vocabCount * 12;
     const rateCard1 = standardVocabTimeSeconds > 0 ? Math.min(1.0, vTime / standardVocabTimeSeconds) : 0;
-    const pctCard1 = rateCard1 * 25;
+    const pctCard1 = rateCard1 * 20;
 
-    // Thẻ 2 - Ghép cặp (Matching): Number of correctly matched pairs out of vocabCount
+    // Thẻ 2 - Ghép cặp (Matching): Number of correctly matched pairs out of vocabCount (20%)
     const rateCard2 = vocabCount > 0 ? Math.min(1.0, mMaxCorrect / vocabCount) : 0;
-    const pctCard2 = rateCard2 * 25;
+    const pctCard2 = rateCard2 * 20;
 
-    // Thẻ 3 - Viết chính tả (Spelling): Number of questions typed/answered out of vocabCount
-    const rateCard3 = vocabCount > 0 ? Math.min(1.0, sMaxDone / vocabCount) : 0;
-    const pctCard3 = rateCard3 * 25;
+    // Thẻ 3 - Nghe & Chọn (Listen & Choose): Number of correctly chosen words out of vocabCount (20%)
+    const rateCard3 = vocabCount > 0 ? Math.min(1.0, lMaxCorrect / vocabCount) : 0;
+    const pctCard3 = rateCard3 * 20;
 
-    // Thẻ 4 - Trắc nghiệm (Quiz): Number of quiz questions answered out of quizCount
-    const rateCard4 = quizCount > 0 ? Math.min(1.0, qMaxDone / quizCount) : 0;
-    const pctCard4 = rateCard4 * 25;
+    // Thẻ 4 - Viết chính tả (Spelling): Number of questions typed/answered out of vocabCount (20%)
+    const rateCard4 = vocabCount > 0 ? Math.min(1.0, sMaxDone / vocabCount) : 0;
+    const pctCard4 = rateCard4 * 20;
 
-    const rawOverallPercent = pctCard1 + pctCard2 + pctCard3 + pctCard4;
+    // Thẻ 5 - Trắc nghiệm (Quiz): Number of quiz questions answered out of quizCount (20%)
+    const rateCard5 = quizCount > 0 ? Math.min(1.0, qMaxDone / quizCount) : 0;
+    const pctCard5 = rateCard5 * 20;
+
+    const rawOverallPercent = pctCard1 + pctCard2 + pctCard3 + pctCard4 + pctCard5;
     let overallPercent = Math.min(100, Math.round(rawOverallPercent));
 
-    if (rateCard1 >= 1.0 && rateCard2 >= 1.0 && rateCard3 >= 1.0 && rateCard4 >= 1.0) {
+    if (rateCard1 >= 1.0 && rateCard2 >= 1.0 && rateCard3 >= 1.0 && rateCard4 >= 1.0 && rateCard5 >= 1.0) {
         overallPercent = 100;
     }
 
@@ -427,6 +436,7 @@ export const listenToStudentActivityAttempts = (
             const counts: ActivityAttemptCounts = {
                 vocabulary: defaultStats(),
                 matching: defaultStats(),
+                listenChoose: defaultStats(),
                 spelling: defaultStats(),
                 quiz: defaultStats()
             };
@@ -434,12 +444,16 @@ export const listenToStudentActivityAttempts = (
                 const grouped: Record<string, any[]> = {
                     vocabulary: [],
                     matching: [],
+                    listenChoose: [],
                     spelling: [],
                     quiz: []
                 };
                 Object.values(val).forEach((item: any) => {
-                    if (item && item.gameType && grouped[item.gameType]) {
-                        grouped[item.gameType].push(item);
+                    if (item && item.gameType) {
+                        const gt = (item.gameType === 'listen-choose' || item.gameType === 'listenChoose') ? 'listenChoose' : item.gameType;
+                        if (grouped[gt]) {
+                            grouped[gt].push(item);
+                        }
                     }
                 });
 
@@ -484,6 +498,7 @@ export const listenToStudentActivityAttempts = (
             callback({
                 vocabulary: defaultStats(),
                 matching: defaultStats(),
+                listenChoose: defaultStats(),
                 spelling: defaultStats(),
                 quiz: defaultStats()
             });
@@ -493,6 +508,7 @@ export const listenToStudentActivityAttempts = (
         callback({
             vocabulary: defaultStats(),
             matching: defaultStats(),
+            listenChoose: defaultStats(),
             spelling: defaultStats(),
             quiz: defaultStats()
         });

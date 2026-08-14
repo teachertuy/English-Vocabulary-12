@@ -24,6 +24,7 @@ interface ActivitySelectionModalProps {
     onLearnVocabulary: (vocab: VocabularyWord[]) => void;
     onStartSpellingGame: (vocab: VocabularyWord[]) => void;
     onStartMatchingGame: (vocab: VocabularyWord[]) => void;
+    onStartListenChooseGame: (vocab: VocabularyWord[]) => void;
 }
 
 const DEFAULT_UNIT_COLORS = [
@@ -77,6 +78,8 @@ const DEFAULT_CONFIG: ExerciseSelectionConfig = {
     activityLearnDesc: 'Xem lại danh sách từ của bài',
     activityMatchLabel: 'Ghép cặp',
     activityMatchDesc: 'Nối từ tiếng Anh với nghĩa Việt',
+    activityListenChooseLabel: 'Nghe & Chọn',
+    activityListenChooseDesc: 'Nghe phát âm và chọn từ tiếng Anh tương ứng',
     activitySpellLabel: 'Viết Chính tả',
     activitySpellDesc: 'Viết từ tiếng Anh tương ứng',
     activityQuizLabel: 'Trắc nghiệm',
@@ -87,6 +90,8 @@ const DEFAULT_CONFIG: ExerciseSelectionConfig = {
     spellingTimerEnabled: true,
     matchingDuration: 20,
     matchingTimerEnabled: true,
+    listenChooseDuration: 20,
+    listenChooseTimerEnabled: true,
 
     actModalBgColor: '#ffffff',
     actModalTitleColor: '#1e293b',
@@ -102,6 +107,10 @@ const DEFAULT_CONFIG: ExerciseSelectionConfig = {
     actMatchBgColor: '#0d9488',
     actMatchTitleColor: '#ffffff',
     actMatchTitleFontSize: 1.125,
+
+    actListenChooseBgColor: '#e11d48',
+    actListenChooseTitleColor: '#ffffff',
+    actListenChooseTitleFontSize: 1.125,
 
     actSpellBgColor: '#0284c7',
     actSpellTitleColor: '#ffffff',
@@ -457,7 +466,19 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
     );
 };
 
-const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, unitNumber, grade, onClose, classroomId, playerData, onStartQuiz, onLearnVocabulary, onStartSpellingGame, onStartMatchingGame }) => {
+const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ 
+    show, 
+    unitNumber, 
+    grade, 
+    onClose, 
+    classroomId, 
+    playerData, 
+    onStartQuiz, 
+    onLearnVocabulary, 
+    onStartSpellingGame, 
+    onStartMatchingGame,
+    onStartListenChooseGame
+}) => {
     const [quiz, setQuiz] = useState<QuizQuestion[] | null>(null);
     const [vocabulary, setVocabulary] = useState<VocabularyWord[] | null>(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -570,6 +591,14 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
             mIncorrect += a.incorrect || 0;
         });
 
+        const lTime = attempts.listenChoose?.totalTimeSeconds || 0;
+        const lCount = attempts.listenChoose?.count || 0;
+        let lCorrect = 0, lIncorrect = 0;
+        (attempts.listenChoose?.attemptsList || []).forEach(a => {
+            lCorrect += a.correct || 0;
+            lIncorrect += a.incorrect || 0;
+        });
+
         const sTime = attempts.spelling.totalTimeSeconds || 0;
         const sCount = attempts.spelling.count || 0;
         let sCorrect = 0, sIncorrect = 0;
@@ -586,19 +615,20 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
             qIncorrect += a.incorrect || 0;
         });
 
-        const totalTime = vTime + mTime + sTime + qTime;
-        const totalCorrect = mCorrect + sCorrect + qCorrect;
-        const totalIncorrect = mIncorrect + sIncorrect + qIncorrect;
+        const totalTime = vTime + mTime + lTime + sTime + qTime;
+        const totalCorrect = mCorrect + lCorrect + sCorrect + qCorrect;
+        const totalIncorrect = mIncorrect + lIncorrect + sIncorrect + qIncorrect;
         const totalAnswered = totalCorrect + totalIncorrect;
-        const totalAttemptsCount = vCount + mCount + sCount + qCount;
+        const totalAttemptsCount = vCount + mCount + lCount + sCount + qCount;
 
-        // Number of sections participated out of 4 (Học từ mới, Ghép cặp, Viết chính tả, Kiểm tra lại)
+        // Number of sections participated out of 5 (Học từ mới, Ghép cặp, Nghe & Chọn, Viết chính tả, Kiểm tra lại)
         const vDone = vTime > 0 || vCount > 0;
         const mDone = mTime > 0 || mCount > 0 || (mCorrect + mIncorrect > 0);
+        const lDone = lTime > 0 || lCount > 0 || (lCorrect + lIncorrect > 0);
         const sDone = sTime > 0 || sCount > 0 || (sCorrect + sIncorrect > 0);
         const qDone = qTime > 0 || qCount > 0 || (qCorrect + qIncorrect > 0);
 
-        const partsDone = (vDone ? 1 : 0) + (mDone ? 1 : 0) + (sDone ? 1 : 0) + (qDone ? 1 : 0);
+        const partsDone = (vDone ? 1 : 0) + (mDone ? 1 : 0) + (lDone ? 1 : 0) + (sDone ? 1 : 0) + (qDone ? 1 : 0);
         const ratio = totalAnswered > 0 ? (totalCorrect / totalAnswered) : 0;
 
         const vocabCount = (vocabulary && vocabulary.length > 0) ? vocabulary.length : 10;
@@ -607,13 +637,14 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
         const allAttempts = [
             ...(attempts.vocabulary.attemptsList || []).map(a => ({ ...a, gameType: 'vocabulary' })),
             ...(attempts.matching.attemptsList || []).map(a => ({ ...a, gameType: 'matching' })),
+            ...(attempts.listenChoose?.attemptsList || []).map(a => ({ ...a, gameType: 'listen-choose' })),
             ...(attempts.spelling.attemptsList || []).map(a => ({ ...a, gameType: 'spelling' })),
             ...(attempts.quiz.attemptsList || []).map(a => ({ ...a, gameType: 'quiz' }))
         ];
 
         const overallPercent = calculateStudentCompletionPercent(allAttempts, vocabulary?.length, quiz?.length);
 
-        const totalUnitQuestions = vocabCount * 2 + quizCount;
+        const totalUnitQuestions = vocabCount * 3 + quizCount;
         const completionRate = totalUnitQuestions > 0 ? (totalAnswered / totalUnitQuestions) : 0;
         const timePerQuestion = totalAnswered > 0 ? (totalTime / totalAnswered) : 0;
 
@@ -625,7 +656,7 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
             if (vTime < 30) {
                 comment = 'Mới lướt qua từ vựng. Em hãy đọc kỹ lại danh sách từ và bắt đầu làm các bài tập nhé!';
             } else {
-                comment = 'Em đã dành thời gian xem từ vựng. Hãy tiếp tục thử sức với các bài tập Ghép cặp, Viết chính tả và Trắc nghiệm nhé!';
+                comment = 'Em đã dành thời gian xem từ vựng. Hãy tiếp tục thử sức với các bài tập Ghép cặp, Nghe & Chọn, Viết chính tả và Trắc nghiệm nhé!';
             }
         } else if (completionRate < 0.4 || totalAnswered < 10) {
             // Very low completion rate or very few questions answered (< 40% of unit exercises)
@@ -637,7 +668,7 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
                 comment = 'Mới làm ít câu hỏi và tỉ lệ đúng còn thấp. Em hãy xem kỹ lại danh sách từ vựng trước khi tiếp tục làm bài nhé!';
             }
         } else if (completionRate < 0.7) {
-            // Medium completion rate (40% to 69% of unit exercises - strictly NO high praise keywords until >= 70%)
+            // Medium completion rate (40% to 69% of unit exercises)
             if (ratio >= 0.85 && totalTime >= 120) {
                 comment = 'Làm bài cẩn thận và có tỉ lệ đúng tốt, nhưng chưa hoàn thành đủ số lượng bài tập. Em hãy tiếp tục làm nốt các phần còn lại nhé!';
             } else if (ratio >= 0.65) {
@@ -650,7 +681,7 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
             if (timePerQuestion < 3.5) {
                 // Rushed / guessed questions
                 comment = 'Đã làm nhiều bài tập nhưng thời gian thao tác quá vội vàng. Em hãy đọc kỹ yêu cầu và suy nghĩ chu đáo hơn trước khi chọn nhé!';
-            } else if (ratio >= 0.85 && completionRate >= 0.80 && partsDone >= 3) {
+            } else if (ratio >= 0.85 && completionRate >= 0.80 && partsDone >= 4) {
                 comment = config.actCommentHighText || 'Xuất sắc! Em đã hoàn thành hầu hết các bài tập rất chu đáo với kết quả rất cao. Tinh thần học tập thật tuyệt vời!';
             } else if (ratio >= 0.75) {
                 comment = config.actCommentGoodText || 'Rất tốt! Em đã chăm chỉ hoàn thành phần lớn các bài tập và đạt kết quả tốt. Hãy tiếp tục phát huy nhé!';
@@ -668,6 +699,7 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
             vUnheardWords,
             vTotalWords,
             mTime, mCorrect, mIncorrect,
+            lTime, lCorrect, lIncorrect,
             sTime, sCorrect, sIncorrect,
             qTime, qCorrect, qIncorrect,
             totalTime,
@@ -784,10 +816,14 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
                                     </div>
                                     <div className="flex items-start gap-1">
                                         <span className="font-bold shrink-0">3.</span>
-                                        <span>Viết chính tả: đúng: <strong className="text-emerald-400">{stats.sCorrect}</strong> / sai: <strong className="text-red-400">{stats.sIncorrect}</strong> (<span className="opacity-90">{formatDuration(stats.sTime)}</span>)</span>
+                                        <span>Nghe & chọn: đúng: <strong className="text-emerald-400">{stats.lCorrect}</strong> / sai: <strong className="text-red-400">{stats.lIncorrect}</strong> (<span className="opacity-90">{formatDuration(stats.lTime)}</span>)</span>
                                     </div>
                                     <div className="flex items-start gap-1">
                                         <span className="font-bold shrink-0">4.</span>
+                                        <span>Viết chính tả: đúng: <strong className="text-emerald-400">{stats.sCorrect}</strong> / sai: <strong className="text-red-400">{stats.sIncorrect}</strong> (<span className="opacity-90">{formatDuration(stats.sTime)}</span>)</span>
+                                    </div>
+                                    <div className="flex items-start gap-1">
+                                        <span className="font-bold shrink-0">5.</span>
                                         <span>Kiểm tra lại: đúng: <strong className="text-emerald-400">{stats.qCorrect}</strong> / sai: <strong className="text-red-400">{stats.qIncorrect}</strong> (<span className="opacity-90">{formatDuration(stats.qTime)}</span>)</span>
                                     </div>
                                 </div>
@@ -859,6 +895,23 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ show, u
                                     titleFontSize={config.actMatchTitleFontSize}
                                     onClick={() => onStartMatchingGame(vocabulary)}
                                     stats={attempts.matching}
+                                    playerData={playerData}
+                                    showCorrectCount={true}
+                                    config={config}
+                                />
+                            )}
+
+                            {hasVocab && (
+                                <ActivityCard
+                                    title={config.activityListenChooseLabel || 'Nghe & Chọn'}
+                                    description={config.activityListenChooseDesc || 'Nghe phát âm và chọn từ tiếng Anh tương ứng'}
+                                    icon={<PointingFingerIcon />}
+                                    cardBgColor={config.actListenChooseBgColor || '#e11d48'}
+                                    cardBgClass="bg-gradient-to-r from-rose-500 to-pink-600"
+                                    titleColor={config.actListenChooseTitleColor || '#ffffff'}
+                                    titleFontSize={config.actListenChooseTitleFontSize || 1.125}
+                                    onClick={() => onStartListenChooseGame(vocabulary)}
+                                    stats={attempts.listenChoose}
                                     playerData={playerData}
                                     showCorrectCount={true}
                                     config={config}
