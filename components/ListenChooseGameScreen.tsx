@@ -465,8 +465,8 @@ const ListenChooseGameScreen: React.FC<ListenChooseGameScreenProps> = ({
 
                                         {/* Selected English Word Box */}
                                         <div className="w-full py-2 px-3 border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center min-h-[48px] bg-gray-50/50">
-                                            <p className={`font-black text-xl transition-all ${selectedEnglish ? 'text-rose-700' : 'text-gray-400 italic text-sm'}`}>
-                                                {selectedEnglish ? selectedEnglish.word : '(Chọn một từ tiếng Anh ở trên hoặc dưới)'}
+                                            <p className={`font-black text-xl transition-all ${selectedEnglish ? 'text-rose-700' : 'text-gray-400 italic text-xs'}`}>
+                                                {selectedEnglish ? selectedEnglish.word : '(Nghe kỹ và chọn từ đúng)'}
                                             </p>
                                         </div>
                                         
