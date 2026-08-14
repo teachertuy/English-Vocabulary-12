@@ -84,7 +84,7 @@ const DEFAULT_EXERCISE_CONFIG: ExerciseSelectionConfig = {
     matchingTimerEnabled: true,
     listenChooseDuration: 20,
     listenChooseTimerEnabled: true,
-    actBackIcon: '<<',
+    actBackIcon: 'curved-arrow',
     actBackCustomIcon: '',
     actBackText: 'Quay lại',
     actBackColor: '#dc2626',

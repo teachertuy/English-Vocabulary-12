@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { ExerciseSelectionConfig } from '../types';
+import { ActivityBackButton, CurvedBackArrowSVG } from './ActivityBackButton';
 
 interface EditExerciseSelectionModalProps {
     show: boolean;
@@ -80,7 +81,7 @@ const DEFAULT_CONFIG: ExerciseSelectionConfig = {
     listenChooseTimerEnabled: true,
 
     // Activity Screens Back Button (Nút <<Quay lại trong 5 màn hình học tập)
-    actBackIcon: '<<',
+    actBackIcon: 'curved-arrow',
     actBackCustomIcon: '',
     actBackText: 'Quay lại',
     actBackColor: '#dc2626',
@@ -1231,29 +1232,7 @@ const EditExerciseSelectionModal: React.FC<EditExerciseSelectionModalProps> = ({
                                     </div>
                                     <div className="p-4 bg-orange-50/60 rounded-lg border border-orange-100 flex items-center justify-between min-h-[56px]">
                                         <div className="flex items-center">
-                                            <button
-                                                type="button"
-                                                style={{
-                                                    color: config.actBackColor || '#dc2626',
-                                                    fontSize: `${config.actBackFontSize !== undefined ? config.actBackFontSize : 1.0}rem`,
-                                                }}
-                                                className={`inline-flex items-center gap-1.5 transition-all duration-200 focus:outline-none rounded active:scale-95 cursor-pointer select-none ${
-                                                    config.actBackFontWeight === 'black'
-                                                        ? 'font-black'
-                                                        : config.actBackFontWeight === 'medium'
-                                                        ? 'font-medium'
-                                                        : config.actBackFontWeight === 'extrabold'
-                                                        ? 'font-extrabold'
-                                                        : 'font-bold'
-                                                }`}
-                                            >
-                                                {config.actBackIcon === 'custom' ? (
-                                                    <span>{config.actBackCustomIcon || '👈'}</span>
-                                                ) : config.actBackIcon !== 'none' ? (
-                                                    <span>{config.actBackIcon || '<<'}</span>
-                                                ) : null}
-                                                {config.actBackText !== undefined ? <span>{config.actBackText}</span> : <span>Quay lại</span>}
-                                            </button>
+                                            <ActivityBackButton config={config} onClick={() => {}} />
                                         </div>
 
                                         <div className="text-xs text-gray-400 italic bg-white px-3 py-1 rounded border border-gray-200">
@@ -1272,8 +1251,9 @@ const EditExerciseSelectionModal: React.FC<EditExerciseSelectionModalProps> = ({
                                         {/* Preset Icon Chips */}
                                         <div className="flex flex-wrap gap-2">
                                             {[
-                                                { id: '<<', label: '<< (Mặc định)' },
-                                                { id: '⬅️', label: '⬅️ Mũi tên' },
+                                                { id: 'curved-arrow', label: '↪ Mũi tên uốn (Ảnh mẫu)', icon: <CurvedBackArrowSVG className="w-4 h-4 inline-block" /> },
+                                                { id: '<<', label: '<< Ký hiệu kép' },
+                                                { id: '⬅️', label: '⬅️ Mũi tên tròn' },
                                                 { id: '◀️', label: '◀️ Tam giác' },
                                                 { id: '↩️', label: '↩️ Uốn cong' },
                                                 { id: '🔙', label: '🔙 BACK' },
@@ -1289,13 +1269,14 @@ const EditExerciseSelectionModal: React.FC<EditExerciseSelectionModalProps> = ({
                                                     key={preset.id}
                                                     type="button"
                                                     onClick={() => handleChange('actBackIcon', preset.id)}
-                                                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border ${
-                                                        (config.actBackIcon || '<<') === preset.id
+                                                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border flex items-center gap-1.5 ${
+                                                        (config.actBackIcon || 'curved-arrow') === preset.id
                                                             ? 'bg-red-600 text-white border-red-700 shadow-sm scale-105'
                                                             : 'bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100'
                                                     }`}
                                                 >
-                                                    {preset.label}
+                                                    {preset.icon}
+                                                    <span>{preset.label}</span>
                                                 </button>
                                             ))}
                                         </div>
