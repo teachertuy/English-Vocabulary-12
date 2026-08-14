@@ -13,6 +13,7 @@ import {
 } from '../services/firebaseService';
 import { generateSpeech } from '../services/geminiService';
 import { decode, decodeAudioData } from '../utils/audioUtils';
+import { YellowSpeakerButton } from './YellowSpeakerIcon';
 
 declare const Tone: any;
 
@@ -454,48 +455,18 @@ const ListenChooseGameScreen: React.FC<ListenChooseGameScreenProps> = ({
                                     <div className={`px-4 pt-5 text-center flex flex-col items-center transition-all duration-500 ${selectedEnglish ? 'pb-5' : 'pb-3'}`}>
                                         
                                         {/* Speaker Icon and Soundwave Button */}
-                                        <div className="flex flex-col items-center justify-center gap-2">
-                                            <button
-                                                type="button"
-                                                onClick={() => currentWord && playWordAudio(currentWord)}
-                                                className={`group relative flex items-center justify-center w-20 h-20 rounded-full transition-all duration-300 shadow-md cursor-pointer ${
-                                                    isPlayingAudio 
-                                                        ? 'bg-rose-600 text-white scale-110 shadow-rose-300 ring-8 ring-rose-200 animate-pulse' 
-                                                        : 'bg-gradient-to-tr from-rose-500 to-pink-500 text-white hover:scale-105 hover:shadow-lg active:scale-95'
-                                                }`}
-                                                title="Nhấn để nghe lại phát âm"
-                                            >
-                                                {/* Ripple effect rings when audio plays */}
-                                                {isPlayingAudio && (
-                                                    <span className="absolute inset-0 rounded-full bg-rose-400 opacity-75 animate-ping"></span>
-                                                )}
-                                                
-                                                <svg 
-                                                    xmlns="http://www.w3.org/2000/svg" 
-                                                    viewBox="0 0 24 24" 
-                                                    fill="currentColor" 
-                                                    className={`w-10 h-10 transition-transform ${isPlayingAudio ? 'scale-110' : 'group-hover:scale-110'}`}
-                                                >
-                                                    <path d="M13.5 4.06c0-1.336-1.616-2.005-2.56-1.06l-4.5 4.5H4.5A2.25 2.25 0 002.25 9.75v4.5a2.25 2.25 0 002.25 2.25h1.94l4.5 4.5c.944.945 2.56.276 2.56-1.06V4.06zM18.54 5.46a.75.75 0 011.06 0 9.75 9.75 0 010 13.08.75.75 0 11-1.06-1.06 8.25 8.25 0 000-10.96.75.75 0 010-1.06z" />
-                                                    <path d="M15.97 8.03a.75.75 0 011.06 0 6.75 6.75 0 010 7.94.75.75 0 11-1.06-1.06 5.25 5.25 0 000-5.82.75.75 0 010-1.06z" />
-                                                </svg>
-                                            </button>
-
-                                            <p className="text-xs font-bold text-gray-500 uppercase tracking-wide flex items-center gap-1">
-                                                {isPlayingAudio ? (
-                                                    <span className="text-rose-600 font-extrabold animate-pulse">🔊 Đang phát âm...</span>
-                                                ) : (
-                                                    <span>🔊 Nhấn loa để nghe phát âm</span>
-                                                )}
-                                            </p>
-                                        </div>
+                                        <YellowSpeakerButton
+                                            onClick={() => currentWord && playWordAudio(currentWord)}
+                                            isPlaying={isPlayingAudio}
+                                            isLoading={currentWord ? fetchingAudioWords.has(currentWord.word) : false}
+                                        />
 
                                         <div className="w-3/4 border-b border-gray-200 my-3"></div>
 
                                         {/* Selected English Word Box */}
-                                        <div className="w-full py-1.5 px-2 border-2 border-dashed border-rose-300 rounded-lg flex items-center justify-center min-h-[44px] bg-rose-50/40">
+                                        <div className="w-full py-2 px-3 border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center min-h-[48px] bg-gray-50/50">
                                             <p className={`font-black text-xl transition-all ${selectedEnglish ? 'text-rose-700' : 'text-gray-400 italic text-sm'}`}>
-                                                {selectedEnglish ? selectedEnglish.word : 'Chọn từ tiếng Anh phù hợp...'}
+                                                {selectedEnglish ? selectedEnglish.word : '(Chọn một từ tiếng Anh ở trên hoặc dưới)'}
                                             </p>
                                         </div>
                                         
