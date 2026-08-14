@@ -127,6 +127,13 @@ const DEFAULT_CONFIG: ExerciseSelectionConfig = {
     actAttemptBoxBgColor: '#0f172a',
     actAttemptTextColor: '#ffffff',
     actAttemptFontSize: 0.75,
+    actAttemptBoxWidthPercent: 100,
+    actAttemptBoxMinWidth: 95,
+    actAttemptBoxPaddingVertical: 0.375,
+    actAttemptBoxPaddingHorizontal: 0.75,
+    actAttemptBoxBorderRadius: 8,
+    actAttemptBoxBorderWidth: 1,
+    actAttemptBoxBorderColor: 'rgba(255,255,255,0.15)',
     actTotalTimeBoxBgColor: '#1e293b',
     actTotalTimeLabelColor: '#ffffff',
     actTotalTimeLabelFontSize: 0.75,
@@ -1061,9 +1068,58 @@ const EditExerciseSelectionModal: React.FC<EditExerciseSelectionModalProps> = ({
                                 </div>
                             </div>
 
-                            {/* 4. Time Tracking Section */}
-                            <div className="p-5 border rounded-2xl bg-white shadow-sm space-y-4">
-                                <h4 className="font-bold text-gray-800 text-base border-b pb-2 flex items-center gap-2"><span>4️⃣</span> Phần "THỜI GIAN LÀM BÀI" & Lượt học</h4>
+                            {/* 4. Time Tracking Section & Attempt Box Customization */}
+                            <div className="p-5 border rounded-2xl bg-white shadow-sm space-y-5">
+                                <div className="border-b pb-3 flex items-center justify-between">
+                                    <h4 className="font-bold text-gray-800 text-base flex items-center gap-2">
+                                        <span>4️⃣</span> Phần "THỜI GIAN LÀM BÀI" & Khung chứa thông tin các lần làm bài của HS
+                                    </h4>
+                                    <span className="text-xs text-gray-500 font-medium">(Chỉnh sửa kích thước chiều dài, rộng, hẹp, bo tròn khung lượt học)</span>
+                                </div>
+
+                                {/* Live Preview Box for Attempt Container */}
+                                <div className="p-4 bg-slate-900 rounded-xl border border-slate-700 shadow-sm">
+                                    <div className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-2 flex items-center justify-between">
+                                        <span>👁️ Xem trước Khung thông tin lần làm bài của HS:</span>
+                                        <span className="text-[11px] font-normal text-slate-400">Hiển thị trong các thẻ hoạt động học</span>
+                                    </div>
+                                    
+                                    <div className="p-3 bg-slate-800/80 rounded-lg space-y-2 border border-slate-700">
+                                        <div 
+                                            style={{ 
+                                                backgroundColor: config.actAttemptBoxBgColor && config.actAttemptBoxBgColor.startsWith('#') ? config.actAttemptBoxBgColor : 'rgba(15,23,42,0.9)', 
+                                                color: config.actAttemptTextColor || '#ffffff', 
+                                                fontSize: `${config.actAttemptFontSize || 0.75}rem`,
+                                                padding: `${config.actAttemptBoxPaddingVertical !== undefined ? config.actAttemptBoxPaddingVertical : 0.375}rem ${config.actAttemptBoxPaddingHorizontal !== undefined ? config.actAttemptBoxPaddingHorizontal : 0.75}rem`,
+                                                borderRadius: `${config.actAttemptBoxBorderRadius !== undefined ? config.actAttemptBoxBorderRadius : 8}px`,
+                                                borderWidth: `${config.actAttemptBoxBorderWidth !== undefined ? config.actAttemptBoxBorderWidth : 1}px`,
+                                                borderColor: config.actAttemptBoxBorderColor || 'rgba(255,255,255,0.2)',
+                                                width: `${config.actAttemptBoxWidthPercent !== undefined ? config.actAttemptBoxWidthPercent : 100}%`
+                                            }}
+                                            className="flex flex-col font-medium gap-1 border transition-all mx-auto"
+                                        >
+                                            <div className="flex items-center justify-between w-full gap-2">
+                                                <div className="flex items-center gap-2 overflow-hidden">
+                                                    <span className="font-bold opacity-90 shrink-0">Lần 1:</span>
+                                                    <span className="font-extrabold text-emerald-400 bg-emerald-950/80 border border-emerald-500/50 px-2 py-0.5 rounded-md text-[0.85em] leading-none shrink-0 shadow-2xs">
+                                                        (Đúng: 10/10)
+                                                    </span>
+                                                </div>
+                                                <span className="font-mono font-extrabold shrink-0">
+                                                    01:25 (15/08)
+                                                </span>
+                                            </div>
+                                            <div 
+                                                style={{ color: '#fde047', fontSize: `${(config.actAttemptFontSize || 0.75) * 0.9}rem` }}
+                                                className="flex items-start gap-1 font-semibold leading-snug pt-1 border-t border-white/10 text-left"
+                                            >
+                                                <span>💬 Xuất sắc! Rất chăm chỉ và làm bài tốt</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Text & Color Header Settings */}
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                     <div>
                                         <label className="block text-xs font-bold text-gray-700 mb-1">Tên gọi Tiêu đề ("THỜI GIAN LÀM BÀI:")</label>
@@ -1071,7 +1127,7 @@ const EditExerciseSelectionModal: React.FC<EditExerciseSelectionModalProps> = ({
                                             type="text" 
                                             value={config.actTimeHeaderText !== undefined ? config.actTimeHeaderText : 'THỜI GIAN LÀM BÀI:'} 
                                             onChange={e => handleChange('actTimeHeaderText', e.target.value)} 
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-800 font-medium focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" 
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-800 font-medium focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none shadow-2xs" 
                                             placeholder="THỜI GIAN LÀM BÀI:"
                                         />
                                     </div>
@@ -1095,6 +1151,127 @@ const EditExerciseSelectionModal: React.FC<EditExerciseSelectionModalProps> = ({
                                     <div>
                                         <label className="block text-xs font-bold text-gray-700 mb-1">Cỡ chữ Ô Lượt học: <span className="text-blue-600 font-bold">{config.actAttemptFontSize || 0.75}rem</span></label>
                                         <input type="range" min="0.5" max="1.5" step="0.05" value={config.actAttemptFontSize || 0.75} onChange={e => handleChange('actAttemptFontSize', parseFloat(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
+                                    </div>
+                                </div>
+
+                                {/* Dimension Controls: Length/Width, Padding, Border Radius & Border */}
+                                <div className="p-4 bg-indigo-50/70 border border-indigo-200 rounded-xl space-y-4">
+                                    <h5 className="font-extrabold text-indigo-900 text-xs uppercase tracking-wider flex items-center gap-1.5">
+                                        <span>📏</span> Tùy chỉnh Kích thước Chiều dài, Rộng, Hẹp & Bo tròn khung làm bài
+                                    </h5>
+
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
+                                        {/* 1. Chiều rộng Khung % */}
+                                        <div>
+                                            <label className="block text-xs font-bold text-gray-800 mb-1">
+                                                Chiều rộng Khung (%): <span className="text-indigo-600 font-extrabold">{config.actAttemptBoxWidthPercent !== undefined ? config.actAttemptBoxWidthPercent : 100}%</span>
+                                            </label>
+                                            <input 
+                                                type="range" 
+                                                min="40" 
+                                                max="100" 
+                                                step="5" 
+                                                value={config.actAttemptBoxWidthPercent !== undefined ? config.actAttemptBoxWidthPercent : 100} 
+                                                onChange={e => handleChange('actAttemptBoxWidthPercent', parseInt(e.target.value))} 
+                                                className="w-full h-2 bg-indigo-200 rounded-lg appearance-none cursor-pointer accent-indigo-600" 
+                                            />
+                                            <p className="text-[11px] text-gray-500 font-medium mt-1">(Cho các ô dạng danh sách dọc)</p>
+                                        </div>
+
+                                        {/* 2. Chiều rộng tối thiểu Ô ngang (px) */}
+                                        <div>
+                                            <label className="block text-xs font-bold text-gray-800 mb-1">
+                                                Rộng tối thiểu Ô ngang: <span className="text-indigo-600 font-extrabold">{config.actAttemptBoxMinWidth !== undefined ? config.actAttemptBoxMinWidth : 95}px</span>
+                                            </label>
+                                            <input 
+                                                type="range" 
+                                                min="50" 
+                                                max="250" 
+                                                step="5" 
+                                                value={config.actAttemptBoxMinWidth !== undefined ? config.actAttemptBoxMinWidth : 95} 
+                                                onChange={e => handleChange('actAttemptBoxMinWidth', parseInt(e.target.value))} 
+                                                className="w-full h-2 bg-indigo-200 rounded-lg appearance-none cursor-pointer accent-indigo-600" 
+                                            />
+                                            <p className="text-[11px] text-gray-500 font-medium mt-1">(Cho các ô nằm ngang như Học từ vựng)</p>
+                                        </div>
+
+                                        {/* 3. Độ cao / hẹp trên dưới (Padding V) */}
+                                        <div>
+                                            <label className="block text-xs font-bold text-gray-800 mb-1">
+                                                Độ cao / hẹp (Padding trên-dưới): <span className="text-indigo-600 font-extrabold">{config.actAttemptBoxPaddingVertical !== undefined ? config.actAttemptBoxPaddingVertical : 0.375}rem</span>
+                                            </label>
+                                            <input 
+                                                type="range" 
+                                                min="0.1" 
+                                                max="1.5" 
+                                                step="0.05" 
+                                                value={config.actAttemptBoxPaddingVertical !== undefined ? config.actAttemptBoxPaddingVertical : 0.375} 
+                                                onChange={e => handleChange('actAttemptBoxPaddingVertical', parseFloat(e.target.value))} 
+                                                className="w-full h-2 bg-indigo-200 rounded-lg appearance-none cursor-pointer accent-indigo-600" 
+                                            />
+                                            <p className="text-[11px] text-gray-500 font-medium mt-1">(Giảm để thu hẹp độ cao khung)</p>
+                                        </div>
+
+                                        {/* 4. Độ rộng / hẹp trái phải (Padding H) */}
+                                        <div>
+                                            <label className="block text-xs font-bold text-gray-800 mb-1">
+                                                Độ rộng / hẹp (Padding trái-phải): <span className="text-indigo-600 font-extrabold">{config.actAttemptBoxPaddingHorizontal !== undefined ? config.actAttemptBoxPaddingHorizontal : 0.75}rem</span>
+                                            </label>
+                                            <input 
+                                                type="range" 
+                                                min="0.2" 
+                                                max="2.0" 
+                                                step="0.05" 
+                                                value={config.actAttemptBoxPaddingHorizontal !== undefined ? config.actAttemptBoxPaddingHorizontal : 0.75} 
+                                                onChange={e => handleChange('actAttemptBoxPaddingHorizontal', parseFloat(e.target.value))} 
+                                                className="w-full h-2 bg-indigo-200 rounded-lg appearance-none cursor-pointer accent-indigo-600" 
+                                            />
+                                            <p className="text-[11px] text-gray-500 font-medium mt-1">(Tăng để mở rộng hai bên lề)</p>
+                                        </div>
+
+                                        {/* 5. Độ bo tròn góc (Border Radius) */}
+                                        <div>
+                                            <label className="block text-xs font-bold text-gray-800 mb-1">
+                                                Độ bo tròn góc Khung: <span className="text-indigo-600 font-extrabold">{config.actAttemptBoxBorderRadius !== undefined ? config.actAttemptBoxBorderRadius : 8}px</span>
+                                            </label>
+                                            <input 
+                                                type="range" 
+                                                min="0" 
+                                                max="30" 
+                                                step="1" 
+                                                value={config.actAttemptBoxBorderRadius !== undefined ? config.actAttemptBoxBorderRadius : 8} 
+                                                onChange={e => handleChange('actAttemptBoxBorderRadius', parseInt(e.target.value))} 
+                                                className="w-full h-2 bg-indigo-200 rounded-lg appearance-none cursor-pointer accent-indigo-600" 
+                                            />
+                                            <p className="text-[11px] text-gray-500 font-medium mt-1">(0px = vuông vức, 30px = bo tròn cong)</p>
+                                        </div>
+
+                                        {/* 6. Độ dày viền (Border Width) & Màu viền */}
+                                        <div className="grid grid-cols-2 gap-2">
+                                            <div>
+                                                <label className="block text-xs font-bold text-gray-800 mb-1">
+                                                    Độ dày viền: <span className="text-indigo-600 font-extrabold">{config.actAttemptBoxBorderWidth !== undefined ? config.actAttemptBoxBorderWidth : 1}px</span>
+                                                </label>
+                                                <input 
+                                                    type="range" 
+                                                    min="0" 
+                                                    max="6" 
+                                                    step="1" 
+                                                    value={config.actAttemptBoxBorderWidth !== undefined ? config.actAttemptBoxBorderWidth : 1} 
+                                                    onChange={e => handleChange('actAttemptBoxBorderWidth', parseInt(e.target.value))} 
+                                                    className="w-full h-2 bg-indigo-200 rounded-lg appearance-none cursor-pointer accent-indigo-600" 
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs font-bold text-gray-800 mb-1">Màu viền</label>
+                                                <input 
+                                                    type="color" 
+                                                    value={config.actAttemptBoxBorderColor && config.actAttemptBoxBorderColor.startsWith('#') ? config.actAttemptBoxBorderColor : '#38bdf8'} 
+                                                    onChange={e => handleChange('actAttemptBoxBorderColor', e.target.value)} 
+                                                    className="w-full h-9 p-0 border border-gray-300 cursor-pointer rounded overflow-hidden shadow-2xs" 
+                                                />
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

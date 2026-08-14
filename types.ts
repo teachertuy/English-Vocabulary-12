@@ -267,6 +267,13 @@ export interface ExerciseSelectionConfig {
     actAttemptBoxBgColor?: string;
     actAttemptTextColor?: string;
     actAttemptFontSize?: number;
+    actAttemptBoxWidthPercent?: number;
+    actAttemptBoxMinWidth?: number;
+    actAttemptBoxPaddingVertical?: number;
+    actAttemptBoxPaddingHorizontal?: number;
+    actAttemptBoxBorderRadius?: number;
+    actAttemptBoxBorderWidth?: number;
+    actAttemptBoxBorderColor?: string;
     actTotalTimeBoxBgColor?: string;
     actTotalTimeLabelColor?: string;
     actTotalTimeLabelFontSize?: number;

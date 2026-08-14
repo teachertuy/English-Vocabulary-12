@@ -132,6 +132,13 @@ const DEFAULT_CONFIG: ExerciseSelectionConfig = {
     actAttemptBoxBgColor: 'rgba(0,0,0,0.2)',
     actAttemptTextColor: '#ffffff',
     actAttemptFontSize: 0.75,
+    actAttemptBoxWidthPercent: 100,
+    actAttemptBoxMinWidth: 95,
+    actAttemptBoxPaddingVertical: 0.375,
+    actAttemptBoxPaddingHorizontal: 0.75,
+    actAttemptBoxBorderRadius: 8,
+    actAttemptBoxBorderWidth: 1,
+    actAttemptBoxBorderColor: 'rgba(255,255,255,0.15)',
     actTotalTimeBoxBgColor: 'rgba(0,0,0,0.25)',
     actTotalTimeLabelColor: '#ffffff',
     actTotalTimeLabelFontSize: 0.75,
@@ -334,6 +341,13 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
     const attemptBg = config?.actAttemptBoxBgColor || '#ffffff';
     const attemptTextColor = config?.actAttemptTextColor || '#1e293b';
     const attemptTextSize = config?.actAttemptFontSize || 0.8;
+    const attemptWidthPct = config?.actAttemptBoxWidthPercent !== undefined ? config.actAttemptBoxWidthPercent : 100;
+    const attemptMinWidth = config?.actAttemptBoxMinWidth !== undefined ? config.actAttemptBoxMinWidth : 95;
+    const attemptPaddingV = config?.actAttemptBoxPaddingVertical !== undefined ? config.actAttemptBoxPaddingVertical : 0.375;
+    const attemptPaddingH = config?.actAttemptBoxPaddingHorizontal !== undefined ? config.actAttemptBoxPaddingHorizontal : 0.75;
+    const attemptRadius = config?.actAttemptBoxBorderRadius !== undefined ? config.actAttemptBoxBorderRadius : 8;
+    const attemptBorderWidth = config?.actAttemptBoxBorderWidth !== undefined ? config.actAttemptBoxBorderWidth : 1;
+    const attemptBorderColor = config?.actAttemptBoxBorderColor || 'rgba(255,255,255,0.15)';
 
     const commentTextColor = config?.actCommentTextColor || '#fde047';
     const commentFontSize = config?.actCommentFontSize || 0.7;
@@ -400,8 +414,16 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
 
                     {attemptsList.length === 0 ? (
                         <div 
-                            style={{ backgroundColor: attemptBg, color: attemptTextColor, fontSize: `${attemptTextSize}rem` }}
-                            className="italic px-3 py-1 rounded-lg"
+                            style={{ 
+                                backgroundColor: attemptBg, 
+                                color: attemptTextColor, 
+                                fontSize: `${attemptTextSize}rem`,
+                                padding: `${attemptPaddingV}rem ${attemptPaddingH}rem`,
+                                borderRadius: `${attemptRadius}px`,
+                                borderWidth: `${attemptBorderWidth}px`,
+                                borderColor: attemptBorderColor,
+                            }}
+                            className="italic border"
                         >
                             Chưa có lượt học
                         </div>
@@ -410,8 +432,17 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
                             {attemptsList.map((att, idx) => (
                                 <div 
                                     key={idx} 
-                                    style={{ backgroundColor: attemptBg, color: attemptTextColor, fontSize: `${attemptTextSize}rem` }}
-                                    className="flex flex-col items-center justify-center px-3 py-1.5 rounded-lg border border-white/15 font-medium shadow-2xs text-center min-w-[95px]"
+                                    style={{ 
+                                        backgroundColor: attemptBg, 
+                                        color: attemptTextColor, 
+                                        fontSize: `${attemptTextSize}rem`,
+                                        padding: `${attemptPaddingV}rem ${attemptPaddingH}rem`,
+                                        borderRadius: `${attemptRadius}px`,
+                                        borderWidth: `${attemptBorderWidth}px`,
+                                        borderColor: attemptBorderColor,
+                                        minWidth: `${attemptMinWidth}px`,
+                                    }}
+                                    className="flex flex-col items-center justify-center font-medium shadow-2xs text-center border"
                                 >
                                     <span className="font-bold shrink-0" style={{ color: openCountLabelColor || '#dc2626' }}>
                                         Lần {idx + 1}
@@ -427,8 +458,17 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
                             {attemptsList.map((att, idx) => (
                                 <div 
                                     key={idx} 
-                                    style={{ backgroundColor: attemptBg, color: attemptTextColor, fontSize: `${attemptTextSize}rem` }}
-                                    className="flex flex-col px-3 py-1.5 rounded-lg border border-white/15 font-medium gap-1"
+                                    style={{ 
+                                        backgroundColor: attemptBg, 
+                                        color: attemptTextColor, 
+                                        fontSize: `${attemptTextSize}rem`,
+                                        padding: `${attemptPaddingV}rem ${attemptPaddingH}rem`,
+                                        borderRadius: `${attemptRadius}px`,
+                                        borderWidth: `${attemptBorderWidth}px`,
+                                        borderColor: attemptBorderColor,
+                                        width: `${attemptWidthPct}%`
+                                    }}
+                                    className="flex flex-col font-medium gap-1 border"
                                 >
                                     <div className="flex items-center justify-between w-full gap-2">
                                         <div className="flex items-center gap-2 overflow-hidden">
