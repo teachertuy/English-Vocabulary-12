@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import { PlayerData, VocabularyWord, GameResult, QuizAnswerDetail } from '../types';
+import { PlayerData, VocabularyWord, GameResult, QuizAnswerDetail, ExerciseSelectionConfig } from '../types';
 import { 
     updateUnitActivityResult, 
     trackStudentPresence, 
@@ -14,6 +14,7 @@ import {
 import { generateSpeech } from '../services/geminiService';
 import { decode, decodeAudioData } from '../utils/audioUtils';
 import { YellowSpeakerButton } from './YellowSpeakerIcon';
+import { ActivityBackButton } from './ActivityBackButton';
 
 declare const Tone: any;
 
@@ -81,6 +82,7 @@ interface ListenChooseGameScreenProps {
     activityId: string;
     onBack: () => void;
     durationSeconds: number;
+    exerciseConfig?: Partial<ExerciseSelectionConfig>;
 }
 
 const ListenChooseGameScreen: React.FC<ListenChooseGameScreenProps> = ({ 
@@ -93,7 +95,8 @@ const ListenChooseGameScreen: React.FC<ListenChooseGameScreenProps> = ({
     classroomId, 
     activityId, 
     onBack, 
-    durationSeconds 
+    durationSeconds,
+    exerciseConfig
 }) => {
     const [localVocabulary, setLocalVocabulary] = useState<VocabularyWord[]>([]);
     const [remainingWords, setRemainingWords] = useState<VocabularyWord[]>([]);
@@ -403,12 +406,9 @@ const ListenChooseGameScreen: React.FC<ListenChooseGameScreenProps> = ({
 
             <div className="w-full max-w-4xl mx-auto mb-2 pt-0 relative min-h-[60px]">
                 {/* <<Quay lại on absolute top-left edge */}
-                <button 
-                    onClick={handleExitPrematurely} 
-                    className="absolute top-0 left-0 flex items-center text-red-600 hover:text-red-700 font-bold text-base transition-colors focus:outline-none rounded active:scale-95 z-10 cursor-pointer"
-                >
-                    <span>&lt;&lt;Quay lại</span>
-                </button>
+                <div className="absolute top-0 left-0 z-10">
+                    <ActivityBackButton onClick={handleExitPrematurely} config={exerciseConfig} />
+                </div>
                 
                 {/* Centered Column: Timer (Top) -> Correct/Incorrect Count -> Progress */}
                 <div className="flex flex-col items-center justify-center gap-0.5 w-full mx-auto">

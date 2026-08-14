@@ -1,9 +1,10 @@
 
 import React, { useState, useRef, useCallback, useEffect, useMemo } from 'react';
-import { VocabularyWord, PlayerData, GameResult } from '../types';
+import { VocabularyWord, PlayerData, GameResult, ExerciseSelectionConfig } from '../types';
 import { generateSpeech, generateImagePrompt } from '../services/geminiService';
 import { updateVocabularyAudio, updateVocabularyImage, updateUnitActivityResult, removeStudentPresence, trackStudentPresence, updateUnitActivityProgress } from '../services/firebaseService';
 import { isUnreliableImage, getVocabImageFromCache, setVocabImageToCache, resolveVocabImages } from '../services/imageCacheService';
+import { ActivityBackButton } from './ActivityBackButton';
 
 
 function decode(base64: string): Uint8Array {
@@ -46,9 +47,10 @@ interface VocabularyScreenProps {
   playerData: PlayerData;
   activityId: string;
   onFinish: (result: GameResult) => void;
+  exerciseConfig?: Partial<ExerciseSelectionConfig>;
 }
 
-const VocabularyScreen: React.FC<VocabularyScreenProps> = ({ unitNumber, vocabulary, onBack, classroomId, grade, playerData, activityId, onFinish }) => {
+const VocabularyScreen: React.FC<VocabularyScreenProps> = ({ unitNumber, vocabulary, onBack, classroomId, grade, playerData, activityId, onFinish, exerciseConfig }) => {
     const [localVocabulary, setLocalVocabulary] = useState<VocabularyWord[]>(() => resolveVocabImages(vocabulary));
     const [playingWord, setPlayingWord] = useState<string | null>(null);
     const [fetchingWords, setFetchingWords] = useState<Set<string>>(new Set());
@@ -219,12 +221,7 @@ const VocabularyScreen: React.FC<VocabularyScreenProps> = ({ unitNumber, vocabul
     return (
         <div className="flex flex-col p-2 sm:p-4 bg-[#FFF8F0] min-h-[600px] relative">
             <div className="flex items-center justify-start mb-2 pt-0 pl-0">
-                 <button 
-                    onClick={handleBackWithSave} 
-                    className="flex items-center text-red-600 hover:text-red-700 font-bold text-base transition-colors focus:outline-none rounded active:scale-95"
-                 >
-                    <span>&lt;&lt;Quay lại</span>
-                </button>
+                <ActivityBackButton onClick={handleBackWithSave} config={exerciseConfig} />
             </div>
             
 

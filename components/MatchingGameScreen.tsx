@@ -1,7 +1,8 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { PlayerData, VocabularyWord, GameResult, QuizAnswerDetail } from '../types';
+import { PlayerData, VocabularyWord, GameResult, QuizAnswerDetail, ExerciseSelectionConfig } from '../types';
 import { updateUnitActivityResult, trackStudentPresence, incrementCheatCount, listenForKickedStatus, getGameStatus, removeStudentPresence, updateStudentProgress, updateUnitActivityProgress } from '../services/firebaseService';
+import { ActivityBackButton } from './ActivityBackButton';
 
 
 declare const Tone: any;
@@ -61,9 +62,10 @@ interface MatchingGameScreenProps {
   activityId: string;
   onBack: () => void;
   durationSeconds: number;
+  exerciseConfig?: Partial<ExerciseSelectionConfig>;
 }
 
-const MatchingGameScreen: React.FC<MatchingGameScreenProps> = ({ playerData, vocabulary, unitNumber, grade, onFinish, onForceExit, classroomId, activityId, onBack, durationSeconds }) => {
+const MatchingGameScreen: React.FC<MatchingGameScreenProps> = ({ playerData, vocabulary, unitNumber, grade, onFinish, onForceExit, classroomId, activityId, onBack, durationSeconds, exerciseConfig }) => {
     const [remainingWords, setRemainingWords] = useState<VocabularyWord[]>([]);
     const [currentVietnamese, setCurrentVietnamese] = useState<VocabularyWord | null>(null);
     const [selectedEnglish, setSelectedEnglish] = useState<VocabularyWord | null>(null);
@@ -184,12 +186,9 @@ const MatchingGameScreen: React.FC<MatchingGameScreenProps> = ({ playerData, voc
             {feedback && <div className="fixed top-5 right-5 shadow-lg rounded-lg p-3 text-sm text-center z-50 bg-red-100 text-red-800"><p className="font-bold">{feedback}</p></div>}
             <div className="w-full max-w-4xl mx-auto mb-2 pt-0 relative min-h-[60px]">
                 {/* <<Quay lại on absolute top-left edge */}
-                <button 
-                    onClick={handleExitPrematurely} 
-                    className="absolute top-0 left-0 flex items-center text-red-600 hover:text-red-700 font-bold text-base transition-colors focus:outline-none rounded active:scale-95 z-10"
-                >
-                    <span>&lt;&lt;Quay lại</span>
-                </button>
+                <div className="absolute top-0 left-0 z-10">
+                    <ActivityBackButton onClick={handleExitPrematurely} config={exerciseConfig} />
+                </div>
                 
                 {/* Centered Column: Timer (Top) -> Correct/Incorrect Count -> Progress */}
                 <div className="flex flex-col items-center justify-center gap-0 w-full mx-auto">

@@ -79,6 +79,14 @@ const DEFAULT_CONFIG: ExerciseSelectionConfig = {
     listenChooseDuration: 20,
     listenChooseTimerEnabled: true,
 
+    // Activity Screens Back Button (Nút <<Quay lại trong 5 màn hình học tập)
+    actBackIcon: '<<',
+    actBackCustomIcon: '',
+    actBackText: 'Quay lại',
+    actBackColor: '#dc2626',
+    actBackFontSize: 1.0,
+    actBackFontWeight: 'bold',
+
     actModalBgColor: '#ffffff',
     actModalTitleColor: '#1e293b',
     actModalTitleFontSize: 1.875,
@@ -1197,6 +1205,228 @@ const EditExerciseSelectionModal: React.FC<EditExerciseSelectionModalProps> = ({
                                         </div>
                                     </div>
                                 )}
+                            </div>
+
+                            {/* 6. Activity Screens Back Button Customization */}
+                            <div className="p-5 border-2 border-red-200 rounded-2xl bg-red-50/30 shadow-sm space-y-5">
+                                <div className="border-b border-red-200 pb-3 flex items-center justify-between">
+                                    <div className="flex items-center gap-2.5">
+                                        <span className="text-2xl">🔙</span>
+                                        <div>
+                                            <h4 className="font-extrabold text-gray-900 text-base flex items-center gap-2">
+                                                <span>6️⃣</span> Nút "Quay lại" (&lt;&lt;Quay lại) trong cả 5 Màn hình Học từ vựng
+                                            </h4>
+                                            <p className="text-xs text-gray-600 font-medium mt-0.5">
+                                                Tùy chỉnh biểu tượng (icon), màu sắc, kích thước và văn bản nút "Quay lại" ở góc trên của 5 hoạt động học
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Live Preview Box */}
+                                <div className="bg-white p-4 rounded-xl border border-red-200 shadow-sm">
+                                    <div className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 flex items-center justify-between">
+                                        <span>👁️ Xem trước giao diện thực tế của nút:</span>
+                                        <span className="text-[11px] font-normal text-gray-400">Hiển thị ở góc trên màn hình khi HS làm bài</span>
+                                    </div>
+                                    <div className="p-4 bg-orange-50/60 rounded-lg border border-orange-100 flex items-center justify-between min-h-[56px]">
+                                        <div className="flex items-center">
+                                            <button
+                                                type="button"
+                                                style={{
+                                                    color: config.actBackColor || '#dc2626',
+                                                    fontSize: `${config.actBackFontSize !== undefined ? config.actBackFontSize : 1.0}rem`,
+                                                }}
+                                                className={`inline-flex items-center gap-1.5 transition-all duration-200 focus:outline-none rounded active:scale-95 cursor-pointer select-none ${
+                                                    config.actBackFontWeight === 'black'
+                                                        ? 'font-black'
+                                                        : config.actBackFontWeight === 'medium'
+                                                        ? 'font-medium'
+                                                        : config.actBackFontWeight === 'extrabold'
+                                                        ? 'font-extrabold'
+                                                        : 'font-bold'
+                                                }`}
+                                            >
+                                                {config.actBackIcon === 'custom' ? (
+                                                    <span>{config.actBackCustomIcon || '👈'}</span>
+                                                ) : config.actBackIcon !== 'none' ? (
+                                                    <span>{config.actBackIcon || '<<'}</span>
+                                                ) : null}
+                                                {config.actBackText !== undefined ? <span>{config.actBackText}</span> : <span>Quay lại</span>}
+                                            </button>
+                                        </div>
+
+                                        <div className="text-xs text-gray-400 italic bg-white px-3 py-1 rounded border border-gray-200">
+                                            Kích thước: {(config.actBackFontSize !== undefined ? config.actBackFontSize : 1.0)}rem (~{Math.round((config.actBackFontSize !== undefined ? config.actBackFontSize : 1.0) * 16)}px)
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white p-4 rounded-xl border border-gray-200">
+                                    {/* 1. Icon Selection */}
+                                    <div className="space-y-3">
+                                        <label className="block text-xs font-bold text-gray-800">
+                                            1. Chọn Biểu tượng (Icon) hiển thị
+                                        </label>
+                                        
+                                        {/* Preset Icon Chips */}
+                                        <div className="flex flex-wrap gap-2">
+                                            {[
+                                                { id: '<<', label: '<< (Mặc định)' },
+                                                { id: '⬅️', label: '⬅️ Mũi tên' },
+                                                { id: '◀️', label: '◀️ Tam giác' },
+                                                { id: '↩️', label: '↩️ Uốn cong' },
+                                                { id: '🔙', label: '🔙 BACK' },
+                                                { id: '❮❮', label: '❮❮ Kép góc' },
+                                                { id: '◀', label: '◀ Đen' },
+                                                { id: '←', label: '← Mảnh' },
+                                                { id: '👈', label: '👈 Chỉ tay' },
+                                                { id: '🏠', label: '🏠 Trang chủ' },
+                                                { id: 'none', label: '🚫 Không icon' },
+                                                { id: 'custom', label: '✏️ Tự nhập...' },
+                                            ].map(preset => (
+                                                <button
+                                                    key={preset.id}
+                                                    type="button"
+                                                    onClick={() => handleChange('actBackIcon', preset.id)}
+                                                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border ${
+                                                        (config.actBackIcon || '<<') === preset.id
+                                                            ? 'bg-red-600 text-white border-red-700 shadow-sm scale-105'
+                                                            : 'bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100'
+                                                    }`}
+                                                >
+                                                    {preset.label}
+                                                </button>
+                                            ))}
+                                        </div>
+
+                                        {/* Custom Icon input when selected */}
+                                        {config.actBackIcon === 'custom' && (
+                                            <div className="pt-2">
+                                                <label className="block text-[11px] font-bold text-gray-600 mb-1">
+                                                    Nhập biểu tượng / ký hiệu tùy chọn (Emoji hoặc Ký tự):
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    value={config.actBackCustomIcon || ''}
+                                                    onChange={e => handleChange('actBackCustomIcon', e.target.value)}
+                                                    placeholder="VD: 🎯, ◀️, <<<, 👉, ⏎"
+                                                    className="w-full px-3 py-2 text-sm border rounded-lg font-bold text-gray-900 bg-yellow-50/50 border-yellow-300 focus:ring-2 focus:ring-red-500 outline-none"
+                                                />
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* 2. Text Content */}
+                                    <div className="space-y-3">
+                                        <label className="block text-xs font-bold text-gray-800">
+                                            2. Chữ hiển thị đi kèm (Văn bản nút)
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={config.actBackText !== undefined ? config.actBackText : 'Quay lại'}
+                                            onChange={e => handleChange('actBackText', e.target.value)}
+                                            placeholder="Quay lại"
+                                            className="w-full px-3 py-2 text-sm border rounded-lg font-bold text-gray-900 bg-white focus:ring-2 focus:ring-red-500 border-gray-300 outline-none"
+                                        />
+                                        <div className="flex flex-wrap gap-1.5">
+                                            {['Quay lại', 'Trở về', 'Thoát', 'Về danh sách', 'Trang trước', ''].map((sug, i) => (
+                                                <button
+                                                    key={i}
+                                                    type="button"
+                                                    onClick={() => handleChange('actBackText', sug)}
+                                                    className="px-2 py-0.5 text-[11px] font-medium bg-gray-100 hover:bg-gray-200 text-gray-700 rounded border border-gray-200"
+                                                >
+                                                    {sug === '' ? '(Để trống - chỉ icon)' : sug}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {/* 3. Color Selection */}
+                                    <div className="space-y-3">
+                                        <label className="block text-xs font-bold text-gray-800">
+                                            3. Màu sắc nút (Icon & Chữ)
+                                        </label>
+                                        <div className="flex items-center gap-3">
+                                            <input
+                                                type="color"
+                                                value={config.actBackColor || '#dc2626'}
+                                                onChange={e => handleChange('actBackColor', e.target.value)}
+                                                className="w-12 h-10 p-0 border border-gray-300 rounded cursor-pointer"
+                                            />
+                                            <input
+                                                type="text"
+                                                value={config.actBackColor || '#dc2626'}
+                                                onChange={e => handleChange('actBackColor', e.target.value)}
+                                                className="w-28 px-2 py-1.5 text-xs font-mono font-bold border rounded uppercase"
+                                                placeholder="#dc2626"
+                                            />
+                                        </div>
+                                        {/* Quick Color Palette */}
+                                        <div className="flex flex-wrap gap-1.5 pt-1">
+                                            {[
+                                                { hex: '#dc2626', name: 'Đỏ' },
+                                                { hex: '#e11d48', name: 'Hồng đỏ' },
+                                                { hex: '#2563eb', name: 'Xanh dương' },
+                                                { hex: '#0d9488', name: 'Xanh ngọc' },
+                                                { hex: '#16a34a', name: 'Xanh lá' },
+                                                { hex: '#ea580c', name: 'Cam' },
+                                                { hex: '#9333ea', name: 'Tím' },
+                                                { hex: '#1e293b', name: 'Đen xám' },
+                                            ].map(color => (
+                                                <button
+                                                    key={color.hex}
+                                                    type="button"
+                                                    onClick={() => handleChange('actBackColor', color.hex)}
+                                                    className="w-6 h-6 rounded-full border-2 border-white shadow-sm hover:scale-110 transition-transform"
+                                                    style={{ backgroundColor: color.hex }}
+                                                    title={color.name}
+                                                />
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {/* 4. Size & Weight Selection */}
+                                    <div className="space-y-3">
+                                        <div>
+                                            <label className="block text-xs font-bold text-gray-800 mb-1">
+                                                4. Kích thước nút: <span className="text-red-600 font-extrabold">{config.actBackFontSize !== undefined ? config.actBackFontSize : 1.0}rem (~{Math.round((config.actBackFontSize !== undefined ? config.actBackFontSize : 1.0) * 16)}px)</span>
+                                            </label>
+                                            <input
+                                                type="range"
+                                                min="0.7"
+                                                max="2.5"
+                                                step="0.05"
+                                                value={config.actBackFontSize !== undefined ? config.actBackFontSize : 1.0}
+                                                onChange={e => handleChange('actBackFontSize', parseFloat(e.target.value))}
+                                                className="w-full h-2 bg-red-100 rounded-lg appearance-none cursor-pointer accent-red-600"
+                                            />
+                                            <div className="flex justify-between text-[10px] text-gray-400 mt-1">
+                                                <span>Nhỏ (0.7rem)</span>
+                                                <span>Chuẩn (1.0rem)</span>
+                                                <span>Lớn (1.5rem)</span>
+                                                <span>Cực đại (2.5rem)</span>
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-xs font-bold text-gray-800 mb-1">
+                                                Độ đậm của chữ:
+                                            </label>
+                                            <select
+                                                value={config.actBackFontWeight || 'bold'}
+                                                onChange={e => handleChange('actBackFontWeight', e.target.value)}
+                                                className="w-full px-3 py-1.5 text-xs font-bold border rounded-lg bg-white border-gray-300 focus:ring-2 focus:ring-red-500"
+                                            >
+                                                <option value="medium">Đậm vừa (font-medium)</option>
+                                                <option value="bold">Đậm chuẩn (font-bold)</option>
+                                                <option value="extrabold">Rất đậm (font-extrabold)</option>
+                                                <option value="black">Siêu đậm (font-black)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     )}

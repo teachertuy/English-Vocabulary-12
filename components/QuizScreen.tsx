@@ -1,7 +1,8 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { PlayerData, QuizQuestion, GameResult, QuizAnswerDetail } from '../types';
+import { PlayerData, QuizQuestion, GameResult, QuizAnswerDetail, ExerciseSelectionConfig } from '../types';
 import { updateUnitActivityResult, trackStudentPresence, incrementCheatCount, listenForKickedStatus, getGameStatus, removeStudentPresence, updateStudentProgress, updateUnitActivityProgress } from '../services/firebaseService';
+import { ActivityBackButton } from './ActivityBackButton';
 
 
 declare const Tone: any;
@@ -48,9 +49,10 @@ interface QuizScreenProps {
   activityId: string;
   onBack: () => void;
   durationSeconds: number;
+  exerciseConfig?: Partial<ExerciseSelectionConfig>;
 }
 
-const QuizScreen: React.FC<QuizScreenProps> = ({ playerData, questions, unitNumber, grade, onFinish, onForceExit, classroomId, activityId, onBack, durationSeconds }) => {
+const QuizScreen: React.FC<QuizScreenProps> = ({ playerData, questions, unitNumber, grade, onFinish, onForceExit, classroomId, activityId, onBack, durationSeconds, exerciseConfig }) => {
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [score, setScore] = useState(0);
     // Nếu durationSeconds = 0 thì timeLeft sẽ không có ý nghĩa, ta dùng 1 giá trị tượng trưng hoặc logic riêng
@@ -181,12 +183,9 @@ const QuizScreen: React.FC<QuizScreenProps> = ({ playerData, questions, unitNumb
             
             <div className="w-full max-w-4xl mx-auto p-3 bg-amber-50 rounded-xl mb-4 border border-amber-200 shadow-sm relative min-h-[50px]">
                 {/* <<Quay lại on absolute top-left edge & Timer on absolute top-right edge */}
-                <button 
-                    onClick={handleExitPrematurely} 
-                    className="absolute top-1.5 left-2 flex items-center text-red-600 hover:text-red-700 font-bold text-base transition-colors focus:outline-none rounded active:scale-95 z-10"
-                >
-                    <span>&lt;&lt;Quay lại</span>
-                </button>
+                <div className="absolute top-1.5 left-2 z-10">
+                    <ActivityBackButton onClick={handleExitPrematurely} config={exerciseConfig} />
+                </div>
 
                 {/* Timer Indicator */}
                 <div className="absolute top-1.5 right-2 z-10">

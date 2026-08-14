@@ -221,6 +221,14 @@ export interface ExerciseSelectionConfig {
     actStudentBadgeTextColor?: string;
     actStudentBadgeFontSize?: number;
 
+    // Activity Screens Back Button (Nút <<Quay lại trong 5 màn hình học tập)
+    actBackIcon?: string;
+    actBackCustomIcon?: string;
+    actBackText?: string;
+    actBackColor?: string;
+    actBackFontSize?: number;
+    actBackFontWeight?: string;
+
     // Individual Card Backgrounds & Titles
     actLearnBgColor?: string;
     actLearnTitleColor?: string;
