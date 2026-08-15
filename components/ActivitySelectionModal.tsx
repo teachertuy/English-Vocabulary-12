@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { QuizQuestion, VocabularyWord, ExerciseSelectionConfig, PlayerData } from '../types';
+import { ActivityBackButton } from './ActivityBackButton';
 import { 
     getUnitQuizQuestionsByGrade, 
     getUnitVocabularyByGrade, 
@@ -755,9 +756,14 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({
         >
             <div 
                 style={{ backgroundColor: config.actModalBgColor || '#ffffff' }}
-                className="rounded-2xl shadow-xl pt-4 sm:pt-5 pb-4 px-2 sm:px-3.5 w-full max-w-2xl transform transition-all text-center max-h-[96vh] overflow-y-auto"
+                className="rounded-2xl shadow-xl pt-3 sm:pt-4 pb-4 px-2 sm:px-3.5 w-full max-w-2xl transform transition-all text-center max-h-[96vh] overflow-y-auto relative"
                 onClick={e => e.stopPropagation()}
             >
+                {/* Back button at top-left corner */}
+                <div className="flex items-center justify-start mb-2 px-1">
+                    <ActivityBackButton onClick={onClose} config={config} />
+                </div>
+
                 {/* 4-Part Summary Notice Box (Replaces Teacher Header) */}
                 {config.actSummaryEnabled !== false && (() => {
                     const stats = calcSummaryStats();
@@ -998,13 +1004,6 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({
                         </div>
                     )}
                 </div>
-                 <button
-                    type="button"
-                    onClick={onClose}
-                    className="w-full mt-6 text-center text-sm text-gray-500 hover:text-gray-800 p-2"
-                >
-                    Thoát
-                </button>
             </div>
         </div>
     );
