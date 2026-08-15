@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { ExerciseSelectionConfig } from '../types';
-import { listenToExerciseSelectionConfig, getCachedExerciseSelectionConfig } from '../services/firebaseService';
+import { listenToExerciseSelectionConfig } from '../services/firebaseService';
 import { FIXED_CLASSROOM_ID } from '../constants';
 
 interface Props {
@@ -180,10 +180,7 @@ const Card: React.FC<{ title: string, icon: string, color: string, fontSize: num
 );
 
 const ExerciseTypeSelectionScreen: React.FC<Props> = ({ onSelect, onBack }) => {
-    const [config, setConfig] = useState<ExerciseSelectionConfig>(() => {
-        const cached = getCachedExerciseSelectionConfig(FIXED_CLASSROOM_ID);
-        return cached ? { ...DEFAULT_CONFIG, ...cached } : DEFAULT_CONFIG;
-    });
+    const [config, setConfig] = useState<ExerciseSelectionConfig>(DEFAULT_CONFIG);
 
     useEffect(() => {
         const unsubscribe = listenToExerciseSelectionConfig(FIXED_CLASSROOM_ID, (newConfig) => {

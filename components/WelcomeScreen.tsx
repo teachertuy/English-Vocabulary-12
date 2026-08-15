@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { PlayerData, WelcomeScreenConfig, LoginRosterConfig } from '../types';
-import { getGameStatus, listenToWelcomeConfig, listenToLoginRosterConfig, getCachedWelcomeConfig, getCachedLoginRosterConfig } from '../services/firebaseService';
+import { getGameStatus, listenToWelcomeConfig, listenToLoginRosterConfig } from '../services/firebaseService';
 
 interface WelcomeScreenProps {
   onLogin: (player: PlayerData) => void;
@@ -52,13 +52,8 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, onHostRequest, c
   const [shakeName, setShakeName] = useState(false);
   const [shakeClass, setShakeClass] = useState(false);
   const [isGameEnabled, setIsGameEnabled] = useState(true);
-  const [config, setConfig] = useState<WelcomeScreenConfig>(() => {
-    const cached = getCachedWelcomeConfig(classroomId);
-    return cached ? { ...DEFAULT_CONFIG, ...cached } : DEFAULT_CONFIG;
-  });
-  const [rosterConfig, setRosterConfig] = useState<LoginRosterConfig | null>(() => {
-    return getCachedLoginRosterConfig(classroomId);
-  });
+  const [config, setConfig] = useState<WelcomeScreenConfig>(DEFAULT_CONFIG);
+  const [rosterConfig, setRosterConfig] = useState<LoginRosterConfig | null>(null);
 
   useEffect(() => {
     setIsCheckingStatus(true);
