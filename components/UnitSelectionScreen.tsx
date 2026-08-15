@@ -3,7 +3,15 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { PlayerData, QuizQuestion, UnitsState, VocabularyWord, WelcomeScreenConfig, ExerciseSelectionConfig } from '../types';
-import { listenToUnitsStatusByGrade, listenToTopicsStatus, listenToWelcomeConfig, listenToExerciseSelectionConfig } from '../services/firebaseService';
+import { 
+    listenToUnitsStatusByGrade, 
+    listenToTopicsStatus, 
+    listenToWelcomeConfig, 
+    listenToExerciseSelectionConfig,
+    getCachedWelcomeConfig,
+    getCachedExerciseSelectionConfig,
+    prefetchUnitsData
+} from '../services/firebaseService';
 import ActivitySelectionModal from './ActivitySelectionModal';
 
 interface UnitSelectionScreenProps {
@@ -237,8 +245,14 @@ const getCachedUnitsStatus = (classroomId: string, grade: number | 'topics'): Un
 
 const UnitSelectionScreen: React.FC<UnitSelectionScreenProps> = ({ playerData, classroomId, grade, onStartQuiz, onLearnVocabulary, onStartSpellingGame, onStartMatchingGame, onStartListenChooseGame, onBack, selectedUnit, onUnitSelect, onCloseActivityModal }) => {
     const [unitsStatus, setUnitsStatus] = useState<UnitsState>(() => getCachedUnitsStatus(classroomId, grade));
-    const [welcomeConfig, setWelcomeConfig] = useState<WelcomeScreenConfig>(DEFAULT_WELCOME_CONFIG);
-    const [exerciseConfig, setExerciseConfig] = useState<ExerciseSelectionConfig>(DEFAULT_EXERCISE_CONFIG);
+    const [welcomeConfig, setWelcomeConfig] = useState<WelcomeScreenConfig>(() => {
+        const cached = getCachedWelcomeConfig(classroomId);
+        return cached ? { ...DEFAULT_WELCOME_CONFIG, ...cached } : DEFAULT_WELCOME_CONFIG;
+    });
+    const [exerciseConfig, setExerciseConfig] = useState<ExerciseSelectionConfig>(() => {
+        const cached = getCachedExerciseSelectionConfig(classroomId);
+        return cached ? { ...DEFAULT_EXERCISE_CONFIG, ...cached } : DEFAULT_EXERCISE_CONFIG;
+    });
 
     useEffect(() => {
         // Synchronously load cache when grade changes
@@ -246,6 +260,9 @@ const UnitSelectionScreen: React.FC<UnitSelectionScreenProps> = ({ playerData, c
         if (Object.keys(cached).length > 0) {
             setUnitsStatus(cached);
         }
+
+        // Prefetch units vocabulary & quiz data in background for instant opening
+        prefetchUnitsData(classroomId, grade);
 
         const handleStatusUpdate = (status: UnitsState) => {
             const newStatus = status || {};

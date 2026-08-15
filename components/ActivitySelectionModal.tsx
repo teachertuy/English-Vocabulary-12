@@ -6,6 +6,10 @@ import {
     getUnitVocabularyByGrade, 
     getTopicQuizQuestions, 
     getTopicVocabulary, 
+    getCachedUnitQuiz,
+    getCachedUnitVocabulary,
+    getCachedStudentActivityAttempts,
+    getCachedExerciseSelectionConfig,
     listenToExerciseSelectionConfig,
     listenToStudentActivityAttempts,
     calculateStudentCompletionPercent,
@@ -520,22 +524,63 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({
     onStartMatchingGame,
     onStartListenChooseGame
 }) => {
-    const [quiz, setQuiz] = useState<QuizQuestion[] | null>(null);
-    const [vocabulary, setVocabulary] = useState<VocabularyWord[] | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
-    const [config, setConfig] = useState<ExerciseSelectionConfig>(DEFAULT_CONFIG);
-    const [attempts, setAttempts] = useState<ActivityAttemptCounts>({
-        vocabulary: defaultStats(),
-        matching: defaultStats(),
-        spelling: defaultStats(),
-        quiz: defaultStats()
+    const [quiz, setQuiz] = useState<QuizQuestion[] | null>(() => {
+        if (!show) return null;
+        const id = grade === 'topics' ? `topic_${unitNumber}` : `unit_${unitNumber}`;
+        return getCachedUnitQuiz(classroomId, grade, id);
+    });
+    const [vocabulary, setVocabulary] = useState<VocabularyWord[] | null>(() => {
+        if (!show) return null;
+        const id = grade === 'topics' ? `topic_${unitNumber}` : `unit_${unitNumber}`;
+        return getCachedUnitVocabulary(classroomId, grade, id);
+    });
+    const [isLoading, setIsLoading] = useState(() => {
+        if (!show) return false;
+        const id = grade === 'topics' ? `topic_${unitNumber}` : `unit_${unitNumber}`;
+        const cachedQuiz = getCachedUnitQuiz(classroomId, grade, id);
+        const cachedVocab = getCachedUnitVocabulary(classroomId, grade, id);
+        return cachedQuiz === null && cachedVocab === null;
+    });
+    const [config, setConfig] = useState<ExerciseSelectionConfig>(() => {
+        const cached = getCachedExerciseSelectionConfig(classroomId);
+        return cached ? { ...DEFAULT_CONFIG, ...cached } : DEFAULT_CONFIG;
+    });
+    const [attempts, setAttempts] = useState<ActivityAttemptCounts>(() => {
+        if (playerData && unitNumber) {
+            const unitId = grade === 'topics' ? `topic_${unitNumber}` : `unit_${unitNumber}`;
+            const cached = getCachedStudentActivityAttempts(classroomId, grade, unitId, playerData.name, playerData.class);
+            if (cached) return cached;
+        }
+        return {
+            vocabulary: defaultStats(),
+            matching: defaultStats(),
+            listenChoose: defaultStats(),
+            spelling: defaultStats(),
+            quiz: defaultStats()
+        };
     });
 
     useEffect(() => {
         if (show) {
-            setIsLoading(true);
             const isTopics = grade === 'topics';
             const id = isTopics ? `topic_${unitNumber}` : `unit_${unitNumber}`;
+            
+            const cachedQuiz = getCachedUnitQuiz(classroomId, grade, id);
+            const cachedVocab = getCachedUnitVocabulary(classroomId, grade, id);
+            if (cachedQuiz !== null || cachedVocab !== null) {
+                setQuiz(cachedQuiz);
+                setVocabulary(cachedVocab);
+                setIsLoading(false);
+            } else {
+                setIsLoading(true);
+            }
+
+            if (playerData) {
+                const cachedAttempts = getCachedStudentActivityAttempts(classroomId, grade, id, playerData.name, playerData.class);
+                if (cachedAttempts) {
+                    setAttempts(cachedAttempts);
+                }
+            }
             
             const quizPromise = isTopics 
                 ? getTopicQuizQuestions(classroomId, id) 
@@ -554,7 +599,7 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({
                 setIsLoading(false);
             });
         }
-    }, [show, unitNumber, classroomId, grade]);
+    }, [show, unitNumber, classroomId, grade, playerData?.name, playerData?.class]);
 
     useEffect(() => {
         if (show && classroomId) {
@@ -581,13 +626,66 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({
         };
     }, [show, classroomId, grade, unitNumber, playerData?.name, playerData?.class]);
 
+    const ensureVocabulary = async (): Promise<VocabularyWord[] | null> => {
+        if (vocabulary && vocabulary.length > 0) return vocabulary;
+        const isTopics = grade === 'topics';
+        const id = isTopics ? `topic_${unitNumber}` : `unit_${unitNumber}`;
+        const v = isTopics 
+            ? await getTopicVocabulary(classroomId, id) 
+            : await getUnitVocabularyByGrade(classroomId, grade as number, id);
+        if (v && v.length > 0) {
+            setVocabulary(v);
+            return v;
+        }
+        return null;
+    };
+
+    const ensureQuiz = async (): Promise<QuizQuestion[] | null> => {
+        if (quiz && quiz.length > 0) return quiz;
+        const isTopics = grade === 'topics';
+        const id = isTopics ? `topic_${unitNumber}` : `unit_${unitNumber}`;
+        const q = isTopics 
+            ? await getTopicQuizQuestions(classroomId, id) 
+            : await getUnitQuizQuestionsByGrade(classroomId, grade as number, id);
+        if (q && q.length > 0) {
+            setQuiz(q);
+            return q;
+        }
+        return null;
+    };
+
+    const handleLearnVocab = async () => {
+        const v = await ensureVocabulary();
+        if (v && v.length > 0) onLearnVocabulary(v);
+    };
+
+    const handleMatch = async () => {
+        const v = await ensureVocabulary();
+        if (v && v.length > 0) onStartMatchingGame(v);
+    };
+
+    const handleListenChoose = async () => {
+        const v = await ensureVocabulary();
+        if (v && v.length > 0) onStartListenChooseGame(v);
+    };
+
+    const handleSpelling = async () => {
+        const v = await ensureVocabulary();
+        if (v && v.length > 0) onStartSpellingGame(v);
+    };
+
+    const handleQuiz = async () => {
+        const q = await ensureQuiz();
+        if (q && q.length > 0) onStartQuiz(q);
+    };
+
     if (!show) {
         return null;
     }
 
     const hasQuiz = quiz && quiz.length > 0;
     const hasVocab = vocabulary && vocabulary.length > 0;
-    const hasActivities = hasQuiz || hasVocab;
+    const isExplicitlyEmpty = !isLoading && quiz !== null && quiz.length === 0 && vocabulary !== null && vocabulary.length === 0;
     const itemPrefix = grade === 'topics' ? config.topicLabelText : config.unitLabelText;
     const titleLabel = `${itemPrefix} ${unitNumber}`;
 
@@ -854,7 +952,7 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({
                                 <div className="space-y-1 font-medium pt-1" style={{ color: itemColor, fontSize: `${itemFontSize}rem` }}>
                                     <div className="flex items-start gap-1">
                                         <span className="font-bold shrink-0">1.</span>
-                                        <span>Học từ vựng: <strong style={{ color: titleColor }}>{formatDuration(stats.vTime)}</strong> (nghe phát âm <strong style={{ color: titleColor }}>{stats.vUniqueWords}</strong> từ (<strong style={{ color: titleColor }}>{stats.vAudioTimes}</strong> lần) còn <strong style={{ color: titleColor }}>{stats.vUnheardWords}</strong> từ chưa nghe)</span>
+                                        <span>Học từ vựng: Đã nghe <strong style={{ color: titleColor }}>{stats.vUniqueWords}</strong> từ / <strong style={{ color: titleColor }}>{stats.vAudioTimes}</strong> lần, còn <strong style={{ color: titleColor }}>{stats.vUnheardWords}</strong> từ chưa nghe (<span className="opacity-90">{formatDuration(stats.vTime)}</span>)</span>
                                     </div>
                                     <div className="flex items-start gap-1">
                                         <span className="font-bold shrink-0">2.</span>
@@ -903,105 +1001,88 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({
                 )}
                 
                 <div className="space-y-4">
-                    {isLoading ? (
-                         <div className="flex justify-center items-center h-24">
-                            <svg className="animate-spin h-8 w-8 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
-                         </div>
-                    ) : hasActivities ? (
-                        <>
-                            {hasVocab && (
-                                <ActivityCard
-                                    title={config.activityLearnLabel}
-                                    description={config.activityLearnDesc}
-                                    icon={<PointingFingerIcon />}
-                                    cardBgColor={config.actLearnBgColor}
-                                    cardBgClass="bg-gradient-to-r from-blue-500 to-blue-600"
-                                    titleColor={config.actLearnTitleColor}
-                                    titleFontSize={config.actLearnTitleFontSize}
-                                    onClick={() => onLearnVocabulary(vocabulary)}
-                                    stats={attempts.vocabulary}
-                                    playerData={playerData}
-                                    showCorrectCount={false}
-                                    isHorizontalAttempts={true}
-                                    config={config}
-                                />
-                            )}
-
-                            {hasVocab && (
-                                <ActivityCard
-                                    title={config.activityMatchLabel}
-                                    description={config.activityMatchDesc}
-                                    icon={<PointingFingerIcon />}
-                                    cardBgColor={config.actMatchBgColor}
-                                    cardBgClass="bg-gradient-to-r from-teal-500 to-teal-600"
-                                    titleColor={config.actMatchTitleColor}
-                                    titleFontSize={config.actMatchTitleFontSize}
-                                    onClick={() => onStartMatchingGame(vocabulary)}
-                                    stats={attempts.matching}
-                                    playerData={playerData}
-                                    showCorrectCount={true}
-                                    config={config}
-                                />
-                            )}
-
-                            {hasVocab && (
-                                <ActivityCard
-                                    title={config.activityListenChooseLabel || 'Nghe & Chọn'}
-                                    description={config.activityListenChooseDesc || 'Nghe phát âm và chọn từ tiếng Anh tương ứng'}
-                                    icon={<PointingFingerIcon />}
-                                    cardBgColor={config.actListenChooseBgColor || '#e11d48'}
-                                    cardBgClass="bg-gradient-to-r from-rose-500 to-pink-600"
-                                    titleColor={config.actListenChooseTitleColor || '#ffffff'}
-                                    titleFontSize={config.actListenChooseTitleFontSize || 1.125}
-                                    onClick={() => onStartListenChooseGame(vocabulary)}
-                                    stats={attempts.listenChoose}
-                                    playerData={playerData}
-                                    showCorrectCount={true}
-                                    config={config}
-                                />
-                            )}
-
-                            {hasVocab && (
-                                <ActivityCard
-                                    title={config.activitySpellLabel}
-                                    description={config.activitySpellDesc}
-                                    icon={<PointingFingerIcon />}
-                                    cardBgColor={config.actSpellBgColor}
-                                    cardBgClass="bg-gradient-to-r from-sky-500 to-sky-600"
-                                    titleColor={config.actSpellTitleColor}
-                                    titleFontSize={config.actSpellTitleFontSize}
-                                    onClick={() => onStartSpellingGame(vocabulary)}
-                                    stats={attempts.spelling}
-                                    playerData={playerData}
-                                    showCorrectCount={true}
-                                    config={config}
-                                />
-                            )}
-
-                            {hasQuiz && (
-                                <ActivityCard
-                                    title={config.activityQuizLabel}
-                                    description={config.activityQuizDesc}
-                                    icon={<PointingFingerIcon />}
-                                    cardBgColor={config.actQuizBgColor}
-                                    cardBgClass="bg-gradient-to-r from-blue-900 via-indigo-950 to-slate-900"
-                                    titleColor={config.actQuizTitleColor}
-                                    titleFontSize={config.actQuizTitleFontSize}
-                                    onClick={() => onStartQuiz(quiz)}
-                                    stats={attempts.quiz}
-                                    playerData={playerData}
-                                    showCorrectCount={true}
-                                    config={config}
-                                />
-                            )}
-                        </>
-                    ) : (
+                    {isExplicitlyEmpty ? (
                          <div className="text-center py-4">
                             <p className="text-gray-700">Mục này chưa có hoạt động nào.</p>
                         </div>
+                    ) : (
+                        <>
+                            <ActivityCard
+                                title={config.activityLearnLabel}
+                                description={config.activityLearnDesc}
+                                icon={<PointingFingerIcon />}
+                                cardBgColor={config.actLearnBgColor}
+                                cardBgClass="bg-gradient-to-r from-blue-500 to-blue-600"
+                                titleColor={config.actLearnTitleColor}
+                                titleFontSize={config.actLearnTitleFontSize}
+                                onClick={handleLearnVocab}
+                                stats={attempts.vocabulary}
+                                playerData={playerData}
+                                showCorrectCount={false}
+                                isHorizontalAttempts={true}
+                                config={config}
+                            />
+
+                            <ActivityCard
+                                title={config.activityMatchLabel}
+                                description={config.activityMatchDesc}
+                                icon={<PointingFingerIcon />}
+                                cardBgColor={config.actMatchBgColor}
+                                cardBgClass="bg-gradient-to-r from-teal-500 to-teal-600"
+                                titleColor={config.actMatchTitleColor}
+                                titleFontSize={config.actMatchTitleFontSize}
+                                onClick={handleMatch}
+                                stats={attempts.matching}
+                                playerData={playerData}
+                                showCorrectCount={true}
+                                config={config}
+                            />
+
+                            <ActivityCard
+                                title={config.activityListenChooseLabel || 'Nghe & Chọn'}
+                                description={config.activityListenChooseDesc || 'Nghe phát âm và chọn từ tiếng Anh tương ứng'}
+                                icon={<PointingFingerIcon />}
+                                cardBgColor={config.actListenChooseBgColor || '#e11d48'}
+                                cardBgClass="bg-gradient-to-r from-rose-500 to-pink-600"
+                                titleColor={config.actListenChooseTitleColor || '#ffffff'}
+                                titleFontSize={config.actListenChooseTitleFontSize || 1.125}
+                                onClick={handleListenChoose}
+                                stats={attempts.listenChoose}
+                                playerData={playerData}
+                                showCorrectCount={true}
+                                config={config}
+                            />
+
+                            <ActivityCard
+                                title={config.activitySpellLabel}
+                                description={config.activitySpellDesc}
+                                icon={<PointingFingerIcon />}
+                                cardBgColor={config.actSpellBgColor}
+                                cardBgClass="bg-gradient-to-r from-sky-500 to-sky-600"
+                                titleColor={config.actSpellTitleColor}
+                                titleFontSize={config.actSpellTitleFontSize}
+                                onClick={handleSpelling}
+                                stats={attempts.spelling}
+                                playerData={playerData}
+                                showCorrectCount={true}
+                                config={config}
+                            />
+
+                            <ActivityCard
+                                title={config.activityQuizLabel}
+                                description={config.activityQuizDesc}
+                                icon={<PointingFingerIcon />}
+                                cardBgColor={config.actQuizBgColor}
+                                cardBgClass="bg-gradient-to-r from-blue-900 via-indigo-950 to-slate-900"
+                                titleColor={config.actQuizTitleColor}
+                                titleFontSize={config.actQuizTitleFontSize}
+                                onClick={handleQuiz}
+                                stats={attempts.quiz}
+                                playerData={playerData}
+                                showCorrectCount={true}
+                                config={config}
+                            />
+                        </>
                     )}
                 </div>
             </div>

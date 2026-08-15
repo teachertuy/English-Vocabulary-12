@@ -156,37 +156,149 @@ export const deleteCurrentQuiz = async (classroomId: string): Promise<void> => {
     await set(ref(db, `classrooms/${classroomId}/currentQuiz`), null);
 };
 
+const memoryQuizCache = new Map<string, QuizQuestion[]>();
+const memoryVocabCache = new Map<string, VocabularyWord[]>();
+const memoryAttemptsCache = new Map<string, ActivityAttemptCounts>();
+
+export const getCachedUnitQuiz = (classroomId: string, grade: any, unitId: string): QuizQuestion[] | null => {
+    const memKey = `quiz_${classroomId}_${grade}_${unitId}`;
+    if (memoryQuizCache.has(memKey)) return memoryQuizCache.get(memKey)!;
+    try {
+        const raw = localStorage.getItem(`quiz_cache_${classroomId}_${grade}_${unitId}`);
+        if (raw) {
+            const parsed = JSON.parse(raw);
+            memoryQuizCache.set(memKey, parsed);
+            return parsed;
+        }
+    } catch (e) {}
+    return null;
+};
+
+export const setCachedUnitQuiz = (classroomId: string, grade: any, unitId: string, data: QuizQuestion[]) => {
+    const memKey = `quiz_${classroomId}_${grade}_${unitId}`;
+    memoryQuizCache.set(memKey, data);
+    try {
+        localStorage.setItem(`quiz_cache_${classroomId}_${grade}_${unitId}`, JSON.stringify(data));
+    } catch (e) {}
+};
+
+export const getCachedUnitVocabulary = (classroomId: string, grade: any, unitId: string): VocabularyWord[] | null => {
+    const memKey = `vocab_${classroomId}_${grade}_${unitId}`;
+    if (memoryVocabCache.has(memKey)) return memoryVocabCache.get(memKey)!;
+    try {
+        const raw = localStorage.getItem(`vocab_cache_${classroomId}_${grade}_${unitId}`);
+        if (raw) {
+            const parsed = JSON.parse(raw);
+            memoryVocabCache.set(memKey, parsed);
+            return parsed;
+        }
+    } catch (e) {}
+    return null;
+};
+
+export const setCachedUnitVocabulary = (classroomId: string, grade: any, unitId: string, data: VocabularyWord[]) => {
+    const memKey = `vocab_${classroomId}_${grade}_${unitId}`;
+    memoryVocabCache.set(memKey, data);
+    try {
+        localStorage.setItem(`vocab_cache_${classroomId}_${grade}_${unitId}`, JSON.stringify(data));
+    } catch (e) {}
+};
+
+export const prefetchUnitsData = async (classroomId: string, grade: any) => {
+    try {
+        const db = checkFirebase();
+        const path = grade === 'topics' ? `classrooms/${classroomId}/topics` : `classrooms/${classroomId}/units_${grade}`;
+        const snapshot = await get(ref(db, path));
+        const val = snapshot.val();
+        if (val && typeof val === 'object') {
+            Object.keys(val).forEach((unitKey) => {
+                const unitData = val[unitKey];
+                if (unitData && typeof unitData === 'object') {
+                    if (unitData.quiz) {
+                        setCachedUnitQuiz(classroomId, grade, unitKey, unitData.quiz);
+                    }
+                    if (unitData.vocabulary) {
+                        const resolved = resolveVocabImages(unitData.vocabulary);
+                        setCachedUnitVocabulary(classroomId, grade, unitKey, resolved);
+                    }
+                }
+            });
+        }
+    } catch (e) {
+        console.error("Error prefetching units data:", e);
+    }
+};
+
 export const getUnitQuizQuestionsByGrade = async (classroomId: string, grade: number, unitId: string) => {
-    const db = checkFirebase();
-    const s = await get(ref(db, `classrooms/${classroomId}/units_${grade}/${unitId}/quiz`));
-    return s.val();
+    const cached = getCachedUnitQuiz(classroomId, grade, unitId);
+    try {
+        const db = checkFirebase();
+        const s = await get(ref(db, `classrooms/${classroomId}/units_${grade}/${unitId}/quiz`));
+        const val = s.val();
+        if (val) {
+            setCachedUnitQuiz(classroomId, grade, unitId, val);
+            return val;
+        }
+    } catch (e) {
+        console.error("Error fetching unit quiz:", e);
+    }
+    return cached;
 };
 
 export const saveUnitQuizQuestionsByGrade = async (classroomId: string, grade: number, unitId: string, questions: QuizQuestion[]) => {
+    setCachedUnitQuiz(classroomId, grade, unitId, questions);
     const db = checkFirebase();
     await set(ref(db, `classrooms/${classroomId}/units_${grade}/${unitId}/quiz`), questions);
 };
 
 export const listenToUnitQuizQuestionsByGrade = (classroomId: string, grade: number, unitId: string, callback: (q: any) => void) => {
+    const cached = getCachedUnitQuiz(classroomId, grade, unitId);
+    if (cached) callback(cached);
     const db = checkFirebase();
-    return onValue(ref(db, `classrooms/${classroomId}/units_${grade}/${unitId}/quiz`), (s) => callback(s.val()));
+    return onValue(ref(db, `classrooms/${classroomId}/units_${grade}/${unitId}/quiz`), (s) => {
+        const val = s.val();
+        if (val) {
+            setCachedUnitQuiz(classroomId, grade, unitId, val);
+        }
+        callback(val);
+    });
 };
 
 export const getUnitVocabularyByGrade = async (classroomId: string, grade: number, unitId: string) => {
-    const db = checkFirebase();
-    const s = await get(ref(db, `classrooms/${classroomId}/units_${grade}/${unitId}/vocabulary`));
-    return resolveVocabImages(s.val());
+    const cached = getCachedUnitVocabulary(classroomId, grade, unitId);
+    try {
+        const db = checkFirebase();
+        const s = await get(ref(db, `classrooms/${classroomId}/units_${grade}/${unitId}/vocabulary`));
+        const val = s.val();
+        if (val) {
+            const resolved = resolveVocabImages(val);
+            setCachedUnitVocabulary(classroomId, grade, unitId, resolved);
+            return resolved;
+        }
+    } catch (e) {
+        console.error("Error fetching unit vocabulary:", e);
+    }
+    return cached;
 };
 
 export const saveUnitVocabularyByGrade = async (classroomId: string, grade: number, unitId: string, vocab: VocabularyWord[]) => {
-    const db = checkFirebase();
     const resolvedVocab = resolveVocabImages(vocab);
+    setCachedUnitVocabulary(classroomId, grade, unitId, resolvedVocab);
+    const db = checkFirebase();
     await set(ref(db, `classrooms/${classroomId}/units_${grade}/${unitId}/vocabulary`), resolvedVocab);
 };
 
 export const listenToUnitVocabularyByGrade = (classroomId: string, grade: number, unitId: string, callback: (v: any) => void) => {
+    const cached = getCachedUnitVocabulary(classroomId, grade, unitId);
+    if (cached) callback(cached);
     const db = checkFirebase();
-    return onValue(ref(db, `classrooms/${classroomId}/units_${grade}/${unitId}/vocabulary`), (s) => callback(resolveVocabImages(s.val())));
+    return onValue(ref(db, `classrooms/${classroomId}/units_${grade}/${unitId}/vocabulary`), (s) => {
+        const resolved = resolveVocabImages(s.val());
+        if (resolved) {
+            setCachedUnitVocabulary(classroomId, grade, unitId, resolved);
+        }
+        callback(resolved);
+    });
 };
 
 export const listenToUnitResultsByGrade = (classroomId: string, grade: number, unitId: string, callback: (r: any) => void) => {
@@ -416,6 +528,28 @@ export const calculateStudentCompletionPercent = (
     return overallPercent;
 };
 
+const getAttemptsCacheKey = (classroomId: string, grade: any, unitId: string, playerName: string, playerClass: string) => {
+    const playerKey = getPlayerKey(playerName, playerClass);
+    return `attempts_cache_${classroomId}_${grade}_${unitId}_${playerKey}`;
+};
+
+export const getCachedStudentActivityAttempts = (
+    classroomId: string,
+    grade: any,
+    unitId: string,
+    playerName: string,
+    playerClass: string
+): ActivityAttemptCounts | null => {
+    try {
+        const key = getAttemptsCacheKey(classroomId, grade, unitId, playerName, playerClass);
+        const raw = localStorage.getItem(key);
+        if (raw) {
+            return JSON.parse(raw);
+        }
+    } catch (e) {}
+    return null;
+};
+
 export const listenToStudentActivityAttempts = (
     classroomId: string,
     grade: any,
@@ -425,6 +559,11 @@ export const listenToStudentActivityAttempts = (
     callback: (counts: ActivityAttemptCounts) => void
 ) => {
     try {
+        const cached = getCachedStudentActivityAttempts(classroomId, grade, unitId, playerName, playerClass);
+        if (cached) {
+            callback(cached);
+        }
+
         const db = checkFirebase();
         const playerKey = getPlayerKey(playerName, playerClass);
         const basePath = grade === 'topics' ? `topics/${unitId}` : `units_${grade}/${unitId}`;
@@ -491,9 +630,29 @@ export const listenToStudentActivityAttempts = (
                     };
                 });
             }
+            try {
+                const key = getAttemptsCacheKey(classroomId, grade, unitId, playerName, playerClass);
+                localStorage.setItem(key, JSON.stringify(counts));
+            } catch (e) {}
             callback(counts);
         }, (error) => {
             console.error("Failed to listen to student activity attempts:", error);
+            if (!cached) {
+                const defaultStats = (): ActivityStats => ({ count: 0, totalTimeSeconds: 0, attemptsList: [] });
+                callback({
+                    vocabulary: defaultStats(),
+                    matching: defaultStats(),
+                    listenChoose: defaultStats(),
+                    spelling: defaultStats(),
+                    quiz: defaultStats()
+                });
+            }
+        });
+    } catch (e) {
+        const cached = getCachedStudentActivityAttempts(classroomId, grade, unitId, playerName, playerClass);
+        if (cached) {
+            callback(cached);
+        } else {
             const defaultStats = (): ActivityStats => ({ count: 0, totalTimeSeconds: 0, attemptsList: [] });
             callback({
                 vocabulary: defaultStats(),
@@ -502,16 +661,7 @@ export const listenToStudentActivityAttempts = (
                 spelling: defaultStats(),
                 quiz: defaultStats()
             });
-        });
-    } catch (e) {
-        const defaultStats = (): ActivityStats => ({ count: 0, totalTimeSeconds: 0, attemptsList: [] });
-        callback({
-            vocabulary: defaultStats(),
-            matching: defaultStats(),
-            listenChoose: defaultStats(),
-            spelling: defaultStats(),
-            quiz: defaultStats()
-        });
+        }
         return () => {};
     }
 };
@@ -531,36 +681,75 @@ export const updateUnitActivityResult = async (classroomId: string, grade: any, 
 };
 
 export const getTopicQuizQuestions = async (classroomId: string, topicId: string) => {
-    const db = checkFirebase();
-    const s = await get(ref(db, `classrooms/${classroomId}/topics/${topicId}/quiz`));
-    return s.val();
+    const cached = getCachedUnitQuiz(classroomId, 'topics', topicId);
+    try {
+        const db = checkFirebase();
+        const s = await get(ref(db, `classrooms/${classroomId}/topics/${topicId}/quiz`));
+        const val = s.val();
+        if (val) {
+            setCachedUnitQuiz(classroomId, 'topics', topicId, val);
+            return val;
+        }
+    } catch (e) {
+        console.error("Error fetching topic quiz:", e);
+    }
+    return cached;
 };
 
 export const saveTopicQuizQuestions = async (classroomId: string, topicId: string, questions: QuizQuestion[]) => {
+    setCachedUnitQuiz(classroomId, 'topics', topicId, questions);
     const db = checkFirebase();
     await set(ref(db, `classrooms/${classroomId}/topics/${topicId}/quiz`), questions);
 };
 
 export const listenToTopicQuizQuestions = (classroomId: string, topicId: string, callback: (q: any) => void) => {
+    const cached = getCachedUnitQuiz(classroomId, 'topics', topicId);
+    if (cached) callback(cached);
     const db = checkFirebase();
-    return onValue(ref(db, `classrooms/${classroomId}/topics/${topicId}/quiz`), (s) => callback(s.val()));
+    return onValue(ref(db, `classrooms/${classroomId}/topics/${topicId}/quiz`), (s) => {
+        const val = s.val();
+        if (val) {
+            setCachedUnitQuiz(classroomId, 'topics', topicId, val);
+        }
+        callback(val);
+    });
 };
 
 export const getTopicVocabulary = async (classroomId: string, topicId: string) => {
-    const db = checkFirebase();
-    const s = await get(ref(db, `classrooms/${classroomId}/topics/${topicId}/vocabulary`));
-    return resolveVocabImages(s.val());
+    const cached = getCachedUnitVocabulary(classroomId, 'topics', topicId);
+    try {
+        const db = checkFirebase();
+        const s = await get(ref(db, `classrooms/${classroomId}/topics/${topicId}/vocabulary`));
+        const val = s.val();
+        if (val) {
+            const resolved = resolveVocabImages(val);
+            setCachedUnitVocabulary(classroomId, 'topics', topicId, resolved);
+            return resolved;
+        }
+    } catch (e) {
+        console.error("Error fetching topic vocabulary:", e);
+    }
+    return cached;
 };
 
 export const saveTopicVocabulary = async (classroomId: string, topicId: string, vocab: VocabularyWord[]) => {
-    const db = checkFirebase();
     const resolvedVocab = resolveVocabImages(vocab);
+    setCachedUnitVocabulary(classroomId, 'topics', topicId, resolvedVocab);
+    const db = checkFirebase();
     await set(ref(db, `classrooms/${classroomId}/topics/${topicId}/vocabulary`), resolvedVocab);
 };
 
 export const listenToTopicVocabulary = (classroomId: string, topicId: string, callback: (v: any) => void) => {
+    const cached = getCachedUnitVocabulary(classroomId, 'topics', topicId);
+    if (cached) callback(cached);
     const db = checkFirebase();
-    return onValue(ref(db, `classrooms/${classroomId}/topics/${topicId}/vocabulary`), (s) => callback(resolveVocabImages(s.val())));
+    return onValue(ref(db, `classrooms/${classroomId}/topics/${topicId}/vocabulary`), (s) => {
+        const resolved = resolveVocabImages(s.val());
+        if (resolved) {
+            setCachedUnitVocabulary(classroomId, 'topics', topicId, resolved);
+        }
+        callback(resolved);
+    });
 };
 
 export const listenToTopicResults = (classroomId: string, topicId: string, callback: (r: any) => void) => {
@@ -654,42 +843,110 @@ export const checkAndSyncQuizVersion = async (classroomId: string, codeVersion: 
     }
 };
 
+export const getCachedWelcomeConfig = (classroomId: string): WelcomeScreenConfig | null => {
+    try {
+        const raw = localStorage.getItem(`welcome_config_cache_${classroomId}`);
+        if (raw) return JSON.parse(raw);
+    } catch (e) {}
+    return null;
+};
+
 export const saveWelcomeConfig = async (classroomId: string, config: WelcomeScreenConfig): Promise<void> => {
+    try { localStorage.setItem(`welcome_config_cache_${classroomId}`, JSON.stringify(config)); } catch (e) {}
     const db = checkFirebase();
     await set(ref(db, `classrooms/${classroomId}/welcomeConfig`), config);
 };
 
 export const listenToWelcomeConfig = (classroomId: string, callback: (config: WelcomeScreenConfig | null) => void): Unsubscribe => {
+    const cached = getCachedWelcomeConfig(classroomId);
+    if (cached) callback(cached);
     const db = checkFirebase();
-    return onValue(ref(db, `classrooms/${classroomId}/welcomeConfig`), (snapshot) => callback(snapshot.val()));
+    return onValue(ref(db, `classrooms/${classroomId}/welcomeConfig`), (snapshot) => {
+        const val = snapshot.val();
+        if (val) {
+            try { localStorage.setItem(`welcome_config_cache_${classroomId}`, JSON.stringify(val)); } catch (e) {}
+        }
+        callback(val);
+    });
+};
+
+export const getCachedDashboardConfig = (classroomId: string): DashboardConfig | null => {
+    try {
+        const raw = localStorage.getItem(`dashboard_config_cache_${classroomId}`);
+        if (raw) return JSON.parse(raw);
+    } catch (e) {}
+    return null;
 };
 
 export const saveDashboardConfig = async (classroomId: string, config: DashboardConfig): Promise<void> => {
+    try { localStorage.setItem(`dashboard_config_cache_${classroomId}`, JSON.stringify(config)); } catch (e) {}
     const db = checkFirebase();
     await set(ref(db, `classrooms/${classroomId}/dashboardConfig`), config);
 };
 
 export const listenToDashboardConfig = (classroomId: string, callback: (config: DashboardConfig | null) => void): Unsubscribe => {
+    const cached = getCachedDashboardConfig(classroomId);
+    if (cached) callback(cached);
     const db = checkFirebase();
-    return onValue(ref(db, `classrooms/${classroomId}/dashboardConfig`), (snapshot) => callback(snapshot.val()));
+    return onValue(ref(db, `classrooms/${classroomId}/dashboardConfig`), (snapshot) => {
+        const val = snapshot.val();
+        if (val) {
+            try { localStorage.setItem(`dashboard_config_cache_${classroomId}`, JSON.stringify(val)); } catch (e) {}
+        }
+        callback(val);
+    });
+};
+
+export const getCachedExerciseSelectionConfig = (classroomId: string): ExerciseSelectionConfig | null => {
+    try {
+        const raw = localStorage.getItem(`exercise_config_cache_${classroomId}`);
+        if (raw) return JSON.parse(raw);
+    } catch (e) {}
+    return null;
 };
 
 export const saveExerciseSelectionConfig = async (classroomId: string, config: ExerciseSelectionConfig): Promise<void> => {
+    try { localStorage.setItem(`exercise_config_cache_${classroomId}`, JSON.stringify(config)); } catch (e) {}
     const db = checkFirebase();
     await set(ref(db, `classrooms/${classroomId}/exerciseSelectionConfig`), config);
 };
 
 export const listenToExerciseSelectionConfig = (classroomId: string, callback: (config: ExerciseSelectionConfig | null) => void): Unsubscribe => {
+    const cached = getCachedExerciseSelectionConfig(classroomId);
+    if (cached) callback(cached);
     const db = checkFirebase();
-    return onValue(ref(db, `classrooms/${classroomId}/exerciseSelectionConfig`), (snapshot) => callback(snapshot.val()));
+    return onValue(ref(db, `classrooms/${classroomId}/exerciseSelectionConfig`), (snapshot) => {
+        const val = snapshot.val();
+        if (val) {
+            try { localStorage.setItem(`exercise_config_cache_${classroomId}`, JSON.stringify(val)); } catch (e) {}
+        }
+        callback(val);
+    });
+};
+
+export const getCachedLoginRosterConfig = (classroomId: string): LoginRosterConfig | null => {
+    try {
+        const raw = localStorage.getItem(`roster_config_cache_${classroomId}`);
+        if (raw) return JSON.parse(raw);
+    } catch (e) {}
+    return null;
 };
 
 export const saveLoginRosterConfig = async (classroomId: string, config: LoginRosterConfig): Promise<void> => {
+    try { localStorage.setItem(`roster_config_cache_${classroomId}`, JSON.stringify(config)); } catch (e) {}
     const db = checkFirebase();
     await set(ref(db, `classrooms/${classroomId}/loginRosterConfig`), config);
 };
 
 export const listenToLoginRosterConfig = (classroomId: string, callback: (config: LoginRosterConfig | null) => void): Unsubscribe => {
+    const cached = getCachedLoginRosterConfig(classroomId);
+    if (cached) callback(cached);
     const db = checkFirebase();
-    return onValue(ref(db, `classrooms/${classroomId}/loginRosterConfig`), (snapshot) => callback(snapshot.val()));
+    return onValue(ref(db, `classrooms/${classroomId}/loginRosterConfig`), (snapshot) => {
+        const val = snapshot.val();
+        if (val) {
+            try { localStorage.setItem(`roster_config_cache_${classroomId}`, JSON.stringify(val)); } catch (e) {}
+        }
+        callback(val);
+    });
 };

@@ -7,7 +7,7 @@ import TeacherDashboard from './components/TeacherDashboard';
 import PasswordModal from './components/PasswordModal';
 import { PlayerData, QuizQuestion, GameResult, VocabularyWord, ExerciseSelectionConfig } from './types';
 import { FIXED_CLASSROOM_ID, TEACHER_PASSWORD } from './constants';
-import { removeStudentPresence, startUnitActivity, listenToExerciseSelectionConfig } from './services/firebaseService';
+import { removeStudentPresence, startUnitActivity, listenToExerciseSelectionConfig, getCachedExerciseSelectionConfig } from './services/firebaseService';
 import UnitSelectionScreen from './components/UnitSelectionScreen';
 import VocabularyScreen from './components/VocabularyScreen';
 import SpellingGameScreen from './components/SpellingGameScreen';
@@ -103,7 +103,10 @@ const App: React.FC = () => {
   const [isPasswordModalVisible, setIsPasswordModalVisible] = useState(false);
   const [currentActivityId, setCurrentActivityId] = useState<string | null>(null);
   const [selectedGrade, setSelectedGrade] = useState<number | 'topics' | null>(null);
-  const [exerciseConfig, setExerciseConfig] = useState<ExerciseSelectionConfig>(DEFAULT_EXERCISE_CONFIG);
+  const [exerciseConfig, setExerciseConfig] = useState<ExerciseSelectionConfig>(() => {
+    const cached = getCachedExerciseSelectionConfig(FIXED_CLASSROOM_ID);
+    return cached ? { ...DEFAULT_EXERCISE_CONFIG, ...cached } : DEFAULT_EXERCISE_CONFIG;
+  });
 
   useEffect(() => {
     const unsub = listenToExerciseSelectionConfig(FIXED_CLASSROOM_ID, (config) => {
