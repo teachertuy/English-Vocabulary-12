@@ -949,8 +949,8 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({
 
                             {hasVocab && (
                                 <ActivityCard
-                                    title={config.activityListenChooseLabel || 'Nghe & Chọn'}
-                                    description={config.activityListenChooseDesc || 'Nghe phát âm và chọn từ tiếng Anh tương ứng'}
+                                    title={config.activityListenChooseLabel !== undefined ? config.activityListenChooseLabel : 'Nghe & Chọn'}
+                                    description={config.activityListenChooseDesc !== undefined ? config.activityListenChooseDesc : ''}
                                     icon={<PointingFingerIcon />}
                                     cardBgColor={config.actListenChooseBgColor || '#e11d48'}
                                     cardBgClass="bg-gradient-to-r from-rose-500 to-pink-600"

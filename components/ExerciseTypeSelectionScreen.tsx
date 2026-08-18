@@ -63,6 +63,8 @@ const DEFAULT_CONFIG: ExerciseSelectionConfig = {
     activityLearnDesc: 'Xem lại danh sách từ của bài',
     activityMatchLabel: 'Trò chơi Ghép cặp',
     activityMatchDesc: 'Nối từ tiếng Anh với nghĩa Việt',
+    activityListenChooseLabel: 'Nghe & Chọn',
+    activityListenChooseDesc: 'Nghe phát âm và chọn từ tiếng Anh tương ứng',
     activitySpellLabel: 'Trò chơi Viết Chính tả',
     activitySpellDesc: 'Viết từ tiếng Anh tương ứng',
     activityQuizLabel: 'Làm bài trắc nghiệm',

@@ -660,28 +660,69 @@ const EditExerciseSelectionModal: React.FC<EditExerciseSelectionModalProps> = ({
                                     {/* Labels configuration */}
                                     <div className="p-4 bg-white rounded-xl border border-orange-200 shadow-sm space-y-3">
                                         <label className="block text-xs font-bold text-blue-600 uppercase">Phần 1: Học từ vựng</label>
-                                        <input type="text" value={config.activityLearnLabel} onChange={e => handleChange('activityLearnLabel', e.target.value)} className="w-full p-2 border rounded font-bold" />
-                                        <textarea value={config.activityLearnDesc} onChange={e => handleChange('activityLearnDesc', e.target.value)} className="w-full p-2 border rounded text-xs text-gray-600" rows={2} placeholder="Dòng mô tả nhỏ bên dưới..." />
+                                        <input type="text" value={config.activityLearnLabel !== undefined ? config.activityLearnLabel : ''} onChange={e => handleChange('activityLearnLabel', e.target.value)} className="w-full p-2 border rounded font-bold" />
+                                        <textarea value={config.activityLearnDesc !== undefined ? config.activityLearnDesc : ''} onChange={e => handleChange('activityLearnDesc', e.target.value)} className="w-full p-2 border rounded text-xs text-gray-600" rows={2} placeholder="Dòng mô tả nhỏ bên dưới (để trống nếu muốn xoá bỏ)..." />
                                     </div>
                                     <div className="p-4 bg-white rounded-xl border border-orange-200 shadow-sm space-y-3">
                                         <label className="block text-xs font-bold text-teal-600 uppercase">Phần 2: Ghép cặp</label>
-                                        <input type="text" value={config.activityMatchLabel} onChange={e => handleChange('activityMatchLabel', e.target.value)} className="w-full p-2 border rounded font-bold" />
-                                        <textarea value={config.activityMatchDesc} onChange={e => handleChange('activityMatchDesc', e.target.value)} className="w-full p-2 border rounded text-xs text-gray-600" rows={2} />
+                                        <input type="text" value={config.activityMatchLabel !== undefined ? config.activityMatchLabel : ''} onChange={e => handleChange('activityMatchLabel', e.target.value)} className="w-full p-2 border rounded font-bold" />
+                                        <textarea value={config.activityMatchDesc !== undefined ? config.activityMatchDesc : ''} onChange={e => handleChange('activityMatchDesc', e.target.value)} className="w-full p-2 border rounded text-xs text-gray-600" rows={2} placeholder="Dòng mô tả nhỏ bên dưới (để trống nếu muốn xoá bỏ)..." />
                                     </div>
-                                    <div className="p-4 bg-white rounded-xl border border-orange-200 shadow-sm space-y-3">
-                                        <label className="block text-xs font-bold text-rose-600 uppercase">Phần 3: Nghe & Chọn</label>
-                                        <input type="text" value={config.activityListenChooseLabel || 'Nghe & Chọn'} onChange={e => handleChange('activityListenChooseLabel', e.target.value)} className="w-full p-2 border rounded font-bold" />
-                                        <textarea value={config.activityListenChooseDesc || 'Nghe phát âm và chọn từ tiếng Anh tương ứng'} onChange={e => handleChange('activityListenChooseDesc', e.target.value)} className="w-full p-2 border rounded text-xs text-gray-600" rows={2} />
+                                    <div className="p-4 bg-white rounded-xl border-2 border-rose-200 bg-rose-50/20 shadow-sm space-y-3">
+                                        <div className="flex items-center justify-between">
+                                            <label className="block text-xs font-bold text-rose-600 uppercase flex items-center gap-1.5">
+                                                <span>🎧</span> Phần 3: Nghe & Chọn
+                                            </label>
+                                            {Boolean(config.activityListenChooseDesc && config.activityListenChooseDesc.trim() !== '') ? (
+                                                <button 
+                                                    type="button" 
+                                                    onClick={() => handleChange('activityListenChooseDesc', '')}
+                                                    className="text-[11px] font-bold text-red-600 hover:text-red-800 bg-red-100 hover:bg-red-200 px-2 py-0.5 rounded border border-red-300 transition flex items-center gap-1"
+                                                    title="Xoá bỏ hoàn toàn cụm thông báo mô tả"
+                                                >
+                                                    <span>🗑️</span> Xoá thông báo
+                                                </button>
+                                            ) : (
+                                                <button 
+                                                    type="button" 
+                                                    onClick={() => handleChange('activityListenChooseDesc', 'Nghe phát âm và chọn từ tiếng Anh tương ứng')}
+                                                    className="text-[11px] font-bold text-rose-700 hover:text-rose-900 bg-rose-100 hover:bg-rose-200 px-2 py-0.5 rounded border border-rose-300 transition flex items-center gap-1"
+                                                    title="Dùng lại thông báo mẫu mặc định"
+                                                >
+                                                    <span>➕</span> Dùng thông báo mẫu
+                                                </button>
+                                            )}
+                                        </div>
+                                        <input 
+                                            type="text" 
+                                            value={config.activityListenChooseLabel !== undefined ? config.activityListenChooseLabel : ''} 
+                                            onChange={e => handleChange('activityListenChooseLabel', e.target.value)} 
+                                            className="w-full p-2 border rounded font-bold text-rose-950 bg-white" 
+                                            placeholder="Tiêu đề: NGHE & CHỌN"
+                                        />
+                                        <div>
+                                            <div className="flex items-center justify-between text-[11px] text-gray-500 mb-1">
+                                                <span className="font-semibold">Cụm thông báo mô tả:</span>
+                                                <span className="italic text-[10px] text-gray-400">(Để trống để xoá bỏ)</span>
+                                            </div>
+                                            <textarea 
+                                                value={config.activityListenChooseDesc !== undefined ? config.activityListenChooseDesc : ''} 
+                                                onChange={e => handleChange('activityListenChooseDesc', e.target.value)} 
+                                                className="w-full p-2 border border-rose-200 rounded text-xs text-gray-700 bg-white focus:ring-2 focus:ring-rose-500" 
+                                                rows={2} 
+                                                placeholder="Nghe phát âm và chọn từ tiếng Anh tương ứng (xoá trống ô này nếu không muốn hiển thị)..." 
+                                            />
+                                        </div>
                                     </div>
                                     <div className="p-4 bg-white rounded-xl border border-orange-200 shadow-sm space-y-3">
                                         <label className="block text-xs font-bold text-sky-600 uppercase">Phần 4: Chính tả</label>
-                                        <input type="text" value={config.activitySpellLabel} onChange={e => handleChange('activitySpellLabel', e.target.value)} className="w-full p-2 border rounded font-bold" />
-                                        <textarea value={config.activitySpellDesc} onChange={e => handleChange('activitySpellDesc', e.target.value)} className="w-full p-2 border rounded text-xs text-gray-600" rows={2} />
+                                        <input type="text" value={config.activitySpellLabel !== undefined ? config.activitySpellLabel : ''} onChange={e => handleChange('activitySpellLabel', e.target.value)} className="w-full p-2 border rounded font-bold" />
+                                        <textarea value={config.activitySpellDesc !== undefined ? config.activitySpellDesc : ''} onChange={e => handleChange('activitySpellDesc', e.target.value)} className="w-full p-2 border rounded text-xs text-gray-600" rows={2} placeholder="Dòng mô tả nhỏ bên dưới (để trống nếu muốn xoá bỏ)..." />
                                     </div>
                                     <div className="p-4 bg-white rounded-xl border border-orange-200 shadow-sm space-y-3">
                                         <label className="block text-xs font-bold text-slate-800 uppercase">Phần 5: Trắc nghiệm</label>
-                                        <input type="text" value={config.activityQuizLabel} onChange={e => handleChange('activityQuizLabel', e.target.value)} className="w-full p-2 border rounded font-bold" />
-                                        <textarea value={config.activityQuizDesc} onChange={e => handleChange('activityQuizDesc', e.target.value)} className="w-full p-2 border rounded text-xs text-gray-600" rows={2} />
+                                        <input type="text" value={config.activityQuizLabel !== undefined ? config.activityQuizLabel : ''} onChange={e => handleChange('activityQuizLabel', e.target.value)} className="w-full p-2 border rounded font-bold" />
+                                        <textarea value={config.activityQuizDesc !== undefined ? config.activityQuizDesc : ''} onChange={e => handleChange('activityQuizDesc', e.target.value)} className="w-full p-2 border rounded text-xs text-gray-600" rows={2} placeholder="Dòng mô tả nhỏ bên dưới (để trống nếu muốn xoá bỏ)..." />
                                     </div>
                                 </div>
                             </div>
