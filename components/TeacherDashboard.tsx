@@ -252,6 +252,10 @@ const getGameTypeStyle = (gameType?: string) => {
         case 'spelling': return 'text-orange-800 bg-orange-100 border-orange-200';
         case 'matching': return 'text-purple-700 bg-purple-50 border-purple-200';
         case 'vocabulary': return 'text-blue-800 bg-blue-100 border-blue-200';
+        case 'listen-choose':
+        case 'listen_choose':
+        case 'listenChoose':
+            return 'text-rose-700 bg-rose-50 border-rose-200';
         default: return 'text-gray-700 bg-gray-100 border-gray-300';
     }
 };
@@ -262,6 +266,10 @@ const getGameTypeLabel = (gameType?: string) => {
         case 'spelling': return 'Chính tả';
         case 'matching': return 'Ghép cặp';
         case 'vocabulary': return 'Học từ vựng';
+        case 'listen-choose':
+        case 'listen_choose':
+        case 'listenChoose':
+            return 'Nghe & chọn';
         default: return 'Khác';
     }
 };
