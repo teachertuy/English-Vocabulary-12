@@ -517,33 +517,32 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
         const setClass = type === 'unit' ? setSelectedUnitClass : setSelectedTopicClass;
 
         return (
-            <div className="bg-white rounded-xl shadow-lg border border-gray-300 overflow-hidden mt-8">
-                <div className="p-4 border-b border-gray-300 bg-white flex flex-col sm:flex-row justify-between items-center gap-4">
-                    <select value={curClass} onChange={(e) => setClass(e.target.value)} className="px-4 py-2 bg-white border-2 border-gray-300 rounded-lg font-bold text-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-200 transition-all">
+            <div className="bg-white rounded-xl shadow-lg border border-gray-300 overflow-hidden mt-6">
+                <div className="p-3 border-b border-gray-300 bg-white flex flex-col sm:flex-row justify-between items-center gap-3">
+                    <select value={curClass} onChange={(e) => setClass(e.target.value)} className="px-3 py-1.5 bg-white border-2 border-gray-300 rounded-lg font-bold text-gray-700 text-sm shadow-xs focus:outline-none focus:ring-2 focus:ring-orange-200 transition-all">
                         {uniqueClasses.map(c => <option key={c} value={c}>{c === 'all' ? 'Tất cả các lớp' : c}</option>)}
                     </select>
-                    <button onClick={type === 'unit' ? () => clearUnitResultsByGrade(classroomId, viewingUnit!.grade, `unit_${viewingUnit!.unit}`) : () => clearTopicResults(classroomId, `topic_${viewingTopic}`)} className="p-2 bg-red-600 text-white rounded-lg hover:bg-red-700 shadow-md transition-colors"><svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>
+                    <button onClick={type === 'unit' ? () => clearUnitResultsByGrade(classroomId, viewingUnit!.grade, `unit_${viewingUnit!.unit}`) : () => clearTopicResults(classroomId, `topic_${viewingTopic}`)} className="p-1.5 bg-red-600 text-white rounded-lg hover:bg-red-700 shadow-xs transition-colors" title="Xóa toàn bộ kết quả"><svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>
                 </div>
                 <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse table-fixed min-w-[1200px]">
+                    <table className="w-full text-left border-collapse table-fixed min-w-[1000px]">
                         <thead>
                             <tr className="bg-[#fff2e0]">
-                                <th className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-14 text-center">STT</th>
-                                <th className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-48 uppercase tracking-tight">HỌ VÀ TÊN</th>
-                                <th className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-20 uppercase tracking-tight text-center">LỚP</th>
-                                <th className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-40 uppercase tracking-tight text-center">NỘI DUNG ↑</th>
-                                <th className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-20 uppercase tracking-tight text-center">ĐIỂM ▼</th>
-                                <th className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-20 uppercase tracking-tight text-center">LẦN LÀM ↑</th>
-                                <th className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-16 uppercase tracking-tight text-center">ĐÚNG ↑</th>
-                                <th className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-16 uppercase tracking-tight text-center">SAI ↑</th>
-                                <th className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-28 uppercase tracking-tight text-center">THỜI GIAN ↑</th>
-                                <th className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-48 uppercase tracking-tight text-center">NGÀY LÀM ↑</th>
-                                <th className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-28 uppercase tracking-tight text-center">HÀNH ĐỘNG</th>
+                                <th className="py-2 px-1 border border-gray-300 text-[12px] font-black text-[#c05621] w-12 text-center">STT</th>
+                                <th className="py-2 px-2 border border-gray-300 text-[12px] font-black text-[#c05621] w-44 uppercase tracking-tight">HỌ VÀ TÊN</th>
+                                <th className="py-2 px-1 border border-gray-300 text-[12px] font-black text-[#c05621] w-16 uppercase tracking-tight text-center">LỚP</th>
+                                <th className="py-2 px-2 border border-gray-300 text-[12px] font-black text-[#c05621] w-36 uppercase tracking-tight text-center">NỘI DUNG ↑</th>
+                                <th className="py-2 px-1 border border-gray-300 text-[12px] font-black text-[#c05621] w-20 uppercase tracking-tight text-center">ĐIỂM ▼</th>
+                                <th className="py-2 px-1 border border-gray-300 text-[12px] font-black text-[#c05621] w-14 uppercase tracking-tight text-center">ĐÚNG ↑</th>
+                                <th className="py-2 px-1 border border-gray-300 text-[12px] font-black text-[#c05621] w-14 uppercase tracking-tight text-center">SAI ↑</th>
+                                <th className="py-2 px-2 border border-gray-300 text-[12px] font-black text-[#c05621] w-24 uppercase tracking-tight text-center">THỜI GIAN ↑</th>
+                                <th className="py-2 px-2 border border-gray-300 text-[12px] font-black text-[#c05621] w-38 uppercase tracking-tight text-center">NGÀY LÀM ↑</th>
+                                <th className="py-2 px-1 border border-gray-300 text-[12px] font-black text-[#c05621] w-20 uppercase tracking-tight text-center">HÀNH ĐỘNG</th>
                             </tr>
                         </thead>
-                        <tbody className="bg-white">
+                        <tbody className="bg-white text-[12px]">
                             {groupedData.length === 0 ? (
-                                <tr><td colSpan={11} className="p-12 text-center text-gray-400 font-bold border border-gray-300">Chưa có kết quả nào.</td></tr>
+                                <tr><td colSpan={10} className="p-8 text-center text-gray-400 font-bold border border-gray-300">Chưa có kết quả nào.</td></tr>
                             ) : groupedData.map((group, sttIdx) => {
                                 const activityGroups = getStudentActivityGroups(group.attempts);
                                 const totalStudentAttempts = group.attempts.length;
@@ -554,69 +553,82 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                                             actGroup.attempts.map((res, attemptIdx) => {
                                                 const isStudentFirstRow = actIdx === 0 && attemptIdx === 0;
                                                 const isActivityFirstRow = attemptIdx === 0;
+                                                const isVocab = actGroup.gameType === 'vocabulary';
 
                                                 return (
                                                     <tr 
                                                         key={`${res.activityId || 'att'}_${res.timestamp || attemptIdx}`} 
                                                         onClick={() => onRowClick(res)} 
-                                                        className="hover:bg-blue-50/60 transition-colors cursor-pointer text-[14px] font-bold"
+                                                        className="hover:bg-blue-50/60 transition-colors cursor-pointer font-bold leading-tight"
                                                     >
                                                         {isStudentFirstRow && (
                                                             <>
-                                                                <td rowSpan={totalStudentAttempts} className="p-3 border border-gray-300 text-blue-600 font-black text-center align-middle bg-white">{sttIdx + 1}</td>
-                                                                <td rowSpan={totalStudentAttempts} className="p-3 border border-gray-300 align-middle bg-white">
-                                                                    <div className="font-bold text-[#E91E63] text-[14px] leading-tight truncate">{group.playerName}</div>
-                                                                    <div className="text-[11px] font-bold text-gray-600 mt-1 flex items-center gap-1 whitespace-nowrap">
-                                                                        <span>Đã hoàn thành:</span>
-                                                                        <span className="text-red-600 font-extrabold text-[12px]">{getCompletionPercentForGroup(group, type)}%</span>
+                                                                <td rowSpan={totalStudentAttempts} className="py-1 px-1 border border-gray-300 text-blue-600 font-black text-center align-middle bg-white text-[13px]">{sttIdx + 1}</td>
+                                                                <td rowSpan={totalStudentAttempts} className="py-1 px-2 border border-gray-300 align-middle bg-white">
+                                                                    <div className="font-bold text-[#E91E63] text-[13px] leading-snug truncate">{group.playerName}</div>
+                                                                    <div className="text-[10px] font-bold text-gray-500 mt-0.5 flex items-center gap-1 whitespace-nowrap">
+                                                                        <span>Hoàn thành:</span>
+                                                                        <span className="text-red-600 font-black text-[11px]">{getCompletionPercentForGroup(group, type)}%</span>
                                                                     </div>
-                                                                    <div className="mt-1.5 flex items-center">
+                                                                    <div className="mt-1 flex items-center">
                                                                         <button 
-                                                                            title="Xem chi tiết toàn bộ màn hình học sinh"
+                                                                            title="Xem chi tiết bài làm học sinh"
                                                                             onClick={(e) => { e.stopPropagation(); handleViewStudentDetail(group, type); }} 
-                                                                            className="px-2 py-1 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-md text-[11px] font-bold transition-all shadow-sm border border-blue-200 flex items-center gap-1 hover:scale-105"
+                                                                            className="px-1.5 py-0.5 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded text-[10px] font-bold transition-all shadow-2xs border border-blue-200 flex items-center gap-1 hover:scale-102"
                                                                         >
-                                                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                                                                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                                                                 <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                                                             </svg>
-                                                                            <span>Xem chi tiết</span>
+                                                                            <span>Chi tiết</span>
                                                                         </button>
                                                                     </div>
                                                                 </td>
-                                                                <td rowSpan={totalStudentAttempts} className="p-3 border border-gray-300 text-[#8E44AD] text-center align-middle bg-white">{group.playerClass}</td>
+                                                                <td rowSpan={totalStudentAttempts} className="py-1 px-1 border border-gray-300 text-[#8E44AD] text-center align-middle bg-white text-[12px] font-black">{group.playerClass}</td>
                                                             </>
                                                         )}
 
                                                         {isActivityFirstRow && (
                                                             <td 
                                                                 rowSpan={actGroup.attempts.length} 
-                                                                className="p-3 border border-gray-300 text-center align-middle bg-white/70"
+                                                                className="py-1 px-1.5 border border-gray-300 text-center align-middle bg-white/70"
                                                             >
-                                                                <div className="flex flex-col items-center justify-center gap-1 py-1">
-                                                                    <span className={`px-3.5 py-1.5 rounded-full text-[12px] font-bold border shadow-xs inline-block whitespace-nowrap ${getGameTypeStyle(actGroup.gameType)}`}>
+                                                                <div className="flex flex-col items-center justify-center gap-0.5 py-0.5">
+                                                                    <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold border shadow-2xs inline-block whitespace-nowrap ${getGameTypeStyle(actGroup.gameType)}`}>
                                                                         {getGameTypeLabel(actGroup.gameType)}
                                                                     </span>
-                                                                    {actGroup.attempts.length > 1 && (
-                                                                        <span className="text-[11px] text-gray-500 font-semibold bg-gray-100/90 px-2 py-0.5 rounded-full border border-gray-200 shadow-2xs whitespace-nowrap">
-                                                                            {actGroup.attempts.length} lần
-                                                                        </span>
-                                                                    )}
+                                                                    <span className="text-[10px] text-gray-600 font-semibold bg-gray-100 px-1.5 py-0 rounded-full border border-gray-200 whitespace-nowrap">
+                                                                        {actGroup.attempts.length} lần
+                                                                    </span>
                                                                 </div>
                                                             </td>
                                                         )}
 
-                                                        <td className={`p-3 border border-gray-300 text-red-600 text-center whitespace-nowrap font-black ${String(res.score).includes('ĐÃ HỌC') || res.gameType === 'vocabulary' ? 'text-sm' : 'text-lg'}`}>{res.score}</td>
-                                                        <td className="p-3 border border-gray-300 text-red-600 text-center font-bold">{res.attempts || (actGroup.attempts.length - attemptIdx)}</td>
-                                                        <td className="p-3 border border-gray-300 text-green-600 text-center">{res.gameType === 'vocabulary' ? '-' : res.correct}</td>
-                                                        <td className="p-3 border border-gray-300 text-red-600 text-center">{res.gameType === 'vocabulary' ? '-' : res.incorrect}</td>
-                                                        <td className="p-3 border border-gray-300 text-[#c05621] text-center font-['Nunito'] font-black">{formatTime(res.timeTakenSeconds || 0)}</td>
-                                                        <td className="p-3 border border-gray-300 text-slate-800 text-[13px] text-center font-['Nunito']">{formatDate(res.timestamp)}</td>
+                                                        {/* Score Column: Grouped for vocabulary, individual for games/quizzes */}
+                                                        {isVocab ? (
+                                                            isActivityFirstRow && (
+                                                                <td 
+                                                                    rowSpan={actGroup.attempts.length} 
+                                                                    className="py-1 px-1 border border-gray-300 text-red-600 text-center whitespace-nowrap font-black text-[12px] align-middle bg-white/70"
+                                                                >
+                                                                    Đã học
+                                                                </td>
+                                                            )
+                                                        ) : (
+                                                            <td className="py-1 px-1 border border-gray-300 text-red-600 text-center whitespace-nowrap font-black text-[13px]">
+                                                                {res.score}
+                                                            </td>
+                                                        )}
+
+                                                        <td className="py-1 px-1 border border-gray-300 text-green-600 text-center text-[12px]">{isVocab ? '-' : res.correct}</td>
+                                                        <td className="py-1 px-1 border border-gray-300 text-red-600 text-center text-[12px]">{isVocab ? '-' : res.incorrect}</td>
+                                                        <td className="py-1 px-1.5 border border-gray-300 text-[#c05621] text-center font-['Nunito'] font-black text-[12px]">{formatTime(res.timeTakenSeconds || 0)}</td>
+                                                        <td className="py-1 px-1.5 border border-gray-300 text-slate-700 text-[11px] text-center font-['Nunito'] whitespace-nowrap">{formatDate(res.timestamp)}</td>
 
                                                         {isStudentFirstRow && (
-                                                            <td rowSpan={totalStudentAttempts} className="p-3 border border-gray-300 text-center align-middle bg-white">
-                                                                <button onClick={(e) => { e.stopPropagation(); onDeleteStudent(group); }} className="p-1.5 bg-red-100 text-red-600 rounded-full hover:bg-red-200 transition shadow-sm hover:scale-110" title="Xóa toàn bộ kết quả học sinh">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                                            <td rowSpan={totalStudentAttempts} className="py-1 px-1 border border-gray-300 text-center align-middle bg-white">
+                                                                <button onClick={(e) => { e.stopPropagation(); onDeleteStudent(group); }} className="p-1 bg-red-100 text-red-600 rounded-full hover:bg-red-200 transition shadow-2xs hover:scale-110" title="Xóa toàn bộ kết quả học sinh">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                                                                 </button>
                                                             </td>
                                                         )}
