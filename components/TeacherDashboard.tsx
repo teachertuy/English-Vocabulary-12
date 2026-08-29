@@ -246,6 +246,56 @@ const ResultDetailModal: React.FC<{ result: GameResult; onClose: () => void }> =
     );
 };
 
+interface StudentActivityGroup {
+    gameType: string;
+    attempts: GameResult[];
+}
+
+const ACTIVITY_ORDER: Record<string, number> = {
+    'vocabulary': 1,
+    'matching': 2,
+    'listen-choose': 3,
+    'listen_choose': 3,
+    'listenChoose': 3,
+    'spelling': 4,
+    'quiz': 5,
+};
+
+const getStudentActivityGroups = (attempts: GameResult[]): StudentActivityGroup[] => {
+    const map = new Map<string, GameResult[]>();
+    
+    // Group attempts by normalized gameType
+    attempts.forEach(res => {
+        let type = res.gameType || 'other';
+        if (type === 'listen_choose' || type === 'listenChoose') {
+            type = 'listen-choose';
+        }
+        if (!map.has(type)) {
+            map.set(type, []);
+        }
+        map.get(type)!.push(res);
+    });
+
+    const groups: StudentActivityGroup[] = Array.from(map.entries()).map(([gameType, atts]) => {
+        // Sort attempts within the same activity: latest timestamp first (Lần N -> Lần 1)
+        const sortedAtts = [...atts].sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+        return {
+            gameType,
+            attempts: sortedAtts,
+        };
+    });
+
+    // Sort the activity groups by standard order (Vocabulary -> Matching -> Listen-Choose -> Spelling -> Quiz)
+    groups.sort((a, b) => {
+        const orderA = ACTIVITY_ORDER[a.gameType] ?? 99;
+        const orderB = ACTIVITY_ORDER[b.gameType] ?? 99;
+        if (orderA !== orderB) return orderA - orderB;
+        return (b.attempts[0]?.timestamp || 0) - (a.attempts[0]?.timestamp || 0);
+    });
+
+    return groups;
+};
+
 const getGameTypeStyle = (gameType?: string) => {
     switch (gameType) {
         case 'quiz': return 'text-green-800 bg-green-100 border-green-200';
@@ -481,8 +531,8 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                                 <th className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-14 text-center">STT</th>
                                 <th className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-48 uppercase tracking-tight">HỌ VÀ TÊN</th>
                                 <th className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-20 uppercase tracking-tight text-center">LỚP</th>
-                                <th className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-20 uppercase tracking-tight text-center">ĐIỂM ▼</th>
                                 <th className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-40 uppercase tracking-tight text-center">NỘI DUNG ↑</th>
+                                <th className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-20 uppercase tracking-tight text-center">ĐIỂM ▼</th>
                                 <th className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-20 uppercase tracking-tight text-center">LẦN LÀM ↑</th>
                                 <th className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-16 uppercase tracking-tight text-center">ĐÚNG ↑</th>
                                 <th className="p-3 border border-gray-300 text-[13px] font-black text-[#c05621] w-16 uppercase tracking-tight text-center">SAI ↑</th>
@@ -494,60 +544,89 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                         <tbody className="bg-white">
                             {groupedData.length === 0 ? (
                                 <tr><td colSpan={11} className="p-12 text-center text-gray-400 font-bold border border-gray-300">Chưa có kết quả nào.</td></tr>
-                            ) : groupedData.map((group, sttIdx) => (
-                                <React.Fragment key={group.playerKey}>
-                                    {group.attempts.map((res, attemptIdx) => (
-                                        <tr key={`${res.activityId}_${attemptIdx}`} onClick={() => onRowClick(res)} className="hover:bg-blue-50/50 transition-colors cursor-pointer text-[14px] font-bold">
-                                            {attemptIdx === 0 && (
-                                                <>
-                                                    <td rowSpan={group.attempts.length} className="p-3 border border-gray-300 text-blue-600 font-black text-center align-middle bg-white">{sttIdx + 1}</td>
-                                                    <td rowSpan={group.attempts.length} className="p-3 border border-gray-300 align-middle bg-white">
-                                                        <div className="font-bold text-[#E91E63] text-[14px] leading-tight truncate">{group.playerName}</div>
-                                                        <div className="text-[11px] font-bold text-gray-600 mt-1 flex items-center gap-1 whitespace-nowrap">
-                                                            <span>Đã hoàn thành:</span>
-                                                            <span className="text-red-600 font-extrabold text-[12px]">{getCompletionPercentForGroup(group, type)}%</span>
-                                                        </div>
-                                                        <div className="mt-1.5 flex items-center">
-                                                            <button 
-                                                                title="Xem chi tiết toàn bộ màn hình học sinh"
-                                                                onClick={(e) => { e.stopPropagation(); handleViewStudentDetail(group, type); }} 
-                                                                className="px-2 py-1 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-md text-[11px] font-bold transition-all shadow-sm border border-blue-200 flex items-center gap-1 hover:scale-105"
+                            ) : groupedData.map((group, sttIdx) => {
+                                const activityGroups = getStudentActivityGroups(group.attempts);
+                                const totalStudentAttempts = group.attempts.length;
+
+                                return (
+                                    <React.Fragment key={group.playerKey}>
+                                        {activityGroups.map((actGroup, actIdx) => 
+                                            actGroup.attempts.map((res, attemptIdx) => {
+                                                const isStudentFirstRow = actIdx === 0 && attemptIdx === 0;
+                                                const isActivityFirstRow = attemptIdx === 0;
+
+                                                return (
+                                                    <tr 
+                                                        key={`${res.activityId || 'att'}_${res.timestamp || attemptIdx}`} 
+                                                        onClick={() => onRowClick(res)} 
+                                                        className="hover:bg-blue-50/60 transition-colors cursor-pointer text-[14px] font-bold"
+                                                    >
+                                                        {isStudentFirstRow && (
+                                                            <>
+                                                                <td rowSpan={totalStudentAttempts} className="p-3 border border-gray-300 text-blue-600 font-black text-center align-middle bg-white">{sttIdx + 1}</td>
+                                                                <td rowSpan={totalStudentAttempts} className="p-3 border border-gray-300 align-middle bg-white">
+                                                                    <div className="font-bold text-[#E91E63] text-[14px] leading-tight truncate">{group.playerName}</div>
+                                                                    <div className="text-[11px] font-bold text-gray-600 mt-1 flex items-center gap-1 whitespace-nowrap">
+                                                                        <span>Đã hoàn thành:</span>
+                                                                        <span className="text-red-600 font-extrabold text-[12px]">{getCompletionPercentForGroup(group, type)}%</span>
+                                                                    </div>
+                                                                    <div className="mt-1.5 flex items-center">
+                                                                        <button 
+                                                                            title="Xem chi tiết toàn bộ màn hình học sinh"
+                                                                            onClick={(e) => { e.stopPropagation(); handleViewStudentDetail(group, type); }} 
+                                                                            className="px-2 py-1 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-md text-[11px] font-bold transition-all shadow-sm border border-blue-200 flex items-center gap-1 hover:scale-105"
+                                                                        >
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                                                <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                                                <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                                            </svg>
+                                                                            <span>Xem chi tiết</span>
+                                                                        </button>
+                                                                    </div>
+                                                                </td>
+                                                                <td rowSpan={totalStudentAttempts} className="p-3 border border-gray-300 text-[#8E44AD] text-center align-middle bg-white">{group.playerClass}</td>
+                                                            </>
+                                                        )}
+
+                                                        {isActivityFirstRow && (
+                                                            <td 
+                                                                rowSpan={actGroup.attempts.length} 
+                                                                className="p-3 border border-gray-300 text-center align-middle bg-white/70"
                                                             >
-                                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                                                </svg>
-                                                                <span>Xem chi tiết</span>
-                                                            </button>
-                                                        </div>
-                                                    </td>
-                                                    <td rowSpan={group.attempts.length} className="p-3 border border-gray-300 text-[#8E44AD] text-center align-middle bg-white">{group.playerClass}</td>
-                                                </>
-                                            )}
-                                            <td className={`p-3 border border-gray-300 text-red-600 text-center whitespace-nowrap font-black ${String(res.score).includes('ĐÃ HỌC') || res.gameType === 'vocabulary' ? 'text-sm' : 'text-lg'}`}>{res.score}</td>
-                                            <td className="p-3 border border-gray-300 text-center">
-                                                <span className={`px-4 py-1.5 rounded-full text-[12px] font-bold border ${getGameTypeStyle(res.gameType)}`}>
-                                                    {getGameTypeLabel(res.gameType)}
-                                                </span>
-                                            </td>
-                                            <td className="p-3 border border-gray-300 text-red-600 text-center">{res.attempts || 1}</td>
-                                            <td className="p-3 border border-gray-300 text-green-600 text-center">{res.gameType === 'vocabulary' ? '-' : res.correct}</td>
-                                            <td className="p-3 border border-gray-300 text-red-600 text-center">{res.gameType === 'vocabulary' ? '-' : res.incorrect}</td>
-                                            <td className="p-3 border border-gray-300 text-[#c05621] text-center font-['Nunito'] font-black">{formatTime(res.timeTakenSeconds || 0)}</td>
-                                            <td className="p-3 border border-gray-300 text-slate-800 text-[13px] text-center font-['Nunito']">{formatDate(res.timestamp)}</td>
-                                            {attemptIdx === 0 && (
-                                                <>
-                                                    <td rowSpan={group.attempts.length} className="p-3 border border-gray-300 text-center align-middle bg-white">
-                                                        <button onClick={(e) => { e.stopPropagation(); onDeleteStudent(group); }} className="p-1.5 bg-red-100 text-red-600 rounded-full hover:bg-red-200 transition shadow-sm hover:scale-110">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                                                        </button>
-                                                    </td>
-                                                </>
-                                            )}
-                                        </tr>
-                                    ))}
-                                </React.Fragment>
-                            ))}
+                                                                <div className="flex flex-col items-center justify-center gap-1 py-1">
+                                                                    <span className={`px-3.5 py-1.5 rounded-full text-[12px] font-bold border shadow-xs inline-block whitespace-nowrap ${getGameTypeStyle(actGroup.gameType)}`}>
+                                                                        {getGameTypeLabel(actGroup.gameType)}
+                                                                    </span>
+                                                                    {actGroup.attempts.length > 1 && (
+                                                                        <span className="text-[11px] text-gray-500 font-semibold bg-gray-100/90 px-2 py-0.5 rounded-full border border-gray-200 shadow-2xs whitespace-nowrap">
+                                                                            {actGroup.attempts.length} lần
+                                                                        </span>
+                                                                    )}
+                                                                </div>
+                                                            </td>
+                                                        )}
+
+                                                        <td className={`p-3 border border-gray-300 text-red-600 text-center whitespace-nowrap font-black ${String(res.score).includes('ĐÃ HỌC') || res.gameType === 'vocabulary' ? 'text-sm' : 'text-lg'}`}>{res.score}</td>
+                                                        <td className="p-3 border border-gray-300 text-red-600 text-center font-bold">{res.attempts || (actGroup.attempts.length - attemptIdx)}</td>
+                                                        <td className="p-3 border border-gray-300 text-green-600 text-center">{res.gameType === 'vocabulary' ? '-' : res.correct}</td>
+                                                        <td className="p-3 border border-gray-300 text-red-600 text-center">{res.gameType === 'vocabulary' ? '-' : res.incorrect}</td>
+                                                        <td className="p-3 border border-gray-300 text-[#c05621] text-center font-['Nunito'] font-black">{formatTime(res.timeTakenSeconds || 0)}</td>
+                                                        <td className="p-3 border border-gray-300 text-slate-800 text-[13px] text-center font-['Nunito']">{formatDate(res.timestamp)}</td>
+
+                                                        {isStudentFirstRow && (
+                                                            <td rowSpan={totalStudentAttempts} className="p-3 border border-gray-300 text-center align-middle bg-white">
+                                                                <button onClick={(e) => { e.stopPropagation(); onDeleteStudent(group); }} className="p-1.5 bg-red-100 text-red-600 rounded-full hover:bg-red-200 transition shadow-sm hover:scale-110" title="Xóa toàn bộ kết quả học sinh">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                                                </button>
+                                                            </td>
+                                                        )}
+                                                    </tr>
+                                                );
+                                            })
+                                        )}
+                                    </React.Fragment>
+                                );
+                            })}
                         </tbody>
                     </table>
                 </div>
