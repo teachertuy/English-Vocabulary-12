@@ -94,6 +94,8 @@ const DEFAULT_EXERCISE_CONFIG: ExerciseSelectionConfig = {
     actBackFontWeight: 'bold',
 };
 
+const STUDENT_SESSION_KEY = 'studentSession-APP_2';
+
 const App: React.FC = () => {
   const [currentScreen, setCurrentScreen] = useState<Screen>(Screen.Welcome);
   const [playerData, setPlayerData] = useState<PlayerData | null>(null);
@@ -107,6 +109,51 @@ const App: React.FC = () => {
   const [selectedGrade, setSelectedGrade] = useState<number | 'topics' | null>(null);
   const [exerciseConfig, setExerciseConfig] = useState<ExerciseSelectionConfig>(DEFAULT_EXERCISE_CONFIG);
 
+  // Disable pull-to-refresh on mobile devices
+  useEffect(() => {
+    let touchStartY = 0;
+
+    const handleTouchStart = (e: TouchEvent) => {
+      if (e.touches.length === 1) {
+        touchStartY = e.touches[0].clientY;
+      }
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (e.touches.length === 1) {
+        const touchY = e.touches[0].clientY;
+        const touchDiff = touchY - touchStartY;
+
+        // When pulling down at the top of the page
+        if (touchDiff > 0 && window.scrollY <= 0) {
+          // Check if touch is inside an inner element that has scrollTop > 0
+          let target = e.target as HTMLElement | null;
+          let isScrolledDown = false;
+          while (target && target !== document.body && target !== document.documentElement) {
+            if (target.scrollTop > 0) {
+              isScrolledDown = true;
+              break;
+            }
+            target = target.parentElement;
+          }
+
+          // If at the very top of scrollable container and pulling down, prevent browser pull-to-refresh
+          if (!isScrolledDown && e.cancelable) {
+            e.preventDefault();
+          }
+        }
+      }
+    };
+
+    window.addEventListener('touchstart', handleTouchStart, { passive: true });
+    window.addEventListener('touchmove', handleTouchMove, { passive: false });
+
+    return () => {
+      window.removeEventListener('touchstart', handleTouchStart);
+      window.removeEventListener('touchmove', handleTouchMove);
+    };
+  }, []);
+
   useEffect(() => {
     const unsub = listenToExerciseSelectionConfig(FIXED_CLASSROOM_ID, (config) => {
       if (config) setExerciseConfig({ ...DEFAULT_EXERCISE_CONFIG, ...config });
@@ -114,17 +161,62 @@ const App: React.FC = () => {
     return () => unsub();
   }, []);
 
-  const handleLogin = useCallback((player: PlayerData) => {
-    setPlayerData(player);
-    setCurrentScreen(Screen.ExerciseTypeSelection);
-  }, []);
-
+  // Restore teacher or student session on mount
   useEffect(() => {
     const isTeacherLoggedIn = sessionStorage.getItem('teacherLoggedIn-APP_2');
     if (isTeacherLoggedIn === 'true') {
       setCurrentScreen(Screen.Dashboard);
       setClassroomId(FIXED_CLASSROOM_ID);
+      return;
     }
+
+    // Restore student session if user refreshed or navigated back
+    try {
+      const savedStudentSession = sessionStorage.getItem(STUDENT_SESSION_KEY) || localStorage.getItem(STUDENT_SESSION_KEY);
+      if (savedStudentSession) {
+        const session = JSON.parse(savedStudentSession);
+        if (session && session.playerData && session.playerData.name && session.playerData.class) {
+          setPlayerData(session.playerData);
+          if (session.selectedGrade) {
+            setSelectedGrade(session.selectedGrade);
+            if (session.selectedUnit) {
+              setSelectedUnit(session.selectedUnit);
+            }
+            if (session.currentScreen === Screen.ExerciseTypeSelection || session.currentScreen === Screen.UnitSelection) {
+              setCurrentScreen(session.currentScreen);
+            } else {
+              // If refreshed during a game or modal, restore to UnitSelection
+              setCurrentScreen(Screen.UnitSelection);
+            }
+          } else {
+            setCurrentScreen(Screen.ExerciseTypeSelection);
+          }
+        }
+      }
+    } catch (e) {
+      console.error("Error restoring student session:", e);
+    }
+  }, []);
+
+  // Sync student session to storage
+  useEffect(() => {
+    if (playerData) {
+      const sessionData = {
+        playerData,
+        selectedGrade,
+        selectedUnit,
+        currentScreen: currentScreen !== Screen.Welcome && currentScreen !== Screen.LoggedOut ? currentScreen : Screen.ExerciseTypeSelection
+      };
+      try {
+        sessionStorage.setItem(STUDENT_SESSION_KEY, JSON.stringify(sessionData));
+        localStorage.setItem(STUDENT_SESSION_KEY, JSON.stringify(sessionData));
+      } catch (e) {}
+    }
+  }, [playerData, selectedGrade, selectedUnit, currentScreen]);
+
+  const handleLogin = useCallback((player: PlayerData) => {
+    setPlayerData(player);
+    setCurrentScreen(Screen.ExerciseTypeSelection);
   }, []);
   
   const handleStartUnitQuiz = useCallback((unitQuestions: QuizQuestion[], unitNumber: number) => {
@@ -225,6 +317,8 @@ const App: React.FC = () => {
     setClassroomId(null);
     setCurrentActivityId(null);
     sessionStorage.removeItem('teacherLoggedIn-APP_2');
+    sessionStorage.removeItem(STUDENT_SESSION_KEY);
+    localStorage.removeItem(STUDENT_SESSION_KEY);
     setCurrentScreen(Screen.Welcome);
   }, []);
   
@@ -235,6 +329,8 @@ const App: React.FC = () => {
     setVocabulary([]);
     setCurrentActivityId(null);
     setSelectedGrade(null);
+    sessionStorage.removeItem(STUDENT_SESSION_KEY);
+    localStorage.removeItem(STUDENT_SESSION_KEY);
     setCurrentScreen(Screen.Welcome);
   }, []);
 
@@ -249,6 +345,8 @@ const App: React.FC = () => {
     setVocabulary([]);
     setCurrentActivityId(null);
     setSelectedGrade(null);
+    sessionStorage.removeItem(STUDENT_SESSION_KEY);
+    localStorage.removeItem(STUDENT_SESSION_KEY);
     setCurrentScreen(Screen.LoggedOut);
   }, [playerData]);
 
