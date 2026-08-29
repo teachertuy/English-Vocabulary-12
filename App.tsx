@@ -109,49 +109,11 @@ const App: React.FC = () => {
   const [selectedGrade, setSelectedGrade] = useState<number | 'topics' | null>(null);
   const [exerciseConfig, setExerciseConfig] = useState<ExerciseSelectionConfig>(DEFAULT_EXERCISE_CONFIG);
 
-  // Disable pull-to-refresh on mobile devices
+  // Disable pull-to-refresh safely via CSS overscroll-behavior without blocking touches
   useEffect(() => {
-    let touchStartY = 0;
-
-    const handleTouchStart = (e: TouchEvent) => {
-      if (e.touches.length === 1) {
-        touchStartY = e.touches[0].clientY;
-      }
-    };
-
-    const handleTouchMove = (e: TouchEvent) => {
-      if (e.touches.length === 1) {
-        const touchY = e.touches[0].clientY;
-        const touchDiff = touchY - touchStartY;
-
-        // When pulling down at the top of the page
-        if (touchDiff > 0 && window.scrollY <= 0) {
-          // Check if touch is inside an inner element that has scrollTop > 0
-          let target = e.target as HTMLElement | null;
-          let isScrolledDown = false;
-          while (target && target !== document.body && target !== document.documentElement) {
-            if (target.scrollTop > 0) {
-              isScrolledDown = true;
-              break;
-            }
-            target = target.parentElement;
-          }
-
-          // If at the very top of scrollable container and pulling down, prevent browser pull-to-refresh
-          if (!isScrolledDown && e.cancelable) {
-            e.preventDefault();
-          }
-        }
-      }
-    };
-
-    window.addEventListener('touchstart', handleTouchStart, { passive: true });
-    window.addEventListener('touchmove', handleTouchMove, { passive: false });
-
-    return () => {
-      window.removeEventListener('touchstart', handleTouchStart);
-      window.removeEventListener('touchmove', handleTouchMove);
-    };
+    // Ensure body has overscroll-behavior: none
+    document.documentElement.style.overscrollBehavior = 'none';
+    document.body.style.overscrollBehavior = 'none';
   }, []);
 
   useEffect(() => {

@@ -219,28 +219,56 @@ const VocabularyScreen: React.FC<VocabularyScreenProps> = ({ unitNumber, vocabul
     }, [playingWord]);
     
     return (
-        <div className="flex flex-col p-2 sm:p-4 bg-[#FFF8F0] min-h-[600px] relative">
-            <div className="flex items-center justify-start mb-2 pt-0 pl-0">
+        <div className="flex flex-col p-2 sm:p-4 bg-[#FFF8F0] w-full h-[90vh] sm:h-[88vh] max-h-[92vh] min-h-[550px] rounded-2xl relative overflow-hidden">
+            {/* Top sticky header */}
+            <div className="flex items-center justify-between mb-2 pt-0 pl-0 shrink-0 z-10 px-1">
                 <ActivityBackButton onClick={handleBackWithSave} config={exerciseConfig} />
+                <div className="flex items-center gap-2">
+                    <span className="text-xs sm:text-sm font-bold text-amber-900/80 bg-amber-100/90 px-3 py-1 rounded-full border border-amber-200 shadow-xs">
+                        📖 {localVocabulary.length} từ vựng
+                    </span>
+                </div>
             </div>
-            
 
-            {(fetchingImages.size > 0 || fetchingWords.size > 0) && <div className="mb-4 px-4 py-2 bg-blue-50 text-blue-700 text-sm font-bold rounded-lg border border-blue-200 flex items-center gap-2 animate-pulse self-center"><div className="w-2 h-2 bg-blue-600 rounded-full animate-ping"></div><span>AI đang đồng bộ Ảnh & Âm thanh...</span></div>}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 overflow-y-auto flex-grow px-2 pb-8 max-w-7xl mx-auto w-full">
+            {(fetchingImages.size > 0 || fetchingWords.size > 0) && (
+                <div className="mb-3 px-4 py-1.5 bg-blue-50 text-blue-700 text-xs sm:text-sm font-bold rounded-lg border border-blue-200 flex items-center gap-2 animate-pulse self-center shrink-0">
+                    <div className="w-2 h-2 bg-blue-600 rounded-full animate-ping"></div>
+                    <span>AI đang đồng bộ Ảnh & Âm thanh...</span>
+                </div>
+            )}
+
+            {/* Scrollable vocabulary grid */}
+            <div 
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 overflow-y-auto flex-1 min-h-0 px-2 pt-1 pb-24 max-w-7xl mx-auto w-full custom-scrollbar overscroll-contain"
+                style={{ WebkitOverflowScrolling: 'touch', touchAction: 'pan-y' }}
+            >
                 {localVocabulary.map((item, index) => (
-                    <div key={index} className={`${CARD_COLORS[index % CARD_COLORS.length]} rounded-[2rem] p-6 flex flex-col items-center shadow-sm hover:shadow-md transition-shadow duration-300`}>
+                    <div 
+                        key={index} 
+                        className={`${CARD_COLORS[index % CARD_COLORS.length]} rounded-[2rem] p-5 sm:p-6 flex flex-col items-center shadow-sm hover:shadow-md transition-shadow duration-300 border border-black/5`}
+                    >
                         <ImageWithLoader 
                             src={item.image || `https://loremflickr.com/800/600/${encodeURIComponent(item.word.toLowerCase())},illustration/all?lock=${item.word.length + (item.word.charCodeAt(0) || 0)}`} 
                             alt={item.word} 
                             isProcessing={fetchingImages.has(item.word)} 
                         />
-                        <div className="text-center w-full mb-6">
-                            <h2 className="text-2xl font-extrabold text-[#006064] mb-1">{item.word} <span className="text-lg text-[#E91E63]">({item.type})</span></h2>
-                            <p className="text-[#00A0A0] font-bold text-lg font-serif mb-2">{item.phonetic}</p>
-                            <p className="text-[#FF5252] font-bold text-xl">{item.translation}</p>
+                        <div className="text-center w-full mb-5 flex-grow flex flex-col justify-center">
+                            <h2 className="text-2xl font-extrabold text-[#006064] mb-1 leading-tight">
+                                {item.word} <span className="text-base sm:text-lg text-[#E91E63] font-bold">({item.type})</span>
+                            </h2>
+                            <p className="text-[#00A0A0] font-bold text-base sm:text-lg font-serif mb-2">{item.phonetic}</p>
+                            <p className="text-[#FF5252] font-bold text-lg sm:text-xl">{item.translation}</p>
                         </div>
-                        <button onClick={(e) => handlePlaySound(item, e)} disabled={playingWord === item.word} className={`w-14 h-14 bg-white rounded-full shadow-md flex items-center justify-center hover:scale-105 transition-transform ${playingWord === item.word ? 'ring-4 ring-blue-200' : ''}`}>
-                            <svg className={`h-8 w-8 ${playingWord === item.word ? 'text-blue-600' : 'text-gray-600'}`} viewBox="0 0 24 24" fill="currentColor"><path d="M14.016 3.234q3.047 0.656 5.016 3.117t1.969 5.648-1.969 5.648-5.016 3.117v-2.063q2.203-0.656 3.586-2.484t1.383-4.219-1.383-4.219-3.586-2.484v-2.063zM16.5 12q0 2.813-2.484 4.031v-8.063q1.031 0.516 1.758 1.688t0.727 2.344zM3 9h3.984l5.016-5.016v16.031l-5.016-5.016h-3.984v-6z"></path></svg>
+                        <button 
+                            onClick={(e) => handlePlaySound(item, e)} 
+                            disabled={playingWord === item.word} 
+                            className={`w-14 h-14 bg-white rounded-full shadow-md flex items-center justify-center hover:scale-105 active:scale-95 transition-transform cursor-pointer shrink-0 ${playingWord === item.word ? 'ring-4 ring-blue-200' : ''}`}
+                            title="Nghe phát âm"
+                            aria-label={`Phát âm từ ${item.word}`}
+                        >
+                            <svg className={`h-8 w-8 ${playingWord === item.word ? 'text-blue-600' : 'text-gray-600'}`} viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M14.016 3.234q3.047 0.656 5.016 3.117t1.969 5.648-1.969 5.648-5.016 3.117v-2.063q2.203-0.656 3.586-2.484t1.383-4.219-1.383-4.219-3.586-2.484v-2.063zM16.5 12q0 2.813-2.484 4.031v-8.063q1.031 0.516 1.758 1.688t0.727 2.344zM3 9h3.984l5.016-5.016v16.031l-5.016-5.016h-3.984v-6z"></path>
+                            </svg>
                         </button>
                     </div>
                 ))}
