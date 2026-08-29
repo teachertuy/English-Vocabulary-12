@@ -525,7 +525,7 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                     <button onClick={type === 'unit' ? () => clearUnitResultsByGrade(classroomId, viewingUnit!.grade, `unit_${viewingUnit!.unit}`) : () => clearTopicResults(classroomId, `topic_${viewingTopic}`)} className="p-1.5 bg-red-600 text-white rounded-lg hover:bg-red-700 shadow-xs transition-colors" title="Xóa toàn bộ kết quả"><svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>
                 </div>
                 <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse table-fixed min-w-[1000px]">
+                    <table className="w-full text-left border-collapse table-fixed min-w-[1050px]">
                         <thead>
                             <tr className="bg-[#fff2e0]">
                                 <th className="py-2 px-1 border border-gray-300 text-[12px] font-black text-[#c05621] w-12 text-center">STT</th>
@@ -533,6 +533,7 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                                 <th className="py-2 px-1 border border-gray-300 text-[12px] font-black text-[#c05621] w-16 uppercase tracking-tight text-center">LỚP</th>
                                 <th className="py-2 px-2 border border-gray-300 text-[12px] font-black text-[#c05621] w-36 uppercase tracking-tight text-center">NỘI DUNG ↑</th>
                                 <th className="py-2 px-1 border border-gray-300 text-[12px] font-black text-[#c05621] w-20 uppercase tracking-tight text-center">ĐIỂM ▼</th>
+                                <th className="py-2 px-1 border border-gray-300 text-[12px] font-black text-[#c05621] w-16 uppercase tracking-tight text-center">LẦN LÀM ↑</th>
                                 <th className="py-2 px-1 border border-gray-300 text-[12px] font-black text-[#c05621] w-14 uppercase tracking-tight text-center">ĐÚNG ↑</th>
                                 <th className="py-2 px-1 border border-gray-300 text-[12px] font-black text-[#c05621] w-14 uppercase tracking-tight text-center">SAI ↑</th>
                                 <th className="py-2 px-2 border border-gray-300 text-[12px] font-black text-[#c05621] w-24 uppercase tracking-tight text-center">THỜI GIAN ↑</th>
@@ -542,7 +543,7 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                         </thead>
                         <tbody className="bg-white text-[12px]">
                             {groupedData.length === 0 ? (
-                                <tr><td colSpan={10} className="p-8 text-center text-gray-400 font-bold border border-gray-300">Chưa có kết quả nào.</td></tr>
+                                <tr><td colSpan={11} className="p-8 text-center text-gray-400 font-bold border border-gray-300">Chưa có kết quả nào.</td></tr>
                             ) : groupedData.map((group, sttIdx) => {
                                 const activityGroups = getStudentActivityGroups(group.attempts);
                                 const totalStudentAttempts = group.attempts.length;
@@ -553,7 +554,6 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                                             actGroup.attempts.map((res, attemptIdx) => {
                                                 const isStudentFirstRow = actIdx === 0 && attemptIdx === 0;
                                                 const isActivityFirstRow = attemptIdx === 0;
-                                                const isVocab = actGroup.gameType === 'vocabulary';
 
                                                 return (
                                                     <tr 
@@ -597,31 +597,19 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                                                                     <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold border shadow-2xs inline-block whitespace-nowrap ${getGameTypeStyle(actGroup.gameType)}`}>
                                                                         {getGameTypeLabel(actGroup.gameType)}
                                                                     </span>
-                                                                    <span className="text-[10px] text-gray-600 font-semibold bg-gray-100 px-1.5 py-0 rounded-full border border-gray-200 whitespace-nowrap">
-                                                                        {actGroup.attempts.length} lần
-                                                                    </span>
+                                                                    {actGroup.attempts.length > 1 && (
+                                                                        <span className="text-[10px] text-gray-500 font-semibold bg-gray-100 px-1.5 py-0 rounded-full border border-gray-200 whitespace-nowrap">
+                                                                            {actGroup.attempts.length} lần
+                                                                        </span>
+                                                                    )}
                                                                 </div>
                                                             </td>
                                                         )}
 
-                                                        {/* Score Column: Grouped for vocabulary, individual for games/quizzes */}
-                                                        {isVocab ? (
-                                                            isActivityFirstRow && (
-                                                                <td 
-                                                                    rowSpan={actGroup.attempts.length} 
-                                                                    className="py-1 px-1 border border-gray-300 text-red-600 text-center whitespace-nowrap font-black text-[12px] align-middle bg-white/70"
-                                                                >
-                                                                    Đã học
-                                                                </td>
-                                                            )
-                                                        ) : (
-                                                            <td className="py-1 px-1 border border-gray-300 text-red-600 text-center whitespace-nowrap font-black text-[13px]">
-                                                                {res.score}
-                                                            </td>
-                                                        )}
-
-                                                        <td className="py-1 px-1 border border-gray-300 text-green-600 text-center text-[12px]">{isVocab ? '-' : res.correct}</td>
-                                                        <td className="py-1 px-1 border border-gray-300 text-red-600 text-center text-[12px]">{isVocab ? '-' : res.incorrect}</td>
+                                                        <td className={`py-1 px-1 border border-gray-300 text-red-600 text-center whitespace-nowrap font-black ${String(res.score).includes('ĐÃ HỌC') || res.gameType === 'vocabulary' ? 'text-[11px]' : 'text-[13px]'}`}>{res.score}</td>
+                                                        <td className="py-1 px-1 border border-gray-300 text-red-600 text-center font-bold text-[12px]">{res.attempts || (actGroup.attempts.length - attemptIdx)}</td>
+                                                        <td className="py-1 px-1 border border-gray-300 text-green-600 text-center text-[12px]">{res.gameType === 'vocabulary' ? '-' : res.correct}</td>
+                                                        <td className="py-1 px-1 border border-gray-300 text-red-600 text-center text-[12px]">{res.gameType === 'vocabulary' ? '-' : res.incorrect}</td>
                                                         <td className="py-1 px-1.5 border border-gray-300 text-[#c05621] text-center font-['Nunito'] font-black text-[12px]">{formatTime(res.timeTakenSeconds || 0)}</td>
                                                         <td className="py-1 px-1.5 border border-gray-300 text-slate-700 text-[11px] text-center font-['Nunito'] whitespace-nowrap">{formatDate(res.timestamp)}</td>
 
