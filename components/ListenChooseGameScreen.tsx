@@ -109,11 +109,14 @@ const ListenChooseGameScreen: React.FC<ListenChooseGameScreenProps> = ({
     const [feedback, setFeedback] = useState<string | null>(null);
     const [isPlayingAudio, setIsPlayingAudio] = useState(false);
     const [fetchingAudioWords, setFetchingAudioWords] = useState<Set<string>>(new Set());
+    const [wordCycle, setWordCycle] = useState(0);
 
     const startTime = useMemo(() => Date.now(), []);
     const incorrectMatches = useMemo(() => gameDetails.filter(d => d.status === 'incorrect').length, [gameDetails]);
     const audioContextRef = useRef<AudioContext | null>(null);
     const isComponentMounted = useRef(true);
+    const isFirstAudioRef = useRef(true);
+    const audioTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     // Initial randomized order of vocabulary buttons (STRICTLY NON-ALPHABETICAL as requested)
     const [shuffledWordPool, setShuffledWordPool] = useState<VocabularyWord[]>([]);
@@ -207,15 +210,26 @@ const ListenChooseGameScreen: React.FC<ListenChooseGameScreenProps> = ({
         }
     }, [classroomId, grade, unitNumber, fetchingAudioWords, currentWord]);
 
-    // Auto-play audio when current word changes
+    // Auto-play audio when current word changes or next question begins
     useEffect(() => {
         if (currentWord) {
-            const timer = setTimeout(() => {
+            if (audioTimeoutRef.current) {
+                clearTimeout(audioTimeoutRef.current);
+            }
+            const delay = isFirstAudioRef.current ? 300 : 2000;
+            if (isFirstAudioRef.current) {
+                isFirstAudioRef.current = false;
+            }
+            audioTimeoutRef.current = setTimeout(() => {
                 playWordAudio(currentWord);
-            }, 300);
-            return () => clearTimeout(timer);
+            }, delay);
+            return () => {
+                if (audioTimeoutRef.current) {
+                    clearTimeout(audioTimeoutRef.current);
+                }
+            };
         }
-    }, [currentWord?.word]);
+    }, [currentWord?.word, wordCycle]);
 
     // Progress updates to Firebase
     useEffect(() => {
@@ -329,6 +343,7 @@ const ListenChooseGameScreen: React.FC<ListenChooseGameScreenProps> = ({
                 newWord = nextWords[0]; 
             }
             setCurrentWord(newWord);
+            setWordCycle(prev => prev + 1);
         } else {
             finishGame();
         }
@@ -456,7 +471,12 @@ const ListenChooseGameScreen: React.FC<ListenChooseGameScreenProps> = ({
                                         
                                         {/* Speaker Icon and Soundwave Button */}
                                         <YellowSpeakerButton
-                                            onClick={() => currentWord && playWordAudio(currentWord)}
+                                            onClick={() => {
+                                                if (audioTimeoutRef.current) {
+                                                    clearTimeout(audioTimeoutRef.current);
+                                                }
+                                                if (currentWord) playWordAudio(currentWord);
+                                            }}
                                             isPlaying={isPlayingAudio}
                                             isLoading={currentWord ? fetchingAudioWords.has(currentWord.word) : false}
                                         />
@@ -465,7 +485,7 @@ const ListenChooseGameScreen: React.FC<ListenChooseGameScreenProps> = ({
 
                                         {/* Selected English Word Box */}
                                         <div className="w-full py-2 px-3 border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center min-h-[48px] bg-gray-50/50">
-                                            <p className={`font-black text-xl transition-all ${selectedEnglish ? 'text-rose-700' : 'text-gray-400 italic text-xs'}`}>
+                                            <p className={`font-black transition-all text-center break-words ${selectedEnglish ? 'text-[24px] text-rose-700 leading-tight' : 'text-gray-400 italic text-xs'}`}>
                                                 {selectedEnglish ? selectedEnglish.word : '(Nghe kỹ và chọn từ đúng)'}
                                             </p>
                                         </div>
@@ -490,7 +510,7 @@ const ListenChooseGameScreen: React.FC<ListenChooseGameScreenProps> = ({
                                                         }}
                                                     />
                                                 ))}
-                                                <span className="relative z-10 animate-text-pulse inline-block font-extrabold">CHECK ANSWER</span>
+                                                <span className="relative z-10 animate-text-pulse inline-block font-extrabold text-[14px]">CHECK ANSWER</span>
                                             </button>
                                         </div>
 

@@ -267,6 +267,7 @@ interface ActivityCardProps {
     showCorrectCount?: boolean;
     isHorizontalAttempts?: boolean;
     config?: ExerciseSelectionConfig;
+    isCardLoading?: boolean;
 }
 
 const PointingFingerIcon: React.FC = () => (
@@ -320,7 +321,8 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
     hideTimeDetails = false,
     showCorrectCount = false,
     isHorizontalAttempts = false,
-    config
+    config,
+    isCardLoading = false
 }) => {
     const count = stats?.count || 0;
     const totalTime = stats?.totalTimeSeconds || 0;
@@ -357,21 +359,37 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
         <div 
             onClick={onClick}
             style={cardBgColor ? { backgroundColor: cardBgColor } : undefined}
-            className={`w-full text-left p-3.5 sm:p-4 rounded-2xl text-white shadow-md transition-all transform hover:scale-[1.005] hover:shadow-lg cursor-pointer ${!cardBgColor && cardBgClass ? cardBgClass : ''}`}
+            className={`w-full text-left p-3.5 sm:p-4 rounded-2xl text-white shadow-md transition-all transform hover:scale-[1.005] hover:shadow-lg cursor-pointer ${!cardBgColor && cardBgClass ? cardBgClass : ''} ${isCardLoading ? 'opacity-90 ring-2 ring-white/50' : ''}`}
         >
             {/* Top row: Icon, Title & Description, and Open count badge */}
             <div className="flex items-start justify-between gap-2.5">
                 <div className="flex items-center gap-3">
                     <div className="p-2 bg-white/20 backdrop-blur-md rounded-xl shrink-0">
-                        {icon}
+                        {isCardLoading ? (
+                            <div className="w-9 h-9 flex items-center justify-center">
+                                <svg className="animate-spin h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                            </div>
+                        ) : (
+                            icon
+                        )}
                     </div>
                     <div>
-                        <span 
-                            style={{ color: titleColor, fontSize: `${titleFontSize}rem` }}
-                            className="font-extrabold leading-tight block"
-                        >
-                            {title}
-                        </span>
+                        <div className="flex items-center gap-2">
+                            <span 
+                                style={{ color: titleColor, fontSize: `${titleFontSize}rem` }}
+                                className="font-extrabold leading-tight block"
+                            >
+                                {title}
+                            </span>
+                            {isCardLoading && (
+                                <span className="text-[10px] bg-white/30 text-white font-bold px-2 py-0.5 rounded-full animate-pulse">
+                                    Đang mở...
+                                </span>
+                            )}
+                        </div>
                         <span className="text-xs sm:text-sm font-normal opacity-90 block mt-0.5">{description}</span>
                     </div>
                 </div>
@@ -507,6 +525,13 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
     );
 };
 
+interface UnitDataCacheItem {
+    quiz: QuizQuestion[] | null;
+    vocabulary: VocabularyWord[] | null;
+    timestamp: number;
+}
+const unitDataMemoryCache = new Map<string, UnitDataCacheItem>();
+
 const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({ 
     show, 
     unitNumber, 
@@ -517,12 +542,15 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({
     onStartQuiz, 
     onLearnVocabulary, 
     onStartSpellingGame, 
-    onStartMatchingGame,
+    onStartMatchingGame, 
     onStartListenChooseGame
 }) => {
-    const [quiz, setQuiz] = useState<QuizQuestion[] | null>(null);
-    const [vocabulary, setVocabulary] = useState<VocabularyWord[] | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
+    const cacheKey = `${classroomId}_${grade}_${unitNumber}`;
+    const initialCached = unitDataMemoryCache.get(cacheKey);
+
+    const [quiz, setQuiz] = useState<QuizQuestion[] | null>(() => initialCached ? initialCached.quiz : null);
+    const [vocabulary, setVocabulary] = useState<VocabularyWord[] | null>(() => initialCached ? initialCached.vocabulary : null);
+    const [loadingActivity, setLoadingActivity] = useState<string | null>(null);
     const [config, setConfig] = useState<ExerciseSelectionConfig>(DEFAULT_CONFIG);
     const [attempts, setAttempts] = useState<ActivityAttemptCounts>({
         vocabulary: defaultStats(),
@@ -531,29 +559,70 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({
         quiz: defaultStats()
     });
 
-    useEffect(() => {
-        if (show) {
-            setIsLoading(true);
-            const isTopics = grade === 'topics';
-            const id = isTopics ? `topic_${unitNumber}` : `unit_${unitNumber}`;
-            
-            const quizPromise = isTopics 
-                ? getTopicQuizQuestions(classroomId, id) 
-                : getUnitQuizQuestionsByGrade(classroomId, grade as number, id);
-    
-            const vocabPromise = isTopics
-                ? getTopicVocabulary(classroomId, id)
-                : getUnitVocabularyByGrade(classroomId, grade as number, id);
+    const pendingActionRef = React.useRef<((v: VocabularyWord[] | null, q: QuizQuestion[] | null) => void) | null>(null);
+    const activeRequestKeyRef = React.useRef<string>('');
 
-            Promise.all([quizPromise, vocabPromise]).then(([quizData, vocabData]) => {
-                setQuiz(quizData);
-                setVocabulary(vocabData);
-                setIsLoading(false);
-            }).catch(error => {
-                console.error("Failed to load unit activities:", error);
-                setIsLoading(false);
-            });
+    useEffect(() => {
+        if (!show) {
+            setLoadingActivity(null);
+            pendingActionRef.current = null;
+            return;
         }
+
+        const currentKey = `${classroomId}_${grade}_${unitNumber}`;
+        activeRequestKeyRef.current = currentKey;
+
+        // Populate synchronously from memory cache if available
+        const cached = unitDataMemoryCache.get(currentKey);
+        if (cached) {
+            setQuiz(cached.quiz);
+            setVocabulary(cached.vocabulary);
+        } else {
+            setQuiz(null);
+            setVocabulary(null);
+        }
+
+        const isTopics = grade === 'topics';
+        const id = isTopics ? `topic_${unitNumber}` : `unit_${unitNumber}`;
+        
+        const quizPromise = isTopics 
+            ? getTopicQuizQuestions(classroomId, id) 
+            : getUnitQuizQuestionsByGrade(classroomId, grade as number, id);
+
+        const vocabPromise = isTopics
+            ? getTopicVocabulary(classroomId, id)
+            : getUnitVocabularyByGrade(classroomId, grade as number, id);
+
+        Promise.all([quizPromise, vocabPromise]).then(([quizData, vocabData]) => {
+            // Guard against race condition: only update if active request key matches
+            if (activeRequestKeyRef.current !== currentKey) return;
+
+            unitDataMemoryCache.set(currentKey, {
+                quiz: quizData,
+                vocabulary: vocabData,
+                timestamp: Date.now()
+            });
+
+            setQuiz(quizData);
+            setVocabulary(vocabData);
+
+            // If user clicked a card while background fetch was in progress
+            if (pendingActionRef.current) {
+                const action = pendingActionRef.current;
+                pendingActionRef.current = null;
+                setLoadingActivity(null);
+                action(vocabData, quizData);
+            }
+        }).catch(error => {
+            console.error("Failed to load unit activities in background:", error);
+            if (activeRequestKeyRef.current === currentKey) {
+                setLoadingActivity(null);
+                if (pendingActionRef.current) {
+                    pendingActionRef.current = null;
+                    alert("Không thể tải dữ liệu bài học. Vui lòng kiểm tra lại kết nối mạng.");
+                }
+            }
+        });
     }, [show, unitNumber, classroomId, grade]);
 
     useEffect(() => {
@@ -581,13 +650,95 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({
         };
     }, [show, classroomId, grade, unitNumber, playerData?.name, playerData?.class]);
 
+    const handleLearnClick = () => {
+        if (vocabulary && vocabulary.length > 0) {
+            onLearnVocabulary(vocabulary);
+        } else if (vocabulary && vocabulary.length === 0) {
+            alert("Lỗi: Không thể bắt đầu vì bài này chưa có từ vựng. Vui lòng báo cho giáo viên.");
+        } else {
+            setLoadingActivity('learn');
+            pendingActionRef.current = (v) => {
+                if (v && v.length > 0) {
+                    onLearnVocabulary(v);
+                } else {
+                    alert("Lỗi: Không thể bắt đầu vì bài này chưa có từ vựng. Vui lòng báo cho giáo viên.");
+                }
+            };
+        }
+    };
+
+    const handleMatchingClick = () => {
+        if (vocabulary && vocabulary.length > 0) {
+            onStartMatchingGame(vocabulary);
+        } else if (vocabulary && vocabulary.length === 0) {
+            alert("Lỗi: Không thể bắt đầu vì bài này chưa có từ vựng. Vui lòng báo cho giáo viên.");
+        } else {
+            setLoadingActivity('match');
+            pendingActionRef.current = (v) => {
+                if (v && v.length > 0) {
+                    onStartMatchingGame(v);
+                } else {
+                    alert("Lỗi: Không thể bắt đầu vì bài này chưa có từ vựng. Vui lòng báo cho giáo viên.");
+                }
+            };
+        }
+    };
+
+    const handleListenChooseClick = () => {
+        if (vocabulary && vocabulary.length > 0) {
+            onStartListenChooseGame(vocabulary);
+        } else if (vocabulary && vocabulary.length === 0) {
+            alert("Lỗi: Không thể bắt đầu vì bài này chưa có từ vựng. Vui lòng báo cho giáo viên.");
+        } else {
+            setLoadingActivity('listenChoose');
+            pendingActionRef.current = (v) => {
+                if (v && v.length > 0) {
+                    onStartListenChooseGame(v);
+                } else {
+                    alert("Lỗi: Không thể bắt đầu vì bài này chưa có từ vựng. Vui lòng báo cho giáo viên.");
+                }
+            };
+        }
+    };
+
+    const handleSpellingClick = () => {
+        if (vocabulary && vocabulary.length > 0) {
+            onStartSpellingGame(vocabulary);
+        } else if (vocabulary && vocabulary.length === 0) {
+            alert("Lỗi: Không thể bắt đầu vì bài này chưa có từ vựng. Vui lòng báo cho giáo viên.");
+        } else {
+            setLoadingActivity('spell');
+            pendingActionRef.current = (v) => {
+                if (v && v.length > 0) {
+                    onStartSpellingGame(v);
+                } else {
+                    alert("Lỗi: Không thể bắt đầu vì bài này chưa có từ vựng. Vui lòng báo cho giáo viên.");
+                }
+            };
+        }
+    };
+
+    const handleQuizClick = () => {
+        if (quiz && quiz.length > 0) {
+            onStartQuiz(quiz);
+        } else if (quiz && quiz.length === 0) {
+            alert("Lỗi: Không thể bắt đầu bài kiểm tra vì bài này chưa có câu hỏi. Vui lòng báo cho giáo viên.");
+        } else {
+            setLoadingActivity('quiz');
+            pendingActionRef.current = (_, q) => {
+                if (q && q.length > 0) {
+                    onStartQuiz(q);
+                } else {
+                    alert("Lỗi: Không thể bắt đầu bài kiểm tra vì bài này chưa có câu hỏi. Vui lòng báo cho giáo viên.");
+                }
+            };
+        }
+    };
+
     if (!show) {
         return null;
     }
 
-    const hasQuiz = quiz && quiz.length > 0;
-    const hasVocab = vocabulary && vocabulary.length > 0;
-    const hasActivities = hasQuiz || hasVocab;
     const itemPrefix = grade === 'topics' ? config.topicLabelText : config.unitLabelText;
     const titleLabel = `${itemPrefix} ${unitNumber}`;
 
@@ -903,106 +1054,86 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({
                 )}
                 
                 <div className="space-y-4">
-                    {isLoading ? (
-                         <div className="flex justify-center items-center h-24">
-                            <svg className="animate-spin h-8 w-8 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
-                         </div>
-                    ) : hasActivities ? (
-                        <>
-                            {hasVocab && (
-                                <ActivityCard
-                                    title={config.activityLearnLabel}
-                                    description={config.activityLearnDesc}
-                                    icon={<PointingFingerIcon />}
-                                    cardBgColor={config.actLearnBgColor}
-                                    cardBgClass="bg-gradient-to-r from-blue-500 to-blue-600"
-                                    titleColor={config.actLearnTitleColor}
-                                    titleFontSize={config.actLearnTitleFontSize}
-                                    onClick={() => onLearnVocabulary(vocabulary)}
-                                    stats={attempts.vocabulary}
-                                    playerData={playerData}
-                                    showCorrectCount={false}
-                                    isHorizontalAttempts={true}
-                                    config={config}
-                                />
-                            )}
+                    <ActivityCard
+                        title={config.activityLearnLabel}
+                        description={config.activityLearnDesc}
+                        icon={<PointingFingerIcon />}
+                        cardBgColor={config.actLearnBgColor}
+                        cardBgClass="bg-gradient-to-r from-blue-500 to-blue-600"
+                        titleColor={config.actLearnTitleColor}
+                        titleFontSize={config.actLearnTitleFontSize}
+                        onClick={handleLearnClick}
+                        stats={attempts.vocabulary}
+                        playerData={playerData}
+                        showCorrectCount={false}
+                        isHorizontalAttempts={true}
+                        config={config}
+                        isCardLoading={loadingActivity === 'learn'}
+                    />
 
-                            {hasVocab && (
-                                <ActivityCard
-                                    title={config.activityMatchLabel}
-                                    description={config.activityMatchDesc}
-                                    icon={<PointingFingerIcon />}
-                                    cardBgColor={config.actMatchBgColor}
-                                    cardBgClass="bg-gradient-to-r from-teal-500 to-teal-600"
-                                    titleColor={config.actMatchTitleColor}
-                                    titleFontSize={config.actMatchTitleFontSize}
-                                    onClick={() => onStartMatchingGame(vocabulary)}
-                                    stats={attempts.matching}
-                                    playerData={playerData}
-                                    showCorrectCount={true}
-                                    config={config}
-                                />
-                            )}
+                    <ActivityCard
+                        title={config.activityMatchLabel}
+                        description={config.activityMatchDesc}
+                        icon={<PointingFingerIcon />}
+                        cardBgColor={config.actMatchBgColor}
+                        cardBgClass="bg-gradient-to-r from-teal-500 to-teal-600"
+                        titleColor={config.actMatchTitleColor}
+                        titleFontSize={config.actMatchTitleFontSize}
+                        onClick={handleMatchingClick}
+                        stats={attempts.matching}
+                        playerData={playerData}
+                        showCorrectCount={true}
+                        config={config}
+                        isCardLoading={loadingActivity === 'match'}
+                    />
 
-                            {hasVocab && (
-                                <ActivityCard
-                                    title={config.activityListenChooseLabel !== undefined ? config.activityListenChooseLabel : 'Nghe & Chọn'}
-                                    description={config.activityListenChooseDesc !== undefined ? config.activityListenChooseDesc : ''}
-                                    icon={<PointingFingerIcon />}
-                                    cardBgColor={config.actListenChooseBgColor || '#e11d48'}
-                                    cardBgClass="bg-gradient-to-r from-rose-500 to-pink-600"
-                                    titleColor={config.actListenChooseTitleColor || '#ffffff'}
-                                    titleFontSize={config.actListenChooseTitleFontSize || 1.125}
-                                    onClick={() => onStartListenChooseGame(vocabulary)}
-                                    stats={attempts.listenChoose}
-                                    playerData={playerData}
-                                    showCorrectCount={true}
-                                    config={config}
-                                />
-                            )}
+                    <ActivityCard
+                        title={config.activityListenChooseLabel !== undefined ? config.activityListenChooseLabel : 'Nghe & Chọn'}
+                        description={config.activityListenChooseDesc !== undefined ? config.activityListenChooseDesc : ''}
+                        icon={<PointingFingerIcon />}
+                        cardBgColor={config.actListenChooseBgColor || '#e11d48'}
+                        cardBgClass="bg-gradient-to-r from-rose-500 to-pink-600"
+                        titleColor={config.actListenChooseTitleColor || '#ffffff'}
+                        titleFontSize={config.actListenChooseTitleFontSize || 1.125}
+                        onClick={handleListenChooseClick}
+                        stats={attempts.listenChoose}
+                        playerData={playerData}
+                        showCorrectCount={true}
+                        config={config}
+                        isCardLoading={loadingActivity === 'listenChoose'}
+                    />
 
-                            {hasVocab && (
-                                <ActivityCard
-                                    title={config.activitySpellLabel}
-                                    description={config.activitySpellDesc}
-                                    icon={<PointingFingerIcon />}
-                                    cardBgColor={config.actSpellBgColor}
-                                    cardBgClass="bg-gradient-to-r from-sky-500 to-sky-600"
-                                    titleColor={config.actSpellTitleColor}
-                                    titleFontSize={config.actSpellTitleFontSize}
-                                    onClick={() => onStartSpellingGame(vocabulary)}
-                                    stats={attempts.spelling}
-                                    playerData={playerData}
-                                    showCorrectCount={true}
-                                    config={config}
-                                />
-                            )}
+                    <ActivityCard
+                        title={config.activitySpellLabel}
+                        description={config.activitySpellDesc}
+                        icon={<PointingFingerIcon />}
+                        cardBgColor={config.actSpellBgColor}
+                        cardBgClass="bg-gradient-to-r from-sky-500 to-sky-600"
+                        titleColor={config.actSpellTitleColor}
+                        titleFontSize={config.actSpellTitleFontSize}
+                        onClick={handleSpellingClick}
+                        stats={attempts.spelling}
+                        playerData={playerData}
+                        showCorrectCount={true}
+                        config={config}
+                        isCardLoading={loadingActivity === 'spell'}
+                    />
 
-                            {hasQuiz && (
-                                <ActivityCard
-                                    title={config.activityQuizLabel}
-                                    description={config.activityQuizDesc}
-                                    icon={<PointingFingerIcon />}
-                                    cardBgColor={config.actQuizBgColor}
-                                    cardBgClass="bg-gradient-to-r from-blue-900 via-indigo-950 to-slate-900"
-                                    titleColor={config.actQuizTitleColor}
-                                    titleFontSize={config.actQuizTitleFontSize}
-                                    onClick={() => onStartQuiz(quiz)}
-                                    stats={attempts.quiz}
-                                    playerData={playerData}
-                                    showCorrectCount={true}
-                                    config={config}
-                                />
-                            )}
-                        </>
-                    ) : (
-                         <div className="text-center py-4">
-                            <p className="text-gray-700">Mục này chưa có hoạt động nào.</p>
-                        </div>
-                    )}
+                    <ActivityCard
+                        title={config.activityQuizLabel}
+                        description={config.activityQuizDesc}
+                        icon={<PointingFingerIcon />}
+                        cardBgColor={config.actQuizBgColor}
+                        cardBgClass="bg-gradient-to-r from-blue-900 via-indigo-950 to-slate-900"
+                        titleColor={config.actQuizTitleColor}
+                        titleFontSize={config.actQuizTitleFontSize}
+                        onClick={handleQuizClick}
+                        stats={attempts.quiz}
+                        playerData={playerData}
+                        showCorrectCount={true}
+                        config={config}
+                        isCardLoading={loadingActivity === 'quiz'}
+                    />
                 </div>
             </div>
         </div>
