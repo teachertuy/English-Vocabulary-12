@@ -146,7 +146,7 @@ const DEFAULT_CONFIG: ExerciseSelectionConfig = {
     actSummaryBorderWidth: 2,
     actSummaryWidth: 100,
     actSummaryBorderRadius: 16,
-    actSummaryTitleText: 'Tổng thời gian học & làm bài cả 4 phần',
+    actSummaryTitleText: 'KẾT QUẢ HỌC TẬP UNIT',
     actSummaryTitleColor: '#f59e0b',
     actSummaryTitleFontSize: 0.9,
 
@@ -782,18 +782,18 @@ const EditExerciseSelectionModal: React.FC<EditExerciseSelectionModalProps> = ({
                                         </div>
 
                                         <div className="font-bold text-indigo-900 text-sm border-b border-indigo-200 pb-2 pt-2 flex items-center gap-2">
-                                            <span>✏️</span> Tùy chỉnh Cụm "Tổng thời gian học 4 phần" & Các Ý Nhỏ (1,2,3,4)
+                                            <span>✏️</span> Tùy chỉnh Tiêu đề Bảng kết quả học tập & Các Ý Nhỏ (1,2,3,4,5)
                                         </div>
 
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <div className="col-span-1 md:col-span-2">
-                                                <label className="block text-xs font-bold text-gray-800 mb-1">Tiêu đề cụm Tổng thời gian</label>
+                                                <label className="block text-xs font-bold text-gray-800 mb-1">Tiêu đề Bảng kết quả học tập (tự động theo Unit/Topic đang học)</label>
                                                 <input 
                                                     type="text" 
-                                                    value={config.actSummaryTitleText !== undefined ? config.actSummaryTitleText : 'Tổng thời gian học & làm bài cả 4 phần'} 
+                                                    value={config.actSummaryTitleText !== undefined ? config.actSummaryTitleText : 'KẾT QUẢ HỌC TẬP UNIT'} 
                                                     onChange={e => handleChange('actSummaryTitleText', e.target.value)} 
                                                     className="w-full p-2 border rounded-lg text-xs font-semibold bg-white focus:ring-2 focus:ring-indigo-500" 
-                                                    placeholder="Tổng thời gian học & làm bài cả 4 phần"
+                                                    placeholder="KẾT QUẢ HỌC TẬP UNIT"
                                                 />
                                             </div>
                                             <div>

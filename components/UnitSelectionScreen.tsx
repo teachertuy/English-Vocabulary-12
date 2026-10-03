@@ -155,7 +155,7 @@ const DEFAULT_EXERCISE_CONFIG: ExerciseSelectionConfig = {
     actSummaryBorderWidth: 2,
     actSummaryWidth: 100,
     actSummaryBorderRadius: 16,
-    actSummaryTitleText: 'Tổng thời gian học & làm bài cả 4 phần',
+    actSummaryTitleText: 'KẾT QUẢ HỌC TẬP UNIT',
     actSummaryTitleColor: '#f59e0b',
     actSummaryTitleFontSize: 0.9,
     actSummarySubTitleText: 'Tổng thời gian tham gia:',

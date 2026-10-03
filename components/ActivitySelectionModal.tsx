@@ -152,7 +152,7 @@ const DEFAULT_CONFIG: ExerciseSelectionConfig = {
     actSummaryBorderWidth: 2,
     actSummaryWidth: 100,
     actSummaryBorderRadius: 16,
-    actSummaryTitleText: 'Tổng thời gian học & làm bài cả 4 phần',
+    actSummaryTitleText: 'KẾT QUẢ HỌC TẬP UNIT',
     actSummaryTitleColor: '#f59e0b',
     actSummaryTitleFontSize: 0.9,
 
@@ -924,7 +924,27 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({
                     const widthPct = config.actSummaryWidth || 100;
                     const borderRadius = config.actSummaryBorderRadius !== undefined ? config.actSummaryBorderRadius : 16;
                     
-                    const titleText = config.actSummaryTitleText || 'Tổng thời gian học & làm bài cả 4 phần';
+                    const itemPrefix = grade === 'topics' ? (config.topicLabelText || 'TOPIC') : (config.unitLabelText || 'UNIT');
+                    const currentUnitTag = `${itemPrefix} ${unitNumber}`;
+
+                    const getSummaryTitleText = () => {
+                        const raw = (config.actSummaryTitleText || '').trim();
+                        // If empty, or matches/contains any variation of "theo dõi", "tổng thời gian", "kết quả học", or default
+                        if (!raw || 
+                            /bảng\s*theo\s*dõi/i.test(raw) || 
+                            /theo\s*dõi/i.test(raw) ||
+                            /tổng\s*thời\s*gian/i.test(raw) || 
+                            /kết\s*quả\s*học/i.test(raw) ||
+                            /kết\s*quả/i.test(raw)
+                        ) {
+                            return `KẾT QUẢ HỌC TẬP ${currentUnitTag}`;
+                        }
+                        if (/\{unit\}/i.test(raw)) {
+                            return raw.replace(/\{unit\}/gi, currentUnitTag);
+                        }
+                        return `KẾT QUẢ HỌC TẬP ${currentUnitTag}`;
+                    };
+                    const titleText = getSummaryTitleText();
                     const titleColor = config.actSummaryTitleColor || '#f59e0b';
                     const titleFontSize = config.actSummaryTitleFontSize || 0.9;
 
