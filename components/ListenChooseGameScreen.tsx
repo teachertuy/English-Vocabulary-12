@@ -12,7 +12,7 @@ import {
     updateVocabularyAudio 
 } from '../services/firebaseService';
 import { generateSpeech } from '../services/geminiService';
-import { decode, decodeAudioData } from '../utils/audioUtils';
+import { decode, decodeAudioData, getSharedAudioContext } from '../utils/audioUtils';
 import { YellowSpeakerButton } from './YellowSpeakerIcon';
 import { ActivityBackButton } from './ActivityBackButton';
 
@@ -149,7 +149,7 @@ const ListenChooseGameScreen: React.FC<ListenChooseGameScreenProps> = ({
         if (wordItem.audio) {
             try {
                 if (!audioContextRef.current) {
-                    audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
+                    audioContextRef.current = getSharedAudioContext();
                 }
                 const audioContext = audioContextRef.current;
                 if (audioContext.state === 'suspended') {
@@ -162,7 +162,8 @@ const ListenChooseGameScreen: React.FC<ListenChooseGameScreenProps> = ({
                 source.onended = () => {
                     if (isComponentMounted.current) setIsPlayingAudio(false);
                 };
-                source.start();
+                const startTime = Math.max(audioContext.currentTime, 0) + 0.025;
+                source.start(startTime);
                 return;
             } catch (err) {
                 console.warn("Audio buffer playback error, using SpeechSynthesis fallback:", err);

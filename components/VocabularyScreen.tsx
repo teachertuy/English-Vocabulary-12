@@ -5,26 +5,7 @@ import { generateSpeech, generateImagePrompt } from '../services/geminiService';
 import { updateVocabularyAudio, updateVocabularyImage, updateUnitActivityResult, removeStudentPresence, trackStudentPresence, updateUnitActivityProgress } from '../services/firebaseService';
 import { isUnreliableImage, getVocabImageFromCache, setVocabImageToCache, resolveVocabImages } from '../services/imageCacheService';
 import { ActivityBackButton } from './ActivityBackButton';
-
-
-function decode(base64: string): Uint8Array {
-  const binaryString = atob(base64);
-  const len = binaryString.length;
-  const bytes = new Uint8Array(len);
-  for (let i = 0; i < len; i++) bytes[i] = binaryString.charCodeAt(i);
-  return bytes;
-}
-
-async function decodeAudioData(data: Uint8Array, ctx: AudioContext, sampleRate: number, numChannels: number): Promise<AudioBuffer> {
-  const dataInt16 = new Int16Array(data.buffer);
-  const frameCount = dataInt16.length / numChannels;
-  const buffer = ctx.createBuffer(numChannels, frameCount, sampleRate);
-  for (let channel = 0; channel < numChannels; channel++) {
-    const channelData = buffer.getChannelData(channel);
-    for (let i = 0; i < frameCount; i++) channelData[i] = dataInt16[i * numChannels + channel] / 32768.0;
-  }
-  return buffer;
-}
+import { decode, decodeAudioData, getSharedAudioContext, startAudioKeepAlive, warmUpAudioContext } from '../utils/audioUtils';
 
 const CARD_COLORS = ['bg-[#FFF0F0]', 'bg-[#F0F8FF]', 'bg-[#F0FFF4]'];
 
@@ -63,6 +44,54 @@ const VocabularyScreen: React.FC<VocabularyScreenProps> = ({ unitNumber, vocabul
     const isComponentMounted = useRef(true);
     const audioListenedCountRef = useRef<number>(0);
     const listenedWordsSetRef = useRef<Set<string>>(new Set());
+    const audioBufferCacheRef = useRef<Map<string, AudioBuffer>>(new Map());
+    const currentSourceRef = useRef<AudioBufferSourceNode | null>(null);
+
+    // Initialize AudioContext, keep-alive, and user gesture warming for iPad/Safari
+    useEffect(() => {
+        const ctx = getSharedAudioContext();
+        audioContextRef.current = ctx;
+
+        // Keep iPad/Safari audio hardware warm & active throughout study session
+        const stopKeepAlive = startAudioKeepAlive(ctx);
+
+        const handleUserGesture = () => {
+            warmUpAudioContext(ctx);
+        };
+        window.addEventListener('touchstart', handleUserGesture, { once: true, passive: true });
+        window.addEventListener('pointerdown', handleUserGesture, { once: true, passive: true });
+
+        return () => {
+            stopKeepAlive();
+            window.removeEventListener('touchstart', handleUserGesture);
+            window.removeEventListener('pointerdown', handleUserGesture);
+            if (currentSourceRef.current) {
+                try {
+                    currentSourceRef.current.stop();
+                    currentSourceRef.current.disconnect();
+                } catch (e) {}
+                currentSourceRef.current = null;
+            }
+        };
+    }, []);
+
+    // Pre-decode audio for all words that already have audio into memory cache
+    useEffect(() => {
+        const ctx = audioContextRef.current || getSharedAudioContext();
+        audioContextRef.current = ctx;
+
+        localVocabulary.forEach(item => {
+            if (item.audio && !audioBufferCacheRef.current.has(item.word)) {
+                try {
+                    decodeAudioData(decode(item.audio), ctx, 24000, 1).then(buffer => {
+                        if (isComponentMounted.current) {
+                            audioBufferCacheRef.current.set(item.word, buffer);
+                        }
+                    }).catch(() => {});
+                } catch (e) {}
+            }
+        });
+    }, [localVocabulary]);
 
     useEffect(() => {
         if (vocabulary && vocabulary.length > 0) {
@@ -186,37 +215,86 @@ const VocabularyScreen: React.FC<VocabularyScreenProps> = ({ unitNumber, vocabul
                 listenedWords: Array.from(listenedWordsSetRef.current),
             }).catch(console.error);
         }
+
+        // If user taps while audio is playing, cleanly stop current audio first
+        if (currentSourceRef.current) {
+            try {
+                currentSourceRef.current.stop();
+                currentSourceRef.current.disconnect();
+            } catch (err) {}
+            currentSourceRef.current = null;
+        }
+
         if (wordItem.audio) {
-            if (playingWord) return;
             try {
                 setPlayingWord(wordItem.word);
-                if (!audioContextRef.current) audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
-                const audioContext = audioContextRef.current;
-                if (audioContext.state === 'suspended') await audioContext.resume();
-                const audioBuffer = await decodeAudioData(decode(wordItem.audio), audioContext, 24000, 1);
+                const audioContext = audioContextRef.current || getSharedAudioContext();
+                audioContextRef.current = audioContext;
+
+                if (audioContext.state === 'suspended') {
+                    await audioContext.resume();
+                }
+
+                // Check decoded audio buffer cache
+                let audioBuffer = audioBufferCacheRef.current.get(wordItem.word);
+                if (!audioBuffer) {
+                    audioBuffer = await decodeAudioData(decode(wordItem.audio), audioContext, 24000, 1);
+                    audioBufferCacheRef.current.set(wordItem.word, audioBuffer);
+                }
+
                 const source = audioContext.createBufferSource();
                 source.buffer = audioBuffer;
                 source.connect(audioContext.destination);
-                source.onended = () => setPlayingWord(null);
-                source.start();
+                currentSourceRef.current = source;
+
+                source.onended = () => {
+                    if (currentSourceRef.current === source) {
+                        currentSourceRef.current = null;
+                    }
+                    if (isComponentMounted.current) {
+                        setPlayingWord(null);
+                    }
+                };
+
+                // Tiny 25ms scheduling buffer to ensure WebKit audio thread is ready without underrun
+                const startTime = Math.max(audioContext.currentTime, 0) + 0.025;
+                source.start(startTime);
             } catch (error) { 
                 setPlayingWord(null); 
                 if ('speechSynthesis' in window) {
-                    window.speechSynthesis.cancel();
-                    const utterance = new SpeechSynthesisUtterance(wordItem.word);
-                    utterance.lang = 'en-US';
-                    window.speechSynthesis.speak(utterance);
+                    try {
+                        if (window.speechSynthesis.speaking) window.speechSynthesis.cancel();
+                        setTimeout(() => {
+                            const utterance = new SpeechSynthesisUtterance(wordItem.word);
+                            utterance.lang = 'en-US';
+                            utterance.onend = () => { if (isComponentMounted.current) setPlayingWord(null); };
+                            utterance.onerror = () => { if (isComponentMounted.current) setPlayingWord(null); };
+                            setPlayingWord(wordItem.word);
+                            window.speechSynthesis.speak(utterance);
+                        }, 30);
+                    } catch (e) {
+                        setPlayingWord(null);
+                    }
                 }
             }
         } else {
             if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                const utterance = new SpeechSynthesisUtterance(wordItem.word);
-                utterance.lang = 'en-US';
-                window.speechSynthesis.speak(utterance);
+                try {
+                    if (window.speechSynthesis.speaking) window.speechSynthesis.cancel();
+                    setTimeout(() => {
+                        const utterance = new SpeechSynthesisUtterance(wordItem.word);
+                        utterance.lang = 'en-US';
+                        utterance.onend = () => { if (isComponentMounted.current) setPlayingWord(null); };
+                        utterance.onerror = () => { if (isComponentMounted.current) setPlayingWord(null); };
+                        setPlayingWord(wordItem.word);
+                        window.speechSynthesis.speak(utterance);
+                    }, 30);
+                } catch (e) {
+                    setPlayingWord(null);
+                }
             }
         }
-    }, [playingWord]);
+    }, [vocabulary.length, classroomId, activityId, grade, unitNumber, playerData]);
     
     return (
         <div className="flex flex-col p-2 sm:p-4 bg-[#FFF8F0] w-full h-[90vh] sm:h-[88vh] max-h-[92vh] min-h-[550px] rounded-2xl relative overflow-hidden">
