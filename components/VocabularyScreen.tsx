@@ -232,7 +232,11 @@ const VocabularyScreen: React.FC<VocabularyScreenProps> = ({ unitNumber, vocabul
                 audioContextRef.current = audioContext;
 
                 if (audioContext.state === 'suspended') {
-                    await audioContext.resume();
+                    try {
+                        await audioContext.resume();
+                    } catch (resumeErr) {
+                        console.warn("AudioContext resume failed:", resumeErr);
+                    }
                 }
 
                 // Check decoded audio buffer cache

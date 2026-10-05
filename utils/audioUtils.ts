@@ -41,7 +41,7 @@ export async function decodeAudioData(
   ctx: AudioContext, 
   sampleRate: number = 24000, 
   numChannels: number = 1,
-  leadInSilenceMs: number = 120,
+  leadInSilenceMs: number = 250,
   trailingSilenceMs: number = 50
 ): Promise<AudioBuffer> {
   const dataInt16 = new Int16Array(data.buffer);
