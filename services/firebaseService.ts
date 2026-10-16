@@ -217,6 +217,13 @@ export const deleteUnitStudentResultByGrade = async (classroomId: string, grade:
     await remove(ref(db, `classrooms/${classroomId}/units_${grade}/${unitId}/results/${playerKey}/${activityId}`));
 };
 
+export const deleteUnitOrTopicStudentResult = async (classroomId: string, grade: any, unitId: string, name: string, className: string, activityId: string) => {
+    const db = checkFirebase();
+    const playerKey = getPlayerKey(name, className);
+    const basePath = grade === 'topics' ? `topics/${unitId}` : `units_${grade}/${unitId}`;
+    await remove(ref(db, `classrooms/${classroomId}/${basePath}/results/${playerKey}/${activityId}`));
+};
+
 export const deleteUnitStudentAllResultsByGrade = async (classroomId: string, grade: number, unitId: string, name: string, className: string) => {
     const db = checkFirebase();
     const playerKey = getPlayerKey(name, className);
@@ -301,6 +308,86 @@ export const startUnitActivity = (classroomId: string, grade: any, unitId: strin
     }
 };
 
+export const decodePushIdTimestamp = (id: string): number | null => {
+    if (!id || typeof id !== 'string' || id.length < 8) return null;
+    const PUSH_CHARS = "-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz";
+    let time = 0;
+    for (let i = 0; i < 8; i++) {
+        const idx = PUSH_CHARS.indexOf(id.charAt(i));
+        if (idx === -1) return null;
+        time = time * 64 + idx;
+    }
+    // Sanity check: valid Unix ms timestamp between 2024 and 2030
+    if (time < 1700000000000 || time > 1900000000000) return null;
+    return time;
+};
+
+export const resolveAttemptTimeSeconds = (item: any, actId?: string): number => {
+    const recordedTime = parseInt(item?.timeTakenSeconds, 10);
+    if (!isNaN(recordedTime) && recordedTime > 0) {
+        return recordedTime;
+    }
+
+    const effectiveActId = actId || item?._actId || item?.activityId;
+
+    // Check if we can derive from push ID start timestamp and session timestamp
+    if (effectiveActId) {
+        const startTime = decodePushIdTimestamp(effectiveActId);
+        const endTime = typeof item?.timestamp === 'number' 
+            ? item.timestamp 
+            : (item?.timestamp?.seconds ? item.timestamp.seconds * 1000 : null);
+        
+        if (startTime && endTime && endTime >= startTime) {
+            const calculatedSec = Math.round((endTime - startTime) / 1000);
+            if (calculatedSec >= 5 && calculatedSec <= 7200) {
+                return calculatedSec;
+            }
+        }
+    }
+
+    // Realistic fallback based on verified student learning activity
+    const audioCount = typeof item?.audioListenedCount === 'number' ? item.audioListenedCount : (parseInt(item?.audioListenedCount, 10) || 0);
+    const uniqueWordsCount = typeof item?.uniqueWordsListenedCount === 'number'
+        ? item.uniqueWordsListenedCount
+        : (Array.isArray(item?.listenedWords) ? item.listenedWords.length : 0);
+    const answeredCount = typeof item?.answered === 'number' ? item.answered : (parseInt(item?.answered, 10) || 0);
+    const corrCount = typeof item?.correct === 'number' ? item.correct : (parseInt(item?.correct, 10) || 0);
+    const incorrCount = typeof item?.incorrect === 'number' ? item.incorrect : (parseInt(item?.incorrect, 10) || 0);
+    const totalDone = Math.max(answeredCount, corrCount + incorrCount);
+
+    if (item?.gameType === 'vocabulary') {
+        if (audioCount > 0 || uniqueWordsCount > 0) {
+            return Math.max(10, audioCount * 3, uniqueWordsCount * 6);
+        }
+    } else {
+        if (totalDone > 0) {
+            return Math.max(10, totalDone * 5);
+        }
+    }
+
+    return Math.max(0, recordedTime || 0);
+};
+
+export const isRealStudentAttempt = (item: any): boolean => {
+    if (!item) return false;
+    const recordedTime = parseInt(item.timeTakenSeconds, 10) || 0;
+    const audioCount = parseInt(item.audioListenedCount, 10) || 0;
+    const uniqueCount = parseInt(item.uniqueWordsListenedCount, 10) || (Array.isArray(item.listenedWords) ? item.listenedWords.length : 0);
+    const answered = parseInt(item.answered, 10) || 0;
+    const correct = parseInt(item.correct, 10) || 0;
+    const incorrect = parseInt(item.incorrect, 10) || 0;
+    const hasDetails = Array.isArray(item.details) && item.details.length > 0;
+    const isCompleted = item.status === 'completed' || item.score === 'ĐÃ HỌC';
+
+    if (audioCount > 0 || uniqueCount > 0 || answered > 0 || correct > 0 || incorrect > 0 || hasDetails || recordedTime >= 5) {
+        return true;
+    }
+    if (isCompleted && (recordedTime > 0 || answered > 0)) {
+        return true;
+    }
+    return false;
+};
+
 export interface AttemptDetail {
     timeTakenSeconds: number;
     timestamp?: any;
@@ -312,6 +399,8 @@ export interface AttemptDetail {
     audioListenedCount?: number;
     uniqueWordsListenedCount?: number;
     listenedWords?: string[];
+    _actId?: string;
+    activityId?: string;
 }
 
 export interface ActivityStats {
@@ -335,6 +424,11 @@ export const calculateStudentCompletionPercent = (
         correct?: number;
         incorrect?: number;
         totalQuestions?: number;
+        audioListenedCount?: number;
+        uniqueWordsListenedCount?: number;
+        listenedWords?: string[];
+        _actId?: string;
+        activityId?: string;
     }>,
     unitVocabCount?: number,
     unitQuizCount?: number
@@ -342,6 +436,7 @@ export const calculateStudentCompletionPercent = (
     if (!attemptsList || attemptsList.length === 0) return 0;
 
     let vTime = 0;
+    let vMaxUniqueWords = 0;
     let mMaxCorrect = 0;
     let lMaxCorrect = 0;
     let sMaxDone = 0;
@@ -350,20 +445,30 @@ export const calculateStudentCompletionPercent = (
     let maxVocabTotalQuestions = 0;
     let maxQuizTotalQuestions = 0;
 
+    const allVocabWordsSet = new Set<string>();
+
     attemptsList.forEach(a => {
-        const gType = a.gameType;
-        const time = Math.max(0, parseInt(a.timeTakenSeconds as any, 10) || 0);
+        if (!a) return;
+        const gType = a.gameType === 'listen-choose' || a.gameType === 'listenChoose' ? 'listenChoose' : a.gameType;
+        const time = resolveAttemptTimeSeconds(a, a._actId || a.activityId);
         const corr = typeof a.correct === 'number' ? a.correct : (parseInt(a.correct as any, 10) || 0);
         const incorr = typeof a.incorrect === 'number' ? a.incorrect : (parseInt(a.incorrect as any, 10) || 0);
         const totQ = typeof a.totalQuestions === 'number' ? a.totalQuestions : (parseInt(a.totalQuestions as any, 10) || 0);
 
         if (gType === 'vocabulary') {
             vTime += time;
+            const uniqueWords = typeof a.uniqueWordsListenedCount === 'number'
+                ? a.uniqueWordsListenedCount
+                : (Array.isArray(a.listenedWords) ? a.listenedWords.length : 0);
+            if (uniqueWords > vMaxUniqueWords) vMaxUniqueWords = uniqueWords;
+            if (Array.isArray(a.listenedWords)) {
+                a.listenedWords.forEach(w => { if (w) allVocabWordsSet.add(w); });
+            }
             if (totQ > maxVocabTotalQuestions) maxVocabTotalQuestions = totQ;
         } else if (gType === 'matching') {
             if (corr > mMaxCorrect) mMaxCorrect = corr;
             if (totQ > maxVocabTotalQuestions) maxVocabTotalQuestions = totQ;
-        } else if (gType === 'listen-choose' || gType === 'listenChoose') {
+        } else if (gType === 'listenChoose') {
             if (corr > lMaxCorrect) lMaxCorrect = corr;
             if (totQ > maxVocabTotalQuestions) maxVocabTotalQuestions = totQ;
         } else if (gType === 'spelling') {
@@ -385,9 +490,12 @@ export const calculateStudentCompletionPercent = (
         ? unitQuizCount
         : (maxQuizTotalQuestions > 0 ? maxQuizTotalQuestions : 10);
 
-    // Thẻ 1 - Từ vựng (Vocabulary): Standard time 12s per word (20%)
+    // Thẻ 1 - Từ vựng (Vocabulary): Number of unique words listened out of vocabCount, OR standard time 12s per word (20%)
+    const effectiveUniqueWords = Math.max(vMaxUniqueWords, allVocabWordsSet.size);
     const standardVocabTimeSeconds = vocabCount * 12;
-    const rateCard1 = standardVocabTimeSeconds > 0 ? Math.min(1.0, vTime / standardVocabTimeSeconds) : 0;
+    const rateFromWords = vocabCount > 0 ? Math.min(1.0, effectiveUniqueWords / vocabCount) : 0;
+    const rateFromTime = standardVocabTimeSeconds > 0 ? Math.min(1.0, vTime / standardVocabTimeSeconds) : 0;
+    const rateCard1 = Math.max(rateFromWords, rateFromTime);
     const pctCard1 = rateCard1 * 20;
 
     // Thẻ 2 - Ghép cặp (Matching): Number of correctly matched pairs out of vocabCount (20%)
@@ -448,11 +556,11 @@ export const listenToStudentActivityAttempts = (
                     spelling: [],
                     quiz: []
                 };
-                Object.values(val).forEach((item: any) => {
+                Object.entries(val).forEach(([key, item]: [string, any]) => {
                     if (item && item.gameType) {
                         const gt = (item.gameType === 'listen-choose' || item.gameType === 'listenChoose') ? 'listenChoose' : item.gameType;
-                        if (grouped[gt]) {
-                            grouped[gt].push(item);
+                        if (grouped[gt] && isRealStudentAttempt(item)) {
+                            grouped[gt].push({ ...item, _actId: key });
                         }
                     }
                 });
@@ -471,7 +579,7 @@ export const listenToStudentActivityAttempts = (
                     });
 
                     const attemptsList: AttemptDetail[] = items.map((item) => ({
-                        timeTakenSeconds: Math.max(0, parseInt(item.timeTakenSeconds, 10) || 0),
+                        timeTakenSeconds: resolveAttemptTimeSeconds(item, item._actId),
                         timestamp: item.timestamp,
                         correct: typeof item.correct === 'number' ? item.correct : (item.correct !== undefined ? (parseInt(item.correct, 10) || 0) : 0),
                         incorrect: typeof item.incorrect === 'number' ? item.incorrect : (item.incorrect !== undefined ? (parseInt(item.incorrect, 10) || 0) : 0),
@@ -479,7 +587,9 @@ export const listenToStudentActivityAttempts = (
                         audioListenedCount: typeof item.audioListenedCount === 'number' ? item.audioListenedCount : (item.audioListenedCount !== undefined ? (parseInt(item.audioListenedCount, 10) || 0) : 0),
                         uniqueWordsListenedCount: typeof item.uniqueWordsListenedCount === 'number' ? item.uniqueWordsListenedCount : (item.uniqueWordsListenedCount !== undefined ? (parseInt(item.uniqueWordsListenedCount, 10) || 0) : 0),
                         listenedWords: Array.isArray(item.listenedWords) ? item.listenedWords : [],
-                        gameType: gt
+                        gameType: gt,
+                        _actId: item._actId,
+                        activityId: item._actId
                     }));
 
                     const totalTimeSeconds = attemptsList.reduce((acc, curr) => acc + curr.timeTakenSeconds, 0);
@@ -512,7 +622,6 @@ export const listenToStudentActivityAttempts = (
             spelling: defaultStats(),
             quiz: defaultStats()
         });
-        return () => {};
     }
 };
 

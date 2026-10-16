@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { PlayerData, VocabularyWord, GameResult, QuizAnswerDetail, ExerciseSelectionConfig } from '../types';
-import { updateUnitActivityResult, trackStudentPresence, incrementCheatCount, listenForKickedStatus, getGameStatus, removeStudentPresence, updateStudentProgress, updateUnitActivityProgress } from '../services/firebaseService';
+import { updateUnitActivityResult, trackStudentPresence, incrementCheatCount, listenForKickedStatus, getGameStatus, removeStudentPresence, updateStudentProgress, updateUnitActivityProgress, deleteUnitOrTopicStudentResult } from '../services/firebaseService';
 import { ActivityBackButton } from './ActivityBackButton';
 
 
@@ -90,26 +90,65 @@ const MatchingGameScreen: React.FC<MatchingGameScreenProps> = ({ playerData, voc
         updateStudentProgress(classroomId, playerData.name, playerData.class, correctCount, incorrectCount).catch(console.error);
         const unitIdentifier = grade === 'topics' ? `topic_${unitNumber}` : `unit_${unitNumber}`;
         const currentScore = ((correctCount / vocabulary.length) * 10).toFixed(1);
-        const progressData = { score: currentScore, correct: correctCount, incorrect: incorrectCount, answered: gameDetails.length, totalQuestions: vocabulary.length, details: gameDetails };
+        const elapsedSeconds = Math.max(1, Math.round((Date.now() - startTime) / 1000));
+        const progressData = { 
+            score: currentScore, 
+            correct: correctCount, 
+            incorrect: incorrectCount, 
+            answered: gameDetails.length, 
+            totalQuestions: vocabulary.length, 
+            timeTakenSeconds: elapsedSeconds,
+            details: gameDetails 
+        };
         updateUnitActivityProgress(classroomId, grade, unitIdentifier, playerData, activityId, progressData).catch(console.error);
-    }, [gameDetails, classroomId, playerData, vocabulary.length, grade, unitNumber, activityId]);
+    }, [gameDetails, classroomId, playerData, vocabulary.length, grade, unitNumber, activityId, startTime]);
+
+    // Continuous heartbeat & unload persistence to guarantee zero time loss
+    useEffect(() => {
+        const syncCurrentTime = () => {
+            if (!classroomId || !activityId || isGameOver) return;
+            const unitIdentifier = grade === 'topics' ? `topic_${unitNumber}` : `unit_${unitNumber}`;
+            const elapsedSeconds = Math.max(1, Math.round((Date.now() - startTime) / 1000));
+            updateUnitActivityProgress(classroomId, grade, unitIdentifier, playerData, activityId, {
+                timeTakenSeconds: elapsedSeconds
+            }).catch(console.error);
+        };
+
+        const intervalId = setInterval(syncCurrentTime, 5000);
+        window.addEventListener('visibilitychange', syncCurrentTime);
+        window.addEventListener('pagehide', syncCurrentTime);
+        window.addEventListener('beforeunload', syncCurrentTime);
+
+        return () => {
+            clearInterval(intervalId);
+            window.removeEventListener('visibilitychange', syncCurrentTime);
+            window.removeEventListener('pagehide', syncCurrentTime);
+            window.removeEventListener('beforeunload', syncCurrentTime);
+            syncCurrentTime();
+        };
+    }, [classroomId, activityId, grade, unitNumber, playerData, startTime, isGameOver]);
 
     const handleExitPrematurely = () => {
         if (isGameOver) return;
         const endTime = Date.now();
-        const timeTakenSeconds = Math.round((endTime - startTime) / 1000);
-        const resultData: Partial<GameResult> = {
-            score: ((score / vocabulary.length) * 10).toFixed(1),
-            correct: score,
-            incorrect: gameDetails.length - score,
-            answered: gameDetails.length,
-            totalQuestions: vocabulary.length,
-            timeTakenSeconds: timeTakenSeconds,
-            details: gameDetails,
-        };
+        const timeTakenSeconds = Math.max(1, Math.round((endTime - startTime) / 1000));
         if (classroomId && activityId) {
             const unitIdentifier = grade === 'topics' ? `topic_${unitNumber}` : `unit_${unitNumber}`;
-            updateUnitActivityResult(classroomId, grade, unitIdentifier, playerData, activityId, resultData).catch(console.error);
+            if (gameDetails.length === 0) {
+                // User opened and exited without answering - cleanly remove blank placeholder
+                deleteUnitOrTopicStudentResult(classroomId, grade, unitIdentifier, playerData.name, playerData.class, activityId).catch(console.error);
+            } else {
+                const resultData: Partial<GameResult> = {
+                    score: ((score / vocabulary.length) * 10).toFixed(1),
+                    correct: score,
+                    incorrect: gameDetails.length - score,
+                    answered: gameDetails.length,
+                    totalQuestions: vocabulary.length,
+                    timeTakenSeconds: timeTakenSeconds,
+                    details: gameDetails,
+                };
+                updateUnitActivityResult(classroomId, grade, unitIdentifier, playerData, activityId, resultData).catch(console.error);
+            }
             removeStudentPresence(classroomId, playerData.name, playerData.class).catch(console.error);
         }
         onBack();

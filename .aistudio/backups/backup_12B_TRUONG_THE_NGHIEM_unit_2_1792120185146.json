@@ -1,0 +1,2714 @@
+{
+  "-P2mm7aDYFRl3bs8K8UY": {
+    "answered": 54,
+    "attempts": 1,
+    "audioListenedCount": 131,
+    "correct": 0,
+    "gameType": "vocabulary",
+    "incorrect": 0,
+    "listenedWords": [
+      "cultural",
+      "diversity",
+      "cuisine",
+      "booth",
+      "spicy",
+      "autograph",
+      "meatball",
+      "souvenir",
+      "spring roll",
+      "fish and chips",
+      "identity",
+      "separate",
+      "fair",
+      "culture shock",
+      "origin",
+      "custom",
+      "mystery",
+      "bamboo dancing",
+      "tug of war",
+      "popularity",
+      "characteristic",
+      "globalisation",
+      "cross-cultural",
+      "captivate",
+      "creative",
+      "keep up with",
+      "appreciate",
+      "specialty",
+      "belief",
+      "ingredient",
+      "influence",
+      "impact",
+      "blend",
+      "unique",
+      "professional",
+      "organise",
+      "stall",
+      "celebrate",
+      "confusion",
+      "anxiety",
+      "unfamiliar",
+      "insulting",
+      "focus on",
+      "rude",
+      "barrier",
+      "illegal",
+      "promote",
+      "open mind",
+      "specialist",
+      "seriously",
+      "applicant",
+      "deal with",
+      "interact with",
+      "overcome"
+    ],
+    "playerClass": "12B",
+    "playerName": "Trương Thế Nghiêm",
+    "score": "ĐANG HỌC",
+    "status": "in-progress",
+    "timeTakenSeconds": 0,
+    "timestamp": 1790780471846,
+    "totalQuestions": 54,
+    "uniqueWordsListenedCount": 54
+  },
+  "-P2mpcXKkVYSb6wPsLKi": {
+    "answered": 57,
+    "attempts": 1,
+    "correct": 53,
+    "details": [
+      {
+        "correctAnswer": "cross-cultural",
+        "explanation": "Từ \"cross-cultural\" có nghĩa là \"đa văn hóa\".",
+        "question": "Nghĩa của \"đa văn hóa\" là gì?",
+        "status": "correct",
+        "translation": "",
+        "userAnswer": "cross-cultural"
+      },
+      {
+        "correctAnswer": "specialty",
+        "explanation": "Từ \"specialty\" có nghĩa là \"đặc sản\".",
+        "question": "Nghĩa của \"đặc sản\" là gì?",
+        "status": "incorrect",
+        "translation": "",
+        "userAnswer": "separate"
+      },
+      {
+        "correctAnswer": "promote",
+        "explanation": "Từ \"promote\" có nghĩa là \"thúc đẩy\".",
+        "question": "Nghĩa của \"thúc đẩy\" là gì?",
+        "status": "correct",
+        "translation": "",
+        "userAnswer": "promote"
+      },
+      {
+        "correctAnswer": "belief",
+        "explanation": "Từ \"belief\" có nghĩa là \"tín ngưỡng\".",
+        "question": "Nghĩa của \"tín ngưỡng\" là gì?",
+        "status": "correct",
+        "translation": "",
+        "userAnswer": "belief"
+      },
+      {
+        "correctAnswer": "identity",
+        "explanation": "Từ \"identity\" có nghĩa là \"bản sắc\".",
+        "question": "Nghĩa của \"bản sắc\" là gì?",
+        "status": "correct",
+        "translation": "",
+        "userAnswer": "identity"
+      },
+      {
+        "correctAnswer": "custom",
+        "explanation": "Từ \"custom\" có nghĩa là \"phong tục\".",
+        "question": "Nghĩa của \"phong tục\" là gì?",
+        "status": "correct",
+        "translation": "",
+        "userAnswer": "custom"
+      },
+      {
+        "correctAnswer": "professional",
+        "explanation": "Từ \"professional\" có nghĩa là \"chuyên nghiệp\".",
+        "question": "Nghĩa của \"chuyên nghiệp\" là gì?",
+        "status": "correct",
+        "translation": "",
+        "userAnswer": "professional"
+      },
+      {
+        "correctAnswer": "interact with",
+        "explanation": "Từ \"interact with\" có nghĩa là \"tương tác với\".",
+        "question": "Nghĩa của \"tương tác với\" là gì?",
+        "status": "correct",
+        "translation": "",
+        "userAnswer": "interact with"
+      },
+      {
+        "correctAnswer": "influence",
+        "explanation": "Từ \"influence\" có nghĩa là \"ảnh hưởng\".",
+        "question": "Nghĩa của \"ảnh hưởng\" là gì?",
+        "status": "correct",
+        "translation": "",
+        "userAnswer": "influence"
+      },
+      {
+        "correctAnswer": "ingredient",
+        "explanation": "Từ \"ingredient\" có nghĩa là \"nguyên liệu/ thành phần\".",
+        "question": "Nghĩa của \"nguyên liệu/ thành phần\" là gì?",
+        "status": "correct",
+        "translation": "",
+        "userAnswer": "ingredient"
+      },
+      {
+        "correctAnswer": "culture shock",
+        "explanation": "Từ \"culture shock\" có nghĩa là \"sốc văn hóa\".",
+        "question": "Nghĩa của \"sốc văn hóa\" là gì?",
+        "status": "correct",
+        "translation": "",
+        "userAnswer": "culture shock"
+      },
+      {
+        "correctAnswer": "spicy",
+        "explanation": "Từ \"spicy\" có nghĩa là \"cay\".",
+        "question": "Nghĩa của \"cay\" là gì?",
+        "status": "correct",
+        "translation": "",
+        "userAnswer": "spicy"
+      },
+      {
+        "correctAnswer": "mystery",
+        "explanation": "Từ \"mystery\" có nghĩa là \"điều bí ẩn\".",
+        "question": "Nghĩa của \"điều bí ẩn\" là gì?",
+        "status": "correct",
+        "translation": "",
+        "userAnswer": "mystery"
+      },
+      {
+        "correctAnswer": "fair",
+        "explanation": "Từ \"fair\" có nghĩa là \"hội chợ\".",
+        "question": "Nghĩa của \"hội chợ\" là gì?",
+        "status": "correct",
+        "translation": "",
+        "userAnswer": "fair"
+      },
+      {
+        "correctAnswer": "fish and chips",
+        "explanation": "Từ \"fish and chips\" có nghĩa là \"cá và khoai tây chiên\".",
+        "question": "Nghĩa của \"cá và khoai tây chiên\" là gì?",
+        "status": "correct",
+        "translation": "",
+        "userAnswer": "fish and chips"
+      },
+      {
+        "correctAnswer": "impact",
+        "explanation": "Từ \"impact\" có nghĩa là \"tác động\".",
+        "question": "Nghĩa của \"tác động\" là gì?",
+        "status": "correct",
+        "translation": "",
+        "userAnswer": "impact"
+      },
+      {
+        "correctAnswer": "spring roll",
+        "explanation": "Từ \"spring roll\" có nghĩa là \"nem\".",
+        "question": "Nghĩa của \"nem\" là gì?",
+        "status": "correct",
+        "translation": "",
+        "userAnswer": "spring roll"
+      },
+      {
+        "correctAnswer": "rude",
+        "explanation": "Từ \"rude\" có nghĩa là \"thô lỗ\".",
+        "question": "Nghĩa của \"thô lỗ\" là gì?",
+        "status": "correct",
+        "translation": "",
+        "userAnswer": "rude"
+      },
+      {
+        "correctAnswer": "captivate",
+        "explanation": "Từ \"captivate\" có nghĩa là \"thu hút\".",
+        "question": "Nghĩa của \"thu hút\" là gì?",
+        "status": "correct",
+        "translation": "",
+        "userAnswer": "captivate"
+      },
+      {
+        "correctAnswer": "creative",
+        "explanation": "Từ \"creative\" có nghĩa là \"sáng tạo\".",
+        "question": "Nghĩa của \"sáng tạo\" là gì?",
+        "status": "correct",
+        "translation": "",
+        "userAnswer": "creative"
+      },
+      {
+        "correctAnswer": "globalisation",
+        "explanation": "Từ \"globalisation\" có nghĩa là \"toàn cầu hóa\".",
+        "question": "Nghĩa của \"toàn cầu hóa\" là gì?",
+        "status": "correct",
+        "translation": "",
+        "userAnswer": "globalisation"
+      },
+      {
+        "correctAnswer": "souvenir",
+        "explanation": "Từ \"souvenir\" có nghĩa là \"quà lưu niệm\".",
+        "question": "Nghĩa của \"quà lưu niệm\" là gì?",
+        "status": "correct",
+        "translation": "",
+        "userAnswer": "souvenir"
+      },
+      {
+        "correctAnswer": "unfamiliar",
+        "explanation": "Từ \"unfamiliar\" có nghĩa là \"xa lạ, không quen\".",
+        "question": "Nghĩa của \"xa lạ, không quen\" là gì?",
+        "status": "correct",
+        "translation": "",
+        "userAnswer": "unfamiliar"
+      },
+      {
+        "correctAnswer": "illegal",
+        "explanation": "Từ \"illegal\" có nghĩa là \"bất hợp pháp\".",
+        "question": "Nghĩa của \"bất hợp pháp\" là gì?",
+        "status": "correct",
+        "translation": "",
+        "userAnswer": "illegal"
+      },
+      {
+        "correctAnswer": "overcome",
+        "explanation": "Từ \"overcome\" có nghĩa là \"vượt qua\".",
+        "question": "Nghĩa của \"vượt qua\" là gì?",
+        "status": "correct",
+        "translation": "",
+        "userAnswer": "overcome"
+      },
+      {
+        "correctAnswer": "cuisine",
+        "explanation": "Từ \"cuisine\" có nghĩa là \"ẩm thực\".",
+        "question": "Nghĩa của \"ẩm thực\" là gì?",
+        "status": "correct",
+        "translation": "",
+        "userAnswer": "cuisine"
+      },
+      {
+        "correctAnswer": "anxiety",
+        "explanation": "Từ \"anxiety\" có nghĩa là \"sự lo lắng\".",
+        "question": "Nghĩa của \"sự lo lắng\" là gì?",
+        "status": "correct",
+        "translation": "",
+        "userAnswer": "anxiety"
+      },
+      {
+        "correctAnswer": "unique",
+        "explanation": "Từ \"unique\" có nghĩa là \"độc đáo\".",
+        "question": "Nghĩa của \"độc đáo\" là gì?",
+        "status": "correct",
+        "translation": "",
+        "userAnswer": "unique"
+      },
+      {
+        "correctAnswer": "deal with",
+        "explanation": "Từ \"deal with\" có nghĩa là \"đối phó với\".",
+        "question": "Nghĩa của \"đối phó với\" là gì?",
+        "status": "correct",
+        "translation": "",
+        "userAnswer": "deal with"
+      },
+      {
+        "correctAnswer": "focus on",
+        "explanation": "Từ \"focus on\" có nghĩa là \"tập trung vào\".",
+        "question": "Nghĩa của \"tập trung vào\" là gì?",
+        "status": "correct",
+        "translation": "",
+        "userAnswer": "focus on"
+      },
+      {
+        "correctAnswer": "celebrate",
+        "explanation": "Từ \"celebrate\" có nghĩa là \"tổ chức\".",
+        "question": "Nghĩa của \"tổ chức\" là gì?",
+        "status": "correct",
+        "translation": "",
+        "userAnswer": "celebrate"
+      },
+      {
+        "correctAnswer": "autograph",
+        "explanation": "Từ \"autograph\" có nghĩa là \"chữ ký\".",
+        "question": "Nghĩa của \"chữ ký\" là gì?",
+        "status": "correct",
+        "translation": "",
+        "userAnswer": "autograph"
+      },
+      {
+        "correctAnswer": "blend",
+        "explanation": "Từ \"blend\" có nghĩa là \"trộn\".",
+        "question": "Nghĩa của \"trộn\" là gì?",
+        "status": "correct",
+        "translation": "",
+        "userAnswer": "blend"
+      },
+      {
+        "correctAnswer": "booth",
+        "explanation": "Từ \"booth\" có nghĩa là \"gian hàng\".",
+        "question": "Nghĩa của \"gian hàng\" là gì?",
+        "status": "incorrect",
+        "translation": "",
+        "userAnswer": "stall"
+      },
+      {
+        "correctAnswer": "applicant",
+        "explanation": "Từ \"applicant\" có nghĩa là \"người xin việc\".",
+        "question": "Nghĩa của \"người xin việc\" là gì?",
+        "status": "correct",
+        "translation": "",
+        "userAnswer": "applicant"
+      },
+      {
+        "correctAnswer": "separate",
+        "explanation": "Từ \"separate\" có nghĩa là \"riêng biệt\".",
+        "question": "Nghĩa của \"riêng biệt\" là gì?",
+        "status": "correct",
+        "translation": "",
+        "userAnswer": "separate"
+      },
+      {
+        "correctAnswer": "tug of war",
+        "explanation": "Từ \"tug of war\" có nghĩa là \"trò chơi kéo co\".",
+        "question": "Nghĩa của \"trò chơi kéo co\" là gì?",
+        "status": "correct",
+        "translation": "",
+        "userAnswer": "tug of war"
+      },
+      {
+        "correctAnswer": "organise",
+        "explanation": "Từ \"organise\" có nghĩa là \"tổ chức\".",
+        "question": "Nghĩa của \"tổ chức\" là gì?",
+        "status": "incorrect",
+        "translation": "",
+        "userAnswer": "appreciate"
+      },
+      {
+        "correctAnswer": "specialty",
+        "explanation": "Từ \"specialty\" có nghĩa là \"đặc sản\".",
+        "question": "Nghĩa của \"đặc sản\" là gì?",
+        "status": "correct",
+        "translation": "",
+        "userAnswer": "specialty"
+      },
+      {
+        "correctAnswer": "organise",
+        "explanation": "Từ \"organise\" có nghĩa là \"tổ chức\".",
+        "question": "Nghĩa của \"tổ chức\" là gì?",
+        "status": "incorrect",
+        "translation": "",
+        "userAnswer": "cultural"
+      },
+      {
+        "correctAnswer": "popularity",
+        "explanation": "Từ \"popularity\" có nghĩa là \"sự phổ biến\".",
+        "question": "Nghĩa của \"sự phổ biến\" là gì?",
+        "status": "correct",
+        "translation": "",
+        "userAnswer": "popularity"
+      },
+      {
+        "correctAnswer": "bamboo dancing",
+        "explanation": "Từ \"bamboo dancing\" có nghĩa là \"nhảy sạp\".",
+        "question": "Nghĩa của \"nhảy sạp\" là gì?",
+        "status": "correct",
+        "translation": "",
+        "userAnswer": "bamboo dancing"
+      },
+      {
+        "correctAnswer": "stall",
+        "explanation": "Từ \"stall\" có nghĩa là \"quầy hàng\".",
+        "question": "Nghĩa của \"quầy hàng\" là gì?",
+        "status": "correct",
+        "translation": "",
+        "userAnswer": "stall"
+      },
+      {
+        "correctAnswer": "specialist",
+        "explanation": "Từ \"specialist\" có nghĩa là \"chuyên gia\".",
+        "question": "Nghĩa của \"chuyên gia\" là gì?",
+        "status": "correct",
+        "translation": "",
+        "userAnswer": "specialist"
+      },
+      {
+        "correctAnswer": "meatball",
+        "explanation": "Từ \"meatball\" có nghĩa là \"thịt viên\".",
+        "question": "Nghĩa của \"thịt viên\" là gì?",
+        "status": "correct",
+        "translation": "",
+        "userAnswer": "meatball"
+      },
+      {
+        "correctAnswer": "booth",
+        "explanation": "Từ \"booth\" có nghĩa là \"gian hàng\".",
+        "question": "Nghĩa của \"gian hàng\" là gì?",
+        "status": "correct",
+        "translation": "",
+        "userAnswer": "booth"
+      },
+      {
+        "correctAnswer": "confusion",
+        "explanation": "Từ \"confusion\" có nghĩa là \"sự bối rối\".",
+        "question": "Nghĩa của \"sự bối rối\" là gì?",
+        "status": "correct",
+        "translation": "",
+        "userAnswer": "confusion"
+      },
+      {
+        "correctAnswer": "open mind",
+        "explanation": "Từ \"open mind\" có nghĩa là \"tâm trí cởi mở\".",
+        "question": "Nghĩa của \"tâm trí cởi mở\" là gì?",
+        "status": "correct",
+        "translation": "",
+        "userAnswer": "open mind"
+      },
+      {
+        "correctAnswer": "origin",
+        "explanation": "Từ \"origin\" có nghĩa là \"nguồn gốc\".",
+        "question": "Nghĩa của \"nguồn gốc\" là gì?",
+        "status": "correct",
+        "translation": "",
+        "userAnswer": "origin"
+      },
+      {
+        "correctAnswer": "diversity",
+        "explanation": "Từ \"diversity\" có nghĩa là \"sự đa dạng\".",
+        "question": "Nghĩa của \"sự đa dạng\" là gì?",
+        "status": "correct",
+        "translation": "",
+        "userAnswer": "diversity"
+      },
+      {
+        "correctAnswer": "seriously",
+        "explanation": "Từ \"seriously\" có nghĩa là \"nghiêm túc, nghiêm trọng\".",
+        "question": "Nghĩa của \"nghiêm túc, nghiêm trọng\" là gì?",
+        "status": "correct",
+        "translation": "",
+        "userAnswer": "seriously"
+      },
+      {
+        "correctAnswer": "barrier",
+        "explanation": "Từ \"barrier\" có nghĩa là \"rào cản\".",
+        "question": "Nghĩa của \"rào cản\" là gì?",
+        "status": "correct",
+        "translation": "",
+        "userAnswer": "barrier"
+      },
+      {
+        "correctAnswer": "appreciate",
+        "explanation": "Từ \"appreciate\" có nghĩa là \"đánh giá cao\".",
+        "question": "Nghĩa của \"đánh giá cao\" là gì?",
+        "status": "correct",
+        "translation": "",
+        "userAnswer": "appreciate"
+      },
+      {
+        "correctAnswer": "cultural",
+        "explanation": "Từ \"cultural\" có nghĩa là \"văn hóa\".",
+        "question": "Nghĩa của \"văn hóa\" là gì?",
+        "status": "correct",
+        "translation": "",
+        "userAnswer": "cultural"
+      },
+      {
+        "correctAnswer": "keep up with",
+        "explanation": "Từ \"keep up with\" có nghĩa là \"theo kịp với\".",
+        "question": "Nghĩa của \"theo kịp với\" là gì?",
+        "status": "correct",
+        "translation": "",
+        "userAnswer": "keep up with"
+      },
+      {
+        "correctAnswer": "characteristic",
+        "explanation": "Từ \"characteristic\" có nghĩa là \"đặc trưng, đặc điểm\".",
+        "question": "Nghĩa của \"đặc trưng, đặc điểm\" là gì?",
+        "status": "correct",
+        "translation": "",
+        "userAnswer": "characteristic"
+      },
+      {
+        "correctAnswer": "insulting",
+        "explanation": "Từ \"insulting\" có nghĩa là \"xúc phạm\".",
+        "question": "Nghĩa của \"xúc phạm\" là gì?",
+        "status": "correct",
+        "translation": "",
+        "userAnswer": "insulting"
+      }
+    ],
+    "gameType": "matching",
+    "incorrect": 4,
+    "playerClass": "12B",
+    "playerName": "Trương Thế Nghiêm",
+    "score": "9.8",
+    "status": "completed",
+    "timeTakenSeconds": 913,
+    "timestamp": 1790781454371,
+    "totalQuestions": 54
+  },
+  "-P2mt951FCiaWLXoS-GT": {
+    "answered": 54,
+    "attempts": 1,
+    "audioListenedCount": 92,
+    "correct": 0,
+    "gameType": "vocabulary",
+    "incorrect": 0,
+    "listenedWords": [
+      "cultural",
+      "diversity",
+      "cuisine",
+      "booth",
+      "spicy",
+      "autograph",
+      "meatball",
+      "souvenir",
+      "spring roll",
+      "fish and chips",
+      "identity",
+      "separate",
+      "fair",
+      "culture shock",
+      "origin",
+      "custom",
+      "mystery",
+      "bamboo dancing",
+      "tug of war",
+      "popularity",
+      "characteristic",
+      "globalisation",
+      "cross-cultural",
+      "captivate",
+      "creative",
+      "keep up with",
+      "appreciate",
+      "specialty",
+      "belief",
+      "ingredient",
+      "influence",
+      "impact",
+      "blend",
+      "unique",
+      "professional",
+      "organise",
+      "stall",
+      "celebrate",
+      "confusion",
+      "anxiety",
+      "unfamiliar",
+      "insulting",
+      "focus on",
+      "rude",
+      "barrier",
+      "illegal",
+      "promote",
+      "open mind",
+      "specialist",
+      "seriously",
+      "applicant",
+      "deal with",
+      "interact with",
+      "overcome"
+    ],
+    "playerClass": "12B",
+    "playerName": "Trương Thế Nghiêm",
+    "score": "ĐANG HỌC",
+    "status": "in-progress",
+    "timeTakenSeconds": 0,
+    "timestamp": 1790781557104,
+    "totalQuestions": 54,
+    "uniqueWordsListenedCount": 54
+  },
+  "-P2mtYTNKzaWd0z92yz-": {
+    "answered": 59,
+    "attempts": 1,
+    "correct": 54,
+    "details": [
+      {
+        "correctAnswer": "insulting",
+        "explanation": "Từ phát âm là \"insulting\" (nghĩa: \"xúc phạm\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "xúc phạm",
+        "userAnswer": "insulting"
+      },
+      {
+        "correctAnswer": "barrier",
+        "explanation": "Từ phát âm là \"barrier\" (nghĩa: \"rào cản\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "rào cản",
+        "userAnswer": "barrier"
+      },
+      {
+        "correctAnswer": "origin",
+        "explanation": "Từ phát âm là \"origin\" (nghĩa: \"nguồn gốc\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "incorrect",
+        "translation": "nguồn gốc",
+        "userAnswer": "organise"
+      },
+      {
+        "correctAnswer": "diversity",
+        "explanation": "Từ phát âm là \"diversity\" (nghĩa: \"sự đa dạng\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "sự đa dạng",
+        "userAnswer": "diversity"
+      },
+      {
+        "correctAnswer": "booth",
+        "explanation": "Từ phát âm là \"booth\" (nghĩa: \"gian hàng\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "gian hàng",
+        "userAnswer": "booth"
+      },
+      {
+        "correctAnswer": "mystery",
+        "explanation": "Từ phát âm là \"mystery\" (nghĩa: \"điều bí ẩn\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "điều bí ẩn",
+        "userAnswer": "mystery"
+      },
+      {
+        "correctAnswer": "bamboo dancing",
+        "explanation": "Từ phát âm là \"bamboo dancing\" (nghĩa: \"nhảy sạp\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "nhảy sạp",
+        "userAnswer": "bamboo dancing"
+      },
+      {
+        "correctAnswer": "open mind",
+        "explanation": "Từ phát âm là \"open mind\" (nghĩa: \"tâm trí cởi mở\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "incorrect",
+        "translation": "tâm trí cởi mở",
+        "userAnswer": "unfamiliar"
+      },
+      {
+        "correctAnswer": "interact with",
+        "explanation": "Từ phát âm là \"interact with\" (nghĩa: \"tương tác với\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "tương tác với",
+        "userAnswer": "interact with"
+      },
+      {
+        "correctAnswer": "cross-cultural",
+        "explanation": "Từ phát âm là \"cross-cultural\" (nghĩa: \"đa văn hóa\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "đa văn hóa",
+        "userAnswer": "cross-cultural"
+      },
+      {
+        "correctAnswer": "culture shock",
+        "explanation": "Từ phát âm là \"culture shock\" (nghĩa: \"sốc văn hóa\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "incorrect",
+        "translation": "sốc văn hóa",
+        "userAnswer": "cultural"
+      },
+      {
+        "correctAnswer": "tug of war",
+        "explanation": "Từ phát âm là \"tug of war\" (nghĩa: \"trò chơi kéo co\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "trò chơi kéo co",
+        "userAnswer": "tug of war"
+      },
+      {
+        "correctAnswer": "professional",
+        "explanation": "Từ phát âm là \"professional\" (nghĩa: \"chuyên nghiệp\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "chuyên nghiệp",
+        "userAnswer": "professional"
+      },
+      {
+        "correctAnswer": "seriously",
+        "explanation": "Từ phát âm là \"seriously\" (nghĩa: \"nghiêm túc, nghiêm trọng\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "nghiêm túc, nghiêm trọng",
+        "userAnswer": "seriously"
+      },
+      {
+        "correctAnswer": "cultural",
+        "explanation": "Từ phát âm là \"cultural\" (nghĩa: \"văn hóa\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "incorrect",
+        "translation": "văn hóa",
+        "userAnswer": "autograph"
+      },
+      {
+        "correctAnswer": "rude",
+        "explanation": "Từ phát âm là \"rude\" (nghĩa: \"thô lỗ\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "thô lỗ",
+        "userAnswer": "rude"
+      },
+      {
+        "correctAnswer": "anxiety",
+        "explanation": "Từ phát âm là \"anxiety\" (nghĩa: \"sự lo lắng\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "sự lo lắng",
+        "userAnswer": "anxiety"
+      },
+      {
+        "correctAnswer": "celebrate",
+        "explanation": "Từ phát âm là \"celebrate\" (nghĩa: \"tổ chức\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "incorrect",
+        "translation": "tổ chức",
+        "userAnswer": "souvenir"
+      },
+      {
+        "correctAnswer": "unique",
+        "explanation": "Từ phát âm là \"unique\" (nghĩa: \"độc đáo\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "độc đáo",
+        "userAnswer": "unique"
+      },
+      {
+        "correctAnswer": "fair",
+        "explanation": "Từ phát âm là \"fair\" (nghĩa: \"hội chợ\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "hội chợ",
+        "userAnswer": "fair"
+      },
+      {
+        "correctAnswer": "appreciate",
+        "explanation": "Từ phát âm là \"appreciate\" (nghĩa: \"đánh giá cao\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "đánh giá cao",
+        "userAnswer": "appreciate"
+      },
+      {
+        "correctAnswer": "stall",
+        "explanation": "Từ phát âm là \"stall\" (nghĩa: \"quầy hàng\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "quầy hàng",
+        "userAnswer": "stall"
+      },
+      {
+        "correctAnswer": "blend",
+        "explanation": "Từ phát âm là \"blend\" (nghĩa: \"trộn\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "trộn",
+        "userAnswer": "blend"
+      },
+      {
+        "correctAnswer": "characteristic",
+        "explanation": "Từ phát âm là \"characteristic\" (nghĩa: \"đặc trưng, đặc điểm\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "đặc trưng, đặc điểm",
+        "userAnswer": "characteristic"
+      },
+      {
+        "correctAnswer": "deal with",
+        "explanation": "Từ phát âm là \"deal with\" (nghĩa: \"đối phó với\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "đối phó với",
+        "userAnswer": "deal with"
+      },
+      {
+        "correctAnswer": "spicy",
+        "explanation": "Từ phát âm là \"spicy\" (nghĩa: \"cay\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "cay",
+        "userAnswer": "spicy"
+      },
+      {
+        "correctAnswer": "culture shock",
+        "explanation": "Từ phát âm là \"culture shock\" (nghĩa: \"sốc văn hóa\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "sốc văn hóa",
+        "userAnswer": "culture shock"
+      },
+      {
+        "correctAnswer": "custom",
+        "explanation": "Từ phát âm là \"custom\" (nghĩa: \"phong tục\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "phong tục",
+        "userAnswer": "custom"
+      },
+      {
+        "correctAnswer": "specialty",
+        "explanation": "Từ phát âm là \"specialty\" (nghĩa: \"đặc sản\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "đặc sản",
+        "userAnswer": "specialty"
+      },
+      {
+        "correctAnswer": "overcome",
+        "explanation": "Từ phát âm là \"overcome\" (nghĩa: \"vượt qua\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "vượt qua",
+        "userAnswer": "overcome"
+      },
+      {
+        "correctAnswer": "creative",
+        "explanation": "Từ phát âm là \"creative\" (nghĩa: \"sáng tạo\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "sáng tạo",
+        "userAnswer": "creative"
+      },
+      {
+        "correctAnswer": "spring roll",
+        "explanation": "Từ phát âm là \"spring roll\" (nghĩa: \"nem\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "nem",
+        "userAnswer": "spring roll"
+      },
+      {
+        "correctAnswer": "ingredient",
+        "explanation": "Từ phát âm là \"ingredient\" (nghĩa: \"nguyên liệu/ thành phần\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "nguyên liệu/ thành phần",
+        "userAnswer": "ingredient"
+      },
+      {
+        "correctAnswer": "open mind",
+        "explanation": "Từ phát âm là \"open mind\" (nghĩa: \"tâm trí cởi mở\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "tâm trí cởi mở",
+        "userAnswer": "open mind"
+      },
+      {
+        "correctAnswer": "separate",
+        "explanation": "Từ phát âm là \"separate\" (nghĩa: \"riêng biệt\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "riêng biệt",
+        "userAnswer": "separate"
+      },
+      {
+        "correctAnswer": "focus on",
+        "explanation": "Từ phát âm là \"focus on\" (nghĩa: \"tập trung vào\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "tập trung vào",
+        "userAnswer": "focus on"
+      },
+      {
+        "correctAnswer": "souvenir",
+        "explanation": "Từ phát âm là \"souvenir\" (nghĩa: \"quà lưu niệm\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "quà lưu niệm",
+        "userAnswer": "souvenir"
+      },
+      {
+        "correctAnswer": "fish and chips",
+        "explanation": "Từ phát âm là \"fish and chips\" (nghĩa: \"cá và khoai tây chiên\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "cá và khoai tây chiên",
+        "userAnswer": "fish and chips"
+      },
+      {
+        "correctAnswer": "popularity",
+        "explanation": "Từ phát âm là \"popularity\" (nghĩa: \"sự phổ biến\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "sự phổ biến",
+        "userAnswer": "popularity"
+      },
+      {
+        "correctAnswer": "captivate",
+        "explanation": "Từ phát âm là \"captivate\" (nghĩa: \"thu hút\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "thu hút",
+        "userAnswer": "captivate"
+      },
+      {
+        "correctAnswer": "promote",
+        "explanation": "Từ phát âm là \"promote\" (nghĩa: \"thúc đẩy\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "thúc đẩy",
+        "userAnswer": "promote"
+      },
+      {
+        "correctAnswer": "origin",
+        "explanation": "Từ phát âm là \"origin\" (nghĩa: \"nguồn gốc\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "nguồn gốc",
+        "userAnswer": "origin"
+      },
+      {
+        "correctAnswer": "organise",
+        "explanation": "Từ phát âm là \"organise\" (nghĩa: \"tổ chức\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "tổ chức",
+        "userAnswer": "organise"
+      },
+      {
+        "correctAnswer": "belief",
+        "explanation": "Từ phát âm là \"belief\" (nghĩa: \"tín ngưỡng\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "tín ngưỡng",
+        "userAnswer": "belief"
+      },
+      {
+        "correctAnswer": "impact",
+        "explanation": "Từ phát âm là \"impact\" (nghĩa: \"tác động\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "tác động",
+        "userAnswer": "impact"
+      },
+      {
+        "correctAnswer": "specialist",
+        "explanation": "Từ phát âm là \"specialist\" (nghĩa: \"chuyên gia\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "chuyên gia",
+        "userAnswer": "specialist"
+      },
+      {
+        "correctAnswer": "meatball",
+        "explanation": "Từ phát âm là \"meatball\" (nghĩa: \"thịt viên\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "thịt viên",
+        "userAnswer": "meatball"
+      },
+      {
+        "correctAnswer": "globalisation",
+        "explanation": "Từ phát âm là \"globalisation\" (nghĩa: \"toàn cầu hóa\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "toàn cầu hóa",
+        "userAnswer": "globalisation"
+      },
+      {
+        "correctAnswer": "unfamiliar",
+        "explanation": "Từ phát âm là \"unfamiliar\" (nghĩa: \"xa lạ, không quen\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "xa lạ, không quen",
+        "userAnswer": "unfamiliar"
+      },
+      {
+        "correctAnswer": "autograph",
+        "explanation": "Từ phát âm là \"autograph\" (nghĩa: \"chữ ký\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "chữ ký",
+        "userAnswer": "autograph"
+      },
+      {
+        "correctAnswer": "cuisine",
+        "explanation": "Từ phát âm là \"cuisine\" (nghĩa: \"ẩm thực\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "ẩm thực",
+        "userAnswer": "cuisine"
+      },
+      {
+        "correctAnswer": "applicant",
+        "explanation": "Từ phát âm là \"applicant\" (nghĩa: \"người xin việc\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "người xin việc",
+        "userAnswer": "applicant"
+      },
+      {
+        "correctAnswer": "celebrate",
+        "explanation": "Từ phát âm là \"celebrate\" (nghĩa: \"tổ chức\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "tổ chức",
+        "userAnswer": "celebrate"
+      },
+      {
+        "correctAnswer": "confusion",
+        "explanation": "Từ phát âm là \"confusion\" (nghĩa: \"sự bối rối\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "sự bối rối",
+        "userAnswer": "confusion"
+      },
+      {
+        "correctAnswer": "illegal",
+        "explanation": "Từ phát âm là \"illegal\" (nghĩa: \"bất hợp pháp\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "bất hợp pháp",
+        "userAnswer": "illegal"
+      },
+      {
+        "correctAnswer": "influence",
+        "explanation": "Từ phát âm là \"influence\" (nghĩa: \"ảnh hưởng\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "ảnh hưởng",
+        "userAnswer": "influence"
+      },
+      {
+        "correctAnswer": "keep up with",
+        "explanation": "Từ phát âm là \"keep up with\" (nghĩa: \"theo kịp với\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "theo kịp với",
+        "userAnswer": "keep up with"
+      },
+      {
+        "correctAnswer": "identity",
+        "explanation": "Từ phát âm là \"identity\" (nghĩa: \"bản sắc\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "bản sắc",
+        "userAnswer": "identity"
+      },
+      {
+        "correctAnswer": "cultural",
+        "explanation": "Từ phát âm là \"cultural\" (nghĩa: \"văn hóa\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "văn hóa",
+        "userAnswer": "cultural"
+      }
+    ],
+    "gameType": "listen-choose",
+    "incorrect": 5,
+    "playerClass": "12B",
+    "playerName": "Trương Thế Nghiêm",
+    "score": "10.0",
+    "status": "completed",
+    "timeTakenSeconds": 654,
+    "timestamp": 1790782222942,
+    "totalQuestions": 54
+  },
+  "-P2mxN-P-VC_1c_N2myL": {
+    "answered": 53,
+    "attempts": 1,
+    "correct": 43,
+    "details": [
+      {
+        "correctAnswer": "blend",
+        "explanation": "Từ \"blend\" (v) có phiên âm //blend//.",
+        "question": "trộn",
+        "status": "correct",
+        "translation": "blend",
+        "userAnswer": "blend"
+      },
+      {
+        "correctAnswer": "impact",
+        "explanation": "Từ \"impact\" (v) có phiên âm //ˈɪmpækt//.",
+        "question": "tác động",
+        "status": "correct",
+        "translation": "impact",
+        "userAnswer": "impact"
+      },
+      {
+        "correctAnswer": "anxiety",
+        "explanation": "Từ \"anxiety\" (n) có phiên âm //æŋˈzaɪəti//.",
+        "question": "sự lo lắng",
+        "status": "correct",
+        "translation": "anxiety",
+        "userAnswer": "anxiety"
+      },
+      {
+        "correctAnswer": "open mind",
+        "explanation": "Từ \"open mind\" (n) có phiên âm //ˌəʊpən ˈmaɪnd//.",
+        "question": "tâm trí cởi mở",
+        "status": "correct",
+        "translation": "open mind",
+        "userAnswer": "open mind"
+      },
+      {
+        "correctAnswer": "specialty",
+        "explanation": "Từ \"specialty\" (n) có phiên âm //ˈspeʃəlti//.",
+        "question": "đặc sản",
+        "status": "correct",
+        "translation": "specialty",
+        "userAnswer": "specialty"
+      },
+      {
+        "correctAnswer": "illegal",
+        "explanation": "Từ \"illegal\" (adj) có phiên âm //ɪˈliːɡl//.",
+        "question": "bất hợp pháp",
+        "status": "correct",
+        "translation": "illegal",
+        "userAnswer": "illegal"
+      },
+      {
+        "correctAnswer": "fish and chips",
+        "explanation": "Từ \"fish and chips\" (n) có phiên âm //ˌfɪʃ en ˈtʃɪps//.",
+        "question": "cá và khoai tây chiên",
+        "status": "correct",
+        "translation": "fish and chips",
+        "userAnswer": "fish and chips"
+      },
+      {
+        "correctAnswer": "identity",
+        "explanation": "Từ \"identity\" (n) có phiên âm //aɪˈdentəti//.",
+        "question": "bản sắc",
+        "status": "incorrect",
+        "translation": "identity",
+        "userAnswer": "identiby"
+      },
+      {
+        "correctAnswer": "influence",
+        "explanation": "Từ \"influence\" (n) có phiên âm //ˈɪnfluəns//.",
+        "question": "ảnh hưởng",
+        "status": "correct",
+        "translation": "influence",
+        "userAnswer": "influence"
+      },
+      {
+        "correctAnswer": "overcome",
+        "explanation": "Từ \"overcome\" (v) có phiên âm //ˌəʊvəˈkʌm//.",
+        "question": "vượt qua",
+        "status": "correct",
+        "translation": "overcome",
+        "userAnswer": "overcome"
+      },
+      {
+        "correctAnswer": "deal with",
+        "explanation": "Từ \"deal with\" (v) có phiên âm //diːl wɪð//.",
+        "question": "đối phó với",
+        "status": "incorrect",
+        "translation": "deal with",
+        "userAnswer": "cleal with"
+      },
+      {
+        "correctAnswer": "cultural",
+        "explanation": "Từ \"cultural\" (adj) có phiên âm //ˈkʌltʃərəl//.",
+        "question": "văn hóa",
+        "status": "correct",
+        "translation": "cultural",
+        "userAnswer": "cultural"
+      },
+      {
+        "correctAnswer": "stall",
+        "explanation": "Từ \"stall\" (n) có phiên âm //stɔːl//.",
+        "question": "quầy hàng",
+        "status": "correct",
+        "translation": "stall",
+        "userAnswer": "stall"
+      },
+      {
+        "correctAnswer": "separate",
+        "explanation": "Từ \"separate\" (adj) có phiên âm //ˈseprət//.",
+        "question": "riêng biệt",
+        "status": "incorrect",
+        "translation": "separate",
+        "userAnswer": "sperate"
+      },
+      {
+        "correctAnswer": "tug of war",
+        "explanation": "Từ \"tug of war\" (n) có phiên âm //tʌg/ /ɒv/ /wɔː//.",
+        "question": "trò chơi kéo co",
+        "status": "correct",
+        "translation": "tug of war",
+        "userAnswer": "tug of war"
+      },
+      {
+        "correctAnswer": "barrier",
+        "explanation": "Từ \"barrier\" (n) có phiên âm //ˈbæriə(r)//.",
+        "question": "rào cản",
+        "status": "incorrect",
+        "translation": "barrier",
+        "userAnswer": "bossier"
+      },
+      {
+        "correctAnswer": "appreciate",
+        "explanation": "Từ \"appreciate\" (v) có phiên âm //əˈpriːʃieɪt//.",
+        "question": "đánh giá cao",
+        "status": "correct",
+        "translation": "appreciate",
+        "userAnswer": "appreciate"
+      },
+      {
+        "correctAnswer": "promote",
+        "explanation": "Từ \"promote\" (v) có phiên âm //prəˈməʊt//.",
+        "question": "thúc đẩy",
+        "status": "correct",
+        "translation": "promote",
+        "userAnswer": "promote"
+      },
+      {
+        "correctAnswer": "meatball",
+        "explanation": "Từ \"meatball\" (n) có phiên âm //ˈmiːtbɔːl//.",
+        "question": "thịt viên",
+        "status": "correct",
+        "translation": "meatball",
+        "userAnswer": "meatball"
+      },
+      {
+        "correctAnswer": "insulting",
+        "explanation": "Từ \"insulting\" (adj) có phiên âm //ɪnˈsʌltɪŋ//.",
+        "question": "xúc phạm",
+        "status": "correct",
+        "translation": "insulting",
+        "userAnswer": "insulting"
+      },
+      {
+        "correctAnswer": "focus on",
+        "explanation": "Từ \"focus on\" (v) có phiên âm //ˈfəʊkəs ɒn//.",
+        "question": "tập trung vào",
+        "status": "correct",
+        "translation": "focus on",
+        "userAnswer": "focus on"
+      },
+      {
+        "correctAnswer": "ingredient",
+        "explanation": "Từ \"ingredient\" (n) có phiên âm //ɪnˈɡriːdiənt//.",
+        "question": "nguyên liệu/ thành phần",
+        "status": "correct",
+        "translation": "ingredient",
+        "userAnswer": "ingredient"
+      },
+      {
+        "correctAnswer": "belief",
+        "explanation": "Từ \"belief\" (n) có phiên âm //bɪˈliːf//.",
+        "question": "tín ngưỡng",
+        "status": "correct",
+        "translation": "belief",
+        "userAnswer": "belief"
+      },
+      {
+        "correctAnswer": "origin",
+        "explanation": "Từ \"origin\" (n) có phiên âm //ˈɒrɪdʒɪn//.",
+        "question": "nguồn gốc",
+        "status": "correct",
+        "translation": "origin",
+        "userAnswer": "origin"
+      },
+      {
+        "correctAnswer": "globalisation",
+        "explanation": "Từ \"globalisation\" (n) có phiên âm //ˌɡləʊbəlɪˈzeɪʃən//.",
+        "question": "toàn cầu hóa",
+        "status": "correct",
+        "translation": "globalisation",
+        "userAnswer": "globalisation"
+      },
+      {
+        "correctAnswer": "unfamiliar",
+        "explanation": "Từ \"unfamiliar\" (adj) có phiên âm //ʌnfəˈmɪliər//.",
+        "question": "xa lạ, không quen",
+        "status": "incorrect",
+        "translation": "unfamiliar",
+        "userAnswer": "unfanilisr"
+      },
+      {
+        "correctAnswer": "diversity",
+        "explanation": "Từ \"diversity\" (n) có phiên âm //daɪˈvɜːsəti//.",
+        "question": "sự đa dạng",
+        "status": "correct",
+        "translation": "diversity",
+        "userAnswer": "diversity"
+      },
+      {
+        "correctAnswer": "autograph",
+        "explanation": "Từ \"autograph\" (n) có phiên âm //ˈɔːtəɡrɑːf//.",
+        "question": "chữ ký",
+        "status": "correct",
+        "translation": "autograph",
+        "userAnswer": "autograph"
+      },
+      {
+        "correctAnswer": "fair",
+        "explanation": "Từ \"fair\" (n) có phiên âm //feə(r)//.",
+        "question": "hội chợ",
+        "status": "correct",
+        "translation": "fair",
+        "userAnswer": "fair"
+      },
+      {
+        "correctAnswer": "captivate",
+        "explanation": "Từ \"captivate\" (v) có phiên âm //ˈkæptɪveɪt//.",
+        "question": "thu hút",
+        "status": "correct",
+        "translation": "captivate",
+        "userAnswer": "captivate"
+      },
+      {
+        "correctAnswer": "custom",
+        "explanation": "Từ \"custom\" (n) có phiên âm //ˈkʌstəm//.",
+        "question": "phong tục",
+        "status": "correct",
+        "translation": "custom",
+        "userAnswer": "custom"
+      },
+      {
+        "correctAnswer": "professional",
+        "explanation": "Từ \"professional\" (adj) có phiên âm //prəˈfeʃənl//.",
+        "question": "chuyên nghiệp",
+        "status": "correct",
+        "translation": "professional",
+        "userAnswer": "professional"
+      },
+      {
+        "correctAnswer": "characteristic",
+        "explanation": "Từ \"characteristic\" (n) có phiên âm //ˌkærəktəˈrɪstɪk//.",
+        "question": "đặc trưng, đặc điểm",
+        "status": "incorrect",
+        "translation": "characteristic",
+        "userAnswer": "charateristic"
+      },
+      {
+        "correctAnswer": "keep up with",
+        "explanation": "Từ \"keep up with\" (v) có phiên âm //kiːp ʌp wɪð//.",
+        "question": "theo kịp với",
+        "status": "correct",
+        "translation": "keep up with",
+        "userAnswer": "keep up with"
+      },
+      {
+        "correctAnswer": "mystery",
+        "explanation": "Từ \"mystery\" (n) có phiên âm //ˈmɪstri//.",
+        "question": "điều bí ẩn",
+        "status": "correct",
+        "translation": "mystery",
+        "userAnswer": "mystery"
+      },
+      {
+        "correctAnswer": "confusion",
+        "explanation": "Từ \"confusion\" (n) có phiên âm //kənˈfjuːʒn//.",
+        "question": "sự bối rối",
+        "status": "correct",
+        "translation": "confusion",
+        "userAnswer": "confusion"
+      },
+      {
+        "correctAnswer": "unique",
+        "explanation": "Từ \"unique\" (adj) có phiên âm //juˈniːk//.",
+        "question": "độc đáo",
+        "status": "correct",
+        "translation": "unique",
+        "userAnswer": "unique"
+      },
+      {
+        "correctAnswer": "celebrate",
+        "explanation": "Từ \"celebrate\" (v) có phiên âm //ˈselɪbreɪt//.",
+        "question": "tổ chức",
+        "status": "incorrect",
+        "translation": "celebrate",
+        "userAnswer": "organise"
+      },
+      {
+        "correctAnswer": "culture shock",
+        "explanation": "Từ \"culture shock\" (n) có phiên âm //ˈkʌltʃə ˌʃɒk//.",
+        "question": "sốc văn hóa",
+        "status": "correct",
+        "translation": "culture shock",
+        "userAnswer": "culture shock"
+      },
+      {
+        "correctAnswer": "rude",
+        "explanation": "Từ \"rude\" (adj) có phiên âm //ruːd//.",
+        "question": "thô lỗ",
+        "status": "incorrect",
+        "translation": "rude",
+        "userAnswer": "rucle"
+      },
+      {
+        "correctAnswer": "souvenir",
+        "explanation": "Từ \"souvenir\" (n) có phiên âm //ˌsuːvəˈnɪə(r)//.",
+        "question": "quà lưu niệm",
+        "status": "correct",
+        "translation": "souvenir",
+        "userAnswer": "souvenir"
+      },
+      {
+        "correctAnswer": "applicant",
+        "explanation": "Từ \"applicant\" (n) có phiên âm //ˈæplɪkənt//.",
+        "question": "người xin việc",
+        "status": "correct",
+        "translation": "applicant",
+        "userAnswer": "applicant"
+      },
+      {
+        "correctAnswer": "cross-cultural",
+        "explanation": "Từ \"cross-cultural\" (adj) có phiên âm //ˌkrɒsˈkʌltʃərəl//.",
+        "question": "đa văn hóa",
+        "status": "correct",
+        "translation": "cross-cultural",
+        "userAnswer": "cross-cultural"
+      },
+      {
+        "correctAnswer": "organise",
+        "explanation": "Từ \"organise\" (v) có phiên âm //ˈɔːgənaɪz//.",
+        "question": "tổ chức",
+        "status": "incorrect",
+        "translation": "organise",
+        "userAnswer": "celebrate"
+      },
+      {
+        "correctAnswer": "seriously",
+        "explanation": "Từ \"seriously\" (adv) có phiên âm //ˈsɪəriəsli//.",
+        "question": "nghiêm túc, nghiêm trọng",
+        "status": "correct",
+        "translation": "seriously",
+        "userAnswer": "seriously"
+      },
+      {
+        "correctAnswer": "cuisine",
+        "explanation": "Từ \"cuisine\" (n) có phiên âm //kwɪˈziːn//.",
+        "question": "ẩm thực",
+        "status": "correct",
+        "translation": "cuisine",
+        "userAnswer": "cuisine"
+      },
+      {
+        "correctAnswer": "spicy",
+        "explanation": "Từ \"spicy\" (adj) có phiên âm //ˈspaɪsi//.",
+        "question": "cay",
+        "status": "correct",
+        "translation": "spicy",
+        "userAnswer": "spicy"
+      },
+      {
+        "correctAnswer": "spring roll",
+        "explanation": "Từ \"spring roll\" (n) có phiên âm //ˌsprɪŋ ˈrəʊl//.",
+        "question": "nem",
+        "status": "correct",
+        "translation": "spring roll",
+        "userAnswer": "spring roll"
+      },
+      {
+        "correctAnswer": "interact with",
+        "explanation": "Từ \"interact with\" (v) có phiên âm //ˌɪntəˈrækt wɪð//.",
+        "question": "tương tác với",
+        "status": "correct",
+        "translation": "interact with",
+        "userAnswer": "interact with"
+      },
+      {
+        "correctAnswer": "booth",
+        "explanation": "Từ \"booth\" (n) có phiên âm //buːð//.",
+        "question": "gian hàng",
+        "status": "correct",
+        "translation": "booth",
+        "userAnswer": "booth"
+      },
+      {
+        "correctAnswer": "specialist",
+        "explanation": "Từ \"specialist\" (n) có phiên âm //ˈspeʃəlɪst//.",
+        "question": "chuyên gia",
+        "status": "incorrect",
+        "translation": "specialist",
+        "userAnswer": "specidlist"
+      },
+      {
+        "correctAnswer": "bamboo dancing",
+        "explanation": "Từ \"bamboo dancing\" (n) có phiên âm //bæmˈbuː ˈdɑːnsɪŋ//.",
+        "question": "nhảy sạp",
+        "status": "correct",
+        "translation": "bamboo dancing",
+        "userAnswer": "bamboo dancing"
+      },
+      {
+        "correctAnswer": "popularity",
+        "explanation": "Từ \"popularity\" (n) có phiên âm //ˌpɒpjuˈlærəti//.",
+        "question": "sự phổ biến",
+        "status": "correct",
+        "translation": "popularity",
+        "userAnswer": "popularity"
+      }
+    ],
+    "gameType": "spelling",
+    "incorrect": 10,
+    "playerClass": "12B",
+    "playerName": "Trương Thế Nghiêm",
+    "score": "8.0",
+    "status": "completed",
+    "timeTakenSeconds": 902,
+    "timestamp": 1790783472691,
+    "totalQuestions": 54
+  },
+  "-P2n-qhsIQCJfYIEO_HO": {
+    "answered": 40,
+    "attempts": 1,
+    "correct": 37,
+    "details": [
+      {
+        "correctAnswer": "cultural",
+        "explanation": "Từ 'cultural' (thuộc về văn hóa) phù hợp nhất với ngữ cảnh 'di sản văn hóa'. Các từ khác không phù hợp về nghĩa.",
+        "options": [
+          "professional",
+          "unique",
+          "creative",
+          "cultural"
+        ],
+        "question": "Vietnam has a rich and diverse ____ heritage.",
+        "status": "correct",
+        "translation": "Việt Nam có một di sản ____ phong phú và đa dạng.",
+        "userAnswer": "cultural"
+      },
+      {
+        "correctAnswer": "diversity",
+        "explanation": "Từ 'diversity' (sự đa dạng) là danh từ phù hợp để diễn tả 'sự đa dạng của các ý kiến'. Các từ khác không phù hợp về nghĩa.",
+        "options": [
+          "popularity",
+          "diversity",
+          "anxiety",
+          "confusion"
+        ],
+        "question": "The ____ of opinions makes our discussions very interesting.",
+        "status": "correct",
+        "translation": "Sự ____ của các ý kiến làm cho cuộc thảo luận của chúng ta rất thú vị.",
+        "userAnswer": "diversity"
+      },
+      {
+        "correctAnswer": "cuisine",
+        "explanation": "Từ 'cuisine' (ẩm thực) là danh từ phù hợp nhất để nói về phong cách nấu ăn và món ăn của một quốc gia. Các từ khác không phù hợp.",
+        "options": [
+          "custom",
+          "ingredient",
+          "cuisine",
+          "specialty"
+        ],
+        "question": "Vietnamese ____ is famous for its fresh ingredients and delicate flavors.",
+        "status": "correct",
+        "translation": "____ Việt Nam nổi tiếng với các nguyên liệu tươi ngon và hương vị tinh tế.",
+        "userAnswer": "cuisine"
+      },
+      {
+        "correctAnswer": "booth",
+        "explanation": "Từ 'booth' (gian hàng) là danh từ chỉ một không gian nhỏ, riêng biệt tại hội chợ hoặc triển lãm để bán hàng hoặc trưng bày. Các từ khác không phù hợp về nghĩa.",
+        "options": [
+          "origin",
+          "booth",
+          "autograph",
+          "barrier"
+        ],
+        "question": "We set up a ____ at the fair to sell handmade crafts.",
+        "status": "correct",
+        "translation": "Chúng tôi đã dựng một ____ tại hội chợ để bán đồ thủ công mỹ nghệ.",
+        "userAnswer": "booth"
+      },
+      {
+        "correctAnswer": "spicy",
+        "explanation": "Từ 'spicy' (cay) là tính từ phù hợp để miêu tả hương vị của món ăn Thái. Các từ khác không phù hợp.",
+        "options": [
+          "illegal",
+          "rude",
+          "unfamiliar",
+          "spicy"
+        ],
+        "question": "Thai food is often very ____, which I love.",
+        "status": "correct",
+        "translation": "Món ăn Thái thường rất ____, điều mà tôi rất thích.",
+        "userAnswer": "spicy"
+      },
+      {
+        "correctAnswer": "autograph",
+        "explanation": "Từ 'autograph' (chữ ký) là danh từ phù hợp nhất trong ngữ cảnh người hâm mộ muốn có chữ ký của người nổi tiếng. Các từ khác không phù hợp.",
+        "options": [
+          "belief",
+          "autograph",
+          "souvenir",
+          "identity"
+        ],
+        "question": "Fans waited for hours to get the singer's ____.",
+        "status": "correct",
+        "translation": "Người hâm mộ đã đợi hàng giờ để lấy ____ của ca sĩ.",
+        "userAnswer": "autograph"
+      },
+      {
+        "correctAnswer": "meatball",
+        "explanation": "Từ 'meatball' (thịt viên) là danh từ phù hợp để tạo thành cụm 'súp thịt viên'. Các từ khác là các món ăn hoặc thành phần khác.",
+        "options": [
+          "ingredient",
+          "fish and chips",
+          "spring roll",
+          "meatball"
+        ],
+        "question": "My grandmother makes the best ____ soup.",
+        "status": "correct",
+        "translation": "Bà tôi nấu món súp ____ ngon nhất.",
+        "userAnswer": "meatball"
+      },
+      {
+        "correctAnswer": "souvenir",
+        "explanation": "Từ 'souvenir' (quà lưu niệm) là danh từ phù hợp nhất để chỉ vật kỷ niệm của một chuyến đi. Các từ khác không phù hợp.",
+        "options": [
+          "souvenir",
+          "origin",
+          "specialty",
+          "custom"
+        ],
+        "question": "I bought a small statue as a ____ of my trip to Paris.",
+        "status": "correct",
+        "translation": "Tôi đã mua một bức tượng nhỏ làm ____ kỷ niệm chuyến đi Paris của mình.",
+        "userAnswer": "souvenir"
+      },
+      {
+        "correctAnswer": "spring roll",
+        "explanation": "Cụm từ 'spring roll' (nem/chả giò) là món ăn phổ biến được dùng làm món khai vị. Các từ khác không phù hợp.",
+        "options": [
+          "meatball",
+          "spring roll",
+          "fish and chips",
+          "ingredient"
+        ],
+        "question": "Fresh ____ are a popular appetizer in many Asian restaurants.",
+        "status": "correct",
+        "translation": "____ tươi là món khai vị phổ biến ở nhiều nhà hàng châu Á.",
+        "userAnswer": "spring roll"
+      },
+      {
+        "correctAnswer": "identity",
+        "explanation": "Từ 'identity' (bản sắc) là danh từ phù hợp nhất để nói về 'bản sắc quốc gia'. Các từ khác không phù hợp về nghĩa.",
+        "options": [
+          "custom",
+          "origin",
+          "identity",
+          "belief"
+        ],
+        "question": "People often feel a strong connection to their national ____.",
+        "status": "correct",
+        "translation": "Mọi người thường cảm thấy gắn bó sâu sắc với ____ quốc gia của mình.",
+        "userAnswer": "identity"
+      },
+      {
+        "correctAnswer": "fair",
+        "explanation": "Từ 'fair' (hội chợ) là danh từ phù hợp nhất để chỉ một sự kiện lớn, thường niên như 'hội chợ sách'. 'Booth' và 'stall' là các gian hàng nhỏ trong hội chợ.",
+        "options": [
+          "barrier",
+          "stall",
+          "fair",
+          "booth"
+        ],
+        "question": "The annual book ____ attracts thousands of visitors.",
+        "status": "correct",
+        "translation": "Hội chợ sách thường niên ____ thu hút hàng ngàn du khách.",
+        "userAnswer": "fair"
+      },
+      {
+        "correctAnswer": "culture shock",
+        "explanation": "Cụm từ 'culture shock' (sốc văn hóa) là hiện tượng tâm lý khi một người tiếp xúc với một nền văn hóa khác biệt. Các từ khác không diễn tả đúng ý nghĩa này.",
+        "options": [
+          "confusion",
+          "anxiety",
+          "culture shock",
+          "globalisation"
+        ],
+        "question": "Moving to a completely new country can cause ____.",
+        "status": "correct",
+        "translation": "Chuyển đến một quốc gia hoàn toàn mới có thể gây ra ____.",
+        "userAnswer": "culture shock"
+      },
+      {
+        "correctAnswer": "origin",
+        "explanation": "Từ 'origin' (nguồn gốc) là danh từ phù hợp nhất để hỏi về điểm khởi đầu hoặc nơi bắt nguồn của một truyền thống. Các từ khác không phù hợp.",
+        "options": [
+          "custom",
+          "belief",
+          "identity",
+          "origin"
+        ],
+        "question": "What is the ____ of this ancient tradition?",
+        "status": "correct",
+        "translation": "____ của truyền thống cổ xưa này là gì?",
+        "userAnswer": "origin"
+      },
+      {
+        "correctAnswer": "custom",
+        "explanation": "Từ 'custom' (phong tục) là danh từ phù hợp nhất để chỉ một thói quen hoặc truyền thống được chấp nhận rộng rãi trong một cộng đồng. Các từ khác không phù hợp.",
+        "options": [
+          "belief",
+          "characteristic",
+          "custom",
+          "specialty"
+        ],
+        "question": "It's a local ____ to take off your shoes before entering a house.",
+        "status": "correct",
+        "translation": "Đó là một ____ địa phương khi cởi giày trước khi vào nhà.",
+        "userAnswer": "custom"
+      },
+      {
+        "correctAnswer": "popularity",
+        "explanation": "Từ 'popularity' (sự phổ biến) là danh từ phù hợp nhất để diễn tả mức độ được yêu thích hoặc sử dụng rộng rãi của mạng xã hội. Các từ khác không phù hợp.",
+        "options": [
+          "influence",
+          "impact",
+          "diversity",
+          "popularity"
+        ],
+        "question": "The ____ of social media has grown exponentially in recent years.",
+        "status": "correct",
+        "translation": "____ của mạng xã hội đã tăng trưởng theo cấp số nhân trong những năm gần đây.",
+        "userAnswer": "popularity"
+      },
+      {
+        "correctAnswer": "characteristic",
+        "explanation": "Từ 'characteristic' (đặc trưng, đặc điểm) là danh từ phù hợp nhất để chỉ một phẩm chất nổi bật của một người hoặc vật. Các từ khác không phù hợp.",
+        "options": [
+          "specialty",
+          "characteristic",
+          "custom",
+          "belief"
+        ],
+        "question": "Punctuality is a key ____ of a good employee.",
+        "status": "correct",
+        "translation": "Sự đúng giờ là một ____ quan trọng của một nhân viên giỏi.",
+        "userAnswer": "characteristic"
+      },
+      {
+        "correctAnswer": "globalisation",
+        "explanation": "Từ 'globalisation' (toàn cầu hóa) là danh từ phù hợp nhất để chỉ quá trình tăng cường sự kết nối và phụ thuộc lẫn nhau giữa các quốc gia. Các từ khác không phù hợp.",
+        "options": [
+          "popularity",
+          "globalisation",
+          "influence",
+          "diversity"
+        ],
+        "question": "____ has led to increased interconnectedness among countries.",
+        "status": "correct",
+        "translation": "____ đã dẫn đến sự kết nối ngày càng tăng giữa các quốc gia.",
+        "userAnswer": "globalisation"
+      },
+      {
+        "correctAnswer": "captivate",
+        "explanation": "Động từ 'captivate' (thu hút, làm say đắm) là phù hợp nhất để diễn tả việc khiến khán giả bị cuốn hút bởi màn trình diễn. Các từ khác không phù hợp.",
+        "options": [
+          "appreciate",
+          "organise",
+          "captivate",
+          "promote"
+        ],
+        "question": "The magician's performance managed to ____ the entire audience.",
+        "status": "correct",
+        "translation": "Màn trình diễn của ảo thuật gia đã ____ toàn bộ khán giả.",
+        "userAnswer": "captivate"
+      },
+      {
+        "correctAnswer": "appreciate",
+        "explanation": "Động từ 'appreciate' (đánh giá cao, trân trọng) là phù hợp nhất để bày tỏ sự cảm kích đối với công sức của người khác. Các từ khác không phù hợp.",
+        "options": [
+          "appreciate",
+          "promote",
+          "captivate",
+          "organise"
+        ],
+        "question": "We truly ____ your hard work and dedication.",
+        "status": "correct",
+        "translation": "Chúng tôi thực sự ____ công sức và sự cống hiến của bạn.",
+        "userAnswer": "appreciate"
+      },
+      {
+        "correctAnswer": "specialty",
+        "explanation": "Từ 'specialty' (đặc sản) là danh từ phù hợp nhất để chỉ một món ăn đặc biệt hoặc nổi tiếng của một vùng. 'Cuisine' là ẩm thực nói chung, không cụ thể một món ăn.",
+        "options": [
+          "souvenir",
+          "ingredient",
+          "cuisine",
+          "specialty"
+        ],
+        "question": "Pho is a Vietnamese ____ that is loved worldwide.",
+        "status": "correct",
+        "translation": "Phở là một ____ của Việt Nam được yêu thích trên toàn thế giới.",
+        "userAnswer": "specialty"
+      },
+      {
+        "correctAnswer": "conf<u>u</u>sion",
+        "explanation": "Phần gạch chân trong 'cultural' /ʌ/, 'custom' /ʌ/, 'tug of war' /ʌ/ đều được phát âm là /ʌ/. Trong khi đó, 'confusion' được phát âm là /juː/.",
+        "options": [
+          "conf<u>u</u>sion",
+          "t<u>u</u>g of war",
+          "c<u>u</u>stom",
+          "c<u>u</u>ltural"
+        ],
+        "question": "Choose the word whose underlined part is pronounced differently from the others.",
+        "status": "correct",
+        "translation": "Chọn từ có phần gạch chân được phát âm khác với các từ còn lại.",
+        "userAnswer": "conf<u>u</u>sion"
+      },
+      {
+        "correctAnswer": "conf<u>u</u>sion",
+        "explanation": "Phần gạch chân trong 'cultural' /ʌ/, 'custom' /ʌ/, 'tug of war' /ʌ/ đều được phát âm là /ʌ/. Trong khi đó, 'confusion' được phát âm là /juː/.",
+        "options": [
+          "conf<u>u</u>sion",
+          "t<u>u</u>g of war",
+          "c<u>u</u>stom",
+          "c<u>u</u>ltural"
+        ],
+        "question": "Choose the word whose underlined part is pronounced differently from the others.",
+        "status": "correct",
+        "translation": "Chọn từ có phần gạch chân được phát âm khác với các từ còn lại.",
+        "userAnswer": "conf<u>u</u>sion"
+      },
+      {
+        "correctAnswer": "conf<u>u</u>sion",
+        "explanation": "Phần gạch chân trong 'cultural' /ʌ/, 'custom' /ʌ/, 'tug of war' /ʌ/ đều được phát âm là /ʌ/. Trong khi đó, 'confusion' được phát âm là /juː/.",
+        "options": [
+          "conf<u>u</u>sion",
+          "t<u>u</u>g of war",
+          "c<u>u</u>stom",
+          "c<u>u</u>ltural"
+        ],
+        "question": "Choose the word whose underlined part is pronounced differently from the others.",
+        "status": "correct",
+        "translation": "Chọn từ có phần gạch chân được phát âm khác với các từ còn lại.",
+        "userAnswer": "conf<u>u</u>sion"
+      },
+      {
+        "correctAnswer": "conf<u>u</u>sion",
+        "explanation": "Phần gạch chân trong 'cultural' /ʌ/, 'custom' /ʌ/, 'tug of war' /ʌ/ đều được phát âm là /ʌ/. Trong khi đó, 'confusion' được phát âm là /juː/.",
+        "options": [
+          "conf<u>u</u>sion",
+          "t<u>u</u>g of war",
+          "c<u>u</u>stom",
+          "c<u>u</u>ltural"
+        ],
+        "question": "Choose the word whose underlined part is pronounced differently from the others.",
+        "status": "correct",
+        "translation": "Chọn từ có phần gạch chân được phát âm khác với các từ còn lại.",
+        "userAnswer": "conf<u>u</u>sion"
+      },
+      {
+        "correctAnswer": "conf<u>u</u>sion",
+        "explanation": "Phần gạch chân trong 'cultural' /ʌ/, 'custom' /ʌ/, 'tug of war' /ʌ/ đều được phát âm là /ʌ/. Trong khi đó, 'confusion' được phát âm là /juː/.",
+        "options": [
+          "conf<u>u</u>sion",
+          "t<u>u</u>g of war",
+          "c<u>u</u>stom",
+          "c<u>u</u>ltural"
+        ],
+        "question": "Choose the word whose underlined part is pronounced differently from the others.",
+        "status": "correct",
+        "translation": "Chọn từ có phần gạch chân được phát âm khác với các từ còn lại.",
+        "userAnswer": "conf<u>u</u>sion"
+      },
+      {
+        "correctAnswer": "conf<u>u</u>sion",
+        "explanation": "Phần gạch chân trong 'cultural' /ʌ/, 'custom' /ʌ/, 'tug of war' /ʌ/ đều được phát âm là /ʌ/. Trong khi đó, 'confusion' được phát âm là /juː/.",
+        "options": [
+          "conf<u>u</u>sion",
+          "t<u>u</u>g of war",
+          "c<u>u</u>stom",
+          "c<u>u</u>ltural"
+        ],
+        "question": "Choose the word whose underlined part is pronounced differently from the others.",
+        "status": "correct",
+        "translation": "Chọn từ có phần gạch chân được phát âm khác với các từ còn lại.",
+        "userAnswer": "conf<u>u</u>sion"
+      },
+      {
+        "correctAnswer": "conf<u>u</u>sion",
+        "explanation": "Phần gạch chân trong 'cultural' /ʌ/, 'custom' /ʌ/, 'tug of war' /ʌ/ đều được phát âm là /ʌ/. Trong khi đó, 'confusion' được phát âm là /juː/.",
+        "options": [
+          "conf<u>u</u>sion",
+          "t<u>u</u>g of war",
+          "c<u>u</u>stom",
+          "c<u>u</u>ltural"
+        ],
+        "question": "Choose the word whose underlined part is pronounced differently from the others.",
+        "status": "correct",
+        "translation": "Chọn từ có phần gạch chân được phát âm khác với các từ còn lại.",
+        "userAnswer": "conf<u>u</u>sion"
+      },
+      {
+        "correctAnswer": "conf<u>u</u>sion",
+        "explanation": "Phần gạch chân trong 'cultural' /ʌ/, 'custom' /ʌ/, 'tug of war' /ʌ/ đều được phát âm là /ʌ/. Trong khi đó, 'confusion' được phát âm là /juː/.",
+        "options": [
+          "conf<u>u</u>sion",
+          "t<u>u</u>g of war",
+          "c<u>u</u>stom",
+          "c<u>u</u>ltural"
+        ],
+        "question": "Choose the word whose underlined part is pronounced differently from the others.",
+        "status": "correct",
+        "translation": "Chọn từ có phần gạch chân được phát âm khác với các từ còn lại.",
+        "userAnswer": "conf<u>u</u>sion"
+      },
+      {
+        "correctAnswer": "conf<u>u</u>sion",
+        "explanation": "Phần gạch chân trong 'cultural' /ʌ/, 'custom' /ʌ/, 'tug of war' /ʌ/ đều được phát âm là /ʌ/. Trong khi đó, 'confusion' được phát âm là /juː/.",
+        "options": [
+          "conf<u>u</u>sion",
+          "t<u>u</u>g of war",
+          "c<u>u</u>stom",
+          "c<u>u</u>ltural"
+        ],
+        "question": "Choose the word whose underlined part is pronounced differently from the others.",
+        "status": "correct",
+        "translation": "Chọn từ có phần gạch chân được phát âm khác với các từ còn lại.",
+        "userAnswer": "conf<u>u</u>sion"
+      },
+      {
+        "correctAnswer": "conf<u>u</u>sion",
+        "explanation": "Phần gạch chân trong 'cultural' /ʌ/, 'custom' /ʌ/, 'tug of war' /ʌ/ đều được phát âm là /ʌ/. Trong khi đó, 'confusion' được phát âm là /juː/.",
+        "options": [
+          "conf<u>u</u>sion",
+          "t<u>u</u>g of war",
+          "c<u>u</u>stom",
+          "c<u>u</u>ltural"
+        ],
+        "question": "Choose the word whose underlined part is pronounced differently from the others.",
+        "status": "correct",
+        "translation": "Chọn từ có phần gạch chân được phát âm khác với các từ còn lại.",
+        "userAnswer": "conf<u>u</u>sion"
+      },
+      {
+        "correctAnswer": "di<u>ver</u>sity",
+        "explanation": "'cultural' /ˈkʌltʃərəl/ (trọng âm rơi vào âm tiết thứ nhất), 'spicy' /ˈspaɪsi/ (trọng âm rơi vào âm tiết thứ nhất), 'autograph' /ˈɔːtəɡrɑːf/ (trọng âm rơi vào âm tiết thứ nhất). 'diversity' /daɪˈvɜːsəti/ (trọng âm rơi vào âm tiết thứ hai).",
+        "options": [
+          "<u>spi</u>cy",
+          "di<u>ver</u>sity",
+          "<u>aut</u>ograph",
+          "<u>cul</u>tural"
+        ],
+        "question": "Choose the word that has a different stress pattern from the others.",
+        "status": "correct",
+        "translation": "Chọn từ có trọng âm khác với các từ còn lại.",
+        "userAnswer": "di<u>ver</u>sity"
+      },
+      {
+        "correctAnswer": "di<u>ver</u>sity",
+        "explanation": "'cultural' /ˈkʌltʃərəl/ (trọng âm rơi vào âm tiết thứ nhất), 'spicy' /ˈspaɪsi/ (trọng âm rơi vào âm tiết thứ nhất), 'autograph' /ˈɔːtəɡrɑːf/ (trọng âm rơi vào âm tiết thứ nhất). 'diversity' /daɪˈvɜːsəti/ (trọng âm rơi vào âm tiết thứ hai).",
+        "options": [
+          "<u>spi</u>cy",
+          "di<u>ver</u>sity",
+          "<u>aut</u>ograph",
+          "<u>cul</u>tural"
+        ],
+        "question": "Choose the word that has a different stress pattern from the others.",
+        "status": "correct",
+        "translation": "Chọn từ có trọng âm khác với các từ còn lại.",
+        "userAnswer": "di<u>ver</u>sity"
+      },
+      {
+        "correctAnswer": "di<u>ver</u>sity",
+        "explanation": "'cultural' /ˈkʌltʃərəl/ (trọng âm rơi vào âm tiết thứ nhất), 'spicy' /ˈspaɪsi/ (trọng âm rơi vào âm tiết thứ nhất), 'autograph' /ˈɔːtəɡrɑːf/ (trọng âm rơi vào âm tiết thứ nhất). 'diversity' /daɪˈvɜːsəti/ (trọng âm rơi vào âm tiết thứ hai).",
+        "options": [
+          "<u>spi</u>cy",
+          "di<u>ver</u>sity",
+          "<u>aut</u>ograph",
+          "<u>cul</u>tural"
+        ],
+        "question": "Choose the word that has a different stress pattern from the others.",
+        "status": "correct",
+        "translation": "Chọn từ có trọng âm khác với các từ còn lại.",
+        "userAnswer": "di<u>ver</u>sity"
+      },
+      {
+        "correctAnswer": "di<u>ver</u>sity",
+        "explanation": "'cultural' /ˈkʌltʃərəl/ (trọng âm rơi vào âm tiết thứ nhất), 'spicy' /ˈspaɪsi/ (trọng âm rơi vào âm tiết thứ nhất), 'autograph' /ˈɔːtəɡrɑːf/ (trọng âm rơi vào âm tiết thứ nhất). 'diversity' /daɪˈvɜːsəti/ (trọng âm rơi vào âm tiết thứ hai).",
+        "options": [
+          "<u>spi</u>cy",
+          "di<u>ver</u>sity",
+          "<u>aut</u>ograph",
+          "<u>cul</u>tural"
+        ],
+        "question": "Choose the word that has a different stress pattern from the others.",
+        "status": "correct",
+        "translation": "Chọn từ có trọng âm khác với các từ còn lại.",
+        "userAnswer": "di<u>ver</u>sity"
+      },
+      {
+        "correctAnswer": "di<u>ver</u>sity",
+        "explanation": "'cultural' /ˈkʌltʃərəl/ (trọng âm rơi vào âm tiết thứ nhất), 'spicy' /ˈspaɪsi/ (trọng âm rơi vào âm tiết thứ nhất), 'autograph' /ˈɔːtəɡrɑːf/ (trọng âm rơi vào âm tiết thứ nhất). 'diversity' /daɪˈvɜːsəti/ (trọng âm rơi vào âm tiết thứ hai).",
+        "options": [
+          "<u>spi</u>cy",
+          "di<u>ver</u>sity",
+          "<u>aut</u>ograph",
+          "<u>cul</u>tural"
+        ],
+        "question": "Choose the word that has a different stress pattern from the others.",
+        "status": "correct",
+        "translation": "Chọn từ có trọng âm khác với các từ còn lại.",
+        "userAnswer": "di<u>ver</u>sity"
+      },
+      {
+        "correctAnswer": "di<u>ver</u>sity",
+        "explanation": "'cultural' /ˈkʌltʃərəl/ (trọng âm rơi vào âm tiết thứ nhất), 'spicy' /ˈspaɪsi/ (trọng âm rơi vào âm tiết thứ nhất), 'autograph' /ˈɔːtəɡrɑːf/ (trọng âm rơi vào âm tiết thứ nhất). 'diversity' /daɪˈvɜːsəti/ (trọng âm rơi vào âm tiết thứ hai).",
+        "options": [
+          "<u>spi</u>cy",
+          "di<u>ver</u>sity",
+          "<u>aut</u>ograph",
+          "<u>cul</u>tural"
+        ],
+        "question": "Choose the word that has a different stress pattern from the others.",
+        "status": "correct",
+        "translation": "Chọn từ có trọng âm khác với các từ còn lại.",
+        "userAnswer": "di<u>ver</u>sity"
+      },
+      {
+        "correctAnswer": "di<u>ver</u>sity",
+        "explanation": "'cultural' /ˈkʌltʃərəl/ (trọng âm rơi vào âm tiết thứ nhất), 'spicy' /ˈspaɪsi/ (trọng âm rơi vào âm tiết thứ nhất), 'autograph' /ˈɔːtəɡrɑːf/ (trọng âm rơi vào âm tiết thứ nhất). 'diversity' /daɪˈvɜːsəti/ (trọng âm rơi vào âm tiết thứ hai).",
+        "options": [
+          "<u>spi</u>cy",
+          "di<u>ver</u>sity",
+          "<u>aut</u>ograph",
+          "<u>cul</u>tural"
+        ],
+        "question": "Choose the word that has a different stress pattern from the others.",
+        "status": "correct",
+        "translation": "Chọn từ có trọng âm khác với các từ còn lại.",
+        "userAnswer": "di<u>ver</u>sity"
+      },
+      {
+        "correctAnswer": "di<u>ver</u>sity",
+        "explanation": "'cultural' /ˈkʌltʃərəl/ (trọng âm rơi vào âm tiết thứ nhất), 'spicy' /ˈspaɪsi/ (trọng âm rơi vào âm tiết thứ nhất), 'autograph' /ˈɔːtəɡrɑːf/ (trọng âm rơi vào âm tiết thứ nhất). 'diversity' /daɪˈvɜːsəti/ (trọng âm rơi vào âm tiết thứ hai).",
+        "options": [
+          "<u>spi</u>cy",
+          "di<u>ver</u>sity",
+          "<u>aut</u>ograph",
+          "<u>cul</u>tural"
+        ],
+        "question": "Choose the word that has a different stress pattern from the others.",
+        "status": "correct",
+        "translation": "Chọn từ có trọng âm khác với các từ còn lại.",
+        "userAnswer": "di<u>ver</u>sity"
+      },
+      {
+        "correctAnswer": "di<u>ver</u>sity",
+        "explanation": "'cultural' /ˈkʌltʃərəl/ (trọng âm rơi vào âm tiết thứ nhất), 'spicy' /ˈspaɪsi/ (trọng âm rơi vào âm tiết thứ nhất), 'autograph' /ˈɔːtəɡrɑːf/ (trọng âm rơi vào âm tiết thứ nhất). 'diversity' /daɪˈvɜːsəti/ (trọng âm rơi vào âm tiết thứ hai).",
+        "options": [
+          "<u>spi</u>cy",
+          "di<u>ver</u>sity",
+          "<u>aut</u>ograph",
+          "<u>cul</u>tural"
+        ],
+        "question": "Choose the word that has a different stress pattern from the others.",
+        "status": "correct",
+        "translation": "Chọn từ có trọng âm khác với các từ còn lại.",
+        "userAnswer": "di<u>ver</u>sity"
+      },
+      {
+        "correctAnswer": "di<u>ver</u>sity",
+        "explanation": "'cultural' /ˈkʌltʃərəl/ (trọng âm rơi vào âm tiết thứ nhất), 'spicy' /ˈspaɪsi/ (trọng âm rơi vào âm tiết thứ nhất), 'autograph' /ˈɔːtəɡrɑːf/ (trọng âm rơi vào âm tiết thứ nhất). 'diversity' /daɪˈvɜːsəti/ (trọng âm rơi vào âm tiết thứ hai).",
+        "options": [
+          "<u>spi</u>cy",
+          "di<u>ver</u>sity",
+          "<u>aut</u>ograph",
+          "<u>cul</u>tural"
+        ],
+        "question": "Choose the word that has a different stress pattern from the others.",
+        "status": "correct",
+        "translation": "Chọn từ có trọng âm khác với các từ còn lại.",
+        "userAnswer": "di<u>ver</u>sity"
+      }
+    ],
+    "gameType": "quiz",
+    "incorrect": 3,
+    "playerClass": "12B",
+    "playerName": "Trương Thế Nghiêm",
+    "score": "9.3",
+    "status": "completed",
+    "timeTakenSeconds": 441,
+    "timestamp": 1790783923442,
+    "totalQuestions": 40
+  },
+  "-P2n1_nB84w9N_Uf6-HK": {
+    "answered": 54,
+    "attempts": 2,
+    "correct": 54,
+    "details": [
+      {
+        "correctAnswer": "culture shock",
+        "explanation": "Từ phát âm là \"culture shock\" (nghĩa: \"sốc văn hóa\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "sốc văn hóa",
+        "userAnswer": "culture shock"
+      },
+      {
+        "correctAnswer": "diversity",
+        "explanation": "Từ phát âm là \"diversity\" (nghĩa: \"sự đa dạng\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "sự đa dạng",
+        "userAnswer": "diversity"
+      },
+      {
+        "correctAnswer": "belief",
+        "explanation": "Từ phát âm là \"belief\" (nghĩa: \"tín ngưỡng\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "tín ngưỡng",
+        "userAnswer": "belief"
+      },
+      {
+        "correctAnswer": "confusion",
+        "explanation": "Từ phát âm là \"confusion\" (nghĩa: \"sự bối rối\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "sự bối rối",
+        "userAnswer": "confusion"
+      },
+      {
+        "correctAnswer": "specialty",
+        "explanation": "Từ phát âm là \"specialty\" (nghĩa: \"đặc sản\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "đặc sản",
+        "userAnswer": "specialty"
+      },
+      {
+        "correctAnswer": "ingredient",
+        "explanation": "Từ phát âm là \"ingredient\" (nghĩa: \"nguyên liệu/ thành phần\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "nguyên liệu/ thành phần",
+        "userAnswer": "ingredient"
+      },
+      {
+        "correctAnswer": "captivate",
+        "explanation": "Từ phát âm là \"captivate\" (nghĩa: \"thu hút\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "thu hút",
+        "userAnswer": "captivate"
+      },
+      {
+        "correctAnswer": "specialist",
+        "explanation": "Từ phát âm là \"specialist\" (nghĩa: \"chuyên gia\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "chuyên gia",
+        "userAnswer": "specialist"
+      },
+      {
+        "correctAnswer": "bamboo dancing",
+        "explanation": "Từ phát âm là \"bamboo dancing\" (nghĩa: \"nhảy sạp\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "nhảy sạp",
+        "userAnswer": "bamboo dancing"
+      },
+      {
+        "correctAnswer": "interact with",
+        "explanation": "Từ phát âm là \"interact with\" (nghĩa: \"tương tác với\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "tương tác với",
+        "userAnswer": "interact with"
+      },
+      {
+        "correctAnswer": "souvenir",
+        "explanation": "Từ phát âm là \"souvenir\" (nghĩa: \"quà lưu niệm\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "quà lưu niệm",
+        "userAnswer": "souvenir"
+      },
+      {
+        "correctAnswer": "custom",
+        "explanation": "Từ phát âm là \"custom\" (nghĩa: \"phong tục\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "phong tục",
+        "userAnswer": "custom"
+      },
+      {
+        "correctAnswer": "fair",
+        "explanation": "Từ phát âm là \"fair\" (nghĩa: \"hội chợ\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "hội chợ",
+        "userAnswer": "fair"
+      },
+      {
+        "correctAnswer": "spring roll",
+        "explanation": "Từ phát âm là \"spring roll\" (nghĩa: \"nem\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "nem",
+        "userAnswer": "spring roll"
+      },
+      {
+        "correctAnswer": "globalisation",
+        "explanation": "Từ phát âm là \"globalisation\" (nghĩa: \"toàn cầu hóa\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "toàn cầu hóa",
+        "userAnswer": "globalisation"
+      },
+      {
+        "correctAnswer": "keep up with",
+        "explanation": "Từ phát âm là \"keep up with\" (nghĩa: \"theo kịp với\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "theo kịp với",
+        "userAnswer": "keep up with"
+      },
+      {
+        "correctAnswer": "overcome",
+        "explanation": "Từ phát âm là \"overcome\" (nghĩa: \"vượt qua\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "vượt qua",
+        "userAnswer": "overcome"
+      },
+      {
+        "correctAnswer": "tug of war",
+        "explanation": "Từ phát âm là \"tug of war\" (nghĩa: \"trò chơi kéo co\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "trò chơi kéo co",
+        "userAnswer": "tug of war"
+      },
+      {
+        "correctAnswer": "barrier",
+        "explanation": "Từ phát âm là \"barrier\" (nghĩa: \"rào cản\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "rào cản",
+        "userAnswer": "barrier"
+      },
+      {
+        "correctAnswer": "focus on",
+        "explanation": "Từ phát âm là \"focus on\" (nghĩa: \"tập trung vào\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "tập trung vào",
+        "userAnswer": "focus on"
+      },
+      {
+        "correctAnswer": "open mind",
+        "explanation": "Từ phát âm là \"open mind\" (nghĩa: \"tâm trí cởi mở\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "tâm trí cởi mở",
+        "userAnswer": "open mind"
+      },
+      {
+        "correctAnswer": "cross-cultural",
+        "explanation": "Từ phát âm là \"cross-cultural\" (nghĩa: \"đa văn hóa\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "đa văn hóa",
+        "userAnswer": "cross-cultural"
+      },
+      {
+        "correctAnswer": "applicant",
+        "explanation": "Từ phát âm là \"applicant\" (nghĩa: \"người xin việc\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "người xin việc",
+        "userAnswer": "applicant"
+      },
+      {
+        "correctAnswer": "illegal",
+        "explanation": "Từ phát âm là \"illegal\" (nghĩa: \"bất hợp pháp\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "bất hợp pháp",
+        "userAnswer": "illegal"
+      },
+      {
+        "correctAnswer": "origin",
+        "explanation": "Từ phát âm là \"origin\" (nghĩa: \"nguồn gốc\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "nguồn gốc",
+        "userAnswer": "origin"
+      },
+      {
+        "correctAnswer": "separate",
+        "explanation": "Từ phát âm là \"separate\" (nghĩa: \"riêng biệt\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "riêng biệt",
+        "userAnswer": "separate"
+      },
+      {
+        "correctAnswer": "characteristic",
+        "explanation": "Từ phát âm là \"characteristic\" (nghĩa: \"đặc trưng, đặc điểm\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "đặc trưng, đặc điểm",
+        "userAnswer": "characteristic"
+      },
+      {
+        "correctAnswer": "unique",
+        "explanation": "Từ phát âm là \"unique\" (nghĩa: \"độc đáo\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "độc đáo",
+        "userAnswer": "unique"
+      },
+      {
+        "correctAnswer": "popularity",
+        "explanation": "Từ phát âm là \"popularity\" (nghĩa: \"sự phổ biến\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "sự phổ biến",
+        "userAnswer": "popularity"
+      },
+      {
+        "correctAnswer": "stall",
+        "explanation": "Từ phát âm là \"stall\" (nghĩa: \"quầy hàng\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "quầy hàng",
+        "userAnswer": "stall"
+      },
+      {
+        "correctAnswer": "spicy",
+        "explanation": "Từ phát âm là \"spicy\" (nghĩa: \"cay\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "cay",
+        "userAnswer": "spicy"
+      },
+      {
+        "correctAnswer": "professional",
+        "explanation": "Từ phát âm là \"professional\" (nghĩa: \"chuyên nghiệp\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "chuyên nghiệp",
+        "userAnswer": "professional"
+      },
+      {
+        "correctAnswer": "anxiety",
+        "explanation": "Từ phát âm là \"anxiety\" (nghĩa: \"sự lo lắng\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "sự lo lắng",
+        "userAnswer": "anxiety"
+      },
+      {
+        "correctAnswer": "meatball",
+        "explanation": "Từ phát âm là \"meatball\" (nghĩa: \"thịt viên\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "thịt viên",
+        "userAnswer": "meatball"
+      },
+      {
+        "correctAnswer": "rude",
+        "explanation": "Từ phát âm là \"rude\" (nghĩa: \"thô lỗ\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "thô lỗ",
+        "userAnswer": "rude"
+      },
+      {
+        "correctAnswer": "creative",
+        "explanation": "Từ phát âm là \"creative\" (nghĩa: \"sáng tạo\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "sáng tạo",
+        "userAnswer": "creative"
+      },
+      {
+        "correctAnswer": "booth",
+        "explanation": "Từ phát âm là \"booth\" (nghĩa: \"gian hàng\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "gian hàng",
+        "userAnswer": "booth"
+      },
+      {
+        "correctAnswer": "impact",
+        "explanation": "Từ phát âm là \"impact\" (nghĩa: \"tác động\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "tác động",
+        "userAnswer": "impact"
+      },
+      {
+        "correctAnswer": "autograph",
+        "explanation": "Từ phát âm là \"autograph\" (nghĩa: \"chữ ký\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "chữ ký",
+        "userAnswer": "autograph"
+      },
+      {
+        "correctAnswer": "appreciate",
+        "explanation": "Từ phát âm là \"appreciate\" (nghĩa: \"đánh giá cao\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "đánh giá cao",
+        "userAnswer": "appreciate"
+      },
+      {
+        "correctAnswer": "mystery",
+        "explanation": "Từ phát âm là \"mystery\" (nghĩa: \"điều bí ẩn\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "điều bí ẩn",
+        "userAnswer": "mystery"
+      },
+      {
+        "correctAnswer": "influence",
+        "explanation": "Từ phát âm là \"influence\" (nghĩa: \"ảnh hưởng\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "ảnh hưởng",
+        "userAnswer": "influence"
+      },
+      {
+        "correctAnswer": "promote",
+        "explanation": "Từ phát âm là \"promote\" (nghĩa: \"thúc đẩy\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "thúc đẩy",
+        "userAnswer": "promote"
+      },
+      {
+        "correctAnswer": "blend",
+        "explanation": "Từ phát âm là \"blend\" (nghĩa: \"trộn\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "trộn",
+        "userAnswer": "blend"
+      },
+      {
+        "correctAnswer": "insulting",
+        "explanation": "Từ phát âm là \"insulting\" (nghĩa: \"xúc phạm\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "xúc phạm",
+        "userAnswer": "insulting"
+      },
+      {
+        "correctAnswer": "cuisine",
+        "explanation": "Từ phát âm là \"cuisine\" (nghĩa: \"ẩm thực\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "ẩm thực",
+        "userAnswer": "cuisine"
+      },
+      {
+        "correctAnswer": "celebrate",
+        "explanation": "Từ phát âm là \"celebrate\" (nghĩa: \"tổ chức\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "tổ chức",
+        "userAnswer": "celebrate"
+      },
+      {
+        "correctAnswer": "unfamiliar",
+        "explanation": "Từ phát âm là \"unfamiliar\" (nghĩa: \"xa lạ, không quen\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "xa lạ, không quen",
+        "userAnswer": "unfamiliar"
+      },
+      {
+        "correctAnswer": "deal with",
+        "explanation": "Từ phát âm là \"deal with\" (nghĩa: \"đối phó với\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "đối phó với",
+        "userAnswer": "deal with"
+      },
+      {
+        "correctAnswer": "cultural",
+        "explanation": "Từ phát âm là \"cultural\" (nghĩa: \"văn hóa\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "văn hóa",
+        "userAnswer": "cultural"
+      },
+      {
+        "correctAnswer": "fish and chips",
+        "explanation": "Từ phát âm là \"fish and chips\" (nghĩa: \"cá và khoai tây chiên\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "cá và khoai tây chiên",
+        "userAnswer": "fish and chips"
+      },
+      {
+        "correctAnswer": "seriously",
+        "explanation": "Từ phát âm là \"seriously\" (nghĩa: \"nghiêm túc, nghiêm trọng\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "nghiêm túc, nghiêm trọng",
+        "userAnswer": "seriously"
+      },
+      {
+        "correctAnswer": "identity",
+        "explanation": "Từ phát âm là \"identity\" (nghĩa: \"bản sắc\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "bản sắc",
+        "userAnswer": "identity"
+      },
+      {
+        "correctAnswer": "organise",
+        "explanation": "Từ phát âm là \"organise\" (nghĩa: \"tổ chức\").",
+        "question": "Nghe phát âm từ tiếng Anh",
+        "status": "correct",
+        "translation": "tổ chức",
+        "userAnswer": "organise"
+      }
+    ],
+    "gameType": "listen-choose",
+    "incorrect": 0,
+    "playerClass": "12B",
+    "playerName": "Trương Thế Nghiêm",
+    "score": "10.0",
+    "status": "completed",
+    "timeTakenSeconds": 543,
+    "timestamp": 1790784481367,
+    "totalQuestions": 54
+  },
+  "-P2rGPFZMTtkFitlCCZ6": {
+    "answered": 54,
+    "attempts": 1,
+    "audioListenedCount": 75,
+    "correct": 0,
+    "gameType": "vocabulary",
+    "incorrect": 0,
+    "listenedWords": [
+      "cultural",
+      "diversity",
+      "cuisine",
+      "booth",
+      "spicy",
+      "autograph",
+      "meatball",
+      "souvenir",
+      "spring roll",
+      "fish and chips",
+      "identity",
+      "separate",
+      "fair",
+      "culture shock",
+      "origin",
+      "custom",
+      "mystery",
+      "bamboo dancing",
+      "tug of war",
+      "popularity",
+      "characteristic",
+      "globalisation",
+      "cross-cultural",
+      "captivate",
+      "creative",
+      "keep up with",
+      "appreciate",
+      "specialty",
+      "belief",
+      "ingredient",
+      "influence",
+      "impact",
+      "blend",
+      "unique",
+      "professional",
+      "organise",
+      "stall",
+      "celebrate",
+      "confusion",
+      "anxiety",
+      "unfamiliar",
+      "insulting",
+      "focus on",
+      "rude",
+      "barrier",
+      "illegal",
+      "promote",
+      "open mind",
+      "specialist",
+      "seriously",
+      "applicant",
+      "deal with",
+      "interact with",
+      "overcome"
+    ],
+    "playerClass": "12B",
+    "playerName": "Trương Thế Nghiêm",
+    "score": "ĐANG HỌC",
+    "status": "in-progress",
+    "timeTakenSeconds": 0,
+    "timestamp": 1790855062067,
+    "totalQuestions": 54,
+    "uniqueWordsListenedCount": 54
+  },
+  "-P3SvUJbvd7iIFO3pbvz": {
+    "answered": 54,
+    "attempts": 1,
+    "audioListenedCount": 56,
+    "correct": 0,
+    "gameType": "vocabulary",
+    "incorrect": 0,
+    "listenedWords": [
+      "cultural",
+      "diversity",
+      "cuisine",
+      "booth",
+      "spicy",
+      "autograph",
+      "meatball",
+      "souvenir",
+      "spring roll",
+      "fish and chips",
+      "identity",
+      "separate",
+      "fair",
+      "culture shock",
+      "origin",
+      "custom",
+      "mystery",
+      "bamboo dancing",
+      "tug of war",
+      "popularity",
+      "characteristic",
+      "globalisation",
+      "cross-cultural",
+      "captivate",
+      "creative",
+      "keep up with",
+      "appreciate",
+      "specialty",
+      "belief",
+      "ingredient",
+      "influence",
+      "impact",
+      "blend",
+      "unique",
+      "professional",
+      "organise",
+      "stall",
+      "celebrate",
+      "confusion",
+      "anxiety",
+      "unfamiliar",
+      "insulting",
+      "focus on",
+      "rude",
+      "barrier",
+      "illegal",
+      "promote",
+      "open mind",
+      "specialist",
+      "seriously",
+      "applicant",
+      "deal with",
+      "interact with",
+      "overcome"
+    ],
+    "playerClass": "12B",
+    "playerName": "Trương Thế Nghiêm",
+    "score": "ĐANG HỌC",
+    "status": "in-progress",
+    "timeTakenSeconds": 0,
+    "timestamp": 1791503586251,
+    "totalQuestions": 54,
+    "uniqueWordsListenedCount": 54
+  }
+}

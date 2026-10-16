@@ -9,6 +9,7 @@ import {
     listenToExerciseSelectionConfig,
     listenToStudentActivityAttempts,
     calculateStudentCompletionPercent,
+    resolveAttemptTimeSeconds,
     ActivityAttemptCounts,
     ActivityStats,
     AttemptDetail
@@ -467,7 +468,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
                                         Lần {idx + 1}
                                     </span>
                                     <span className="font-mono font-extrabold text-[0.85em] shrink-0 opacity-90 mt-0.5">
-                                        {formatDuration(att.timeTakenSeconds)}{formatDateMonth(att.timestamp)}
+                                        {formatDuration(resolveAttemptTimeSeconds(att, att._actId || att.activityId))}{formatDateMonth(att.timestamp)}
                                     </span>
                                 </div>
                             ))}
@@ -499,7 +500,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
                                             )}
                                         </div>
                                         <span className="font-mono font-extrabold shrink-0">
-                                            {formatDuration(att.timeTakenSeconds)}{formatDateMonth(att.timestamp)}
+                                            {formatDuration(resolveAttemptTimeSeconds(att, att._actId || att.activityId))}{formatDateMonth(att.timestamp)}
                                         </span>
                                     </div>
 
@@ -743,69 +744,85 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({
     const titleLabel = `${itemPrefix} ${unitNumber}`;
 
     const calcSummaryStats = () => {
-        const vTime = attempts.vocabulary.totalTimeSeconds || 0;
+        let vTime = attempts.vocabulary.totalTimeSeconds || 0;
         const vCount = attempts.vocabulary.count || 0;
         
         const vocabListCount = (vocabulary && vocabulary.length > 0) ? vocabulary.length : 0;
         let vAudioTimes = 0;
         let maxVocabTotal = vocabListCount;
+        let maxUnique = 0;
         const uniqueWordsSet = new Set<string>();
 
         (attempts.vocabulary.attemptsList || []).forEach(a => {
             vAudioTimes += a.audioListenedCount || 0;
             if (Array.isArray(a.listenedWords)) {
-                a.listenedWords.forEach(w => uniqueWordsSet.add(w));
+                a.listenedWords.forEach(w => { if (w) uniqueWordsSet.add(w); });
+            }
+            if (typeof a.uniqueWordsListenedCount === 'number') {
+                maxUnique = Math.max(maxUnique, a.uniqueWordsListenedCount);
             }
             if (a.totalQuestions && a.totalQuestions > maxVocabTotal) {
                 maxVocabTotal = a.totalQuestions;
             }
         });
 
-        let vUniqueWords = uniqueWordsSet.size;
+        // Always combine unique words from recorded set and count
+        let vUniqueWords = Math.max(uniqueWordsSet.size, maxUnique);
         if (vUniqueWords === 0 && vAudioTimes > 0) {
-            let maxUnique = 0;
-            (attempts.vocabulary.attemptsList || []).forEach(a => {
-                if (typeof a.uniqueWordsListenedCount === 'number') {
-                    maxUnique = Math.max(maxUnique, a.uniqueWordsListenedCount);
-                }
-            });
-            vUniqueWords = maxUnique > 0 ? maxUnique : Math.min(vAudioTimes, maxVocabTotal || 10);
+            vUniqueWords = Math.min(vAudioTimes, maxVocabTotal || 10);
         }
 
         const vTotalWords = maxVocabTotal > 0 ? maxVocabTotal : (vocabListCount > 0 ? vocabListCount : 10);
         const vUnheardWords = Math.max(0, vTotalWords - vUniqueWords);
+
+        // Fallback for vocabulary time if 0 but student listened
+        if (vTime === 0 && (vAudioTimes > 0 || vUniqueWords > 0)) {
+            vTime = Math.max(10, vAudioTimes * 3, vUniqueWords * 6);
+        }
         
-        const mTime = attempts.matching.totalTimeSeconds || 0;
+        let mTime = attempts.matching.totalTimeSeconds || 0;
         const mCount = attempts.matching.count || 0;
         let mCorrect = 0, mIncorrect = 0;
         (attempts.matching.attemptsList || []).forEach(a => {
             mCorrect += a.correct || 0;
             mIncorrect += a.incorrect || 0;
         });
+        if (mTime === 0 && (mCorrect + mIncorrect > 0)) {
+            mTime = Math.max(10, (mCorrect + mIncorrect) * 5);
+        }
 
-        const lTime = attempts.listenChoose?.totalTimeSeconds || 0;
+        let lTime = attempts.listenChoose?.totalTimeSeconds || 0;
         const lCount = attempts.listenChoose?.count || 0;
         let lCorrect = 0, lIncorrect = 0;
         (attempts.listenChoose?.attemptsList || []).forEach(a => {
             lCorrect += a.correct || 0;
             lIncorrect += a.incorrect || 0;
         });
+        if (lTime === 0 && (lCorrect + lIncorrect > 0)) {
+            lTime = Math.max(10, (lCorrect + lIncorrect) * 5);
+        }
 
-        const sTime = attempts.spelling.totalTimeSeconds || 0;
+        let sTime = attempts.spelling.totalTimeSeconds || 0;
         const sCount = attempts.spelling.count || 0;
         let sCorrect = 0, sIncorrect = 0;
         (attempts.spelling.attemptsList || []).forEach(a => {
             sCorrect += a.correct || 0;
             sIncorrect += a.incorrect || 0;
         });
+        if (sTime === 0 && (sCorrect + sIncorrect > 0)) {
+            sTime = Math.max(10, (sCorrect + sIncorrect) * 5);
+        }
 
-        const qTime = attempts.quiz.totalTimeSeconds || 0;
+        let qTime = attempts.quiz.totalTimeSeconds || 0;
         const qCount = attempts.quiz.count || 0;
         let qCorrect = 0, qIncorrect = 0;
         (attempts.quiz.attemptsList || []).forEach(a => {
             qCorrect += a.correct || 0;
             qIncorrect += a.incorrect || 0;
         });
+        if (qTime === 0 && (qCorrect + qIncorrect > 0)) {
+            qTime = Math.max(10, (qCorrect + qIncorrect) * 5);
+        }
 
         const totalTime = vTime + mTime + lTime + sTime + qTime;
         const totalCorrect = mCorrect + lCorrect + sCorrect + qCorrect;
@@ -842,10 +859,12 @@ const ActivitySelectionModal: React.FC<ActivitySelectionModalProps> = ({
 
         let comment = '';
 
-        if (totalAttemptsCount === 0 || (totalTime === 0 && totalAnswered === 0)) {
+        if (totalAttemptsCount === 0 || (totalTime === 0 && totalAnswered === 0 && vUniqueWords === 0)) {
             comment = 'Chưa có lượt học nào. Em hãy bắt đầu luyện tập ngay nhé!';
         } else if (totalAnswered === 0) {
-            if (vTime < 30) {
+            if (vUniqueWords >= Math.min(vTotalWords, 10) || vTime >= 60) {
+                comment = 'Em đã chăm chỉ học và nghe phát âm từ vựng. Hãy tiếp tục thử sức với các bài tập Ghép cặp, Nghe & Chọn, Viết chính tả và Trắc nghiệm nhé!';
+            } else if (vTime < 30 && vUniqueWords < 5) {
                 comment = 'Mới lướt qua từ vựng. Em hãy đọc kỹ lại danh sách từ và bắt đầu làm các bài tập nhé!';
             } else {
                 comment = 'Em đã dành thời gian xem từ vựng. Hãy tiếp tục thử sức với các bài tập Ghép cặp, Nghe & Chọn, Viết chính tả và Trắc nghiệm nhé!';

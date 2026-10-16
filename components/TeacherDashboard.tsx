@@ -13,7 +13,7 @@ import {
     listenToTopicVocabulary, saveTopicVocabulary, saveTopicQuizQuestions, clearTopicResults,
     deleteTopicStudentAllResults, saveWelcomeConfig, listenToWelcomeConfig, saveDashboardConfig, listenToDashboardConfig,
     saveExerciseSelectionConfig, listenToExerciseSelectionConfig, saveLoginRosterConfig, listenToLoginRosterConfig,
-    calculateStudentCompletionPercent
+    calculateStudentCompletionPercent, resolveAttemptTimeSeconds, isRealStudentAttempt
 } from '../services/firebaseService';
 import { QUIZ_VERSION, generateQuizFromCustomPrompt, generateQuizFromText, generateVocabularyList } from '../services/geminiService';
 import TextToQuizModal from './TextToQuizModal';
@@ -433,7 +433,11 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
         const unsubResults = listenToUnitResultsByGrade(classroomId, grade, id, (data) => {
             if (!data) { setProcessedUnitResults([]); return; }
             const processed = Object.entries(data).map(([playerKey, resultsObj]): StudentUnitSummary | null => {
-                const resultsArray = resultsObj ? Object.entries(resultsObj).map(([activityId, result]) => ({ ...result as GameResult, activityId })) : [];
+                const resultsArray = resultsObj ? Object.entries(resultsObj).map(([activityId, result]) => {
+                    const r = result as GameResult;
+                    const resolvedTime = resolveAttemptTimeSeconds(r, activityId);
+                    return { ...r, activityId, timeTakenSeconds: resolvedTime };
+                }).filter(r => isRealStudentAttempt(r)) : [];
                 if (resultsArray.length === 0) return null;
                 resultsArray.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
                 return { playerKey, playerName: resultsArray[0]?.playerName || '', playerClass: resultsArray[0]?.playerClass || '', results: resultsArray };
@@ -451,7 +455,11 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
         const unsubResults = listenToTopicResults(classroomId, id, (data) => {
             if (!data) { setProcessedTopicResults([]); return; }
             const processed = Object.entries(data).map(([playerKey, resultsObj]): StudentUnitSummary | null => {
-                const resultsArray = resultsObj ? Object.entries(resultsObj).map(([activityId, result]) => ({ ...result as GameResult, activityId })) : [];
+                const resultsArray = resultsObj ? Object.entries(resultsObj).map(([activityId, result]) => {
+                    const r = result as GameResult;
+                    const resolvedTime = resolveAttemptTimeSeconds(r, activityId);
+                    return { ...r, activityId, timeTakenSeconds: resolvedTime };
+                }).filter(r => isRealStudentAttempt(r)) : [];
                 if (resultsArray.length === 0) return null;
                 resultsArray.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
                 return { playerKey, playerName: resultsArray[0]?.playerName || '', playerClass: resultsArray[0]?.playerClass || '', results: resultsArray };
@@ -469,7 +477,7 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
     }, [results, processedUnitResults, processedTopicResults]);
 
     const getGroupedData = (rawStudents: StudentUnitSummary[], currentClass: string) => {
-        const filtered = rawStudents.filter(s => currentClass === 'all' || (s.playerClass || '').toUpperCase() === (currentClass || '').toUpperCase());
+        const filtered = rawStudents.filter(s => currentClass === 'all' || (s.playerClass || '').trim().toUpperCase() === (currentClass || '').trim().toUpperCase());
         const mergedMap: Record<string, StudentGroupedResult> = {};
         
         const countUpper = (str: string) => {
@@ -483,11 +491,11 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
         };
 
         filtered.forEach(s => {
-            const pClass = (s.playerClass || '').toUpperCase();
-            const pName = (s.playerName || '').toUpperCase();
-            const identityKey = `${pClass}_${pName}`;
+            const pClass = (s.playerClass || '').trim().toUpperCase();
+            const pName = (s.playerName || '').trim().replace(/\s+/g, ' ');
+            const identityKey = `${pClass}_${pName.toUpperCase()}`;
             if (!mergedMap[identityKey]) {
-                mergedMap[identityKey] = { playerKey: identityKey, playerName: s.playerName || '', playerClass: s.playerClass || '', attempts: [], latestTimestamp: 0 };
+                mergedMap[identityKey] = { playerKey: identityKey, playerName: pName, playerClass: pClass, attempts: [], latestTimestamp: 0 };
             }
             mergedMap[identityKey].attempts.push(...s.results);
             const groupLatest = s.results.length > 0 ? Math.max(...s.results.map(r => r.timestamp || 0)) : 0;

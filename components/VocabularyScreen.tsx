@@ -2,7 +2,7 @@
 import React, { useState, useRef, useCallback, useEffect, useMemo } from 'react';
 import { VocabularyWord, PlayerData, GameResult, ExerciseSelectionConfig } from '../types';
 import { generateSpeech, generateImagePrompt } from '../services/geminiService';
-import { updateVocabularyAudio, updateVocabularyImage, updateUnitActivityResult, removeStudentPresence, trackStudentPresence, updateUnitActivityProgress } from '../services/firebaseService';
+import { updateVocabularyAudio, updateVocabularyImage, updateUnitActivityResult, removeStudentPresence, trackStudentPresence, updateUnitActivityProgress, deleteUnitOrTopicStudentResult } from '../services/firebaseService';
 import { isUnreliableImage, getVocabImageFromCache, setVocabImageToCache, resolveVocabImages } from '../services/imageCacheService';
 import { ActivityBackButton } from './ActivityBackButton';
 import { decode, decodeAudioData, getSharedAudioContext, startAudioKeepAlive, warmUpAudioContext } from '../utils/audioUtils';
@@ -111,6 +111,7 @@ const VocabularyScreen: React.FC<VocabularyScreenProps> = ({ unitNumber, vocabul
                 incorrect: 0,
                 answered: 0,
                 totalQuestions: vocabulary.length,
+                timeTakenSeconds: 0,
                 audioListenedCount: 0,
                 uniqueWordsListenedCount: 0,
                 listenedWords: [],
@@ -164,35 +165,80 @@ const VocabularyScreen: React.FC<VocabularyScreenProps> = ({ unitNumber, vocabul
         startWorker();
     }, [unitNumber, classroomId, grade]);
 
-    const handleBackWithSave = () => {
-        if (isFinishing) return;
-        setIsFinishing(true);
-        const endTime = Date.now();
-        const timeTakenSeconds = Math.round((endTime - startTime) / 1000);
-        // Change score to 'ĐÃ HỌC' and set correct/incorrect to 0 for vocabulary
-        const resultData: Partial<GameResult> = { 
-            score: 'ĐÃ HỌC', 
-            correct: 0, 
-            incorrect: 0, 
-            answered: localVocabulary.length, 
-            totalQuestions: localVocabulary.length, 
-            timeTakenSeconds: timeTakenSeconds, 
+    const saveProgressNow = useCallback((isExplicitBack = false) => {
+        if (!classroomId || !activityId) return;
+        const elapsedSeconds = Math.max(1, Math.round((Date.now() - startTime) / 1000));
+        const unitIdentifier = grade === 'topics' ? `topic_${unitNumber}` : `unit_${unitNumber}`;
+        const hasLearnedAll = listenedWordsSetRef.current.size >= (vocabulary.length || 1);
+        const shouldComplete = isExplicitBack || hasLearnedAll;
+
+        const data: Partial<GameResult> = {
+            score: shouldComplete ? 'ĐÃ HỌC' : 'ĐANG HỌC',
+            correct: 0,
+            incorrect: 0,
+            answered: localVocabulary.length,
+            totalQuestions: localVocabulary.length,
+            timeTakenSeconds: elapsedSeconds,
             audioListenedCount: audioListenedCountRef.current,
             uniqueWordsListenedCount: listenedWordsSetRef.current.size,
             listenedWords: Array.from(listenedWordsSetRef.current),
-            details: localVocabulary.map(v => ({ 
-                question: v.word, 
-                translation: v.translation, 
-                options: [], 
-                userAnswer: v.word, 
-                correctAnswer: v.word, 
-                status: 'correct', 
-                explanation: `Bạn đã học từ: ${v.word}` 
-            })) 
+            status: shouldComplete ? 'completed' : 'in-progress'
         };
+
+        if (shouldComplete) {
+            updateUnitActivityResult(classroomId, grade, unitIdentifier, playerData, activityId, {
+                ...data,
+                details: localVocabulary.map(v => ({ 
+                    question: v.word, 
+                    translation: v.translation, 
+                    options: [], 
+                    userAnswer: v.word, 
+                    correctAnswer: v.word, 
+                    status: 'correct', 
+                    explanation: `Bạn đã học từ: ${v.word}` 
+                }))
+            }).catch(console.error);
+        } else {
+            updateUnitActivityProgress(classroomId, grade, unitIdentifier, playerData, activityId, data).catch(console.error);
+        }
+    }, [classroomId, activityId, grade, unitNumber, vocabulary.length, localVocabulary, playerData, startTime]);
+
+    // Continuous heartbeat & unload persistence to guarantee zero data loss
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            if (isComponentMounted.current && !isFinishing) {
+                saveProgressNow(false);
+            }
+        }, 5000);
+
+        const handleVisibilityOrPageHide = () => {
+            saveProgressNow(false);
+        };
+
+        window.addEventListener('visibilitychange', handleVisibilityOrPageHide);
+        window.addEventListener('pagehide', handleVisibilityOrPageHide);
+        window.addEventListener('beforeunload', handleVisibilityOrPageHide);
+
+        return () => {
+            clearInterval(intervalId);
+            window.removeEventListener('visibilitychange', handleVisibilityOrPageHide);
+            window.removeEventListener('pagehide', handleVisibilityOrPageHide);
+            window.removeEventListener('beforeunload', handleVisibilityOrPageHide);
+            saveProgressNow(false);
+        };
+    }, [saveProgressNow, isFinishing]);
+
+    const handleBackWithSave = () => {
+        if (isFinishing) return;
+        setIsFinishing(true);
         if (classroomId && activityId) {
             const unitIdentifier = grade === 'topics' ? `topic_${unitNumber}` : `unit_${unitNumber}`;
-            updateUnitActivityResult(classroomId, grade, unitIdentifier, playerData, activityId, resultData).catch(console.error);
+            if (audioListenedCountRef.current === 0 && listenedWordsSetRef.current.size === 0) {
+                // User opened and exited without interacting - cleanly remove blank placeholder
+                deleteUnitOrTopicStudentResult(classroomId, grade, unitIdentifier, playerData.name, playerData.class, activityId).catch(console.error);
+            } else {
+                saveProgressNow(true);
+            }
             removeStudentPresence(classroomId, playerData.name, playerData.class).catch(console.error);
         }
         onBack();
@@ -202,19 +248,7 @@ const VocabularyScreen: React.FC<VocabularyScreenProps> = ({ unitNumber, vocabul
         e.stopPropagation();
         audioListenedCountRef.current += 1;
         listenedWordsSetRef.current.add(wordItem.word);
-        if (classroomId && activityId) {
-            const unitIdentifier = grade === 'topics' ? `topic_${unitNumber}` : `unit_${unitNumber}`;
-            updateUnitActivityProgress(classroomId, grade, unitIdentifier, playerData, activityId, {
-                score: 'ĐANG HỌC',
-                correct: 0,
-                incorrect: 0,
-                answered: vocabulary.length,
-                totalQuestions: vocabulary.length,
-                audioListenedCount: audioListenedCountRef.current,
-                uniqueWordsListenedCount: listenedWordsSetRef.current.size,
-                listenedWords: Array.from(listenedWordsSetRef.current),
-            }).catch(console.error);
-        }
+        saveProgressNow(false);
 
         // If user taps while audio is playing, cleanly stop current audio first
         if (currentSourceRef.current) {
