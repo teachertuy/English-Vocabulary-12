@@ -34,8 +34,8 @@ const checkFirebase = (): Database => {
 };
 
 const getPlayerKey = (playerName: string, playerClass: string) => {
-    const normalizedClass = (playerClass || '').trim().toUpperCase();
-    const normalizedName = (playerName || '').trim().toUpperCase();
+    const normalizedClass = (playerClass || '').trim().normalize('NFC').toUpperCase();
+    const normalizedName = (playerName || '').trim().normalize('NFC').toUpperCase();
     const combined = `${normalizedClass}_${normalizedName}`;
     return combined.replace(/[.#$[\]]/g, '_');
 };
@@ -417,111 +417,290 @@ export interface ActivityAttemptCounts {
     quiz: ActivityStats;
 }
 
-export const calculateStudentCompletionPercent = (
+export interface DetailedCompletionResult {
+    overallPercent: number;           // Rounded 0-100%
+    is100PercentEligible: boolean;   // True ONLY if all 4 teacher conditions pass
+    totalValidTimeSeconds: number;   // Total valid active learning time
+    contentScore: number;            // Component C (0-100%)
+    timeScore: number;               // Component T (0-100%)
+    card1Coverage: number;           // Card 1 Coverage (0-100%)
+    card2Coverage: number;           // Card 2 Coverage (0-100%)
+    card3Coverage: number;           // Card 3 Coverage (0-100%)
+    card4Coverage: number;           // Card 4 Coverage (0-100%)
+    card5Coverage: number;           // Card 5 Coverage (0-100%)
+    card2Accuracy: number;           // Card 2 Accuracy Rate (0-100%)
+    card3Accuracy: number;           // Card 3 Accuracy Rate (0-100%)
+    card4Accuracy: number;           // Card 4 Accuracy Rate (0-100%)
+    card5Accuracy: number;           // Card 5 Accuracy Rate (0-100%)
+    card2Correct: number;
+    card2Answered: number;
+    card3Correct: number;
+    card3Answered: number;
+    card4Correct: number;
+    card4Answered: number;
+    card5Correct: number;
+    card5Answered: number;
+}
+
+export const calculateStudentCompletionDetails = (
     attemptsList: Array<{
         gameType?: string;
         timeTakenSeconds?: number;
         correct?: number;
         incorrect?: number;
+        answered?: number;
         totalQuestions?: number;
         audioListenedCount?: number;
         uniqueWordsListenedCount?: number;
         listenedWords?: string[];
+        details?: Array<any>;
+        score?: number | string;
+        status?: string;
         _actId?: string;
         activityId?: string;
     }>,
     unitVocabCount?: number,
     unitQuizCount?: number
-): number => {
-    if (!attemptsList || attemptsList.length === 0) return 0;
+): DetailedCompletionResult => {
+    const defaultResult: DetailedCompletionResult = {
+        overallPercent: 0,
+        is100PercentEligible: false,
+        totalValidTimeSeconds: 0,
+        contentScore: 0,
+        timeScore: 0,
+        card1Coverage: 0,
+        card2Coverage: 0,
+        card3Coverage: 0,
+        card4Coverage: 0,
+        card5Coverage: 0,
+        card2Accuracy: 0,
+        card3Accuracy: 0,
+        card4Accuracy: 0,
+        card5Accuracy: 0,
+        card2Correct: 0,
+        card2Answered: 0,
+        card3Correct: 0,
+        card3Answered: 0,
+        card4Correct: 0,
+        card4Answered: 0,
+        card5Correct: 0,
+        card5Answered: 0,
+    };
 
-    let vTime = 0;
-    let vMaxUniqueWords = 0;
-    let mMaxCorrect = 0;
-    let lMaxCorrect = 0;
-    let sMaxDone = 0;
-    let qMaxDone = 0;
+    if (!attemptsList || !Array.isArray(attemptsList) || attemptsList.length === 0) {
+        return defaultResult;
+    }
 
-    let maxVocabTotalQuestions = 0;
-    let maxQuizTotalQuestions = 0;
+    // Filter out ghost attempts (0 time, 0 audio, 0 answers, 0 questions)
+    const validAttempts = attemptsList.filter(a => a && isRealStudentAttempt(a));
+    if (validAttempts.length === 0) {
+        return defaultResult;
+    }
 
-    const allVocabWordsSet = new Set<string>();
+    // 1. Calculate Total Valid Learning Time (Condition 1 & Component T)
+    let totalValidTimeSeconds = 0;
+    validAttempts.forEach(a => {
+        totalValidTimeSeconds += resolveAttemptTimeSeconds(a, a._actId || a.activityId);
+    });
 
-    attemptsList.forEach(a => {
-        if (!a) return;
-        const gType = a.gameType === 'listen-choose' || a.gameType === 'listenChoose' ? 'listenChoose' : a.gameType;
-        const time = resolveAttemptTimeSeconds(a, a._actId || a.activityId);
+    // Tracking unique items & stats for each card
+    let maxVocabTotQ = 0;
+    let maxQuizTotQ = 0;
+
+    // Card 1 (Vocabulary)
+    const card1WordsSet = new Set<string>();
+    let card1MaxUnique = 0;
+
+    // Card 2 (Matching)
+    const card2ItemsSet = new Set<string>();
+    let card2MaxAnsweredSingle = 0;
+    let card2SumAnswered = 0;
+    let card2SumCorrect = 0;
+
+    // Card 3 (Listen & Choose)
+    const card3ItemsSet = new Set<string>();
+    let card3MaxAnsweredSingle = 0;
+    let card3SumAnswered = 0;
+    let card3SumCorrect = 0;
+
+    // Card 4 (Spelling)
+    const card4ItemsSet = new Set<string>();
+    let card4MaxAnsweredSingle = 0;
+    let card4SumAnswered = 0;
+    let card4SumCorrect = 0;
+
+    // Card 5 (Quiz)
+    const card5ItemsSet = new Set<string>();
+    let card5MaxAnsweredSingle = 0;
+    let card5SumAnswered = 0;
+    let card5SumCorrect = 0;
+
+    validAttempts.forEach(a => {
+        const gType = (a.gameType === 'listen-choose' || a.gameType === 'listenChoose') ? 'listenChoose' : a.gameType;
         const corr = typeof a.correct === 'number' ? a.correct : (parseInt(a.correct as any, 10) || 0);
         const incorr = typeof a.incorrect === 'number' ? a.incorrect : (parseInt(a.incorrect as any, 10) || 0);
+        const ans = typeof a.answered === 'number' ? a.answered : (corr + incorr);
         const totQ = typeof a.totalQuestions === 'number' ? a.totalQuestions : (parseInt(a.totalQuestions as any, 10) || 0);
 
         if (gType === 'vocabulary') {
-            vTime += time;
-            const uniqueWords = typeof a.uniqueWordsListenedCount === 'number'
+            if (totQ > maxVocabTotQ) maxVocabTotQ = totQ;
+            const uniqueCount = typeof a.uniqueWordsListenedCount === 'number'
                 ? a.uniqueWordsListenedCount
                 : (Array.isArray(a.listenedWords) ? a.listenedWords.length : 0);
-            if (uniqueWords > vMaxUniqueWords) vMaxUniqueWords = uniqueWords;
+            if (uniqueCount > card1MaxUnique) card1MaxUnique = uniqueCount;
             if (Array.isArray(a.listenedWords)) {
-                a.listenedWords.forEach(w => { if (w) allVocabWordsSet.add(w); });
+                a.listenedWords.forEach(w => { if (w) card1WordsSet.add(w); });
             }
-            if (totQ > maxVocabTotalQuestions) maxVocabTotalQuestions = totQ;
         } else if (gType === 'matching') {
-            if (corr > mMaxCorrect) mMaxCorrect = corr;
-            if (totQ > maxVocabTotalQuestions) maxVocabTotalQuestions = totQ;
+            if (totQ > maxVocabTotQ) maxVocabTotQ = totQ;
+            if (ans > card2MaxAnsweredSingle) card2MaxAnsweredSingle = ans;
+            card2SumAnswered += ans;
+            card2SumCorrect += corr;
+            if (Array.isArray(a.details)) {
+                a.details.forEach(d => {
+                    const key = d.correctAnswer || d.question || d.translation;
+                    if (key) card2ItemsSet.add(key);
+                });
+            }
         } else if (gType === 'listenChoose') {
-            if (corr > lMaxCorrect) lMaxCorrect = corr;
-            if (totQ > maxVocabTotalQuestions) maxVocabTotalQuestions = totQ;
+            if (totQ > maxVocabTotQ) maxVocabTotQ = totQ;
+            if (ans > card3MaxAnsweredSingle) card3MaxAnsweredSingle = ans;
+            card3SumAnswered += ans;
+            card3SumCorrect += corr;
+            if (Array.isArray(a.details)) {
+                a.details.forEach(d => {
+                    const key = d.correctAnswer || d.question;
+                    if (key) card3ItemsSet.add(key);
+                });
+            }
         } else if (gType === 'spelling') {
-            const done = corr + incorr;
-            if (done > sMaxDone) sMaxDone = done;
-            if (totQ > maxVocabTotalQuestions) maxVocabTotalQuestions = totQ;
+            if (totQ > maxVocabTotQ) maxVocabTotQ = totQ;
+            if (ans > card4MaxAnsweredSingle) card4MaxAnsweredSingle = ans;
+            card4SumAnswered += ans;
+            card4SumCorrect += corr;
+            if (Array.isArray(a.details)) {
+                a.details.forEach(d => {
+                    const key = d.correctAnswer || d.question;
+                    if (key) card4ItemsSet.add(key);
+                });
+            }
         } else if (gType === 'quiz') {
-            const done = corr + incorr;
-            if (done > qMaxDone) qMaxDone = done;
-            if (totQ > maxQuizTotalQuestions) maxQuizTotalQuestions = totQ;
+            if (totQ > maxQuizTotQ) maxQuizTotQ = totQ;
+            if (ans > card5MaxAnsweredSingle) card5MaxAnsweredSingle = ans;
+            card5SumAnswered += ans;
+            card5SumCorrect += corr;
+            if (Array.isArray(a.details)) {
+                a.details.forEach(d => {
+                    const key = d.question || d.correctAnswer;
+                    if (key) card5ItemsSet.add(key);
+                });
+            }
         }
     });
 
-    const vocabCount = (unitVocabCount && unitVocabCount > 0)
+    // Catalog item totals (denom for coverage)
+    const totalVocab = (unitVocabCount && unitVocabCount > 0)
         ? unitVocabCount
-        : (maxVocabTotalQuestions > 0 ? maxVocabTotalQuestions : 10);
+        : (maxVocabTotQ > 0 ? maxVocabTotQ : 10);
 
-    const quizCount = (unitQuizCount && unitQuizCount > 0)
+    const totalQuiz = (unitQuizCount && unitQuizCount > 0)
         ? unitQuizCount
-        : (maxQuizTotalQuestions > 0 ? maxQuizTotalQuestions : 10);
+        : (maxQuizTotQ > 0 ? maxQuizTotQ : 10);
 
-    // Thẻ 1 - Từ vựng (Vocabulary): Number of unique words listened out of vocabCount, OR standard time 12s per word (20%)
-    const effectiveUniqueWords = Math.max(vMaxUniqueWords, allVocabWordsSet.size);
-    const standardVocabTimeSeconds = vocabCount * 12;
-    const rateFromWords = vocabCount > 0 ? Math.min(1.0, effectiveUniqueWords / vocabCount) : 0;
-    const rateFromTime = standardVocabTimeSeconds > 0 ? Math.min(1.0, vTime / standardVocabTimeSeconds) : 0;
-    const rateCard1 = Math.max(rateFromWords, rateFromTime);
-    const pctCard1 = rateCard1 * 20;
+    // Card 1 Coverage
+    const effectiveCard1Unique = Math.max(card1WordsSet.size, card1MaxUnique);
+    const card1Coverage = totalVocab > 0 ? Math.min(100, (effectiveCard1Unique / totalVocab) * 100) : 0;
 
-    // Thẻ 2 - Ghép cặp (Matching): Number of correctly matched pairs out of vocabCount (20%)
-    const rateCard2 = vocabCount > 0 ? Math.min(1.0, mMaxCorrect / vocabCount) : 0;
-    const pctCard2 = rateCard2 * 20;
+    // Card 2 Coverage & Accuracy
+    const card2UniqueCount = Math.min(totalVocab, Math.max(card2ItemsSet.size, card2MaxAnsweredSingle, Math.min(totalVocab, card2SumAnswered)));
+    const card2Coverage = totalVocab > 0 ? Math.min(100, (card2UniqueCount / totalVocab) * 100) : 0;
+    const card2Accuracy = card2SumAnswered > 0 ? Math.min(100, (card2SumCorrect / card2SumAnswered) * 100) : 0;
 
-    // Thẻ 3 - Nghe & Chọn (Listen & Choose): Number of correctly chosen words out of vocabCount (20%)
-    const rateCard3 = vocabCount > 0 ? Math.min(1.0, lMaxCorrect / vocabCount) : 0;
-    const pctCard3 = rateCard3 * 20;
+    // Card 3 Coverage & Accuracy
+    const card3UniqueCount = Math.min(totalVocab, Math.max(card3ItemsSet.size, card3MaxAnsweredSingle, Math.min(totalVocab, card3SumAnswered)));
+    const card3Coverage = totalVocab > 0 ? Math.min(100, (card3UniqueCount / totalVocab) * 100) : 0;
+    const card3Accuracy = card3SumAnswered > 0 ? Math.min(100, (card3SumCorrect / card3SumAnswered) * 100) : 0;
 
-    // Thẻ 4 - Viết chính tả (Spelling): Number of questions typed/answered out of vocabCount (20%)
-    const rateCard4 = vocabCount > 0 ? Math.min(1.0, sMaxDone / vocabCount) : 0;
-    const pctCard4 = rateCard4 * 20;
+    // Card 4 Coverage & Accuracy
+    const card4UniqueCount = Math.min(totalVocab, Math.max(card4ItemsSet.size, card4MaxAnsweredSingle, Math.min(totalVocab, card4SumAnswered)));
+    const card4Coverage = totalVocab > 0 ? Math.min(100, (card4UniqueCount / totalVocab) * 100) : 0;
+    const card4Accuracy = card4SumAnswered > 0 ? Math.min(100, (card4SumCorrect / card4SumAnswered) * 100) : 0;
 
-    // Thẻ 5 - Trắc nghiệm (Quiz): Number of quiz questions answered out of quizCount (20%)
-    const rateCard5 = quizCount > 0 ? Math.min(1.0, qMaxDone / quizCount) : 0;
-    const pctCard5 = rateCard5 * 20;
+    // Card 5 Coverage & Accuracy
+    const card5UniqueCount = Math.min(totalQuiz, Math.max(card5ItemsSet.size, card5MaxAnsweredSingle, Math.min(totalQuiz, card5SumAnswered)));
+    const card5Coverage = totalQuiz > 0 ? Math.min(100, (card5UniqueCount / totalQuiz) * 100) : 0;
+    const card5Accuracy = card5SumAnswered > 0 ? Math.min(100, (card5SumCorrect / card5SumAnswered) * 100) : 0;
 
-    const rawOverallPercent = pctCard1 + pctCard2 + pctCard3 + pctCard4 + pctCard5;
-    let overallPercent = Math.min(100, Math.round(rawOverallPercent));
+    // Evaluate 4 Mandatory Teacher Conditions for 100%
+    // Condition 1: Time >= 150 minutes (9000 seconds)
+    const cond1_time = totalValidTimeSeconds >= 9000;
 
-    if (rateCard1 >= 1.0 && rateCard2 >= 1.0 && rateCard3 >= 1.0 && rateCard4 >= 1.0 && rateCard5 >= 1.0) {
+    // Condition 2: 100% Content Coverage across ALL 5 Cards
+    const cond2_coverage = card1Coverage >= 99.99 &&
+                            card2Coverage >= 99.99 &&
+                            card3Coverage >= 99.99 &&
+                            card4Coverage >= 99.99 &&
+                            card5Coverage >= 99.99;
+
+    // Condition 3: Accuracy strictly > 50% for Cards 2 to 5
+    const cond3_accuracy = (card2SumAnswered > 0 && card2Accuracy > 50) &&
+                            (card3SumAnswered > 0 && card3Accuracy > 50) &&
+                            (card4SumAnswered > 0 && card4Accuracy > 50) &&
+                            (card5SumAnswered > 0 && card5Accuracy > 50);
+
+    const is100PercentEligible = cond1_time && cond2_coverage && cond3_accuracy;
+
+    // Calculate Progress Score Components
+    // Component C (0-100%): Average content coverage across 5 cards
+    const contentScore = (card1Coverage + card2Coverage + card3Coverage + card4Coverage + card5Coverage) / 5;
+
+    // Component T (0-100%): Time score = min(100, totalValidTimeSeconds / 9000 * 100)
+    const timeScore = Math.min(100, (totalValidTimeSeconds / 9000) * 100);
+
+    // Composite P = 0.7 * C + 0.3 * T
+    const rawP = 0.7 * contentScore + 0.3 * timeScore;
+    const roundedP = Math.round(rawP);
+
+    let overallPercent = 0;
+    if (is100PercentEligible) {
         overallPercent = 100;
+    } else {
+        // Must cap at 99% if mandatory conditions are not met
+        overallPercent = Math.min(99, roundedP);
     }
 
-    return overallPercent;
+    return {
+        overallPercent,
+        is100PercentEligible,
+        totalValidTimeSeconds,
+        contentScore,
+        timeScore,
+        card1Coverage,
+        card2Coverage,
+        card3Coverage,
+        card4Coverage,
+        card5Coverage,
+        card2Accuracy,
+        card3Accuracy,
+        card4Accuracy,
+        card5Accuracy,
+        card2Correct: card2SumCorrect,
+        card2Answered: card2SumAnswered,
+        card3Correct: card3SumCorrect,
+        card3Answered: card3SumAnswered,
+        card4Correct: card4SumCorrect,
+        card4Answered: card4SumAnswered,
+        card5Correct: card5SumCorrect,
+        card5Answered: card5SumAnswered,
+    };
+};
+
+export const calculateStudentCompletionPercent = (
+    attemptsList: Array<any>,
+    unitVocabCount?: number,
+    unitQuizCount?: number
+): number => {
+    return calculateStudentCompletionDetails(attemptsList, unitVocabCount, unitQuizCount).overallPercent;
 };
 
 export const listenToStudentActivityAttempts = (

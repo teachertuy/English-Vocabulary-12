@@ -1,0 +1,3334 @@
+[
+  {
+    "unit": "unit_1",
+    "student": "12 A_NGUYỄN BẢO HUY",
+    "oldPercent": "37%",
+    "newPercent": "40%",
+    "is100PercentEligible": false,
+    "validMinutes": "34 phút (2054s)",
+    "contentScoreC": "47%",
+    "timeScoreT": "23%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "86% (Acc: 59%)",
+      "listenChooseCard3": "25% (Acc: 29%)",
+      "spellingCard4": "26% (Acc: 27%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12A_CAO THỊ TRÀ MY",
+    "oldPercent": "56%",
+    "newPercent": "53%",
+    "is100PercentEligible": false,
+    "validMinutes": "55 phút (3274s)",
+    "contentScoreC": "60%",
+    "timeScoreT": "36%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "98% (Acc: 82%)",
+      "listenChooseCard3": "100% (Acc: 78%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12A_DƯƠNG HOÀNG LONG",
+    "oldPercent": "20%",
+    "newPercent": "15%",
+    "is100PercentEligible": false,
+    "validMinutes": "26 phút (1546s)",
+    "contentScoreC": "14%",
+    "timeScoreT": "17%",
+    "cardCoverage": {
+      "vocabCard1": "72%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12A_DƯƠNG QUỐC ANH",
+    "oldPercent": "78%",
+    "newPercent": "71%",
+    "is100PercentEligible": false,
+    "validMinutes": "78 phút (4703s)",
+    "contentScoreC": "78%",
+    "timeScoreT": "52%",
+    "cardCoverage": {
+      "vocabCard1": "98%",
+      "matchingCard2": "100% (Acc: 46%)",
+      "listenChooseCard3": "100% (Acc: 75%)",
+      "spellingCard4": "84% (Acc: 77%)",
+      "quizCard5": "10% (Acc: 25%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12A_HUỲNH NHẬT LINH",
+    "oldPercent": "91%",
+    "newPercent": "97%",
+    "is100PercentEligible": false,
+    "validMinutes": "135 phút (8110s)",
+    "contentScoreC": "100%",
+    "timeScoreT": "90%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 91%)",
+      "listenChooseCard3": "100% (Acc: 99%)",
+      "spellingCard4": "100% (Acc: 85%)",
+      "quizCard5": "100% (Acc: 34%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12A_HUỲNH THÁI TOÀN",
+    "oldPercent": "50%",
+    "newPercent": "44%",
+    "is100PercentEligible": false,
+    "validMinutes": "45 phút (2697s)",
+    "contentScoreC": "51%",
+    "timeScoreT": "30%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "5% (Acc: 67%)",
+      "listenChooseCard3": "100% (Acc: 89%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "48% (Acc: 32%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12A_HỒ MINH NHÂN",
+    "oldPercent": "61%",
+    "newPercent": "42%",
+    "is100PercentEligible": false,
+    "validMinutes": "55 phút (3295s)",
+    "contentScoreC": "45%",
+    "timeScoreT": "37%",
+    "cardCoverage": {
+      "vocabCard1": "14%",
+      "matchingCard2": "100% (Acc: 100%)",
+      "listenChooseCard3": "5% (Acc: 67%)",
+      "spellingCard4": "98% (Acc: 91%)",
+      "quizCard5": "5% (Acc: 50%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12A_HỒ THỊ THANH THẢO",
+    "oldPercent": "61%",
+    "newPercent": "58%",
+    "is100PercentEligible": false,
+    "validMinutes": "89 phút (5364s)",
+    "contentScoreC": "57%",
+    "timeScoreT": "60%",
+    "cardCoverage": {
+      "vocabCard1": "33%",
+      "matchingCard2": "75% (Acc: 84%)",
+      "listenChooseCard3": "77% (Acc: 57%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "100% (Acc: 38%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12A_LÊ THANH BÌNH",
+    "oldPercent": "73%",
+    "newPercent": "69%",
+    "is100PercentEligible": false,
+    "validMinutes": "89 phút (5357s)",
+    "contentScoreC": "73%",
+    "timeScoreT": "60%",
+    "cardCoverage": {
+      "vocabCard1": "67%",
+      "matchingCard2": "100% (Acc: 73%)",
+      "listenChooseCard3": "100% (Acc: 92%)",
+      "spellingCard4": "100% (Acc: 79%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12A_LÊ TRUNG TRỰC",
+    "oldPercent": "2%",
+    "newPercent": "2%",
+    "is100PercentEligible": false,
+    "validMinutes": "0 phút (24s)",
+    "contentScoreC": "2%",
+    "timeScoreT": "0%",
+    "cardCoverage": {
+      "vocabCard1": "12%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12A_LƯU XUÂN TIN",
+    "oldPercent": "0%",
+    "newPercent": "0%",
+    "is100PercentEligible": false,
+    "validMinutes": "0 phút (0s)",
+    "contentScoreC": "0%",
+    "timeScoreT": "0%",
+    "cardCoverage": {
+      "vocabCard1": "0%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12A_NGUYỄN BẢO HUY",
+    "oldPercent": "20%",
+    "newPercent": "7%",
+    "is100PercentEligible": false,
+    "validMinutes": "27 phút (1603s)",
+    "contentScoreC": "3%",
+    "timeScoreT": "18%",
+    "cardCoverage": {
+      "vocabCard1": "14%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12A_NGUYỄN BẢO NHƯ",
+    "oldPercent": "17%",
+    "newPercent": "15%",
+    "is100PercentEligible": false,
+    "validMinutes": "18 phút (1103s)",
+    "contentScoreC": "16%",
+    "timeScoreT": "12%",
+    "cardCoverage": {
+      "vocabCard1": "42%",
+      "matchingCard2": "39% (Acc: 100%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12A_NGUYỄN HOÀNG HÀ MY",
+    "oldPercent": "40%",
+    "newPercent": "48%",
+    "is100PercentEligible": false,
+    "validMinutes": "78 phút (4656s)",
+    "contentScoreC": "47%",
+    "timeScoreT": "52%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 84%)",
+      "listenChooseCard3": "18% (Acc: 70%)",
+      "spellingCard4": "11% (Acc: 67%)",
+      "quizCard5": "5% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12A_NGUYỄN HUỲNH BẢO",
+    "oldPercent": "41%",
+    "newPercent": "38%",
+    "is100PercentEligible": false,
+    "validMinutes": "49 phút (2958s)",
+    "contentScoreC": "41%",
+    "timeScoreT": "33%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 66%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "4% (Acc: 100%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12A_NGUYỄN SƠN TÙNG",
+    "oldPercent": "16%",
+    "newPercent": "3%",
+    "is100PercentEligible": false,
+    "validMinutes": "9 phút (539s)",
+    "contentScoreC": "1%",
+    "timeScoreT": "6%",
+    "cardCoverage": {
+      "vocabCard1": "7%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12A_NGUYỄN THÀNH HƯNG",
+    "oldPercent": "20%",
+    "newPercent": "19%",
+    "is100PercentEligible": false,
+    "validMinutes": "27 phút (1620s)",
+    "contentScoreC": "20%",
+    "timeScoreT": "18%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12A_NGUYỄN THỊ BÍCH HÂN",
+    "oldPercent": "28%",
+    "newPercent": "25%",
+    "is100PercentEligible": false,
+    "validMinutes": "15 phút (890s)",
+    "contentScoreC": "32%",
+    "timeScoreT": "10%",
+    "cardCoverage": {
+      "vocabCard1": "95%",
+      "matchingCard2": "63% (Acc: 69%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12A_NGUYỄN THỊ MAI LINH",
+    "oldPercent": "25%",
+    "newPercent": "17%",
+    "is100PercentEligible": false,
+    "validMinutes": "48 phút (2897s)",
+    "contentScoreC": "10%",
+    "timeScoreT": "32%",
+    "cardCoverage": {
+      "vocabCard1": "25%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "26% (Acc: 93%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12A_NGUYỄN THỊ NGỌC HIỀN",
+    "oldPercent": "0%",
+    "newPercent": "0%",
+    "is100PercentEligible": false,
+    "validMinutes": "0 phút (0s)",
+    "contentScoreC": "0%",
+    "timeScoreT": "0%",
+    "cardCoverage": {
+      "vocabCard1": "0%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12A_NGUYỄN THỊ THÚY KIỀU",
+    "oldPercent": "100%",
+    "newPercent": "92%",
+    "is100PercentEligible": false,
+    "validMinutes": "117 phút (6998s)",
+    "contentScoreC": "98%",
+    "timeScoreT": "78%",
+    "cardCoverage": {
+      "vocabCard1": "89%",
+      "matchingCard2": "100% (Acc: 57%)",
+      "listenChooseCard3": "100% (Acc: 90%)",
+      "spellingCard4": "100% (Acc: 68%)",
+      "quizCard5": "100% (Acc: 38%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12A_NGUYỄN TRẦN NGUYÊN HẠNH",
+    "oldPercent": "59%",
+    "newPercent": "52%",
+    "is100PercentEligible": false,
+    "validMinutes": "65 phút (3884s)",
+    "contentScoreC": "56%",
+    "timeScoreT": "43%",
+    "cardCoverage": {
+      "vocabCard1": "68%",
+      "matchingCard2": "100% (Acc: 88%)",
+      "listenChooseCard3": "100% (Acc: 97%)",
+      "spellingCard4": "11% (Acc: 50%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12A_NGUYỄN TẤN LỘC",
+    "oldPercent": "29%",
+    "newPercent": "35%",
+    "is100PercentEligible": false,
+    "validMinutes": "37 phút (2225s)",
+    "contentScoreC": "40%",
+    "timeScoreT": "25%",
+    "cardCoverage": {
+      "vocabCard1": "98%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "100% (Acc: 61%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12A_NGUYỄN VÕ MINH ĐƯƠNG",
+    "oldPercent": "40%",
+    "newPercent": "39%",
+    "is100PercentEligible": false,
+    "validMinutes": "60 phút (3605s)",
+    "contentScoreC": "38%",
+    "timeScoreT": "40%",
+    "cardCoverage": {
+      "vocabCard1": "89%",
+      "matchingCard2": "100% (Acc: 84%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12A_NGUYỄN VĂN THANH DUY",
+    "oldPercent": "100%",
+    "newPercent": "99%",
+    "is100PercentEligible": false,
+    "validMinutes": "200 phút (11972s)",
+    "contentScoreC": "100%",
+    "timeScoreT": "100%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 47%)",
+      "listenChooseCard3": "100% (Acc: 81%)",
+      "spellingCard4": "100% (Acc: 77%)",
+      "quizCard5": "100% (Acc: 34%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12A_PHAN LÊ CHÍ NGUYỄN",
+    "oldPercent": "96%",
+    "newPercent": "93%",
+    "is100PercentEligible": false,
+    "validMinutes": "117 phút (7031s)",
+    "contentScoreC": "100%",
+    "timeScoreT": "78%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 89%)",
+      "listenChooseCard3": "100% (Acc: 93%)",
+      "spellingCard4": "100% (Acc: 69%)",
+      "quizCard5": "100% (Acc: 40%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12A_PHẠM HOÀNG HẢI",
+    "oldPercent": "52%",
+    "newPercent": "53%",
+    "is100PercentEligible": false,
+    "validMinutes": "57 phút (3441s)",
+    "contentScoreC": "60%",
+    "timeScoreT": "38%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 98%)",
+      "listenChooseCard3": "82% (Acc: 81%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "18% (Acc: 57%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12A_TEACHERTUY",
+    "oldPercent": "13%",
+    "newPercent": "18%",
+    "is100PercentEligible": false,
+    "validMinutes": "29 phút (1732s)",
+    "contentScoreC": "17%",
+    "timeScoreT": "19%",
+    "cardCoverage": {
+      "vocabCard1": "33%",
+      "matchingCard2": "2% (Acc: 0%)",
+      "listenChooseCard3": "51% (Acc: 10%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12A_TRẦN NGUYỄN TÂM NGUYÊN",
+    "oldPercent": "100%",
+    "newPercent": "83%",
+    "is100PercentEligible": false,
+    "validMinutes": "87 phút (5236s)",
+    "contentScoreC": "94%",
+    "timeScoreT": "58%",
+    "cardCoverage": {
+      "vocabCard1": "68%",
+      "matchingCard2": "100% (Acc: 72%)",
+      "listenChooseCard3": "100% (Acc: 98%)",
+      "spellingCard4": "100% (Acc: 73%)",
+      "quizCard5": "100% (Acc: 60%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12A_VÕ HOÀI NAM",
+    "oldPercent": "60%",
+    "newPercent": "43%",
+    "is100PercentEligible": false,
+    "validMinutes": "41 phút (2434s)",
+    "contentScoreC": "51%",
+    "timeScoreT": "27%",
+    "cardCoverage": {
+      "vocabCard1": "53%",
+      "matchingCard2": "100% (Acc: 98%)",
+      "listenChooseCard3": "100% (Acc: 77%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12A_VÕ NGUYỄN HOÀNG MINH",
+    "oldPercent": "20%",
+    "newPercent": "18%",
+    "is100PercentEligible": false,
+    "validMinutes": "24 phút (1440s)",
+    "contentScoreC": "18%",
+    "timeScoreT": "16%",
+    "cardCoverage": {
+      "vocabCard1": "91%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12A_VÕ TRUNG TÍNH",
+    "oldPercent": "100%",
+    "newPercent": "100%",
+    "is100PercentEligible": true,
+    "validMinutes": "163 phút (9803s)",
+    "contentScoreC": "100%",
+    "timeScoreT": "100%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 82%)",
+      "listenChooseCard3": "100% (Acc: 96%)",
+      "spellingCard4": "100% (Acc: 64%)",
+      "quizCard5": "100% (Acc: 70%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12A_ĐOÀN MINH THƯ",
+    "oldPercent": "87%",
+    "newPercent": "79%",
+    "is100PercentEligible": false,
+    "validMinutes": "91 phút (5459s)",
+    "contentScoreC": "87%",
+    "timeScoreT": "61%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 98%)",
+      "listenChooseCard3": "100% (Acc: 98%)",
+      "spellingCard4": "33% (Acc: 89%)",
+      "quizCard5": "100% (Acc: 48%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12A_ĐOÀN QUỐC TRUNG",
+    "oldPercent": "80%",
+    "newPercent": "76%",
+    "is100PercentEligible": false,
+    "validMinutes": "100 phút (5971s)",
+    "contentScoreC": "80%",
+    "timeScoreT": "66%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 97%)",
+      "listenChooseCard3": "100% (Acc: 92%)",
+      "spellingCard4": "2% (Acc: 0%)",
+      "quizCard5": "100% (Acc: 80%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12A_ĐẶNG TRƯỜNG NGÂN",
+    "oldPercent": "31%",
+    "newPercent": "17%",
+    "is100PercentEligible": false,
+    "validMinutes": "34 phút (2026s)",
+    "contentScoreC": "14%",
+    "timeScoreT": "23%",
+    "cardCoverage": {
+      "vocabCard1": "12%",
+      "matchingCard2": "60% (Acc: 94%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12A_ĐỖ THÁI HUY",
+    "oldPercent": "65%",
+    "newPercent": "66%",
+    "is100PercentEligible": false,
+    "validMinutes": "50 phút (2990s)",
+    "contentScoreC": "80%",
+    "timeScoreT": "33%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 6%)",
+      "listenChooseCard3": "100% (Acc: 63%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "100% (Acc: 31%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12B_BÙI VĂN KIỆT",
+    "oldPercent": "100%",
+    "newPercent": "84%",
+    "is100PercentEligible": false,
+    "validMinutes": "81 phút (4839s)",
+    "contentScoreC": "98%",
+    "timeScoreT": "54%",
+    "cardCoverage": {
+      "vocabCard1": "89%",
+      "matchingCard2": "100% (Acc: 93%)",
+      "listenChooseCard3": "100% (Acc: 72%)",
+      "spellingCard4": "98% (Acc: 73%)",
+      "quizCard5": "100% (Acc: 43%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12B_CHÂU KIM TIỀN",
+    "oldPercent": "100%",
+    "newPercent": "92%",
+    "is100PercentEligible": false,
+    "validMinutes": "109 phút (6526s)",
+    "contentScoreC": "100%",
+    "timeScoreT": "73%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 97%)",
+      "listenChooseCard3": "100% (Acc: 90%)",
+      "spellingCard4": "100% (Acc: 81%)",
+      "quizCard5": "100% (Acc: 83%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12B_DƯƠNG THU THẢO",
+    "oldPercent": "98%",
+    "newPercent": "96%",
+    "is100PercentEligible": false,
+    "validMinutes": "129 phút (7728s)",
+    "contentScoreC": "100%",
+    "timeScoreT": "86%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 87%)",
+      "listenChooseCard3": "100% (Acc: 94%)",
+      "spellingCard4": "98% (Acc: 91%)",
+      "quizCard5": "100% (Acc: 85%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12B_HUỲNH CHÍ THỊNH",
+    "oldPercent": "98%",
+    "newPercent": "90%",
+    "is100PercentEligible": false,
+    "validMinutes": "100 phút (6000s)",
+    "contentScoreC": "100%",
+    "timeScoreT": "67%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 96%)",
+      "listenChooseCard3": "100% (Acc: 93%)",
+      "spellingCard4": "100% (Acc: 81%)",
+      "quizCard5": "100% (Acc: 85%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12B_HUỲNH NGUYỄN ĐỨC CƯỜNG",
+    "oldPercent": "85%",
+    "newPercent": "91%",
+    "is100PercentEligible": false,
+    "validMinutes": "195 phút (11672s)",
+    "contentScoreC": "88%",
+    "timeScoreT": "100%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 76%)",
+      "listenChooseCard3": "100% (Acc: 90%)",
+      "spellingCard4": "39% (Acc: 55%)",
+      "quizCard5": "100% (Acc: 44%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12B_LÊ ANH VŨ",
+    "oldPercent": "68%",
+    "newPercent": "99%",
+    "is100PercentEligible": false,
+    "validMinutes": "148 phút (8860s)",
+    "contentScoreC": "100%",
+    "timeScoreT": "98%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 17%)",
+      "listenChooseCard3": "100% (Acc: 4%)",
+      "spellingCard4": "100% (Acc: 53%)",
+      "quizCard5": "100% (Acc: 45%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12B_LÊ HUYỀN TRÂN",
+    "oldPercent": "88%",
+    "newPercent": "98%",
+    "is100PercentEligible": false,
+    "validMinutes": "154 phút (9265s)",
+    "contentScoreC": "96%",
+    "timeScoreT": "100%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "82% (Acc: 100%)",
+      "listenChooseCard3": "100% (Acc: 91%)",
+      "spellingCard4": "100% (Acc: 84%)",
+      "quizCard5": "100% (Acc: 85%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12B_LÊ NGUYỄN BẢO TRÂN",
+    "oldPercent": "87%",
+    "newPercent": "75%",
+    "is100PercentEligible": false,
+    "validMinutes": "78 phút (4705s)",
+    "contentScoreC": "85%",
+    "timeScoreT": "52%",
+    "cardCoverage": {
+      "vocabCard1": "93%",
+      "matchingCard2": "100% (Acc: 100%)",
+      "listenChooseCard3": "100% (Acc: 97%)",
+      "spellingCard4": "98% (Acc: 93%)",
+      "quizCard5": "35% (Acc: 29%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12B_LÊ THANH THIÊN",
+    "oldPercent": "98%",
+    "newPercent": "98%",
+    "is100PercentEligible": false,
+    "validMinutes": "194 phút (11630s)",
+    "contentScoreC": "98%",
+    "timeScoreT": "100%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 87%)",
+      "listenChooseCard3": "100% (Acc: 86%)",
+      "spellingCard4": "88% (Acc: 90%)",
+      "quizCard5": "100% (Acc: 28%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12B_LÊ THỊ HÒA HỢP",
+    "oldPercent": "72%",
+    "newPercent": "66%",
+    "is100PercentEligible": false,
+    "validMinutes": "73 phút (4379s)",
+    "contentScoreC": "74%",
+    "timeScoreT": "49%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 91%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "68% (Acc: 87%)",
+      "quizCard5": "100% (Acc: 88%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12B_LÊ VÕ NGỌC HIỀN",
+    "oldPercent": "100%",
+    "newPercent": "93%",
+    "is100PercentEligible": false,
+    "validMinutes": "116 phút (6988s)",
+    "contentScoreC": "100%",
+    "timeScoreT": "78%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 98%)",
+      "listenChooseCard3": "100% (Acc: 93%)",
+      "spellingCard4": "100% (Acc: 87%)",
+      "quizCard5": "100% (Acc: 71%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12B_LÊ VĂN NHÃ",
+    "oldPercent": "90%",
+    "newPercent": "87%",
+    "is100PercentEligible": false,
+    "validMinutes": "120 phút (7173s)",
+    "contentScoreC": "90%",
+    "timeScoreT": "80%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 85%)",
+      "listenChooseCard3": "100% (Acc: 91%)",
+      "spellingCard4": "100% (Acc: 85%)",
+      "quizCard5": "50% (Acc: 35%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12B_NGUYỄN MINH THÀNH",
+    "oldPercent": "99%",
+    "newPercent": "84%",
+    "is100PercentEligible": false,
+    "validMinutes": "72 phút (4335s)",
+    "contentScoreC": "100%",
+    "timeScoreT": "48%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 95%)",
+      "listenChooseCard3": "100% (Acc: 70%)",
+      "spellingCard4": "98% (Acc: 29%)",
+      "quizCard5": "100% (Acc: 75%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12B_NGUYỄN MINH THÀNH",
+    "oldPercent": "81%",
+    "newPercent": "73%",
+    "is100PercentEligible": false,
+    "validMinutes": "81 phút (4885s)",
+    "contentScoreC": "81%",
+    "timeScoreT": "54%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 82%)",
+      "listenChooseCard3": "100% (Acc: 71%)",
+      "spellingCard4": "7% (Acc: 25%)",
+      "quizCard5": "100% (Acc: 83%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12B_NGUYỄN HUỲNH DUY KHÁNH",
+    "oldPercent": "99%",
+    "newPercent": "99%",
+    "is100PercentEligible": false,
+    "validMinutes": "167 phút (9999s)",
+    "contentScoreC": "100%",
+    "timeScoreT": "100%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 72%)",
+      "listenChooseCard3": "100% (Acc: 41%)",
+      "spellingCard4": "100% (Acc: 81%)",
+      "quizCard5": "100% (Acc: 43%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12B_NGUYỄN HỮU TRÍ",
+    "oldPercent": "40%",
+    "newPercent": "38%",
+    "is100PercentEligible": false,
+    "validMinutes": "48 phút (2904s)",
+    "contentScoreC": "40%",
+    "timeScoreT": "32%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 74%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12B_NGUYỄN LÊ NGỌC ÁNH",
+    "oldPercent": "40%",
+    "newPercent": "42%",
+    "is100PercentEligible": false,
+    "validMinutes": "98 phút (5864s)",
+    "contentScoreC": "32%",
+    "timeScoreT": "65%",
+    "cardCoverage": {
+      "vocabCard1": "58%",
+      "matchingCard2": "100% (Acc: 92%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12B_NGUYỄN MINH TÙNG",
+    "oldPercent": "60%",
+    "newPercent": "53%",
+    "is100PercentEligible": false,
+    "validMinutes": "56 phút (3382s)",
+    "contentScoreC": "60%",
+    "timeScoreT": "38%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 97%)",
+      "listenChooseCard3": "100% (Acc: 73%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12B_NGUYỄN NGỌC TUYỀN GIANG",
+    "oldPercent": "20%",
+    "newPercent": "28%",
+    "is100PercentEligible": false,
+    "validMinutes": "71 phút (4244s)",
+    "contentScoreC": "20%",
+    "timeScoreT": "47%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12B_NGUYỄN QUỐC THẮNG",
+    "oldPercent": "91%",
+    "newPercent": "92%",
+    "is100PercentEligible": false,
+    "validMinutes": "139 phút (8338s)",
+    "contentScoreC": "91%",
+    "timeScoreT": "93%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 92%)",
+      "listenChooseCard3": "100% (Acc: 71%)",
+      "spellingCard4": "56% (Acc: 84%)",
+      "quizCard5": "100% (Acc: 78%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12B_NGUYỄN ĐÀO NGUYÊN KHA",
+    "oldPercent": "62%",
+    "newPercent": "49%",
+    "is100PercentEligible": false,
+    "validMinutes": "27 phút (1620s)",
+    "contentScoreC": "62%",
+    "timeScoreT": "18%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "98% (Acc: 100%)",
+      "listenChooseCard3": "100% (Acc: 83%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "10% (Acc: 50%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12B_NGUYỄN ĐỊNH GIÁC",
+    "oldPercent": "54%",
+    "newPercent": "45%",
+    "is100PercentEligible": false,
+    "validMinutes": "25 phút (1519s)",
+    "contentScoreC": "56%",
+    "timeScoreT": "17%",
+    "cardCoverage": {
+      "vocabCard1": "63%",
+      "matchingCard2": "11% (Acc: 0%)",
+      "listenChooseCard3": "100% (Acc: 77%)",
+      "spellingCard4": "9% (Acc: 60%)",
+      "quizCard5": "100% (Acc: 28%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12B_NGÔ HỮU THIỆN",
+    "oldPercent": "40%",
+    "newPercent": "55%",
+    "is100PercentEligible": false,
+    "validMinutes": "88 phút (5296s)",
+    "contentScoreC": "54%",
+    "timeScoreT": "59%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "70% (Acc: 0%)",
+      "listenChooseCard3": "100% (Acc: 92%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12B_PHẠM CHÍ KHANG",
+    "oldPercent": "46%",
+    "newPercent": "44%",
+    "is100PercentEligible": false,
+    "validMinutes": "55 phút (3271s)",
+    "contentScoreC": "47%",
+    "timeScoreT": "36%",
+    "cardCoverage": {
+      "vocabCard1": "96%",
+      "matchingCard2": "23% (Acc: 85%)",
+      "listenChooseCard3": "18% (Acc: 60%)",
+      "spellingCard4": "100% (Acc: 48%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12B_PHẠM NGỌC CHÂU",
+    "oldPercent": "55%",
+    "newPercent": "73%",
+    "is100PercentEligible": false,
+    "validMinutes": "136 phút (8145s)",
+    "contentScoreC": "66%",
+    "timeScoreT": "91%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 61%)",
+      "listenChooseCard3": "100% (Acc: 59%)",
+      "spellingCard4": "28% (Acc: 44%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12B_TEACHERTUY",
+    "oldPercent": "20%",
+    "newPercent": "3%",
+    "is100PercentEligible": false,
+    "validMinutes": "12 phút (741s)",
+    "contentScoreC": "1%",
+    "timeScoreT": "8%",
+    "cardCoverage": {
+      "vocabCard1": "4%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12B_TRƯƠNG MINH HOÀNG",
+    "oldPercent": "100%",
+    "newPercent": "88%",
+    "is100PercentEligible": false,
+    "validMinutes": "92 phút (5545s)",
+    "contentScoreC": "100%",
+    "timeScoreT": "62%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 80%)",
+      "listenChooseCard3": "100% (Acc: 83%)",
+      "spellingCard4": "100% (Acc: 84%)",
+      "quizCard5": "100% (Acc: 69%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12B_TRƯƠNG THIÊN HẢI",
+    "oldPercent": "96%",
+    "newPercent": "91%",
+    "is100PercentEligible": false,
+    "validMinutes": "122 phút (7293s)",
+    "contentScoreC": "96%",
+    "timeScoreT": "81%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 88%)",
+      "listenChooseCard3": "100% (Acc: 75%)",
+      "spellingCard4": "79% (Acc: 82%)",
+      "quizCard5": "100% (Acc: 88%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12B_TRƯƠNG THẾ NGHIÊM",
+    "oldPercent": "99%",
+    "newPercent": "92%",
+    "is100PercentEligible": false,
+    "validMinutes": "109 phút (6556s)",
+    "contentScoreC": "100%",
+    "timeScoreT": "73%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 95%)",
+      "listenChooseCard3": "100% (Acc: 79%)",
+      "spellingCard4": "100% (Acc: 83%)",
+      "quizCard5": "100% (Acc: 90%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12B_TRẦN MIN GUN",
+    "oldPercent": "80%",
+    "newPercent": "67%",
+    "is100PercentEligible": false,
+    "validMinutes": "56 phút (3349s)",
+    "contentScoreC": "80%",
+    "timeScoreT": "37%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 58%)",
+      "listenChooseCard3": "100% (Acc: 70%)",
+      "spellingCard4": "2% (Acc: 100%)",
+      "quizCard5": "100% (Acc: 25%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12B_TRẦN THÀNH ĐẠT",
+    "oldPercent": "48%",
+    "newPercent": "44%",
+    "is100PercentEligible": false,
+    "validMinutes": "44 phút (2619s)",
+    "contentScoreC": "51%",
+    "timeScoreT": "29%",
+    "cardCoverage": {
+      "vocabCard1": "79%",
+      "matchingCard2": "75% (Acc: 56%)",
+      "listenChooseCard3": "100% (Acc: 90%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12B_TRẦN THÁI TÂN",
+    "oldPercent": "43%",
+    "newPercent": "44%",
+    "is100PercentEligible": false,
+    "validMinutes": "39 phút (2356s)",
+    "contentScoreC": "52%",
+    "timeScoreT": "26%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "60% (Acc: 32%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "98% (Acc: 25%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12B_TRẦN THỊ HÀ LAN",
+    "oldPercent": "100%",
+    "newPercent": "99%",
+    "is100PercentEligible": false,
+    "validMinutes": "242 phút (14534s)",
+    "contentScoreC": "100%",
+    "timeScoreT": "100%",
+    "cardCoverage": {
+      "vocabCard1": "98%",
+      "matchingCard2": "100% (Acc: 93%)",
+      "listenChooseCard3": "100% (Acc: 68%)",
+      "spellingCard4": "100% (Acc: 84%)",
+      "quizCard5": "100% (Acc: 33%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12B_TRẦN THỊ THANH HOÀI",
+    "oldPercent": "100%",
+    "newPercent": "100%",
+    "is100PercentEligible": true,
+    "validMinutes": "507 phút (30405s)",
+    "contentScoreC": "100%",
+    "timeScoreT": "100%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 84%)",
+      "listenChooseCard3": "100% (Acc: 99%)",
+      "spellingCard4": "100% (Acc: 95%)",
+      "quizCard5": "100% (Acc: 76%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12B_VÕ HOÀNG NGÂN",
+    "oldPercent": "87%",
+    "newPercent": "90%",
+    "is100PercentEligible": false,
+    "validMinutes": "99 phút (5914s)",
+    "contentScoreC": "100%",
+    "timeScoreT": "66%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 46%)",
+      "listenChooseCard3": "100% (Acc: 82%)",
+      "spellingCard4": "100% (Acc: 46%)",
+      "quizCard5": "100% (Acc: 80%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12B_VÕ KIM NGÂN",
+    "oldPercent": "100%",
+    "newPercent": "99%",
+    "is100PercentEligible": false,
+    "validMinutes": "247 phút (14798s)",
+    "contentScoreC": "100%",
+    "timeScoreT": "100%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 100%)",
+      "listenChooseCard3": "100% (Acc: 97%)",
+      "spellingCard4": "98% (Acc: 98%)",
+      "quizCard5": "100% (Acc: 88%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12B_ĐÀM NGỌC AN",
+    "oldPercent": "65%",
+    "newPercent": "76%",
+    "is100PercentEligible": false,
+    "validMinutes": "131 phút (7885s)",
+    "contentScoreC": "71%",
+    "timeScoreT": "88%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 59%)",
+      "listenChooseCard3": "12% (Acc: 57%)",
+      "spellingCard4": "100% (Acc: 90%)",
+      "quizCard5": "45% (Acc: 44%)"
+    }
+  },
+  {
+    "unit": "unit_1",
+    "student": "12B_ĐẶNG QUỲNH ANH",
+    "oldPercent": "100%",
+    "newPercent": "100%",
+    "is100PercentEligible": true,
+    "validMinutes": "260 phút (15588s)",
+    "contentScoreC": "100%",
+    "timeScoreT": "100%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 82%)",
+      "listenChooseCard3": "100% (Acc: 79%)",
+      "spellingCard4": "100% (Acc: 91%)",
+      "quizCard5": "100% (Acc: 84%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12A_CAO THỊ TRÀ MY",
+    "oldPercent": "40%",
+    "newPercent": "33%",
+    "is100PercentEligible": false,
+    "validMinutes": "24 phút (1440s)",
+    "contentScoreC": "40%",
+    "timeScoreT": "16%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "100% (Acc: 70%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12A_DƯƠNG QUỐC ANH",
+    "oldPercent": "36%",
+    "newPercent": "35%",
+    "is100PercentEligible": false,
+    "validMinutes": "34 phút (2061s)",
+    "contentScoreC": "40%",
+    "timeScoreT": "23%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 54%)",
+      "listenChooseCard3": "2% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12A_HUỲNH NHẬT LINH",
+    "oldPercent": "84%",
+    "newPercent": "68%",
+    "is100PercentEligible": false,
+    "validMinutes": "43 phút (2562s)",
+    "contentScoreC": "85%",
+    "timeScoreT": "28%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 98%)",
+      "listenChooseCard3": "100% (Acc: 96%)",
+      "spellingCard4": "24% (Acc: 69%)",
+      "quizCard5": "100% (Acc: 65%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12A_HUỲNH THÁI TOÀN",
+    "oldPercent": "47%",
+    "newPercent": "48%",
+    "is100PercentEligible": false,
+    "validMinutes": "63 phút (3794s)",
+    "contentScoreC": "51%",
+    "timeScoreT": "42%",
+    "cardCoverage": {
+      "vocabCard1": "98%",
+      "matchingCard2": "35% (Acc: 68%)",
+      "listenChooseCard3": "100% (Acc: 80%)",
+      "spellingCard4": "9% (Acc: 20%)",
+      "quizCard5": "13% (Acc: 40%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12A_HỒ MINH NHÂN",
+    "oldPercent": "60%",
+    "newPercent": "51%",
+    "is100PercentEligible": false,
+    "validMinutes": "46 phút (2751s)",
+    "contentScoreC": "60%",
+    "timeScoreT": "31%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 87%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "98% (Acc: 89%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12A_HỒ THỊ THANH THẢO",
+    "oldPercent": "21%",
+    "newPercent": "17%",
+    "is100PercentEligible": false,
+    "validMinutes": "9 phút (552s)",
+    "contentScoreC": "22%",
+    "timeScoreT": "6%",
+    "cardCoverage": {
+      "vocabCard1": "0%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "9% (Acc: 60%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "100% (Acc: 40%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12A_LÊ NGUYỄN TIẾN VINH",
+    "oldPercent": "0%",
+    "newPercent": "0%",
+    "is100PercentEligible": false,
+    "validMinutes": "0 phút (0s)",
+    "contentScoreC": "0%",
+    "timeScoreT": "0%",
+    "cardCoverage": {
+      "vocabCard1": "0%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12A_LÊ THANH BÌNH",
+    "oldPercent": "99%",
+    "newPercent": "87%",
+    "is100PercentEligible": false,
+    "validMinutes": "85 phút (5108s)",
+    "contentScoreC": "99%",
+    "timeScoreT": "57%",
+    "cardCoverage": {
+      "vocabCard1": "98%",
+      "matchingCard2": "100% (Acc: 76%)",
+      "listenChooseCard3": "100% (Acc: 100%)",
+      "spellingCard4": "98% (Acc: 66%)",
+      "quizCard5": "100% (Acc: 38%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12A_LÊ TRUNG TRỰC",
+    "oldPercent": "1%",
+    "newPercent": "1%",
+    "is100PercentEligible": false,
+    "validMinutes": "1 phút (48s)",
+    "contentScoreC": "1%",
+    "timeScoreT": "1%",
+    "cardCoverage": {
+      "vocabCard1": "4%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12A_NGUYỄN BẢO HUY",
+    "oldPercent": "20%",
+    "newPercent": "14%",
+    "is100PercentEligible": false,
+    "validMinutes": "58 phút (3498s)",
+    "contentScoreC": "3%",
+    "timeScoreT": "39%",
+    "cardCoverage": {
+      "vocabCard1": "17%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12A_NGUYỄN HOÀNG HÀ MY",
+    "oldPercent": "57%",
+    "newPercent": "56%",
+    "is100PercentEligible": false,
+    "validMinutes": "65 phút (3913s)",
+    "contentScoreC": "62%",
+    "timeScoreT": "43%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "13% (Acc: 57%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "96% (Acc: 73%)",
+      "quizCard5": "100% (Acc: 94%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12A_NGUYỄN HUỲNH BẢO",
+    "oldPercent": "0%",
+    "newPercent": "0%",
+    "is100PercentEligible": false,
+    "validMinutes": "0 phút (0s)",
+    "contentScoreC": "0%",
+    "timeScoreT": "0%",
+    "cardCoverage": {
+      "vocabCard1": "0%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12A_NGUYỄN THÀNH HƯNG",
+    "oldPercent": "20%",
+    "newPercent": "15%",
+    "is100PercentEligible": false,
+    "validMinutes": "5 phút (326s)",
+    "contentScoreC": "20%",
+    "timeScoreT": "4%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12A_NGUYỄN THỊ MAI LINH",
+    "oldPercent": "20%",
+    "newPercent": "17%",
+    "is100PercentEligible": false,
+    "validMinutes": "19 phút (1155s)",
+    "contentScoreC": "19%",
+    "timeScoreT": "13%",
+    "cardCoverage": {
+      "vocabCard1": "94%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12A_NGUYỄN THỊ THÚY KIỀU",
+    "oldPercent": "100%",
+    "newPercent": "87%",
+    "is100PercentEligible": false,
+    "validMinutes": "88 phút (5265s)",
+    "contentScoreC": "100%",
+    "timeScoreT": "59%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 86%)",
+      "listenChooseCard3": "100% (Acc: 91%)",
+      "spellingCard4": "98% (Acc: 91%)",
+      "quizCard5": "100% (Acc: 38%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12A_NGUYỄN TRẦN NGUYÊN HẠNH",
+    "oldPercent": "76%",
+    "newPercent": "71%",
+    "is100PercentEligible": false,
+    "validMinutes": "81 phút (4853s)",
+    "contentScoreC": "79%",
+    "timeScoreT": "54%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 90%)",
+      "listenChooseCard3": "44% (Acc: 92%)",
+      "spellingCard4": "98% (Acc: 83%)",
+      "quizCard5": "50% (Acc: 60%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12A_NGUYỄN VĂN THANH DUY",
+    "oldPercent": "55%",
+    "newPercent": "60%",
+    "is100PercentEligible": false,
+    "validMinutes": "81 phút (4868s)",
+    "contentScoreC": "63%",
+    "timeScoreT": "54%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 33%)",
+      "listenChooseCard3": "100% (Acc: 86%)",
+      "spellingCard4": "15% (Acc: 63%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12A_PHAN LÊ CHÍ NGUYỄN",
+    "oldPercent": "100%",
+    "newPercent": "84%",
+    "is100PercentEligible": false,
+    "validMinutes": "74 phút (4422s)",
+    "contentScoreC": "100%",
+    "timeScoreT": "49%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 93%)",
+      "listenChooseCard3": "100% (Acc: 90%)",
+      "spellingCard4": "98% (Acc: 91%)",
+      "quizCard5": "100% (Acc: 60%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12A_PHẠM HOÀNG HẢI",
+    "oldPercent": "20%",
+    "newPercent": "17%",
+    "is100PercentEligible": false,
+    "validMinutes": "13 phút (809s)",
+    "contentScoreC": "20%",
+    "timeScoreT": "9%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12A_TEACHERTUY",
+    "oldPercent": "20%",
+    "newPercent": "17%",
+    "is100PercentEligible": false,
+    "validMinutes": "16 phút (958s)",
+    "contentScoreC": "20%",
+    "timeScoreT": "11%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12A_TRẦN NGUYỄN TÂM NGUYÊN",
+    "oldPercent": "100%",
+    "newPercent": "85%",
+    "is100PercentEligible": false,
+    "validMinutes": "78 phút (4705s)",
+    "contentScoreC": "99%",
+    "timeScoreT": "52%",
+    "cardCoverage": {
+      "vocabCard1": "94%",
+      "matchingCard2": "100% (Acc: 96%)",
+      "listenChooseCard3": "100% (Acc: 95%)",
+      "spellingCard4": "98% (Acc: 91%)",
+      "quizCard5": "100% (Acc: 48%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12A_VÕ HOÀI NAM",
+    "oldPercent": "20%",
+    "newPercent": "14%",
+    "is100PercentEligible": false,
+    "validMinutes": "2 phút (133s)",
+    "contentScoreC": "20%",
+    "timeScoreT": "1%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12A_VÕ TRUNG TÍNH",
+    "oldPercent": "80%",
+    "newPercent": "67%",
+    "is100PercentEligible": false,
+    "validMinutes": "57 phút (3426s)",
+    "contentScoreC": "80%",
+    "timeScoreT": "38%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 92%)",
+      "listenChooseCard3": "100% (Acc: 100%)",
+      "spellingCard4": "100% (Acc: 83%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12A_ĐOÀN MINH THƯ",
+    "oldPercent": "100%",
+    "newPercent": "83%",
+    "is100PercentEligible": false,
+    "validMinutes": "64 phút (3836s)",
+    "contentScoreC": "100%",
+    "timeScoreT": "43%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 98%)",
+      "listenChooseCard3": "100% (Acc: 100%)",
+      "spellingCard4": "98% (Acc: 92%)",
+      "quizCard5": "100% (Acc: 53%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12A_ĐOÀN QUỐC TRUNG",
+    "oldPercent": "56%",
+    "newPercent": "49%",
+    "is100PercentEligible": false,
+    "validMinutes": "41 phút (2444s)",
+    "contentScoreC": "58%",
+    "timeScoreT": "27%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "91% (Acc: 90%)",
+      "listenChooseCard3": "100% (Acc: 93%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12A_ĐẶNG TRƯỜNG NGÂN",
+    "oldPercent": "20%",
+    "newPercent": "18%",
+    "is100PercentEligible": false,
+    "validMinutes": "22 phút (1290s)",
+    "contentScoreC": "20%",
+    "timeScoreT": "14%",
+    "cardCoverage": {
+      "vocabCard1": "98%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12A_ĐỖ THÁI HUY",
+    "oldPercent": "40%",
+    "newPercent": "29%",
+    "is100PercentEligible": false,
+    "validMinutes": "6 phút (340s)",
+    "contentScoreC": "40%",
+    "timeScoreT": "4%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "100% (Acc: 15%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12B_BÙI VĂN KIỆT",
+    "oldPercent": "99%",
+    "newPercent": "87%",
+    "is100PercentEligible": false,
+    "validMinutes": "90 phút (5389s)",
+    "contentScoreC": "99%",
+    "timeScoreT": "60%",
+    "cardCoverage": {
+      "vocabCard1": "98%",
+      "matchingCard2": "100% (Acc: 83%)",
+      "listenChooseCard3": "100% (Acc: 86%)",
+      "spellingCard4": "98% (Acc: 75%)",
+      "quizCard5": "100% (Acc: 88%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12B_CHÂU KIM TIỀN",
+    "oldPercent": "71%",
+    "newPercent": "73%",
+    "is100PercentEligible": false,
+    "validMinutes": "115 phút (6887s)",
+    "contentScoreC": "72%",
+    "timeScoreT": "77%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "81% (Acc: 93%)",
+      "listenChooseCard3": "100% (Acc: 67%)",
+      "spellingCard4": "78% (Acc: 79%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12B_DƯƠNG THU THẢO",
+    "oldPercent": "70%",
+    "newPercent": "78%",
+    "is100PercentEligible": false,
+    "validMinutes": "122 phút (7340s)",
+    "contentScoreC": "77%",
+    "timeScoreT": "82%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 88%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "85% (Acc: 76%)",
+      "quizCard5": "100% (Acc: 88%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12B_HUỲNH CHÍ THỊNH",
+    "oldPercent": "100%",
+    "newPercent": "92%",
+    "is100PercentEligible": false,
+    "validMinutes": "113 phút (6783s)",
+    "contentScoreC": "100%",
+    "timeScoreT": "75%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 96%)",
+      "listenChooseCard3": "100% (Acc: 93%)",
+      "spellingCard4": "98% (Acc: 91%)",
+      "quizCard5": "100% (Acc: 93%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12B_HUỲNH NGUYỄN ĐỨC CƯỜNG",
+    "oldPercent": "47%",
+    "newPercent": "66%",
+    "is100PercentEligible": false,
+    "validMinutes": "662 phút (39716s)",
+    "contentScoreC": "51%",
+    "timeScoreT": "100%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "54% (Acc: 69%)",
+      "listenChooseCard3": "100% (Acc: 66%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12B_LÊ ANH VŨ",
+    "oldPercent": "40%",
+    "newPercent": "36%",
+    "is100PercentEligible": false,
+    "validMinutes": "42 phút (2547s)",
+    "contentScoreC": "40%",
+    "timeScoreT": "28%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 93%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12B_LÊ HUYỀN TRÂN",
+    "oldPercent": "96%",
+    "newPercent": "100%",
+    "is100PercentEligible": true,
+    "validMinutes": "250 phút (15026s)",
+    "contentScoreC": "100%",
+    "timeScoreT": "100%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 95%)",
+      "listenChooseCard3": "100% (Acc: 100%)",
+      "spellingCard4": "100% (Acc: 89%)",
+      "quizCard5": "100% (Acc: 95%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12B_LÊ NGUYỄN BẢO TRÂN",
+    "oldPercent": "99%",
+    "newPercent": "82%",
+    "is100PercentEligible": false,
+    "validMinutes": "59 phút (3569s)",
+    "contentScoreC": "100%",
+    "timeScoreT": "40%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 98%)",
+      "listenChooseCard3": "100% (Acc: 96%)",
+      "spellingCard4": "98% (Acc: 94%)",
+      "quizCard5": "100% (Acc: 45%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12B_LÊ THANH THIÊN",
+    "oldPercent": "97%",
+    "newPercent": "93%",
+    "is100PercentEligible": false,
+    "validMinutes": "124 phút (7451s)",
+    "contentScoreC": "97%",
+    "timeScoreT": "83%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 43%)",
+      "listenChooseCard3": "100% (Acc: 91%)",
+      "spellingCard4": "85% (Acc: 59%)",
+      "quizCard5": "100% (Acc: 23%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12B_LÊ THỊ HÒA HỢP",
+    "oldPercent": "29%",
+    "newPercent": "21%",
+    "is100PercentEligible": false,
+    "validMinutes": "5 phút (304s)",
+    "contentScoreC": "29%",
+    "timeScoreT": "3%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "43% (Acc: 78%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12B_LÊ VÕ NGỌC HIỀN",
+    "oldPercent": "81%",
+    "newPercent": "74%",
+    "is100PercentEligible": false,
+    "validMinutes": "86 phút (5130s)",
+    "contentScoreC": "81%",
+    "timeScoreT": "57%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 90%)",
+      "listenChooseCard3": "100% (Acc: 83%)",
+      "spellingCard4": "98% (Acc: 92%)",
+      "quizCard5": "5% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12B_LÊ VĂN NHÃ",
+    "oldPercent": "80%",
+    "newPercent": "67%",
+    "is100PercentEligible": false,
+    "validMinutes": "57 phút (3414s)",
+    "contentScoreC": "80%",
+    "timeScoreT": "38%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "100% (Acc: 92%)",
+      "spellingCard4": "100% (Acc: 78%)",
+      "quizCard5": "100% (Acc: 35%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12B_NGUYỄN MINH THÀNH",
+    "oldPercent": "80%",
+    "newPercent": "67%",
+    "is100PercentEligible": false,
+    "validMinutes": "55 phút (3284s)",
+    "contentScoreC": "80%",
+    "timeScoreT": "36%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 89%)",
+      "listenChooseCard3": "100% (Acc: 83%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "100% (Acc: 93%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12B_NGUYỄN MINH THÀNH",
+    "oldPercent": "40%",
+    "newPercent": "33%",
+    "is100PercentEligible": false,
+    "validMinutes": "25 phút (1528s)",
+    "contentScoreC": "40%",
+    "timeScoreT": "17%",
+    "cardCoverage": {
+      "vocabCard1": "98%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "2% (Acc: 100%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "100% (Acc: 93%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12B_NGUYỄN HUỲNH DUY KHÁNH",
+    "oldPercent": "79%",
+    "newPercent": "89%",
+    "is100PercentEligible": false,
+    "validMinutes": "125 phút (7497s)",
+    "contentScoreC": "91%",
+    "timeScoreT": "83%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 68%)",
+      "listenChooseCard3": "100% (Acc: 28%)",
+      "spellingCard4": "56% (Acc: 70%)",
+      "quizCard5": "100% (Acc: 31%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12B_NGUYỄN HỮU TRÍ",
+    "oldPercent": "41%",
+    "newPercent": "37%",
+    "is100PercentEligible": false,
+    "validMinutes": "41 phút (2434s)",
+    "contentScoreC": "42%",
+    "timeScoreT": "27%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 92%)",
+      "listenChooseCard3": "9% (Acc: 60%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12B_NGUYỄN LÊ NGỌC ÁNH",
+    "oldPercent": "55%",
+    "newPercent": "62%",
+    "is100PercentEligible": false,
+    "validMinutes": "101 phút (6073s)",
+    "contentScoreC": "60%",
+    "timeScoreT": "67%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 95%)",
+      "listenChooseCard3": "98% (Acc: 77%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12B_NGUYỄN MINH TÙNG",
+    "oldPercent": "20%",
+    "newPercent": "18%",
+    "is100PercentEligible": false,
+    "validMinutes": "20 phút (1170s)",
+    "contentScoreC": "20%",
+    "timeScoreT": "13%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12B_NGUYỄN NGỌC TUYỀN GIANG",
+    "oldPercent": "20%",
+    "newPercent": "19%",
+    "is100PercentEligible": false,
+    "validMinutes": "34 phút (2053s)",
+    "contentScoreC": "17%",
+    "timeScoreT": "23%",
+    "cardCoverage": {
+      "vocabCard1": "83%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12B_NGUYỄN QUỐC THẮNG",
+    "oldPercent": "83%",
+    "newPercent": "85%",
+    "is100PercentEligible": false,
+    "validMinutes": "135 phút (8124s)",
+    "contentScoreC": "83%",
+    "timeScoreT": "90%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 82%)",
+      "listenChooseCard3": "100% (Acc: 83%)",
+      "spellingCard4": "15% (Acc: 63%)",
+      "quizCard5": "100% (Acc: 88%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12B_NGUYỄN ĐÀO NGUYÊN KHA",
+    "oldPercent": "60%",
+    "newPercent": "50%",
+    "is100PercentEligible": false,
+    "validMinutes": "39 phút (2337s)",
+    "contentScoreC": "60%",
+    "timeScoreT": "26%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 86%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "98% (Acc: 91%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12B_NGÔ HỮU THIỆN",
+    "oldPercent": "75%",
+    "newPercent": "67%",
+    "is100PercentEligible": false,
+    "validMinutes": "74 phút (4428s)",
+    "contentScoreC": "75%",
+    "timeScoreT": "49%",
+    "cardCoverage": {
+      "vocabCard1": "98%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "100% (Acc: 95%)",
+      "spellingCard4": "76% (Acc: 85%)",
+      "quizCard5": "100% (Acc: 33%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12B_PHẠM CHÍ KHANG",
+    "oldPercent": "43%",
+    "newPercent": "41%",
+    "is100PercentEligible": false,
+    "validMinutes": "44 phút (2618s)",
+    "contentScoreC": "46%",
+    "timeScoreT": "29%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "33% (Acc: 56%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "98% (Acc: 66%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12B_PHẠM NGỌC CHÂU",
+    "oldPercent": "92%",
+    "newPercent": "99%",
+    "is100PercentEligible": false,
+    "validMinutes": "172 phút (10294s)",
+    "contentScoreC": "100%",
+    "timeScoreT": "100%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 54%)",
+      "listenChooseCard3": "100% (Acc: 88%)",
+      "spellingCard4": "100% (Acc: 82%)",
+      "quizCard5": "100% (Acc: 46%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12B_TEACHERTUY",
+    "oldPercent": "27%",
+    "newPercent": "25%",
+    "is100PercentEligible": false,
+    "validMinutes": "15 phút (889s)",
+    "contentScoreC": "31%",
+    "timeScoreT": "10%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "22% (Acc: 58%)",
+      "listenChooseCard3": "35% (Acc: 68%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12B_TRƯƠNG MINH HOÀNG",
+    "oldPercent": "40%",
+    "newPercent": "34%",
+    "is100PercentEligible": false,
+    "validMinutes": "31 phút (1884s)",
+    "contentScoreC": "40%",
+    "timeScoreT": "21%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 93%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12B_TRƯƠNG MẠNH CƯỜNG",
+    "oldPercent": "1%",
+    "newPercent": "1%",
+    "is100PercentEligible": false,
+    "validMinutes": "0 phút (12s)",
+    "contentScoreC": "1%",
+    "timeScoreT": "0%",
+    "cardCoverage": {
+      "vocabCard1": "7%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12B_TRƯƠNG THIÊN HẢI",
+    "oldPercent": "99%",
+    "newPercent": "92%",
+    "is100PercentEligible": false,
+    "validMinutes": "112 phút (6748s)",
+    "contentScoreC": "100%",
+    "timeScoreT": "75%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 96%)",
+      "listenChooseCard3": "100% (Acc: 75%)",
+      "spellingCard4": "100% (Acc: 82%)",
+      "quizCard5": "100% (Acc: 90%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12B_TRƯƠNG THẾ NGHIÊM",
+    "oldPercent": "99%",
+    "newPercent": "85%",
+    "is100PercentEligible": false,
+    "validMinutes": "77 phút (4614s)",
+    "contentScoreC": "100%",
+    "timeScoreT": "51%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 93%)",
+      "listenChooseCard3": "100% (Acc: 96%)",
+      "spellingCard4": "98% (Acc: 81%)",
+      "quizCard5": "100% (Acc: 93%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12B_TRẦN MIN GUN",
+    "oldPercent": "40%",
+    "newPercent": "31%",
+    "is100PercentEligible": false,
+    "validMinutes": "16 phút (945s)",
+    "contentScoreC": "40%",
+    "timeScoreT": "11%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "100% (Acc: 98%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12B_TRẦN THÀNH ĐẠT",
+    "oldPercent": "20%",
+    "newPercent": "17%",
+    "is100PercentEligible": false,
+    "validMinutes": "15 phút (917s)",
+    "contentScoreC": "20%",
+    "timeScoreT": "10%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12B_TRẦN THÁI TÂN",
+    "oldPercent": "20%",
+    "newPercent": "19%",
+    "is100PercentEligible": false,
+    "validMinutes": "26 phút (1562s)",
+    "contentScoreC": "20%",
+    "timeScoreT": "17%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12B_TRẦN THỊ HÀ LAN",
+    "oldPercent": "100%",
+    "newPercent": "89%",
+    "is100PercentEligible": false,
+    "validMinutes": "95 phút (5682s)",
+    "contentScoreC": "100%",
+    "timeScoreT": "63%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 86%)",
+      "listenChooseCard3": "100% (Acc: 81%)",
+      "spellingCard4": "98% (Acc: 91%)",
+      "quizCard5": "100% (Acc: 51%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12B_TRẦN THỊ THANH HOÀI",
+    "oldPercent": "100%",
+    "newPercent": "100%",
+    "is100PercentEligible": true,
+    "validMinutes": "197 phút (11843s)",
+    "contentScoreC": "100%",
+    "timeScoreT": "100%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 92%)",
+      "listenChooseCard3": "100% (Acc: 96%)",
+      "spellingCard4": "100% (Acc: 85%)",
+      "quizCard5": "100% (Acc: 68%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12B_VÕ HOÀNG NGÂN",
+    "oldPercent": "90%",
+    "newPercent": "83%",
+    "is100PercentEligible": false,
+    "validMinutes": "74 phút (4426s)",
+    "contentScoreC": "97%",
+    "timeScoreT": "49%",
+    "cardCoverage": {
+      "vocabCard1": "96%",
+      "matchingCard2": "100% (Acc: 93%)",
+      "listenChooseCard3": "93% (Acc: 54%)",
+      "spellingCard4": "98% (Acc: 81%)",
+      "quizCard5": "100% (Acc: 93%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12B_VÕ KIM NGÂN",
+    "oldPercent": "100%",
+    "newPercent": "100%",
+    "is100PercentEligible": true,
+    "validMinutes": "177 phút (10614s)",
+    "contentScoreC": "100%",
+    "timeScoreT": "100%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 96%)",
+      "listenChooseCard3": "100% (Acc: 96%)",
+      "spellingCard4": "100% (Acc: 94%)",
+      "quizCard5": "100% (Acc: 80%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12B_ĐÀM NGỌC AN",
+    "oldPercent": "40%",
+    "newPercent": "38%",
+    "is100PercentEligible": false,
+    "validMinutes": "49 phút (2934s)",
+    "contentScoreC": "40%",
+    "timeScoreT": "33%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 89%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_2",
+    "student": "12B_ĐẶNG QUỲNH ANH",
+    "oldPercent": "100%",
+    "newPercent": "100%",
+    "is100PercentEligible": true,
+    "validMinutes": "196 phút (11752s)",
+    "contentScoreC": "100%",
+    "timeScoreT": "100%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 98%)",
+      "listenChooseCard3": "100% (Acc: 96%)",
+      "spellingCard4": "100% (Acc: 87%)",
+      "quizCard5": "100% (Acc: 91%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12A_CAO THỊ TRÀ MY",
+    "oldPercent": "69%",
+    "newPercent": "57%",
+    "is100PercentEligible": false,
+    "validMinutes": "46 phút (2786s)",
+    "contentScoreC": "68%",
+    "timeScoreT": "31%",
+    "cardCoverage": {
+      "vocabCard1": "94%",
+      "matchingCard2": "100% (Acc: 96%)",
+      "listenChooseCard3": "100% (Acc: 77%)",
+      "spellingCard4": "44% (Acc: 100%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12A_DƯƠNG QUỐC ANH",
+    "oldPercent": "60%",
+    "newPercent": "50%",
+    "is100PercentEligible": false,
+    "validMinutes": "42 phút (2499s)",
+    "contentScoreC": "60%",
+    "timeScoreT": "28%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 86%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "98% (Acc: 79%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12A_HUỲNH NHẬT LINH",
+    "oldPercent": "20%",
+    "newPercent": "20%",
+    "is100PercentEligible": false,
+    "validMinutes": "30 phút (1823s)",
+    "contentScoreC": "20%",
+    "timeScoreT": "20%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12A_HUỲNH THÁI TOÀN",
+    "oldPercent": "63%",
+    "newPercent": "53%",
+    "is100PercentEligible": false,
+    "validMinutes": "44 phút (2661s)",
+    "contentScoreC": "63%",
+    "timeScoreT": "30%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 94%)",
+      "listenChooseCard3": "100% (Acc: 87%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "15% (Acc: 17%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12A_HỒ THỊ THANH THẢO",
+    "oldPercent": "40%",
+    "newPercent": "32%",
+    "is100PercentEligible": false,
+    "validMinutes": "22 phút (1334s)",
+    "contentScoreC": "40%",
+    "timeScoreT": "15%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 64%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12A_LÊ THANH BÌNH",
+    "oldPercent": "99%",
+    "newPercent": "87%",
+    "is100PercentEligible": false,
+    "validMinutes": "89 phút (5320s)",
+    "contentScoreC": "100%",
+    "timeScoreT": "59%",
+    "cardCoverage": {
+      "vocabCard1": "98%",
+      "matchingCard2": "100% (Acc: 56%)",
+      "listenChooseCard3": "100% (Acc: 100%)",
+      "spellingCard4": "100% (Acc: 70%)",
+      "quizCard5": "100% (Acc: 48%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12A_NGUYỄN BẢO HUY",
+    "oldPercent": "60%",
+    "newPercent": "66%",
+    "is100PercentEligible": false,
+    "validMinutes": "118 phút (7083s)",
+    "contentScoreC": "60%",
+    "timeScoreT": "79%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 94%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "100% (Acc: 55%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12A_NGUYỄN BẢO NHƯ",
+    "oldPercent": "20%",
+    "newPercent": "17%",
+    "is100PercentEligible": false,
+    "validMinutes": "19 phút (1110s)",
+    "contentScoreC": "19%",
+    "timeScoreT": "12%",
+    "cardCoverage": {
+      "vocabCard1": "96%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12A_NGUYỄN HOÀNG HÀ MY",
+    "oldPercent": "100%",
+    "newPercent": "100%",
+    "is100PercentEligible": true,
+    "validMinutes": "435 phút (26126s)",
+    "contentScoreC": "100%",
+    "timeScoreT": "100%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 55%)",
+      "listenChooseCard3": "100% (Acc: 82%)",
+      "spellingCard4": "100% (Acc: 85%)",
+      "quizCard5": "100% (Acc: 98%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12A_NGUYỄN THỊ BÍCH HÂN",
+    "oldPercent": "20%",
+    "newPercent": "2%",
+    "is100PercentEligible": false,
+    "validMinutes": "11 phút (631s)",
+    "contentScoreC": "0%",
+    "timeScoreT": "7%",
+    "cardCoverage": {
+      "vocabCard1": "2%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12A_NGUYỄN THỊ MAI LINH",
+    "oldPercent": "20%",
+    "newPercent": "18%",
+    "is100PercentEligible": false,
+    "validMinutes": "18 phút (1074s)",
+    "contentScoreC": "20%",
+    "timeScoreT": "12%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12A_NGUYỄN THỊ THÚY KIỀU",
+    "oldPercent": "40%",
+    "newPercent": "36%",
+    "is100PercentEligible": false,
+    "validMinutes": "38 phút (2309s)",
+    "contentScoreC": "40%",
+    "timeScoreT": "26%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "100% (Acc: 81%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12A_NGUYỄN VÕ MINH ĐƯƠNG",
+    "oldPercent": "20%",
+    "newPercent": "5%",
+    "is100PercentEligible": false,
+    "validMinutes": "15 phút (904s)",
+    "contentScoreC": "3%",
+    "timeScoreT": "10%",
+    "cardCoverage": {
+      "vocabCard1": "17%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12A_NGUYỄN VĂN THANH DUY",
+    "oldPercent": "20%",
+    "newPercent": "16%",
+    "is100PercentEligible": false,
+    "validMinutes": "11 phút (647s)",
+    "contentScoreC": "20%",
+    "timeScoreT": "7%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12A_PHAN LÊ CHÍ NGUYỄN",
+    "oldPercent": "20%",
+    "newPercent": "18%",
+    "is100PercentEligible": false,
+    "validMinutes": "21 phút (1236s)",
+    "contentScoreC": "20%",
+    "timeScoreT": "14%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12A_PHẠM HOÀNG HẢI",
+    "oldPercent": "20%",
+    "newPercent": "15%",
+    "is100PercentEligible": false,
+    "validMinutes": "11 phút (641s)",
+    "contentScoreC": "19%",
+    "timeScoreT": "7%",
+    "cardCoverage": {
+      "vocabCard1": "94%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12A_TEACHERTUY",
+    "oldPercent": "20%",
+    "newPercent": "17%",
+    "is100PercentEligible": false,
+    "validMinutes": "14 phút (868s)",
+    "contentScoreC": "20%",
+    "timeScoreT": "10%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12A_TRẦN NGUYỄN TÂM NGUYÊN",
+    "oldPercent": "22%",
+    "newPercent": "18%",
+    "is100PercentEligible": false,
+    "validMinutes": "20 phút (1180s)",
+    "contentScoreC": "20%",
+    "timeScoreT": "13%",
+    "cardCoverage": {
+      "vocabCard1": "92%",
+      "matchingCard2": "4% (Acc: 50%)",
+      "listenChooseCard3": "2% (Acc: 100%)",
+      "spellingCard4": "2% (Acc: 100%)",
+      "quizCard5": "3% (Acc: 100%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12A_VÕ HOÀI NAM",
+    "oldPercent": "20%",
+    "newPercent": "12%",
+    "is100PercentEligible": false,
+    "validMinutes": "12 phút (717s)",
+    "contentScoreC": "14%",
+    "timeScoreT": "8%",
+    "cardCoverage": {
+      "vocabCard1": "71%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12A_VÕ TRUNG TÍNH",
+    "oldPercent": "40%",
+    "newPercent": "32%",
+    "is100PercentEligible": false,
+    "validMinutes": "21 phút (1240s)",
+    "contentScoreC": "40%",
+    "timeScoreT": "14%",
+    "cardCoverage": {
+      "vocabCard1": "98%",
+      "matchingCard2": "100% (Acc: 91%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12A_ĐOÀN MINH THƯ",
+    "oldPercent": "100%",
+    "newPercent": "82%",
+    "is100PercentEligible": false,
+    "validMinutes": "64 phút (3818s)",
+    "contentScoreC": "99%",
+    "timeScoreT": "42%",
+    "cardCoverage": {
+      "vocabCard1": "98%",
+      "matchingCard2": "100% (Acc: 100%)",
+      "listenChooseCard3": "100% (Acc: 94%)",
+      "spellingCard4": "98% (Acc: 91%)",
+      "quizCard5": "100% (Acc: 45%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12A_ĐOÀN QUỐC TRUNG",
+    "oldPercent": "20%",
+    "newPercent": "16%",
+    "is100PercentEligible": false,
+    "validMinutes": "12 phút (701s)",
+    "contentScoreC": "20%",
+    "timeScoreT": "8%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12A_ĐẶNG TRƯỜNG NGÂN",
+    "oldPercent": "20%",
+    "newPercent": "5%",
+    "is100PercentEligible": false,
+    "validMinutes": "11 phút (635s)",
+    "contentScoreC": "4%",
+    "timeScoreT": "7%",
+    "cardCoverage": {
+      "vocabCard1": "21%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12B_BÙI VĂN KIỆT",
+    "oldPercent": "40%",
+    "newPercent": "33%",
+    "is100PercentEligible": false,
+    "validMinutes": "24 phút (1467s)",
+    "contentScoreC": "40%",
+    "timeScoreT": "16%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "100% (Acc: 90%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12B_CHÂU KIM TIỀN",
+    "oldPercent": "100%",
+    "newPercent": "84%",
+    "is100PercentEligible": false,
+    "validMinutes": "69 phút (4149s)",
+    "contentScoreC": "100%",
+    "timeScoreT": "46%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 94%)",
+      "listenChooseCard3": "100% (Acc: 83%)",
+      "spellingCard4": "98% (Acc: 87%)",
+      "quizCard5": "100% (Acc: 95%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12B_DƯƠNG THU THẢO",
+    "oldPercent": "40%",
+    "newPercent": "37%",
+    "is100PercentEligible": false,
+    "validMinutes": "43 phút (2552s)",
+    "contentScoreC": "40%",
+    "timeScoreT": "28%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 98%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12B_HUỲNH CHÍ THỊNH",
+    "oldPercent": "20%",
+    "newPercent": "33%",
+    "is100PercentEligible": false,
+    "validMinutes": "94 phút (5660s)",
+    "contentScoreC": "20%",
+    "timeScoreT": "63%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12B_HUỲNH NGUYỄN ĐỨC CƯỜNG",
+    "oldPercent": "63%",
+    "newPercent": "52%",
+    "is100PercentEligible": false,
+    "validMinutes": "32 phút (1933s)",
+    "contentScoreC": "65%",
+    "timeScoreT": "21%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 91%)",
+      "listenChooseCard3": "15% (Acc: 43%)",
+      "spellingCard4": "10% (Acc: 40%)",
+      "quizCard5": "100% (Acc: 20%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12B_LÊ ANH VŨ",
+    "oldPercent": "20%",
+    "newPercent": "17%",
+    "is100PercentEligible": false,
+    "validMinutes": "15 phút (875s)",
+    "contentScoreC": "20%",
+    "timeScoreT": "10%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12B_LÊ HUYỀN TRÂN",
+    "oldPercent": "60%",
+    "newPercent": "61%",
+    "is100PercentEligible": false,
+    "validMinutes": "95 phút (5692s)",
+    "contentScoreC": "60%",
+    "timeScoreT": "63%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 94%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "98% (Acc: 85%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12B_LÊ NGUYỄN BẢO TRÂN",
+    "oldPercent": "100%",
+    "newPercent": "82%",
+    "is100PercentEligible": false,
+    "validMinutes": "63 phút (3789s)",
+    "contentScoreC": "100%",
+    "timeScoreT": "42%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 100%)",
+      "listenChooseCard3": "100% (Acc: 98%)",
+      "spellingCard4": "98% (Acc: 94%)",
+      "quizCard5": "100% (Acc: 33%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12B_LÊ THANH THIÊN",
+    "oldPercent": "40%",
+    "newPercent": "35%",
+    "is100PercentEligible": false,
+    "validMinutes": "36 phút (2184s)",
+    "contentScoreC": "40%",
+    "timeScoreT": "24%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 96%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12B_LÊ VÕ NGỌC HIỀN",
+    "oldPercent": "80%",
+    "newPercent": "66%",
+    "is100PercentEligible": false,
+    "validMinutes": "50 phút (2996s)",
+    "contentScoreC": "80%",
+    "timeScoreT": "33%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 98%)",
+      "listenChooseCard3": "100% (Acc: 81%)",
+      "spellingCard4": "98% (Acc: 96%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12B_LÊ VĂN NHÃ",
+    "oldPercent": "40%",
+    "newPercent": "32%",
+    "is100PercentEligible": false,
+    "validMinutes": "19 phút (1127s)",
+    "contentScoreC": "40%",
+    "timeScoreT": "13%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "100% (Acc: 87%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12B_NGUYỄN MINH THÀNH",
+    "oldPercent": "20%",
+    "newPercent": "17%",
+    "is100PercentEligible": false,
+    "validMinutes": "13 phút (802s)",
+    "contentScoreC": "20%",
+    "timeScoreT": "9%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12B_NGUYỄN HUỲNH DUY KHÁNH",
+    "oldPercent": "99%",
+    "newPercent": "85%",
+    "is100PercentEligible": false,
+    "validMinutes": "75 phút (4509s)",
+    "contentScoreC": "100%",
+    "timeScoreT": "50%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 89%)",
+      "listenChooseCard3": "100% (Acc: 33%)",
+      "spellingCard4": "98% (Acc: 74%)",
+      "quizCard5": "100% (Acc: 20%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12B_NGUYỄN HỮU TRÍ",
+    "oldPercent": "20%",
+    "newPercent": "16%",
+    "is100PercentEligible": false,
+    "validMinutes": "9 phút (528s)",
+    "contentScoreC": "20%",
+    "timeScoreT": "6%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12B_NGUYỄN LÊ NGỌC ÁNH",
+    "oldPercent": "20%",
+    "newPercent": "17%",
+    "is100PercentEligible": false,
+    "validMinutes": "22 phút (1334s)",
+    "contentScoreC": "18%",
+    "timeScoreT": "15%",
+    "cardCoverage": {
+      "vocabCard1": "88%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12B_NGUYỄN MINH TÙNG",
+    "oldPercent": "20%",
+    "newPercent": "17%",
+    "is100PercentEligible": false,
+    "validMinutes": "16 phút (953s)",
+    "contentScoreC": "20%",
+    "timeScoreT": "11%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12B_NGUYỄN NGỌC TUYỀN GIANG",
+    "oldPercent": "40%",
+    "newPercent": "37%",
+    "is100PercentEligible": false,
+    "validMinutes": "43 phút (2606s)",
+    "contentScoreC": "40%",
+    "timeScoreT": "29%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 98%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12B_NGUYỄN QUỐC THẮNG",
+    "oldPercent": "91%",
+    "newPercent": "79%",
+    "is100PercentEligible": false,
+    "validMinutes": "77 phút (4625s)",
+    "contentScoreC": "91%",
+    "timeScoreT": "51%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 92%)",
+      "listenChooseCard3": "100% (Acc: 68%)",
+      "spellingCard4": "54% (Acc: 77%)",
+      "quizCard5": "100% (Acc: 95%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12B_NGUYỄN ĐÀO NGUYÊN KHA",
+    "oldPercent": "26%",
+    "newPercent": "17%",
+    "is100PercentEligible": false,
+    "validMinutes": "24 phút (1420s)",
+    "contentScoreC": "18%",
+    "timeScoreT": "16%",
+    "cardCoverage": {
+      "vocabCard1": "60%",
+      "matchingCard2": "29% (Acc: 100%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12B_NGÔ HỮU THIỆN",
+    "oldPercent": "40%",
+    "newPercent": "36%",
+    "is100PercentEligible": false,
+    "validMinutes": "41 phút (2449s)",
+    "contentScoreC": "40%",
+    "timeScoreT": "27%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "100% (Acc: 81%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12B_PHẠM NGỌC CHÂU",
+    "oldPercent": "86%",
+    "newPercent": "70%",
+    "is100PercentEligible": false,
+    "validMinutes": "106 phút (6368s)",
+    "contentScoreC": "70%",
+    "timeScoreT": "71%",
+    "cardCoverage": {
+      "vocabCard1": "8%",
+      "matchingCard2": "100% (Acc: 98%)",
+      "listenChooseCard3": "100% (Acc: 97%)",
+      "spellingCard4": "40% (Acc: 89%)",
+      "quizCard5": "100% (Acc: 35%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12B_TRƯƠNG MINH HOÀNG",
+    "oldPercent": "20%",
+    "newPercent": "18%",
+    "is100PercentEligible": false,
+    "validMinutes": "20 phút (1228s)",
+    "contentScoreC": "20%",
+    "timeScoreT": "14%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12B_TRƯƠNG MẠNH CƯỜNG",
+    "oldPercent": "23%",
+    "newPercent": "23%",
+    "is100PercentEligible": false,
+    "validMinutes": "7 phút (398s)",
+    "contentScoreC": "31%",
+    "timeScoreT": "4%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "10% (Acc: 0%)",
+      "listenChooseCard3": "44% (Acc: 33%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12B_TRƯƠNG THIÊN HẢI",
+    "oldPercent": "40%",
+    "newPercent": "36%",
+    "is100PercentEligible": false,
+    "validMinutes": "42 phút (2503s)",
+    "contentScoreC": "40%",
+    "timeScoreT": "28%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 100%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12B_TRƯƠNG THẾ NGHIÊM",
+    "oldPercent": "100%",
+    "newPercent": "82%",
+    "is100PercentEligible": false,
+    "validMinutes": "61 phút (3630s)",
+    "contentScoreC": "100%",
+    "timeScoreT": "40%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 96%)",
+      "listenChooseCard3": "100% (Acc: 100%)",
+      "spellingCard4": "98% (Acc: 83%)",
+      "quizCard5": "100% (Acc: 95%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12B_TRẦN MIN GUN",
+    "oldPercent": "19%",
+    "newPercent": "15%",
+    "is100PercentEligible": false,
+    "validMinutes": "7 phút (449s)",
+    "contentScoreC": "19%",
+    "timeScoreT": "5%",
+    "cardCoverage": {
+      "vocabCard1": "96%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12B_TRẦN THÀNH ĐẠT",
+    "oldPercent": "20%",
+    "newPercent": "16%",
+    "is100PercentEligible": false,
+    "validMinutes": "11 phút (686s)",
+    "contentScoreC": "20%",
+    "timeScoreT": "8%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12B_TRẦN THÁI TÂN",
+    "oldPercent": "20%",
+    "newPercent": "21%",
+    "is100PercentEligible": false,
+    "validMinutes": "35 phút (2080s)",
+    "contentScoreC": "20%",
+    "timeScoreT": "23%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12B_TRẦN THỊ HÀ LAN",
+    "oldPercent": "60%",
+    "newPercent": "56%",
+    "is100PercentEligible": false,
+    "validMinutes": "71 phút (4274s)",
+    "contentScoreC": "60%",
+    "timeScoreT": "47%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 92%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "98% (Acc: 85%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12B_TRẦN THỊ THANH HOÀI",
+    "oldPercent": "100%",
+    "newPercent": "99%",
+    "is100PercentEligible": false,
+    "validMinutes": "170 phút (10226s)",
+    "contentScoreC": "100%",
+    "timeScoreT": "100%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 94%)",
+      "listenChooseCard3": "100% (Acc: 96%)",
+      "spellingCard4": "98% (Acc: 85%)",
+      "quizCard5": "100% (Acc: 93%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12B_VÕ HOÀNG NGÂN",
+    "oldPercent": "80%",
+    "newPercent": "66%",
+    "is100PercentEligible": false,
+    "validMinutes": "53 phút (3177s)",
+    "contentScoreC": "80%",
+    "timeScoreT": "35%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "100% (Acc: 96%)",
+      "spellingCard4": "98% (Acc: 89%)",
+      "quizCard5": "100% (Acc: 95%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12B_VÕ KIM NGÂN",
+    "oldPercent": "100%",
+    "newPercent": "100%",
+    "is100PercentEligible": true,
+    "validMinutes": "208 phút (12483s)",
+    "contentScoreC": "100%",
+    "timeScoreT": "100%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 100%)",
+      "listenChooseCard3": "100% (Acc: 96%)",
+      "spellingCard4": "100% (Acc: 100%)",
+      "quizCard5": "100% (Acc: 91%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12B_ĐÀM NGỌC AN",
+    "oldPercent": "20%",
+    "newPercent": "17%",
+    "is100PercentEligible": false,
+    "validMinutes": "16 phút (973s)",
+    "contentScoreC": "20%",
+    "timeScoreT": "11%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "0% (Acc: 0%)",
+      "listenChooseCard3": "0% (Acc: 0%)",
+      "spellingCard4": "0% (Acc: 0%)",
+      "quizCard5": "0% (Acc: 0%)"
+    }
+  },
+  {
+    "unit": "unit_3",
+    "student": "12B_ĐẶNG QUỲNH ANH",
+    "oldPercent": "100%",
+    "newPercent": "84%",
+    "is100PercentEligible": false,
+    "validMinutes": "72 phút (4346s)",
+    "contentScoreC": "100%",
+    "timeScoreT": "48%",
+    "cardCoverage": {
+      "vocabCard1": "100%",
+      "matchingCard2": "100% (Acc: 100%)",
+      "listenChooseCard3": "100% (Acc: 94%)",
+      "spellingCard4": "98% (Acc: 96%)",
+      "quizCard5": "100% (Acc: 93%)"
+    }
+  }
+]

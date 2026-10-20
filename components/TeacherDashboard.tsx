@@ -491,8 +491,8 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
         };
 
         filtered.forEach(s => {
-            const pClass = (s.playerClass || '').trim().toUpperCase();
-            const pName = (s.playerName || '').trim().replace(/\s+/g, ' ');
+            const pClass = (s.playerClass || '').trim().normalize('NFC').toUpperCase();
+            const pName = (s.playerName || '').trim().normalize('NFC').replace(/\s+/g, ' ');
             const identityKey = `${pClass}_${pName.toUpperCase()}`;
             if (!mergedMap[identityKey]) {
                 mergedMap[identityKey] = { playerKey: identityKey, playerName: pName, playerClass: pClass, attempts: [], latestTimestamp: 0 };
