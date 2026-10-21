@@ -223,6 +223,7 @@ interface StudentGroupedResult {
     playerClass: string;
     attempts: GameResult[];
     latestTimestamp: number;
+    rosterPosition?: number;
 }
 
 const ResultDetailModal: React.FC<{ result: GameResult; onClose: () => void }> = ({ result, onClose }) => {
@@ -477,9 +478,51 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
     }, [results, processedUnitResults, processedTopicResults]);
 
     const getGroupedData = (rawStudents: StudentUnitSummary[], currentClass: string) => {
-        const filtered = rawStudents.filter(s => currentClass === 'all' || (s.playerClass || '').trim().toUpperCase() === (currentClass || '').trim().toUpperCase());
         const mergedMap: Record<string, StudentGroupedResult> = {};
-        
+
+        const classOrderMap = new Map<string, number>();
+        const studentOrderMap = new Map<string, number>();
+
+        if (loginRosterConfig && Array.isArray(loginRosterConfig.columns)) {
+            loginRosterConfig.columns.forEach((col, colIdx) => {
+                if (!col || !col.classId || col.classId.trim() === '') return;
+                const normClass = col.classId.trim().normalize('NFC').toUpperCase();
+                classOrderMap.set(normClass, colIdx);
+
+                const isClassMatched = currentClass === 'all' || normClass === currentClass.trim().normalize('NFC').toUpperCase();
+
+                if (col.studentList) {
+                    const rawNames = col.studentList.split(/[\n,;]/);
+                    let sIdx = 0;
+                    rawNames.forEach(rawName => {
+                        const normName = rawName.trim().normalize('NFC').replace(/\s+/g, ' ');
+                        if (normName.length > 0) {
+                            const studentKey = `${normClass}_${normName.toUpperCase()}`;
+                            if (!studentOrderMap.has(studentKey)) {
+                                studentOrderMap.set(studentKey, sIdx);
+                            }
+
+                            if (isClassMatched) {
+                                if (!mergedMap[studentKey]) {
+                                    mergedMap[studentKey] = {
+                                        playerKey: studentKey,
+                                        playerName: normName,
+                                        playerClass: normClass,
+                                        attempts: [],
+                                        latestTimestamp: 0,
+                                        rosterPosition: sIdx + 1
+                                    };
+                                }
+                            }
+                            sIdx++;
+                        }
+                    });
+                }
+            });
+        }
+
+        const filtered = rawStudents.filter(s => currentClass === 'all' || (s.playerClass || '').trim().normalize('NFC').toUpperCase() === (currentClass || '').trim().normalize('NFC').toUpperCase());
+
         const countUpper = (str: string) => {
             if (!str) return 0;
             let count = 0;
@@ -494,9 +537,19 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
             const pClass = (s.playerClass || '').trim().normalize('NFC').toUpperCase();
             const pName = (s.playerName || '').trim().normalize('NFC').replace(/\s+/g, ' ');
             const identityKey = `${pClass}_${pName.toUpperCase()}`;
+
             if (!mergedMap[identityKey]) {
-                mergedMap[identityKey] = { playerKey: identityKey, playerName: pName, playerClass: pClass, attempts: [], latestTimestamp: 0 };
+                const studentIdx = studentOrderMap.has(identityKey) ? studentOrderMap.get(identityKey)! + 1 : 99999;
+                mergedMap[identityKey] = {
+                    playerKey: identityKey,
+                    playerName: pName,
+                    playerClass: pClass,
+                    attempts: [],
+                    latestTimestamp: 0,
+                    rosterPosition: studentIdx
+                };
             }
+
             mergedMap[identityKey].attempts.push(...s.results);
             const groupLatest = s.results.length > 0 ? Math.max(...s.results.map(r => r.timestamp || 0)) : 0;
             const currentNameCapCount = countUpper(mergedMap[identityKey].playerName);
@@ -505,9 +558,30 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
             else if (incomingNameCapCount === currentNameCapCount && groupLatest > mergedMap[identityKey].latestTimestamp) mergedMap[identityKey].playerName = s.playerName || '';
             if (groupLatest > mergedMap[identityKey].latestTimestamp) mergedMap[identityKey].latestTimestamp = groupLatest;
         });
+
         const groups = Object.values(mergedMap);
         groups.forEach(g => g.attempts.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0)));
-        return groups.sort((a, b) => b.latestTimestamp - a.latestTimestamp);
+
+        return groups.sort((a, b) => {
+            const classA = (a.playerClass || '').trim().normalize('NFC').toUpperCase();
+            const classB = (b.playerClass || '').trim().normalize('NFC').toUpperCase();
+
+            const classIdxA = classOrderMap.has(classA) ? classOrderMap.get(classA)! : 999;
+            const classIdxB = classOrderMap.has(classB) ? classOrderMap.get(classB)! : 999;
+
+            if (classIdxA !== classIdxB) {
+                return classIdxA - classIdxB;
+            }
+
+            const posA = a.rosterPosition || 99999;
+            const posB = b.rosterPosition || 99999;
+
+            if (posA !== posB) {
+                return posA - posB;
+            }
+
+            return a.playerName.localeCompare(b.playerName, 'vi');
+        });
     };
 
     const getCompletionPercentForGroup = (group: StudentGroupedResult, type: 'unit' | 'topic') => {
@@ -517,8 +591,8 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
         return calculateStudentCompletionPercent(group.attempts || [], vocabList?.length, quizList?.length);
     };
 
-    const groupedUnitResults = useMemo(() => getGroupedData(processedUnitResults, selectedUnitClass), [processedUnitResults, selectedUnitClass]);
-    const groupedTopicResults = useMemo(() => getGroupedData(processedTopicResults, selectedTopicClass), [processedTopicResults, selectedTopicClass]);
+    const groupedUnitResults = useMemo(() => getGroupedData(processedUnitResults, selectedUnitClass), [processedUnitResults, selectedUnitClass, loginRosterConfig]);
+    const groupedTopicResults = useMemo(() => getGroupedData(processedTopicResults, selectedTopicClass), [processedTopicResults, selectedTopicClass, loginRosterConfig]);
 
     const renderResultsTable = (groupedData: StudentGroupedResult[], type: 'unit' | 'topic', onRowClick: (r: GameResult) => void, onDeleteStudent: (group: StudentGroupedResult) => void) => {
         const curClass = type === 'unit' ? selectedUnitClass : selectedTopicClass;
@@ -532,20 +606,20 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                     </select>
                     <button onClick={type === 'unit' ? () => clearUnitResultsByGrade(classroomId, viewingUnit!.grade, `unit_${viewingUnit!.unit}`) : () => clearTopicResults(classroomId, `topic_${viewingTopic}`)} className="p-1.5 bg-red-600 text-white rounded-lg hover:bg-red-700 shadow-xs transition-colors" title="Xóa toàn bộ kết quả"><svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>
                 </div>
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse table-fixed min-w-[1000px]">
+                <div className="overflow-x-auto w-full">
+                    <table className="w-full text-left border-collapse table-auto min-w-[max-content]">
                         <thead>
                             <tr className="bg-[#fff2e0]">
-                                <th className="py-2 px-1 border border-gray-300 text-[12px] font-black text-[#c05621] w-12 text-center">STT</th>
-                                <th className="py-2 px-2 border border-gray-300 text-[12px] font-black text-[#c05621] w-44 uppercase tracking-tight">HỌ VÀ TÊN</th>
-                                <th className="py-2 px-1 border border-gray-300 text-[12px] font-black text-[#c05621] w-16 uppercase tracking-tight text-center">LỚP</th>
-                                <th className="py-2 px-2 border border-gray-300 text-[12px] font-black text-[#c05621] w-36 uppercase tracking-tight text-center">NỘI DUNG ↑</th>
-                                <th className="py-2 px-1 border border-gray-300 text-[12px] font-black text-[#c05621] w-20 uppercase tracking-tight text-center">ĐIỂM ▼</th>
-                                <th className="py-2 px-1 border border-gray-300 text-[12px] font-black text-[#c05621] w-14 uppercase tracking-tight text-center">ĐÚNG ↑</th>
-                                <th className="py-2 px-1 border border-gray-300 text-[12px] font-black text-[#c05621] w-14 uppercase tracking-tight text-center">SAI ↑</th>
-                                <th className="py-2 px-2 border border-gray-300 text-[12px] font-black text-[#c05621] w-24 uppercase tracking-tight text-center">THỜI GIAN ↑</th>
-                                <th className="py-2 px-2 border border-gray-300 text-[12px] font-black text-[#c05621] w-38 uppercase tracking-tight text-center">NGÀY LÀM ↑</th>
-                                <th className="py-2 px-1 border border-gray-300 text-[12px] font-black text-[#c05621] w-20 uppercase tracking-tight text-center">HÀNH ĐỘNG</th>
+                                <th className="py-2.5 px-2 border border-gray-300 text-[12px] font-black text-[#c05621] min-w-[48px] text-center whitespace-nowrap">STT</th>
+                                <th className="py-2.5 px-3 border border-gray-300 text-[12px] font-black text-[#c05621] min-w-[200px] uppercase tracking-tight whitespace-nowrap">HỌ VÀ TÊN</th>
+                                <th className="py-2.5 px-2 border border-gray-300 text-[12px] font-black text-[#c05621] min-w-[65px] uppercase tracking-tight text-center whitespace-nowrap">LỚP</th>
+                                <th className="py-2.5 px-2 border border-gray-300 text-[12px] font-black text-[#c05621] min-w-[130px] uppercase tracking-tight text-center whitespace-nowrap">NỘI DUNG ↑</th>
+                                <th className="py-2.5 px-2 border border-gray-300 text-[12px] font-black text-[#c05621] min-w-[75px] uppercase tracking-tight text-center whitespace-nowrap">ĐIỂM ▼</th>
+                                <th className="py-2.5 px-2 border border-gray-300 text-[12px] font-black text-[#c05621] min-w-[60px] uppercase tracking-tight text-center whitespace-nowrap">ĐÚNG ↑</th>
+                                <th className="py-2.5 px-2 border border-gray-300 text-[12px] font-black text-[#c05621] min-w-[60px] uppercase tracking-tight text-center whitespace-nowrap">SAI ↑</th>
+                                <th className="py-2.5 px-2 border border-gray-300 text-[12px] font-black text-[#c05621] min-w-[110px] uppercase tracking-tight text-center whitespace-nowrap">THỜI GIAN ↑</th>
+                                <th className="py-2.5 px-2 border border-gray-300 text-[12px] font-black text-[#c05621] min-w-[140px] uppercase tracking-tight text-center whitespace-nowrap">NGÀY LÀM ↑</th>
+                                <th className="py-2.5 px-2 border border-gray-300 text-[12px] font-black text-[#c05621] min-w-[80px] uppercase tracking-tight text-center whitespace-nowrap">HÀNH ĐỘNG</th>
                             </tr>
                         </thead>
                         <tbody className="bg-white text-[12px]">
@@ -554,6 +628,32 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                             ) : groupedData.map((group, sttIdx) => {
                                 const activityGroups = getStudentActivityGroups(group.attempts);
                                 const totalStudentAttempts = group.attempts.length;
+                                const displayStt = (group.rosterPosition && group.rosterPosition < 99999) ? group.rosterPosition : (sttIdx + 1);
+
+                                if (totalStudentAttempts === 0) {
+                                    return (
+                                        <tr key={group.playerKey} className="hover:bg-gray-50/80 transition-colors font-bold leading-tight">
+                                            <td className="py-2 px-1 border border-gray-300 text-blue-600 font-black text-center align-middle bg-white text-[13px] whitespace-nowrap">{displayStt}</td>
+                                            <td className="py-2 px-3 border border-gray-300 align-middle bg-white min-w-[200px] max-w-[320px]">
+                                                <div className="font-extrabold text-[#E91E63] text-[13px] leading-snug break-words">{group.playerName}</div>
+                                                <div className="text-[10px] font-bold text-gray-400 mt-1 flex items-center gap-1 whitespace-nowrap">
+                                                    <span>Hoàn thành:</span>
+                                                    <span className="text-gray-400 font-bold text-[11px]">0%</span>
+                                                </div>
+                                            </td>
+                                            <td className="py-2 px-2 border border-gray-300 text-[#8E44AD] text-center align-middle bg-white text-[12px] font-black whitespace-nowrap">{group.playerClass}</td>
+                                            <td className="py-2 px-2 border border-gray-300 text-center align-middle bg-white/70">
+                                                <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold text-gray-400 bg-gray-100 border border-gray-200 whitespace-nowrap">Chưa tham gia</span>
+                                            </td>
+                                            <td className="py-2 px-2 border border-gray-300 text-gray-400 text-center whitespace-nowrap text-[12px]">-</td>
+                                            <td className="py-2 px-2 border border-gray-300 text-gray-400 text-center whitespace-nowrap text-[12px]">-</td>
+                                            <td className="py-2 px-2 border border-gray-300 text-gray-400 text-center whitespace-nowrap text-[12px]">-</td>
+                                            <td className="py-2 px-2 border border-gray-300 text-gray-400 text-center font-['Nunito'] text-[12px] whitespace-nowrap">-</td>
+                                            <td className="py-2 px-2 border border-gray-300 text-gray-400 text-[11px] text-center font-['Nunito'] whitespace-nowrap">Chưa làm bài</td>
+                                            <td className="py-2 px-2 border border-gray-300 text-center align-middle bg-white whitespace-nowrap text-gray-300">-</td>
+                                        </tr>
+                                    );
+                                }
 
                                 return (
                                     <React.Fragment key={group.playerKey}>
@@ -571,10 +671,10 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                                                     >
                                                         {isStudentFirstRow && (
                                                             <>
-                                                                <td rowSpan={totalStudentAttempts} className="py-1 px-1 border border-gray-300 text-blue-600 font-black text-center align-middle bg-white text-[13px]">{sttIdx + 1}</td>
-                                                                <td rowSpan={totalStudentAttempts} className="py-1 px-2 border border-gray-300 align-middle bg-white">
-                                                                    <div className="font-bold text-[#E91E63] text-[13px] leading-snug truncate">{group.playerName}</div>
-                                                                    <div className="text-[10px] font-bold text-gray-500 mt-0.5 flex items-center gap-1 whitespace-nowrap">
+                                                                <td rowSpan={totalStudentAttempts} className="py-2 px-1 border border-gray-300 text-blue-600 font-black text-center align-middle bg-white text-[13px] whitespace-nowrap">{displayStt}</td>
+                                                                <td rowSpan={totalStudentAttempts} className="py-2 px-3 border border-gray-300 align-middle bg-white min-w-[200px] max-w-[320px]">
+                                                                    <div className="font-extrabold text-[#E91E63] text-[13px] leading-snug break-words">{group.playerName}</div>
+                                                                    <div className="text-[10px] font-bold text-gray-500 mt-1 flex items-center gap-1 whitespace-nowrap">
                                                                         <span>Hoàn thành:</span>
                                                                         <span className="text-red-600 font-black text-[11px]">{getCompletionPercentForGroup(group, type)}%</span>
                                                                     </div>
@@ -582,7 +682,7 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                                                                         <button 
                                                                             title="Xem chi tiết bài làm học sinh"
                                                                             onClick={(e) => { e.stopPropagation(); handleViewStudentDetail(group, type); }} 
-                                                                            className="px-1.5 py-0.5 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded text-[10px] font-bold transition-all shadow-2xs border border-blue-200 flex items-center gap-1 hover:scale-102"
+                                                                            className="px-2 py-0.5 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded text-[10px] font-bold transition-all shadow-2xs border border-blue-200 flex items-center gap-1 hover:scale-102"
                                                                         >
                                                                             <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                                                                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -592,7 +692,7 @@ const TeacherDashboard: React.FC<{ classroomId: string; onGoHome: () => void; }>
                                                                         </button>
                                                                     </div>
                                                                 </td>
-                                                                <td rowSpan={totalStudentAttempts} className="py-1 px-1 border border-gray-300 text-[#8E44AD] text-center align-middle bg-white text-[12px] font-black">{group.playerClass}</td>
+                                                                <td rowSpan={totalStudentAttempts} className="py-2 px-2 border border-gray-300 text-[#8E44AD] text-center align-middle bg-white text-[12px] font-black whitespace-nowrap">{group.playerClass}</td>
                                                             </>
                                                         )}
 
